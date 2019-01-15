@@ -3,19 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.elements;
+package rockstar.expression;
 
 /**
  *
  * @author Gabor
  */
-public class VariableReference {
-    
-    private String name;
-
-    public VariableReference(String name) {
-        this.name = name;
-    }
-
+public class ConstantValue extends Expression {
     
 }

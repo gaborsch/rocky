@@ -3,12 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.elements;
+package rockstar.expression;
 
 /**
  *
  * @author Gabor
  */
-public class ConstantValue extends Expression {
+public class Expression {
+    
+    public enum Type {
+        MYSTERIOUS,
+        NULL,
+        BOOLEAN,
+        NUMBER,
+        STRING
+    }
     
 }

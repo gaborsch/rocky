@@ -3,17 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.parser;
+package rockstar.statement;
 
+import rockstar.expression.ExpressionFactory;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import rockstar.elements.AssignmentStatement;
-import rockstar.elements.Expression;
-import rockstar.elements.NoOpStatement;
-import rockstar.elements.Statement;
-import rockstar.elements.VariableReference;
+import rockstar.expression.Expression;
+import rockstar.expression.VariableReference;
+import rockstar.parser.Line;
 
 /**
  *
@@ -26,7 +24,7 @@ public class StatementFactory {
         new NoOpChecker() 
     };
 
-    static Statement getStatementFor(Line l) {
+    public static Statement getStatementFor(Line l) {
         Statement stmt = null;
         for (Checker checker : CHECKERS) {
             stmt = checker.initialize(l).check();

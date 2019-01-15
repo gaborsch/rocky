@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.elements;
+package rockstar.statement;
+
+import rockstar.expression.Expression;
+import rockstar.expression.VariableReference;
 
 /**
  *
@@ -18,6 +21,14 @@ public class AssignmentStatement extends Statement {
         this.variable = variable;
         this.expression = expression;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + 
+                "    " + variable+" := " + expression +"\n" ; 
+    }
+    
+    
     
     
 }

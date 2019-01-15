@@ -3,14 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.parser;
+package rockstar.expression;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import rockstar.elements.Expression;
-import rockstar.elements.VariableReference;
 
 /**
  *
@@ -19,7 +15,7 @@ import rockstar.elements.VariableReference;
 public class ExpressionFactory {
     
     public static Expression getExpressionFor(List<String> tokens) {
-        return new Expression();
+        return new DummyExpression(tokens);
     }
 
     public static List<String> COMMON_VARIABLE_PREFIXES = Arrays.asList(new String[] {"a", "an", "the", "my", "your"});

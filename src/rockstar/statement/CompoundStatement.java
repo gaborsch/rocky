@@ -1,4 +1,4 @@
-package rockstar.elements;
+package rockstar.statement;
 
 /**
  * Marker interface for block start elements

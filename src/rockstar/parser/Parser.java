@@ -5,6 +5,7 @@
  */
 package rockstar.parser;
 
+import rockstar.statement.StatementFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +16,10 @@ import java.io.InputStreamReader;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import rockstar.elements.Block;
-import rockstar.elements.Program;
-import rockstar.elements.Statement;
-import rockstar.elements.CompoundStatement;
+import rockstar.statement.Block;
+import rockstar.statement.Program;
+import rockstar.statement.Statement;
+import rockstar.statement.CompoundStatement;
 
 /**
  *

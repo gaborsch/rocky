@@ -3,26 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.elements;
+package rockstar.expression;
 
 /**
  *
  * @author Gabor
  */
-public class Program extends Block {
+public class VariableReference extends Expression {
     
     private String name;
 
-    public Program(String name) {
+    public VariableReference(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return "( Program " + name + ")\n" +
-                super.toString(); 
+        return name;
     }
-    
+
     
     
 }

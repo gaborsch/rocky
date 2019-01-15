@@ -1,6 +1,6 @@
 package rockstar;
 
-import rockstar.elements.Program;
+import rockstar.statement.Program;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
