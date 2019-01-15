@@ -19,4 +19,10 @@ public class Expression {
         STRING
     }
     
+    protected Type type = null;
+
+    public Type getType() {
+        return type;
+    }
+    
 }

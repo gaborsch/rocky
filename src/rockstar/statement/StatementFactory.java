@@ -9,6 +9,7 @@ import rockstar.expression.ExpressionFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import rockstar.expression.ConstantValue;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.Line;
@@ -21,6 +22,9 @@ public class StatementFactory {
     
     private static final Checker CHECKERS[] = new Checker[]{ 
         new AssignmentChecker(),
+        
+        
+        new PoeticAssignmentChecker(),
         new NoOpChecker() 
     };
 
@@ -42,7 +46,7 @@ public class StatementFactory {
 
     private static abstract class Checker {
         
-        private Line l;
+        protected  Line line;
         private final Map<String,Integer> positionsMap = new HashMap<>();
         
         private final List<String>[] result = new List[10];
@@ -53,7 +57,7 @@ public class StatementFactory {
         }
                 
         public Checker initialize(Line l) {
-            this.l = l;
+            this.line = l;
             positionsMap.clear();
             int i=0;
             for (String token : l.getTokens()) {
@@ -71,7 +75,7 @@ public class StatementFactory {
             if(this.hasMatch) {
                 return false;
             }
-            List<String> tokens = l.getTokens();
+            List<String> tokens = line.getTokens();
             // clear previous result
             for (int i = 0; i < result.length; i++) { result[i] = null; }
             // match cycle
@@ -123,6 +127,34 @@ public class StatementFactory {
             return null;
         }
     }
+    
+     private static class PoeticAssignmentChecker extends Checker {
+
+        @Override
+        Statement check() {
+            if (    match( 1, "is", 2) ||
+                    match( 1, "was", 2) ||
+                    match( 1, "are", 2) ||
+                    match( 1, "were", 2) ) {
+                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                ConstantValue value = ExpressionFactory.getPoeticLiteralFor(getResult()[2]);
+                if (varRef != null && value != null) {
+                    return new AssignmentStatement(varRef, value);
+                }
+            }
+            if (    match( 1, "says", 2) ) {
+                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                
+                // grab original string from line
+                String poeticLiteralString = line.getOrigLine().substring(line.getOrigLine().indexOf("says ") + 5);
+                ConstantValue value = new ConstantValue(poeticLiteralString);
+                if (varRef != null && value != null) {
+                    return new AssignmentStatement(varRef, value);
+                }
+            }            return null;
+        }
+    }   
+ 
     private static class NoOpChecker extends Checker {
 
         @Override
