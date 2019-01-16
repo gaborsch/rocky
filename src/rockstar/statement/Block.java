@@ -15,6 +15,11 @@ import java.util.List;
 public class Block extends Statement {
     
     private List<Statement> statements = new ArrayList<>();
+    private int level = 0;
+    
+    public List<Statement> getStatements() {
+        return statements;
+    }
 
     public void addStatement(Statement stmt) {
         statements.add(stmt);
@@ -27,13 +32,18 @@ public class Block extends Statement {
         return null;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Statement statement : statements) {
-            sb.append(statement.toString());
-        }
-        return sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//        statements.forEach((statement) -> {
+//            sb.append("   |".repeat(level)).append(statement.toString());
+//        });
+//        return sb.toString();
+        return super.toString();
     }
     
     

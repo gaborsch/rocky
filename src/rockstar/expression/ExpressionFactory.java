@@ -120,8 +120,10 @@ public class ExpressionFactory {
             if (BOOLEAN_FALSE_KEYWORDS.contains(token)) {
                 return new ConstantValue(false);
             }
-// TODO: numeric literals
-        // NumericValue.parse(token);
+            NumericValue nv = NumericValue.parse(token);
+            if(nv != null) {
+                return new ConstantValue(nv);
+            }
         }
 
         return null;

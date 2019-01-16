@@ -17,9 +17,10 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import rockstar.statement.Block;
+import rockstar.statement.BlockEnd;
+import rockstar.statement.CompoundStatement;
 import rockstar.statement.Program;
 import rockstar.statement.Statement;
-import rockstar.statement.CompoundStatement;
 
 /**
  *
@@ -49,7 +50,7 @@ public class Parser {
         try {
             while ((line = rdr.readLine()) != null) {
                 Statement stmt = StatementFactory.getStatementFor(new Line(line, filename, lnum));
-                if (stmt == null) {
+                if (stmt == null || stmt instanceof BlockEnd) {
                     if (blocks.size() > 1) {
                         Block finishedBlock = blocks.pop();
                         Block nextStatement = blocks.peek();
@@ -61,8 +62,8 @@ public class Parser {
                     }
                 } else {
                     blocks.peek().addStatement(stmt);
-                    if (stmt instanceof CompoundStatement) {
-                        blocks.push(new Block());
+                    if (stmt instanceof Block) {
+                        blocks.push((Block)stmt);
                     } 
                 }
                 lnum++;

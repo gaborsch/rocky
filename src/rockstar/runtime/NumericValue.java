@@ -5,6 +5,8 @@
  */
 package rockstar.runtime;
 
+import rockstar.expression.ConstantValue;
+
 /**
  * This will hold a numeric value, according to the required definition of Rockstar
  * @author Gabor
@@ -34,6 +36,22 @@ public class NumericValue {
             return CACHED_VALUES[(int)l];
         }
         return new NumericValue(l);
+    }
+
+    public static NumericValue parse(String token) {
+        try {
+            double d = Double.parseDouble(token);        
+            return new NumericValue(d);
+        } catch (NumberFormatException e) {
+            // not a double, no problem
+        }
+        try {
+            long l = Long.parseLong(token);
+            return new NumericValue(l);
+        } catch (NumberFormatException e) {
+            // not a long, no problem
+        }
+        return null;
     }
     
     private final double value; // TODO: DEC64 representation

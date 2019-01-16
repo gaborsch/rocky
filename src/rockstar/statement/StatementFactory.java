@@ -21,9 +21,13 @@ import rockstar.parser.Line;
 public class StatementFactory {
     
     private static final Checker CHECKERS[] = new Checker[]{ 
+        new ListenChecker(), 
+        new SayChecker(),
         new AssignmentChecker(),
         
+        new FunctionDefChecker(),
         
+        new BlockEndChecker(), 
         new PoeticAssignmentChecker(),
         new NoOpChecker() 
     };
@@ -111,13 +115,106 @@ public class StatementFactory {
         };
         
     }
+    private static class ListenChecker extends Checker {
 
+        @Override
+        Statement check() {
+            if (    match("Listen", "to", 1 ) ||
+                    match("listen", "to", 1 ) ) {
+                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                if (varRef != null ) {
+                    return new ListenStatement(varRef);
+                }
+            }
+            return null;
+        }
+    }
+
+    private static class SayChecker extends Checker {
+
+        @Override
+        Statement check() {
+            if (    match("Say", 1 ) ||
+                    match("Shout", 1 ) ||
+                    match("Whisper", 1 ) ||
+                    match("Scream", 1 ) || 
+                    match("say", 1 ) ||
+                    match("dhout", 1 ) ||
+                    match("whisper", 1 ) ||
+                    match("scream", 1 )) {
+                Expression expr = ExpressionFactory.getExpressionFor(getResult()[1]);
+                if (expr != null ) {
+                    return new SayStatement(expr);
+                }
+            }
+            return null;
+        }
+    }
+    
+    private static class FunctionDefChecker extends Checker {
+
+        @Override
+        Statement check() {
+            int paramCount = -1;
+            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7, "and", 8, "and", 9))
+                    paramCount = 9;
+            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7, "and", 8))
+                    paramCount = 8;
+            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7))
+                    paramCount = 7;
+            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6))
+                    paramCount = 6;
+            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5))
+                    paramCount = 5;
+            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4))
+                    paramCount = 4;
+            if (match(0, "takes", 1, "and", 2, "and", 3))
+                    paramCount = 3;
+            if (match(0, "takes", 1, "and", 2))
+                    paramCount = 2;
+            if (match(0, "takes", 1))
+                    paramCount = 1;
+            if (match(0, "takes", "nothing") )
+                    paramCount = 0;
+            if (paramCount >= 0) {
+                // function name is the same as a variable name
+                VariableReference nameRef = ExpressionFactory.getVariableReferenceFor(getResult()[0]);
+                FunctionBlock fb = new FunctionBlock(nameRef.getName());
+                
+                VariableReference paramRef;
+                for(int i=0; i<paramCount; i++) {
+                    paramRef = ExpressionFactory.getVariableReferenceFor(getResult()[i]);
+                    if (paramRef != null) {
+                        fb.addParameterName(paramRef.getName());
+                    } else {
+                        return null;
+                    }
+                }
+                return fb;
+            }
+            return null;
+        }
+        
+    }
+ 
+    private static class BlockEndChecker extends Checker {
+
+        @Override
+        Statement check() {
+            if ( line.getTokens().isEmpty() ) {
+                return new BlockEnd();
+            }
+            return null;
+        }
+    }
+  
     private static class AssignmentChecker extends Checker {
 
         @Override
         Statement check() {
             if (    match("Put", 1, "into", 2) ||
-                    match("put", 1, "into", 2) ) {
+                    match("put", 1, "into", 2) ||
+                    match(2, "thinks", 1) ) {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[2]);
                 Expression expr = ExpressionFactory.getExpressionFor(getResult()[1]);
                 if (varRef != null && expr != null) {
