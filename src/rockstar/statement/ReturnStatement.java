@@ -5,26 +5,26 @@
  */
 package rockstar.statement;
 
+import rockstar.expression.Expression;
+
 /**
  *
  * @author Gabor
  */
-public class Program extends Block {
+public class ReturnStatement extends Statement {
     
-    private String name;
+    private Expression expression;
 
-    public String getName() {
-        return name;
-    }
-    
-    public Program(String name) {
-        this.name = name;
+    public ReturnStatement(Expression expression) {
+        this.expression = expression;
     }
 
     @Override
     public String toString() {
-        return "( Program " + name + ")";
+        return super.toString() + 
+                "\n    OUTPUT " + expression ; 
     }
+    
     
     
     

@@ -12,20 +12,18 @@ import rockstar.expression.VariableReference;
  *
  * @author Gabor
  */
-public class AssignmentStatement extends Statement {
+public class OutputStatement extends Statement {
     
-    private VariableReference variable;
     private Expression expression;
 
-    public AssignmentStatement(VariableReference variable, Expression expression) {
-        this.variable = variable;
+    public OutputStatement(Expression expression) {
         this.expression = expression;
     }
 
     @Override
     public String toString() {
         return super.toString() + 
-                "\n    " + variable+" := " + expression  ; 
+                "\n    OUTPUT " + expression ; 
     }
     
     

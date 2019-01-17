@@ -13,21 +13,27 @@ import rockstar.parser.Line;
  */
 public class Statement {
     
-    private Line l;
+    private Line line;
 
     protected Statement() {}
 
+    public Line getLine() {
+        return line;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        l.getTokens().forEach((token) -> {
-            sb.append(token).append("/");
-        });
-        return "[" + l.getLnum() + "] " + getClass().getSimpleName() + ": " + sb /*+ line*/ +  "\n"; 
+        if (line != null) {
+            line.getTokens().forEach((token) -> {
+                sb.append(token).append("/");
+            });
+        }
+        return sb.toString(); 
     }
     
     public void setDebugInfo(Line line) {
-        this.l = line;      
+        this.line = line;      
     }
     
 }

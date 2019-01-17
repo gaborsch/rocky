@@ -4,8 +4,8 @@ package rockstar.statement;
  * Marker interface for block start elements
  * @author Gabor
  */
-public interface CompoundStatement {
+public interface ContinuingBlockStatementI {
 
-    public void applyBlock(Block finishedBlock);
+    public boolean applyBlock(Block finishedBlock);
     
 }

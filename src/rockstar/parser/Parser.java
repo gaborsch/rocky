@@ -18,9 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
-import rockstar.statement.CompoundStatement;
 import rockstar.statement.Program;
 import rockstar.statement.Statement;
+import rockstar.statement.ContinuingBlockStatementI;
 
 /**
  *
@@ -50,22 +50,36 @@ public class Parser {
         try {
             while ((line = rdr.readLine()) != null) {
                 Statement stmt = StatementFactory.getStatementFor(new Line(line, filename, lnum));
-                if (stmt == null || stmt instanceof BlockEnd) {
+                if (stmt instanceof BlockEnd) {
+                    // simple block closing: no need to add it anywhere
                     if (blocks.size() > 1) {
                         Block finishedBlock = blocks.pop();
-                        Block nextStatement = blocks.peek();
-                        if (nextStatement instanceof CompoundStatement) {
-                            ((CompoundStatement) nextStatement).applyBlock(finishedBlock);
-                        } else {
-                        parseError("Non-compound statement for block");
-                        }
+                        finishedBlock.blockClosed();
                     }
                 } else {
+                    // meaningful statements
+                    if (stmt instanceof ContinuingBlockStatementI) {
+                        // if it sticks to the previous block, close that block, and append it
+                        if (blocks.size() > 1) {
+                            Block finishedBlock = blocks.pop();
+                            finishedBlock.blockClosed();
+                            boolean applied = ((ContinuingBlockStatementI)stmt).applyBlock(finishedBlock);
+                            if (! applied) {
+                                parseError(stmt.getClass().getSimpleName() + " cannot be applied to " + finishedBlock.getClass().getSimpleName());
+                            }
+                        }
+                    }
+
+                    // append statement to current block
                     blocks.peek().addStatement(stmt);
+
+                    // open a new block if it's a block statement
                     if (stmt instanceof Block) {
                         blocks.push((Block)stmt);
                     } 
-                }
+
+                }                  
+
                 lnum++;
             }
         } catch (IOException ex) {

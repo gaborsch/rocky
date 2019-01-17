@@ -5,26 +5,26 @@
  */
 package rockstar.statement;
 
+import rockstar.expression.VariableReference;
+
 /**
  *
  * @author Gabor
  */
-public class Program extends Block {
+public class IncrementStatement extends Statement {
     
-    private String name;
+    private VariableReference variable;
 
-    public String getName() {
-        return name;
-    }
-    
-    public Program(String name) {
-        this.name = name;
+    public IncrementStatement(VariableReference variable) {
+        this.variable = variable;
     }
 
     @Override
     public String toString() {
-        return "( Program " + name + ")";
+        return super.toString() + 
+                "\n    variable: " + variable ; 
     }
+    
     
     
     
