@@ -196,18 +196,20 @@ public class StatementFactory {
             if (paramCount >= 0) {
                 // function name is the same as a variable name
                 VariableReference nameRef = ExpressionFactory.getVariableReferenceFor(getResult()[0]);
-                FunctionBlock fb = new FunctionBlock(nameRef.getName());
+                if (nameRef != null) {
+                    FunctionBlock fb = new FunctionBlock(nameRef.getName());
 
-                VariableReference paramRef;
-                for (int i = 0; i < paramCount; i++) {
-                    paramRef = ExpressionFactory.getVariableReferenceFor(getResult()[i]);
-                    if (paramRef != null) {
-                        fb.addParameterName(paramRef.getName());
-                    } else {
-                        return null;
+                    VariableReference paramRef;
+                    for (int i = 1; i <= paramCount; i++) {
+                        paramRef = ExpressionFactory.getVariableReferenceFor(getResult()[i]);
+                        if (paramRef != null) {
+                            fb.addParameterName(paramRef.getName());
+                        } else {
+                            return null;
+                        }
                     }
+                    return fb;
                 }
-                return fb;
             }
             return null;
         }

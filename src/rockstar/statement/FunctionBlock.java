@@ -6,6 +6,7 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,5 +49,10 @@ public class FunctionBlock extends Block {
         return hasReturn;
     }
 
-    
+    @Override
+    public String toString() {
+        
+        return super.toString() + 
+                "\n    FUNC: " + name+"(" + Arrays.deepToString(parameterNames.toArray())  + ")"; 
+    }
 }
