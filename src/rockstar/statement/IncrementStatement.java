@@ -14,15 +14,17 @@ import rockstar.expression.VariableReference;
 public class IncrementStatement extends Statement {
     
     private VariableReference variable;
+    private int count;
 
-    public IncrementStatement(VariableReference variable) {
+    public IncrementStatement(VariableReference variable, int count) {
         this.variable = variable;
+        this.count = count;
     }
 
     @Override
     public String toString() {
         return super.toString() + 
-                "\n    variable: " + variable ; 
+                "\n    " + variable + " ++".repeat(count); 
     }
     
     

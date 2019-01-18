@@ -9,20 +9,6 @@ package rockstar.expression;
  *
  * @author Gabor
  */
-public class Expression {
+public class SimpleExpression extends Expression {
     
-    public enum Type {
-        MYSTERIOUS,
-        NULL,
-        BOOLEAN,
-        NUMBER,
-        STRING
-    }
-    
-    protected Type type = null;
-
-    public Type getType() {
-        return type;
-    }
-  
 }

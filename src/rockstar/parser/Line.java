@@ -53,6 +53,9 @@ public class Line {
         int pos = 0;
         int len = line.length();
         
+        // "'n'", ",", "&" is generally replaced by " and "
+        line = line.replace(", and ", " and ").replace(",", " and ").replace("&", " and ").replace("'n'", " and ");
+        
         while (pos < len) {
             switch (line.charAt(pos)) {
                 case ' ':

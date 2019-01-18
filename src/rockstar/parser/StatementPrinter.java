@@ -22,12 +22,10 @@ public class StatementPrinter {
         Line line = s.getLine();
         if (line != null) {
             out.format("[ %2d ] ", line.getLnum());
-        } else {
-            out.print("       ");
         }
         out.print("    ".repeat(level));
         // prune extra line information, if present
-        out.println(s.getClass().getSimpleName() + ": " + s.toString().replaceAll("\\n.*$", ""));
+        out.println(s.getClass().getSimpleName() + ": " + s.toString()  ); // .replaceAll("\\n.*$", ""));
         if (s instanceof Block) {
             List<Statement> statements = ((Block) s).getStatements();
             statements.forEach((Statement sub) -> {

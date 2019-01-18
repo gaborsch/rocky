@@ -34,6 +34,7 @@ public class Block extends Statement {
     /**
      * Called when a block is closed
      */
-    public void blockClosed() {
+    public boolean blockClosed() {
+        return true;
     }
 }

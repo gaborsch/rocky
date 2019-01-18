@@ -290,6 +290,7 @@ public class StatementFactory {
         @Override
         Statement check() {
             if (match("Put", 1, "into", 2)
+                    || match("Let", 2, "be", 1)
                     || match(2, "thinks", 1)) {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[2]);
                 Expression expr = ExpressionFactory.getExpressionFor(getResult()[1]);
@@ -333,10 +334,18 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            if (match("Build", 1, "up")) {
+            if (match("Build", 1, "up", 2)) {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                int count = 1;
+                for (String up : getResult()[2]) {
+                    if("up".equals(up)) {
+                        count++;
+                    } else {
+                        return null;
+                    }
+                }
                 if (varRef != null) {
-                    return new IncrementStatement(varRef);
+                    return new IncrementStatement(varRef, count);
                 }
             }
             return null;
@@ -347,10 +356,18 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            if (match("Knock", 1, "down")) {
+            if (match("Knock", 1, "down", 2)) {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                int count = 1;
+                for (String down : getResult()[2]) {
+                    if("down".equals(down)) {
+                        count++;
+                    } else {
+                        return null;
+                    }
+                }
                 if (varRef != null) {
-                    return new DecrementStatement(varRef);
+                    return new DecrementStatement(varRef, count);
                 }
             }
             return null;
@@ -383,7 +400,8 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            return new NoOpStatement();
+            throw new RuntimeException("NoOp: " + line.getLine().toString());
+//            return new NoOpStatement();
         }
     }
 

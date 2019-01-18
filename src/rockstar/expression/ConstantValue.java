@@ -11,7 +11,7 @@ import rockstar.runtime.NumericValue;
  *
  * @author Gabor
  */
-public class ConstantValue extends Expression {
+public class ConstantValue extends SimpleExpression {
     
     private String stringValue;
     private NumericValue numericValue;

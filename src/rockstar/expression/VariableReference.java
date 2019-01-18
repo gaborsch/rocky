@@ -9,7 +9,7 @@ package rockstar.expression;
  *
  * @author Gabor
  */
-public class VariableReference extends Expression {
+public class VariableReference extends SimpleExpression {
     
     private String name;
 
