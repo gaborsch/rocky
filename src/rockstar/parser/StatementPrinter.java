@@ -21,11 +21,12 @@ public class StatementPrinter {
     private void print(Statement s, PrintStream out, int level) {
         Line line = s.getLine();
         if (line != null) {
-            out.format("[ %2d ] ", line.getLnum());
+            out.format("[ %3d ] ", line.getLnum());
         }
         out.print("    ".repeat(level));
         // prune extra line information, if present
-        out.println(s.getClass().getSimpleName() + ": " + s.toString()  ); // .replaceAll("\\n.*$", ""));
+        out.println(s.getClass().getSimpleName() + ": " + s.toString() 
+                .replaceAll("\\n\\s*", "\n" + ("    ".repeat(level+3))));
         if (s instanceof Block) {
             List<Statement> statements = ((Block) s).getStatements();
             statements.forEach((Statement sub) -> {
