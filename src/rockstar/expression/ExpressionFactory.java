@@ -5,7 +5,9 @@
  */
 package rockstar.expression;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import rockstar.runtime.NumericValue;
 
@@ -16,15 +18,19 @@ import rockstar.runtime.NumericValue;
 public class ExpressionFactory {
 
     public static Expression getExpressionFor(List<String> tokens) {
+        Expression parsed = new ExpressionParser(tokens).parse();
+        if (parsed != null) {
+            return parsed;
+        }
         return new DummyExpression(tokens);
     }
 
     private static VariableReference lastVariable = null;
 
     public static VariableReference getVariableReferenceFor(List<String> list) {
-        ExpressionParser factory = new ExpressionParser(list);
-        VariableReference varRef = factory.parseVariableReference();
-        if (varRef != null && factory.isFullyParsed()) {
+        ExpressionParser parser = new ExpressionParser(list);
+        VariableReference varRef = parser.parseVariableReference();
+        if (varRef != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
             return varRef;
         }
@@ -32,9 +38,24 @@ public class ExpressionFactory {
     }
 
     public static ConstantValue getLiteralFor(List<String> list) {
-        ExpressionParser factory = new ExpressionParser(list);
-        ConstantValue value = factory.parseLiteral();
-        if (value != null && factory.isFullyParsed()) {
+        ExpressionParser parser = new ExpressionParser(list);
+        ConstantValue value = parser.parseLiteral();
+        if (value != null && parser.isFullyParsed()) {
+            // has valid value and parsed through the list
+            return value;
+        }
+        return null;
+    }
+
+    public static SimpleExpression getParameterFor(List<String> list) {
+        ExpressionParser parser = new ExpressionParser(list);
+        VariableReference varRef = parser.parseVariableReference();
+        if (varRef != null && parser.isFullyParsed()) {
+            // has valid value and parsed through the list
+            return varRef;
+        }
+        ConstantValue value = parser.parseLiteral();
+        if (value != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
             return value;
         }
@@ -67,7 +88,7 @@ public class ExpressionFactory {
     private static class ExpressionParser {
         // tokens of the whole expression
 
-        private List<String> list;
+        private final List<String> list;
         // next position in the list
         private int idx;
 
@@ -88,8 +109,20 @@ public class ExpressionFactory {
             return list.get(idx);
         }
 
+        private void next() {
+            idx++;
+        }
+
+        private void next(int count) {
+            idx += count;
+        }
+
         private String peekNext() {
             return list.get(idx + 1);
+        }
+
+        private String peekNext(int offset) {
+            return list.get(idx + offset);
         }
 
         private static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{
@@ -106,27 +139,27 @@ public class ExpressionFactory {
         });
 
         private ConstantValue parseLiteral() {
-            if (containsAtLeast(1)) {
+            if (!isFullyParsed()) {
                 String token = getCurrent();
                 if (MYSTERIOUS_KEYWORDS.contains(token)) {
-                    idx++;
+                    next();
                     return new ConstantValue(Expression.Type.MYSTERIOUS);
                 }
                 if (NULL_KEYWORDS.contains(token)) {
-                    idx++;
+                    next();
                     return new ConstantValue(Expression.Type.NULL);
                 }
                 if (BOOLEAN_TRUE_KEYWORDS.contains(token)) {
-                    idx++;
+                    next();
                     return new ConstantValue(true);
                 }
                 if (BOOLEAN_FALSE_KEYWORDS.contains(token)) {
-                    idx++;
+                    next();
                     return new ConstantValue(false);
                 }
                 NumericValue nv = NumericValue.parse(token);
                 if (nv != null) {
-                    idx++;
+                    next();
                     return new ConstantValue(nv);
                 }
             }
@@ -142,7 +175,7 @@ public class ExpressionFactory {
 
         private VariableReference parseVariableReference() {
             String name = null;
-            if (!containsAtLeast(1)) {
+            if (isFullyParsed()) {
                 return null;
             }
             String token0 = getCurrent();
@@ -151,20 +184,22 @@ public class ExpressionFactory {
                 String token1 = peekNext();
                 if (token1.toLowerCase().equals(token1)) {
                     name = token0.toLowerCase() + " " + token1;
-                    idx += 2;
+                    next(2);
                 }
             }
             if (name == null && Character.isUpperCase(token0.charAt(0))) {
                 // proper variable
-                idx++; // first part processed
+                next(); // first part processed
                 StringBuilder sb = new StringBuilder(token0);
 
                 while (!isFullyParsed()) {
                     String token = getCurrent();
                     // all parts of a Proper Name must start with capital letter
                     if (Character.isUpperCase(token.charAt(0))) {
-                        idx++; // next part processed
+                        next(); // next part processed
                         sb.append(" ").append(token);
+                    } else {
+                        break;
                     }
                 }
                 name = sb.toString();
@@ -173,7 +208,7 @@ public class ExpressionFactory {
                 // Variable backreference
 // TODO start of the line capitalization
                 if (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(token0)) {
-                    idx++;
+                    next();
                     return lastVariable;
                 }
             }
@@ -184,6 +219,91 @@ public class ExpressionFactory {
             return null;
         }
 
-    }
+        public SimpleExpression parseSimpleExpression() {
+            SimpleExpression expr = parseLiteral();
+            if (expr == null) {
+                expr = parseVariableReference();
+            }
+            return expr;
+        }
+/*
+        public Expression parseExpression1() {
+            if (isFullyParsed()) {
+                return null;
+            }
 
+            List<Expression> valueList = new LinkedList<>();
+            List<CompoundExpression> operatorStack = new LinkedList<>();
+
+            while (!isFullyParsed()) {
+                // get a value
+                SimpleExpression value = parseLiteral();
+                if (value != null) {
+                    value = parseVariableReference();
+                }
+                if (value != null) {
+                    valueList.add(value);
+                }
+
+            }
+
+            if (!isFullyParsed()) {
+                return null;
+            }
+            return valueList.get(0);
+        }
+*/
+        public Expression parse() {
+            if (isFullyParsed()) {
+                return null;
+            }
+            String token = this.getCurrent();
+            if ("not".equals(token)) {
+                next();
+                Expression expr = parse();
+                return new NotExpression(expr);
+            }
+
+            Expression value1 = parseSimpleExpression();
+            Expression value2;
+            if (isFullyParsed() || value1 == null) {
+                return value1;
+            }
+
+            String operator = this.getCurrent();
+
+            if ("times".equals(operator) || "of".equals(operator)) {
+                next();
+                value2 = parse();
+                return new MultiplyExpression(value1, value2);
+            }
+
+            if ("plus".equals(operator) || "with".equals(operator)) {
+                next();
+                value2 = parse();
+                
+                return new PlusExpression(value1, value2);
+            }
+            /*            if("taking".equals(operator)) {
+                
+            }
+             */
+
+            return null;
+        }
+
+    }
 }
+
+/*
+   1 + 2 * 3
+
+
+    add(1,mul(2,3)) ~
+    
+
+   1 * 2 + 3
+
+   add(mul(1,2),3)
+
+ */

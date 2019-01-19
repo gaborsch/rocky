@@ -46,8 +46,4 @@ public class ConstantValue extends SimpleExpression {
         return this.type.toString();
     }
     
-    
-    
-    
-    
 }

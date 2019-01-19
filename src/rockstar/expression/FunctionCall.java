@@ -6,21 +6,31 @@ import java.util.List;
  *
  * @author Gabor
  */
-public class FunctionCall extends Expression {
+public class FunctionCall extends CompoundExpression {
 
-    private String name;
-    private List<SimpleExpression> callParameters;
+    private final String name;
 
-    public FunctionCall(String name) {
+    public FunctionCall(String name, Expression ... params) {
+        super(params);
         this.name = name;
     }
-    
+
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("CALL "+name+":/");
-        callParameters.forEach((paramExpr) -> {
-            sb.append(paramExpr).append("/");
-        });
-        return sb.toString(); 
+    protected String getFormat() {
+        StringBuilder sb = new StringBuilder("CALL ");
+        sb.append(name);
+        sb.append("(");
+        final List<Expression> parameters = getParameters();
+        boolean isFirst = true;
+        for (int i = 0; i < parameters.size(); i++) {
+            if (!isFirst) {
+                sb.append(", ");
+            }
+            sb.append(parameters.get(i));
+            isFirst = false;
+        }
+        sb.append(")");
+        return sb.toString();
     }
+
 }

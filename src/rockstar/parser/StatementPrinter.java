@@ -26,7 +26,7 @@ public class StatementPrinter {
         out.print("    ".repeat(level));
         // prune extra line information, if present
         out.println(s.getClass().getSimpleName() + ": " + s.toString() 
-                .replaceAll("\\n\\s*", "\n" + ("    ".repeat(level+3))));
+                .replaceAll("\\n\\s*", "\n" + ("    ".repeat(level+4))));
         if (s instanceof Block) {
             List<Statement> statements = ((Block) s).getStatements();
             statements.forEach((Statement sub) -> {

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class DummyExpression extends Expression {
 
-    private List<String> tokens;
+    private final List<String> tokens;
 
     public DummyExpression(List<String> tokens) {
         this.tokens = tokens;
@@ -21,7 +21,7 @@ public class DummyExpression extends Expression {
     
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("EXPR:/");
+        StringBuilder sb = new StringBuilder("DUMMYEXPR:/");
         tokens.forEach((token) -> {
             sb.append(token).append("/");
         });
