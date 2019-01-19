@@ -5,10 +5,10 @@
  */
 package rockstar.runtime;
 
-import rockstar.expression.ConstantValue;
+import java.math.BigDecimal;
 
 /**
- * This will hold a numeric value, according to the required definition of Rockstar
+ * This will hold a numeric value, according to the required specification of Rockstar
  * @author Gabor
  */
 public class NumericValue {
@@ -54,40 +54,43 @@ public class NumericValue {
         return null;
     }
     
-    private final double value; // TODO: DEC64 representation
+    private final BigDecimal value; // TODO: DEC64 representation
 
     public NumericValue(long value) {
-        this.value = value;
+        this.value = new BigDecimal(value);
     }
     
     public NumericValue(double value) {
+        this.value = new BigDecimal(value);
+    }
+
+    private NumericValue(BigDecimal value) {
         this.value = value;
     }
 
     public NumericValue plus (NumericValue other) {
-        return new NumericValue(value + other.value);
+        return new NumericValue(value.add(other.value));
     }
 
     public NumericValue minus (NumericValue other) {
-        return new NumericValue(value - other.value);
+        return new NumericValue(value.subtract(other.value));
     }
     
     public NumericValue multiply (NumericValue other) {
-        return new NumericValue(value * other.value);
+        return new NumericValue(value.multiply(other.value));
     }    
     public NumericValue divide (NumericValue other) {
-        return new NumericValue(value / other.value);
+        return new NumericValue(value.divide(other.value));
     }
 
     public NumericValue power (NumericValue other) {
-        return new NumericValue(Math.pow(value, other.value));
+        // TODO: fractional power
+        return new NumericValue(value.pow(other.value.intValue()));
     }
+    
     @Override
     public String toString() {
-        if (Math.abs(value - Math.round(value)) < 0.000000001) {
-            return Long.toString((long) value);
-        }
-        return Double.toString(value);
+        return this.value.toPlainString();
     }
     
     
