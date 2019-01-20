@@ -5,17 +5,18 @@
  */
 package rockstar.expression;
 
-import java.security.CodeSigner;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import rockstar.expression.ComparisonExpression.ComparisonType;
+import rockstar.expression.LogicalExpression.LogicalType;
 import rockstar.runtime.NumericValue;
 
 /**
  *
  * @author Gabor
  */
-class ExpressionParser {
+public class ExpressionParser {
 
     // tokens of the whole expression
     private final List<String> list;
@@ -48,11 +49,13 @@ class ExpressionParser {
     }
 
     private String peekNext() {
-        return list.get(idx + 1);
+        String next = list.get(idx + 1);
+        return next;
     }
 
     private String peekNext(int offset) {
-        return list.get(idx + offset);
+        String next = list.get(idx + offset);
+        return next;
     }
     private static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
     private static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
@@ -160,6 +163,8 @@ class ExpressionParser {
             if (operator != null) {
                 // operator found
                 pushOperator(operator);
+                // after operators a value us requires, except FunctionCall that consumers values, too
+                operatorRequired = (operator instanceof FunctionCall);
             } else if (operatorRequired) {
                 // operator not found, but required
                 return new DummyExpression(list, idx, "Operator required");
@@ -172,6 +177,7 @@ class ExpressionParser {
                     // neither operator nor value found
                     return new DummyExpression(list, idx, "Operator or value required");
                 }
+                operatorRequired = true;
             }
         }
         // compact operators
@@ -187,7 +193,7 @@ class ExpressionParser {
 
             // take the operator from the top of the operator stack
             CompoundExpression op = operatorStack.pop();
-            
+
             // process the operator
             int paramCount = op.getParameterCount();
             if (valueStack.size() < paramCount) {
@@ -209,10 +215,82 @@ class ExpressionParser {
     public CompoundExpression getOperator() {
         String operator = this.getCurrent();
         String token = this.getCurrent();
+        // logical operators
         if ("not".equals(token)) {
             next();
             return new NotExpression();
         }
+        if ("and".equals(token)) {
+            next();
+            return new LogicalExpression(LogicalType.AND);
+        }
+        if ("or".equals(token)) {
+            next();
+            return new LogicalExpression(LogicalType.OR);
+        }
+        if ("nor".equals(token)) {
+            next();
+            return new LogicalExpression(LogicalType.NOR);
+        }
+        if ("is".equals(token)) {
+            next();
+            if (containsAtLeast(3)) {
+                if ("than".equals(peekNext())) {
+                    String comparator = this.getCurrent();
+                    ComparisonType type = null;
+                    switch (comparator) {
+                        case "higher":
+                        case "greater":
+                        case "bigger":
+                        case "stronger":
+                            type = ComparisonType.GREATER_THAN;
+                            break;
+                        case "lower":
+                        case "less":
+                        case "smaller":
+                        case "weaker":
+                            type = ComparisonType.LESS_THAN;
+                            break;
+                    }
+                    if (type != null) {
+                        next(2);
+                        return new ComparisonExpression(type);
+                    }
+                }
+            }
+            if (containsAtLeast(4)) {
+                if ("as".equals(getCurrent()) && "as".equals(peekNext(2))) {
+                    String comparator = this.peekNext(1);
+                    ComparisonType type = null;
+                    switch (comparator) {
+                        case "high":
+                        case "great":
+                        case "big":
+                        case "strong":
+                            type = ComparisonType.GREATER_OR_EQUALS; 
+                            break;
+                        case "low":
+                        case "little":
+                        case "small":
+                        case "weak":
+                            type = ComparisonType.LESS_OR_EQUALS;
+                            break;
+                    }
+                    if (type != null) {
+                        next(3);
+                        return new ComparisonExpression(type);
+                    }
+                }
+            }
+            // simple "is"
+            return new ComparisonExpression(ComparisonType.EQUALS);
+        }
+        if ("isnt".equals(token) || "aint".equals(token)) {
+            next();
+            return new ComparisonExpression(ComparisonType.NOT_EQUALS);
+        }
+
+        // arithmetical operators
         if ("times".equals(operator) || "of".equals(operator)) {
             next();
             return new MultiplyExpression();
@@ -224,6 +302,30 @@ class ExpressionParser {
         if ("minus".equals(operator) || "without".equals(operator)) {
             next();
             return new MinusExpression();
+        }
+
+        // function call
+        if ("taking".equals(token)) {
+            next();
+            FunctionCall functionCall = new FunctionCall();
+            SimpleExpression funcParam;
+            while (!isFullyParsed()) {
+                funcParam = parseSimpleExpression();
+                if (funcParam != null) {
+                    functionCall.addParameter(funcParam);
+                } else {
+                    // ERROR: invalid parameter
+                    // TODO some better method to sign expression parse error
+                    valueStack.push(new DummyExpression(list, idx, "Invalid function parameter"));
+                    return null;
+                }
+                // end of expression or no "and" found: end of parameters
+                if (isFullyParsed() || !("and".equals(getCurrent()))) {
+                    break;
+                }
+                next();
+            }
+            return functionCall;
         }
         return null;
     }
@@ -244,8 +346,7 @@ class ExpressionParser {
         protected int getParameterCount() {
             return 0;
         }
-        
-        
+
     }
 
 }
@@ -308,13 +409,16 @@ a                           ! ! &   REDUCE
   fibo taking 1 and 2 plus 3    => (fibo(1, 2) + 3)
 
 fibo
-fibo                        func
-fibo 1                      func
-fibo 1                      func &
-fibo 1 2                    func &
-fibo 1 2                    func & +    REDUCE
-                            func & +    REDUCE
+fibo                        funccall(1,2)
+fibo                        funccall +      REDUCE
+fibo(1,2)                   +
+fibo(1,2) 3                 +
+fibo(1,2) 3                 + $             REDUCE
+(fibo(1,2)+3)               $               FINISH
 
+
+
+Midnight taking my world, Fire is nothing and Midnight taking my world, Hate is nothing
 
 
  */

@@ -15,11 +15,11 @@ import java.util.List;
 public class Line {
     
     private String line;
-    private String origLine;
-    private String fileName;
-    private int lnum;
+    private final String origLine;
+    private final String fileName;
+    private final int lnum;
     
-    private List<String> tokens = new ArrayList<>();
+    private final List<String> tokens = new ArrayList<>();
 
     public Line(String line, String fileName, int lnum) {
         this.line = line;
@@ -50,11 +50,11 @@ public class Line {
     } 
     
     private void tokenize() {
-        int pos = 0;
-        int len = line.length();
-        
         // "'n'", ",", "&" is generally replaced by " and "
         line = line.replace(", and ", " and ").replace(",", " and ").replace("&", " and ").replace("'n'", " and ");
+        
+        int len = line.length();       
+        int pos = 0;
         
         while (pos < len) {
             switch (line.charAt(pos)) {

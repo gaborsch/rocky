@@ -8,23 +8,17 @@ import java.util.List;
  */
 public class FunctionCall extends CompoundExpression {
 
-    private final String name;
-
-    public FunctionCall(String name, Expression ... params) {
-        super(params);
-        this.name = name;
-    }
-
+    private String name;
+    
     @Override
     public int getPrecedence() {
-        // TODO
-        return 0;
+        return 200;
     }
      
     @Override
     public int getParameterCount() {
-        // TODO
-        return 0;
+        // FunctionCall takes the name
+        return 1;
     }   
     
 
@@ -45,5 +39,13 @@ public class FunctionCall extends CompoundExpression {
         sb.append(")");
         return sb.toString();
     }
+
+    @Override
+    public void setupFinished() {
+        Expression nameExpr = getParameters().remove(0);
+        name = ((VariableReference)nameExpr).getName();
+    }
+    
+    
 
 }

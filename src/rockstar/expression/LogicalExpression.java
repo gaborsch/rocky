@@ -9,22 +9,36 @@ package rockstar.expression;
  *
  * @author Gabor
  */
-public class NotExpression extends CompoundExpression {
+public class LogicalExpression extends CompoundExpression {
     
+    public enum LogicalType {
+        AND,
+        OR,
+        NOR
+    }
+    
+    private LogicalType type;
+
+    public LogicalExpression(LogicalType type) {
+        super();
+        this.type = type;
+    }
+    
+    
+            
     @Override
     protected String getFormat() {
-        return "NOT (%s)";
+        return "(%s "+type+" %s)";
     }
-
+    
     @Override
     public int getPrecedence() {
-        return 600;
+        return 800;
     }
     
     @Override
     public int getParameterCount() {
-        return 1;
+        return 2;
     }
-    
-    
+   
 }

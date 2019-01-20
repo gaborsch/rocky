@@ -28,7 +28,7 @@ public class DummyExpression extends Expression {
     }
     
     final void setErrorIndex(int errorIdx) {
-        tokens.set(errorIdx, "!!!" + tokens.get(errorIdx) + "!!!");
+        tokens.set(errorIdx, ">>>" + tokens.get(errorIdx) + "<<<");
     }
     
     @Override

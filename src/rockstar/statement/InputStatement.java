@@ -13,7 +13,7 @@ import rockstar.expression.VariableReference;
  */
 public class InputStatement extends Statement {
     
-    private VariableReference variable;
+    private final VariableReference variable;
 
     public InputStatement(VariableReference variable) {
         this.variable = variable;
@@ -24,8 +24,5 @@ public class InputStatement extends Statement {
         return super.toString() + 
                 "\n    INPUT " + variable ; 
     }
-    
-    
-    
     
 }

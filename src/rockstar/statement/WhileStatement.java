@@ -24,6 +24,10 @@ public class WhileStatement extends Block {
         return condition;
     }
     
-    
+     @Override
+    public String toString() {
+        return super.toString() + 
+                "\n    COND: " + condition ; 
+    }   
 
 }

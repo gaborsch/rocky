@@ -19,9 +19,13 @@ public class IfStatement extends Block {
         this.condition = condition;
     }
 
-    
     public Expression getCondition() {
         return condition;
     }
-
+    
+    @Override
+    public String toString() {
+        return super.toString() + 
+                "\n    COND: " + condition ; 
+    }
 }

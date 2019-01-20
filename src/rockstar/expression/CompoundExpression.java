@@ -46,9 +46,13 @@ public abstract class CompoundExpression extends Expression {
 
     /* Precedences
     999: $ (expression end)
+    800: and, or, nor
+    700: is, isn't, >, <, >=, <=
+    600: not
     500: +, -
     400: *, /
     300: ^ (power)
+    200: function call
      */
     public abstract int getPrecedence();
     
