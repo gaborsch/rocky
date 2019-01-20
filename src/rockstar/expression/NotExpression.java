@@ -10,14 +10,16 @@ package rockstar.expression;
  * @author Gabor
  */
 public class NotExpression extends CompoundExpression {
-
-    public NotExpression(Expression param) {
-        super(param);
-    }
     
     @Override
     protected String getFormat() {
         return "NOT (%s)";
+    }
+
+    @Override
+    public int getPrecedence() {
+        // TODO
+        return 0;
     }
     
     

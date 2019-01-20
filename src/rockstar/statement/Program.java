@@ -11,7 +11,7 @@ package rockstar.statement;
  */
 public class Program extends Block {
     
-    private String name;
+    private final String name;
 
     public String getName() {
         return name;

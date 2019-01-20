@@ -16,5 +16,10 @@ public class MinusExpression extends CompoundExpression {
         return "(%s - %s)";
     }
     
+    @Override
+    public int getPrecedence() {
+        return 500;
+    }
+
    
 }

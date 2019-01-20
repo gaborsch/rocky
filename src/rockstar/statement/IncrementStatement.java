@@ -13,8 +13,8 @@ import rockstar.expression.VariableReference;
  */
 public class IncrementStatement extends Statement {
     
-    private VariableReference variable;
-    private int count;
+    private final VariableReference variable;
+    private final int count;
 
     public IncrementStatement(VariableReference variable, int count) {
         this.variable = variable;

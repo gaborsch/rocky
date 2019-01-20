@@ -402,7 +402,7 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            throw new RuntimeException("NoOp: " + line.getLine().toString());
+            throw new RuntimeException("NoOp: " + line.getLine());
 //            return new NoOpStatement();
         }
     }

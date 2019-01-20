@@ -15,5 +15,10 @@ public class DivideExpression extends CompoundExpression {
     protected String getFormat() {
         return "(%s / %s)";
     }
+
+    @Override
+    public int getPrecedence() {
+        return 400;
+    }
     
 }

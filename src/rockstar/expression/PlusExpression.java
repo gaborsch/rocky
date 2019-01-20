@@ -11,14 +11,14 @@ package rockstar.expression;
  */
 public class PlusExpression extends CompoundExpression {
 
-    public PlusExpression(Expression value1, Expression value2) {
-        super(value1, value2);
-    }
-    
     @Override
     protected String getFormat() {
         return "(%s + %s)";
     }
-    
-    
+
+    @Override
+    public int getPrecedence() {
+        return 500;
+    }
+
 }

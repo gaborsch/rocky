@@ -11,14 +11,4 @@ package rockstar.statement;
  */
 public class NoOpStatement extends Statement {
  
-//    @Override
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        if (getLine() != null) {
-//            getLine().getTokens().forEach((token) -> {
-//                sb.append(token).append("/");
-//            });
-//        }
-//        return sb.toString(); 
-//    }
 }

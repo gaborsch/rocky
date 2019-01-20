@@ -6,7 +6,6 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
-import rockstar.expression.VariableReference;
 
 /**
  *

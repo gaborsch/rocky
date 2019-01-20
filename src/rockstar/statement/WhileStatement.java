@@ -13,7 +13,7 @@ import rockstar.expression.Expression;
  */
 public class WhileStatement extends Block {
 
-    private Expression condition;
+    private final Expression condition;
 
     public WhileStatement(Expression condition) {
         this.condition = condition;

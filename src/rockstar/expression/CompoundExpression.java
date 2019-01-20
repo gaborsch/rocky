@@ -36,6 +36,15 @@ public abstract class CompoundExpression extends Expression {
         return parameters;
     }
 
+    /* Precedences
+    999: $ (expression end)
+    500: +, -
+    400: *, /
+    300: ^ (power)
+     */
+    public abstract int getPrecedence();
+    
+    
     protected abstract String getFormat();
 
     @Override

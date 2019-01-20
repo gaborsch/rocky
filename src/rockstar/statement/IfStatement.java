@@ -13,7 +13,7 @@ import rockstar.expression.Expression;
  */
 public class IfStatement extends Block {
 
-    private Expression condition;
+    private final Expression condition;
 
     public IfStatement(Expression condition) {
         this.condition = condition;

@@ -16,6 +16,14 @@ public class FunctionCall extends CompoundExpression {
     }
 
     @Override
+    public int getPrecedence() {
+        // TODO
+        return 0;
+    }
+    
+    
+
+    @Override
     protected String getFormat() {
         StringBuilder sb = new StringBuilder("CALL ");
         sb.append(name);

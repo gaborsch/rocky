@@ -10,15 +10,15 @@ package rockstar.expression;
  * @author Gabor
  */
 public class MultiplyExpression extends CompoundExpression {
-
-    MultiplyExpression(Expression value1, Expression value2) {
-        super(value1, value2);
-    }
     
     @Override
     protected String getFormat() {
         return "(%s * %s)";
     }
     
+    @Override
+    public int getPrecedence() {
+        return 400;
+    }
     
 }

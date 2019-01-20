@@ -13,7 +13,7 @@ import rockstar.expression.Expression;
  */
 public class ReturnStatement extends Statement {
     
-    private Expression expression;
+    private final Expression expression;
 
     public ReturnStatement(Expression expression) {
         this.expression = expression;
@@ -22,7 +22,7 @@ public class ReturnStatement extends Statement {
     @Override
     public String toString() {
         return super.toString() + 
-                "\n    OUTPUT " + expression ; 
+                "\n    RETURN " + expression ; 
     }
     
     

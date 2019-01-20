@@ -33,6 +33,7 @@ public class Block extends Statement {
 
     /**
      * Called when a block is closed
+     * @return 
      */
     public boolean blockClosed() {
         return true;

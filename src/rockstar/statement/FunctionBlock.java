@@ -50,9 +50,8 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    public String toString() {
-        
+    public String toString() {     
         return super.toString() + 
-                "\n    FUNC: " + name+"(" + Arrays.deepToString(parameterNames.toArray())  + ")"; 
+                "\n    FUNCDEF: " + name+"(" + Arrays.deepToString(parameterNames.toArray())  + ")"; 
     }
 }
