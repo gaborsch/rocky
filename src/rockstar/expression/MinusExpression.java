@@ -20,6 +20,10 @@ public class MinusExpression extends CompoundExpression {
     public int getPrecedence() {
         return 500;
     }
-
+    
+    @Override
+    public int getParameterCount() {
+        return 2;
+    }
    
 }

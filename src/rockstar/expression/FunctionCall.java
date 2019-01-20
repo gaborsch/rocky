@@ -20,7 +20,12 @@ public class FunctionCall extends CompoundExpression {
         // TODO
         return 0;
     }
-    
+     
+    @Override
+    public int getParameterCount() {
+        // TODO
+        return 0;
+    }   
     
 
     @Override

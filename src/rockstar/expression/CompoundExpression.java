@@ -7,6 +7,7 @@ package rockstar.expression;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,11 +26,18 @@ public abstract class CompoundExpression extends Expression {
 
     public CompoundExpression(Expression... params) {
         this.paramCount = params.length;
-        parameters = Arrays.asList(params);
+        parameters = params.length > 0 ? Arrays.asList(params) : new LinkedList<>();
     }
 
     public void addParameter(Expression parameter) {
         parameters.add(parameter);
+    }
+
+    public void addParameterReverse(Expression parameter) {
+        parameters.add(0, parameter);
+    }
+    
+    public void setupFinished() {
     }
 
     public List<Expression> getParameters() {
@@ -44,6 +52,7 @@ public abstract class CompoundExpression extends Expression {
      */
     public abstract int getPrecedence();
     
+    protected abstract int getParameterCount();
     
     protected abstract String getFormat();
 

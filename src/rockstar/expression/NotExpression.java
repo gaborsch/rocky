@@ -22,5 +22,10 @@ public class NotExpression extends CompoundExpression {
         return 0;
     }
     
+    @Override
+    public int getParameterCount() {
+        return 1;
+    }
+    
     
 }

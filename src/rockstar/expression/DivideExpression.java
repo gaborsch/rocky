@@ -21,4 +21,9 @@ public class DivideExpression extends CompoundExpression {
         return 400;
     }
     
+    @Override
+    public int getParameterCount() {
+        return 2;
+    }
+    
 }

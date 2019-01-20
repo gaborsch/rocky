@@ -5,6 +5,7 @@
  */
 package rockstar.expression;
 
+import java.security.CodeSigner;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -15,7 +16,7 @@ import rockstar.runtime.NumericValue;
  * @author Gabor
  */
 class ExpressionParser {
-    
+
     // tokens of the whole expression
     private final List<String> list;
     // next position in the list
@@ -61,10 +62,10 @@ class ExpressionParser {
     ConstantValue parseLiteral() {
         if (!isFullyParsed()) {
             String token = getCurrent();
-            if(token.startsWith("\"") && token.endsWith("\"") && token.length() >= 2) {
+            if (token.startsWith("\"") && token.endsWith("\"") && token.length() >= 2) {
                 // string literal> strip quotes
                 next();
-                String literal = token.substring(1, token.length()-1);
+                String literal = token.substring(1, token.length() - 1);
                 return new ConstantValue(literal);
             }
             if (MYSTERIOUS_KEYWORDS.contains(token)) {
@@ -146,29 +147,7 @@ class ExpressionParser {
         }
         return expr;
     }
-    /*
-    public Expression parseExpression1() {
-    if (isFullyParsed()) {
-    return null;
-    }
-    List<Expression> valueList = new LinkedList<>();
-    List<CompoundExpression> operatorStack = new LinkedList<>();
-    while (!isFullyParsed()) {
-    // get a value
-    SimpleExpression value = parseLiteral();
-    if (value != null) {
-    value = parseVariableReference();
-    }
-    if (value != null) {
-    valueList.add(value);
-    }
-    }
-    if (!isFullyParsed()) {
-    return null;
-    }
-    return valueList.get(0);
-    }
-     */
+
     Stack<CompoundExpression> operatorStack;
     Stack<Expression> valueStack;
 
@@ -196,11 +175,35 @@ class ExpressionParser {
             }
         }
         // compact operators
-        pushOperator(null);
+        pushOperator(new EndOfExpression());
         return valueStack.isEmpty() ? null : valueStack.get(0);
     }
 
     private void pushOperator(CompoundExpression operator) {
+
+        // interpret 
+        while (!operatorStack.isEmpty()
+                && (operatorStack.peek().getPrecedence() < operator.getPrecedence())) {
+
+            // take the operator from the top of the operator stack
+            CompoundExpression op = operatorStack.pop();
+            
+            // process the operator
+            int paramCount = op.getParameterCount();
+            if (valueStack.size() < paramCount) {
+                paramCount = valueStack.size();
+            }
+            // add paramcount parameters to the operator, preserving declaraton order
+            for (int i = 0; i < paramCount; i++) {
+                op.addParameterReverse(valueStack.pop());
+            }
+            // all parameters set: time to check the types
+            op.setupFinished();
+            // the result of the operator is a value now
+            valueStack.push(op);
+        }
+
+        operatorStack.push(operator);
     }
 
     public CompoundExpression getOperator() {
@@ -218,13 +221,34 @@ class ExpressionParser {
             next();
             return new PlusExpression();
         }
+        if ("minus".equals(operator) || "without".equals(operator)) {
+            next();
+            return new MinusExpression();
+        }
         return null;
     }
-    
+
+    private static class EndOfExpression extends CompoundExpression {
+
+        @Override
+        public int getPrecedence() {
+            return 999;
+        }
+
+        @Override
+        protected String getFormat() {
+            return "$";
+        }
+
+        @Override
+        protected int getParameterCount() {
+            return 0;
+        }
+        
+        
+    }
+
 }
-
-
-
 
 /*
   1 + 2 * 3^4           =>  1+(2*(3^4))
@@ -281,7 +305,16 @@ a                           ! ! &   REDUCE
 ((!(!a)) & b)               $       FINISH
 
 
+  fibo taking 1 and 2 plus 3    => (fibo(1, 2) + 3)
+
+fibo
+fibo                        func
+fibo 1                      func
+fibo 1                      func &
+fibo 1 2                    func &
+fibo 1 2                    func & +    REDUCE
+                            func & +    REDUCE
 
 
 
-*/
+ */
