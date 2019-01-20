@@ -252,10 +252,7 @@ public class StatementFactory {
         Statement check() {
             if (match("Else", 1)
                     || match("Otherwise", 1)) {
-                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1]);
-                if (condition != null) {
-                    return new ElseStatement();
-                }
+                return new ElseStatement();
             }
             return null;
         }
@@ -340,7 +337,7 @@ public class StatementFactory {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
                 int count = 1;
                 for (String up : getResult()[2]) {
-                    if("up".equals(up)) {
+                    if ("up".equals(up)) {
                         count++;
                     } else {
                         return null;
@@ -362,7 +359,7 @@ public class StatementFactory {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
                 int count = 1;
                 for (String down : getResult()[2]) {
-                    if("down".equals(down)) {
+                    if ("down".equals(down)) {
                         count++;
                     } else {
                         return null;

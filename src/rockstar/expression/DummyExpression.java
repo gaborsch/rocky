@@ -19,12 +19,14 @@ public class DummyExpression extends Expression {
     
     public DummyExpression(List<String> tokens) {
         this.tokens = new ArrayList<>(tokens);
+        throw new RuntimeException("Expression parsing");
     }
     
     public DummyExpression(List<String> tokens, int errorIdx, String errorMsg) {
         this.tokens = new ArrayList<>(tokens);
         this.errorMsg = errorMsg;
         setErrorIndex(errorIdx);
+        throw new RuntimeException("Expression parsing: "+ errorMsg);
     }
     
     final void setErrorIndex(int errorIdx) {

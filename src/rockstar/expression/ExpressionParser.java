@@ -61,6 +61,7 @@ public class ExpressionParser {
     private static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
     private static final List<String> BOOLEAN_TRUE_KEYWORDS = Arrays.asList(new String[]{"true", "right", "yes", "ok"});
     private static final List<String> BOOLEAN_FALSE_KEYWORDS = Arrays.asList(new String[]{"false", "wrong", "no", "lies"});
+    private static final List<String> RESERVED_KEYWORDS = Arrays.asList(new String[]{"definitely", "maybe"});
 
     ConstantValue parseLiteral() {
         if (!isFullyParsed()) {
@@ -91,6 +92,11 @@ public class ExpressionParser {
             if (nv != null) {
                 next();
                 return new ConstantValue(nv);
+            }
+             if (RESERVED_KEYWORDS.contains(token)) {
+                 // reserved keywords are skipped
+                next();
+                return null;
             }
         }
         return null;
