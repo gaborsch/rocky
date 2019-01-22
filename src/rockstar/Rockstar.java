@@ -22,7 +22,8 @@ public class Rockstar {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String filename = "programs/fizzbuzz.rock";
+//        String filename = "programs/fizzbuzz.rock";
+        String filename = "programs/tests/correct/inputTest.rock";
         Map<String, Object> env = new HashMap<>();
 
         Rockstar rockstar = new Rockstar(System.in, System.out, System.err, env);
@@ -45,7 +46,7 @@ public class Rockstar {
         interpreter = new Interpreter(input, output, error, env);
     }
 
-    private void run(String filename) {
+    public void run(String filename) {
         try {
             // TODO code application logic here
             Program prg = new Parser(filename).parse();
@@ -59,5 +60,5 @@ public class Rockstar {
             Logger.getLogger(Rockstar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
 }

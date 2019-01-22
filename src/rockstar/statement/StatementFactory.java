@@ -57,7 +57,7 @@ public class StatementFactory {
     private static abstract class Checker {
 
         protected Line line;
-        private final Map<String, Integer> positionsMap = new HashMap<>();
+//        private final Map<String, Integer> positionsMap = new HashMap<>();
 
         private final List<String>[] result = new List[10];
         private boolean hasMatch = false;
@@ -68,11 +68,11 @@ public class StatementFactory {
 
         public Checker initialize(Line l) {
             this.line = l;
-            positionsMap.clear();
-            int i = 0;
-            for (String token : l.getTokens()) {
-                positionsMap.putIfAbsent(token, i++);
-            }
+//            positionsMap.clear();
+//            int i = 0;
+//            for (String token : l.getTokens()) {
+//                positionsMap.putIfAbsent(token, i++);
+//            }
             this.hasMatch = false;
             return this;
         }
@@ -95,8 +95,8 @@ public class StatementFactory {
             Integer lastNum = null;
             for (Object param : params) {
                 if (param instanceof String) {
-                    Integer nextPos = positionsMap.get(param);
-                    if (nextPos != null && nextPos > lastPos) {
+                    int nextPos = this.findNext((String) param, lastPos);
+                    if (nextPos > lastPos) {
                         if (lastNum != null) {
                             // save the sublist as the numbered result
                             result[lastNum] = tokens.subList(lastPos + 1, nextPos);
@@ -124,9 +124,25 @@ public class StatementFactory {
             this.hasMatch = true;
             return true;
         }
-    ;
 
+        private int findNext(String needle, int lastPos) {
+            List<String> tokens = line.getTokens();
+            for (int idx = lastPos + 1; idx < tokens.size(); idx++) {
+                String token = tokens.get(idx);
+                if (token.equals(needle)) {
+                    return idx;
+                } else if (idx == 0
+                        && Character.toUpperCase(token.charAt(0)) == needle.charAt(0)
+                        && token.substring(1).equals(needle.substring(1))) {
+                    // first token, first character may be lowercase
+                    return idx;
+                }
+
+            }
+            return -1;
+        }
     }
+
     private static class ListenChecker extends Checker {
 
         @Override
@@ -135,6 +151,11 @@ public class StatementFactory {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
                 if (varRef != null) {
                     return new InputStatement(varRef);
+                }
+            }
+            if (match("Listen", 1)) {
+                if (getResult()[1].isEmpty()) {
+                    return new InputStatement();
                 }
             }
             return null;
@@ -220,11 +241,16 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            if (match("While", 1)
-                    || match("Until", 1)) {
+            if (match("While", 1)) {
                 Expression condition = ExpressionFactory.getExpressionFor(getResult()[1]);
                 if (condition != null) {
                     return new WhileStatement(condition);
+                }
+            }
+            if (match("Until", 1)) {
+                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1]);
+                if (condition != null) {
+                    return new WhileStatement(condition, true);
                 }
             }
             return null;
@@ -377,7 +403,7 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            if (match("Take", "it", "to", "the", "top")) {
+            if (match("Take", "it", "to", "the", "top") || match("Continue")) {
                 return new ContinueStatement();
             }
             return null;

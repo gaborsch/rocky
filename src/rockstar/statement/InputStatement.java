@@ -19,10 +19,14 @@ public class InputStatement extends Statement {
         this.variable = variable;
     }
 
+    public InputStatement() {
+        this.variable = null;
+    }
+    
     @Override
     public String toString() {
         return super.toString() + 
-                "\n    INPUT " + variable ; 
+                "\n    INPUT " + (variable==null ?  "" : variable.toString()); 
     }
     
 }

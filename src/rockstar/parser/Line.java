@@ -50,6 +50,10 @@ public class Line {
     } 
     
     private void tokenize() {
+        
+        // trim trailing extra chars
+        line = line.replaceAll("[,;:]+$", "");
+        
         // "'n'", ",", "&" is generally replaced by " and "
         line = line.replace(", and ", " and ").replace(",", " and ").replace("&", " and ").replace("'n'", " and ");
         

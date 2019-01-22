@@ -14,11 +14,16 @@ import rockstar.expression.Expression;
 public class WhileStatement extends Block {
 
     private final Expression condition;
+    private boolean negateCondition = false;
 
     public WhileStatement(Expression condition) {
         this.condition = condition;
     }
 
+    public WhileStatement(Expression condition, boolean negateCondition) {
+        this.condition = condition;
+        this.negateCondition = negateCondition;
+    }
     
     public Expression getCondition() {
         return condition;
@@ -27,7 +32,7 @@ public class WhileStatement extends Block {
      @Override
     public String toString() {
         return super.toString() + 
-                "\n    COND: " + condition ; 
+                "\n    COND: " + (negateCondition ? "not " : "") + condition ; 
     }   
 
 }
