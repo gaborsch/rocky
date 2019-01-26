@@ -55,7 +55,7 @@ public class Parser {
                     if (blocks.size() > 1) {
                         Block finishedBlock = blocks.pop();
                         if (!finishedBlock.blockClosed()) {
-                            parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly");
+                            parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (1)");
                         }
                     }
                 } else {
@@ -65,7 +65,7 @@ public class Parser {
                         if (blocks.size() > 1) {
                             Block finishedBlock = blocks.pop();
                             if (!finishedBlock.blockClosed()) {
-                                parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly");
+                                parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (2)");
                             }
                             boolean applied = ((ContinuingBlockStatementI) stmt).applyBlock(finishedBlock);
                             if (!applied) {

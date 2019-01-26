@@ -35,6 +35,7 @@ public class StatementFactory {
         new GiveBackChecker(),
         new BlockEndChecker(),
         new PoeticAssignmentChecker(),
+        new ExpressionStatementChecker(),
         new NoOpChecker()
     };
 
@@ -153,6 +154,7 @@ public class StatementFactory {
                     return new InputStatement(varRef);
                 }
             }
+            this.initialize(line);
             if (match("Listen", 1)) {
                 if (getResult()[1].isEmpty()) {
                     return new InputStatement();
@@ -186,32 +188,23 @@ public class StatementFactory {
             int paramCount = -1;
             if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7, "and", 8, "and", 9)) {
                 paramCount = 9;
-            }
-            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7, "and", 8)) {
+            } else if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7, "and", 8)) {
                 paramCount = 8;
-            }
-            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7)) {
+            } else if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7)) {
                 paramCount = 7;
-            }
-            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6)) {
+            } else if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6)) {
                 paramCount = 6;
-            }
-            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5)) {
+            } else if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5)) {
                 paramCount = 5;
-            }
-            if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4)) {
+            } else if (match(0, "takes", 1, "and", 2, "and", 3, "and", 4)) {
                 paramCount = 4;
-            }
-            if (match(0, "takes", 1, "and", 2, "and", 3)) {
+            } else if (match(0, "takes", 1, "and", 2, "and", 3)) {
                 paramCount = 3;
-            }
-            if (match(0, "takes", 1, "and", 2)) {
+            } else if (match(0, "takes", 1, "and", 2)) {
                 paramCount = 2;
-            }
-            if (match(0, "takes", 1)) {
+            } else if (match(0, "takes", 1)) {
                 paramCount = 1;
-            }
-            if (match(0, "takes", "nothing")) {
+            } else if (match(0, "takes", "nothing")) {
                 paramCount = 0;
             }
             if (paramCount >= 0) {
@@ -247,6 +240,7 @@ public class StatementFactory {
                     return new WhileStatement(condition);
                 }
             }
+            this.initialize(line);
             if (match("Until", 1)) {
                 Expression condition = ExpressionFactory.getExpressionFor(getResult()[1]);
                 if (condition != null) {
@@ -310,6 +304,25 @@ public class StatementFactory {
         }
     }
 
+    private static class ExpressionStatementChecker extends Checker {
+
+        @Override
+        Statement check() {
+            if (match(1)) {
+                try {
+                    Expression expression = ExpressionFactory.getExpressionFor(getResult()[1]);
+                    if (expression != null) {
+                        return new ExpressionStatement(expression);
+                    }
+                } catch (Exception e) {
+                    // if expession is not parsed properly, we must continue
+                }
+            }
+            return null;
+        }
+
+    }
+
     private static class AssignmentChecker extends Checker {
 
         @Override
@@ -341,6 +354,7 @@ public class StatementFactory {
                     return new AssignmentStatement(varRef, value);
                 }
             }
+            this.initialize(line);
             if (match(1, "says", 2)) {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
 
@@ -362,9 +376,13 @@ public class StatementFactory {
             if (match("Build", 1, "up", 2)) {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
                 int count = 1;
-                for (String up : getResult()[2]) {
-                    if ("up".equals(up)) {
+                boolean isAndPossible = true;
+                for (String s : getResult()[2]) {
+                    if ("up".equals(s)) {
                         count++;
+                        isAndPossible = true;
+                    } else if (isAndPossible && s.equals("and")) {
+                        isAndPossible = false;
                     } else {
                         return null;
                     }
@@ -384,9 +402,13 @@ public class StatementFactory {
             if (match("Knock", 1, "down", 2)) {
                 VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
                 int count = 1;
-                for (String down : getResult()[2]) {
-                    if ("down".equals(down)) {
+                boolean isAndPossible = true;
+                for (String s : getResult()[2]) {
+                    if ("down".equals(s)) {
                         count++;
+                        isAndPossible = true;
+                    } else if (isAndPossible && s.equals("and")) {
+                        isAndPossible = false;
                     } else {
                         return null;
                     }
@@ -414,7 +436,7 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            if (match("Break", "it", "down")) {
+            if (match("Break", "it", "down") || match("Break")) {
                 return new BreakStatement();
             }
             return null;

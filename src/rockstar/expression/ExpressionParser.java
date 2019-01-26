@@ -297,10 +297,6 @@ public class ExpressionParser {
         }
 
         // arithmetical operators
-        if ("times".equals(operator) || "of".equals(operator)) {
-            next();
-            return new MultiplyExpression();
-        }
         if ("plus".equals(operator) || "with".equals(operator)) {
             next();
             return new PlusExpression();
@@ -308,6 +304,14 @@ public class ExpressionParser {
         if ("minus".equals(operator) || "without".equals(operator)) {
             next();
             return new MinusExpression();
+        }
+        if ("times".equals(operator) || "of".equals(operator)) {
+            next();
+            return new MultiplyExpression();
+        }
+        if ("over".equals(operator)) {
+            next();
+            return new DivideExpression();
         }
 
         // function call

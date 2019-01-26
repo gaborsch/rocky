@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementPrinter;
 import rockstar.runtime.Interpreter;
+import rockstar.test.RockstarTest;
 
 /**
  *
@@ -18,12 +19,16 @@ import rockstar.runtime.Interpreter;
  */
 public class Rockstar {
 
+    public static void main1(String[] args) {
+        RockstarTest.main(args);
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        String filename = "programs/fizzbuzz.rock";
-        String filename = "programs/tests/correct/inputTest.rock";
+        String filename = "programs/t.rock";
+//        String filename = "programs/tests/correct/operators/andTest.rock";
         Map<String, Object> env = new HashMap<>();
 
         Rockstar rockstar = new Rockstar(System.in, System.out, System.err, env);
