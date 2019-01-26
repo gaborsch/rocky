@@ -22,6 +22,8 @@ public class ExpressionParser {
     private final List<String> list;
     // next position in the list
     private int idx;
+    // saved position
+    private int savedIdx;
 
     ExpressionParser(List<String> list) {
         this.list = list;
@@ -36,7 +38,7 @@ public class ExpressionParser {
         return list.size() >= idx + count;
     }
 
-    private String getCurrent() {
+    private String peekCurrent() {
         return list.get(idx);
     }
 
@@ -57,6 +59,15 @@ public class ExpressionParser {
         String next = list.get(idx + offset);
         return next;
     }
+    
+    private void savePos() {
+        savedIdx = idx;
+    }
+    
+    private void restorePos() {
+        idx = savedIdx;
+    }
+    
     private static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
     private static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
     private static final List<String> BOOLEAN_TRUE_KEYWORDS = Arrays.asList(new String[]{"true", "right", "yes", "ok"});
@@ -65,7 +76,7 @@ public class ExpressionParser {
 
     ConstantValue parseLiteral() {
         if (!isFullyParsed()) {
-            String token = getCurrent();
+            String token = peekCurrent();
             if (token.startsWith("\"") && token.endsWith("\"") && token.length() >= 2) {
                 // string literal> strip quotes
                 next();
@@ -110,7 +121,7 @@ public class ExpressionParser {
         if (isFullyParsed()) {
             return null;
         }
-        String token0 = getCurrent();
+        String token0 = peekCurrent();
         if (COMMON_VARIABLE_KEYWORDS.contains(token0) && containsAtLeast(2)) {
             // common variable
             String token1 = peekNext();
@@ -124,7 +135,7 @@ public class ExpressionParser {
             next(); // first part processed
             StringBuilder sb = new StringBuilder(token0);
             while (!isFullyParsed()) {
-                String token = getCurrent();
+                String token = peekCurrent();
                 // all parts of a Proper Name must start with capital letter
                 if (token.length() > 0 && Character.isUpperCase(token.charAt(0))) {
                     next(); // next part processed
@@ -134,7 +145,7 @@ public class ExpressionParser {
                 }
             }
             // if a Proper Name is followed by "taking", it is a function call
-            if (! isFullyParsed() && getCurrent().equals("taking")) {
+            if (! isFullyParsed() && peekCurrent().equals("taking")) {
                 isFunctionName = true;
             }
             name = sb.toString();
@@ -227,7 +238,7 @@ public class ExpressionParser {
     }
 
     public CompoundExpression getOperator() {
-        String token = this.getCurrent();
+        String token = this.peekCurrent();
         // logical operators
         if ("not".equals(token)) {
             next();
@@ -249,7 +260,7 @@ public class ExpressionParser {
             next();
             if (containsAtLeast(3)) {
                 if ("than".equals(peekNext())) {
-                    String comparator = this.getCurrent();
+                    String comparator = this.peekCurrent();
                     ComparisonType type = null;
                     switch (comparator) {
                         case "higher":
@@ -272,7 +283,7 @@ public class ExpressionParser {
                 }
             }
             if (containsAtLeast(4)) {
-                if ("as".equals(getCurrent()) && "as".equals(peekNext(2))) {
+                if ("as".equals(peekCurrent()) && "as".equals(peekNext(2))) {
                     String comparator = this.peekNext(1);
                     ComparisonType type = null;
                     switch (comparator) {
@@ -326,7 +337,7 @@ public class ExpressionParser {
             next();
             FunctionCall functionCall = new FunctionCall();
             SimpleExpression funcParam;
-            int savedIdx = this.idx;
+            savePos();
 
             while (!isFullyParsed()) {
                 funcParam = parseSimpleExpression();
@@ -335,12 +346,12 @@ public class ExpressionParser {
                     // Example: say TrueFunc taking nothing and TrueFunc taking nothing
                     if(funcParam instanceof VariableReference && 
                             ((VariableReference)funcParam).isFunctionName()) {
-                        this.idx = savedIdx;
+                        restorePos();
                         break;
                     }
                     // otherwise save the parameter and the position
                     functionCall.addParameter(funcParam);
-                    savedIdx = this.idx;
+                    savePos();
                 } else {
                     // ERROR: invalid parameter
                     // TODO some better method to sign expression parse error
@@ -348,7 +359,7 @@ public class ExpressionParser {
                     return null;
                 }
                 // end of expression or no "and" found: end of parameters
-                if (isFullyParsed() || !("and".equals(getCurrent()))) {
+                if (isFullyParsed() || !("and".equals(peekCurrent()))) {
                     break;
                 }
                 next();
