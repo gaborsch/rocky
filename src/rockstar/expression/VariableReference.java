@@ -12,13 +12,25 @@ package rockstar.expression;
 public class VariableReference extends SimpleExpression {
     
     private String name;
+    private boolean isFunctionName = false;
 
     public String getName() {
         return name;
     }
 
+    public boolean isFunctionName() {
+        return isFunctionName;
+    }
+    
+    
+
     public VariableReference(String name) {
         this.name = name;
+    }
+
+    public VariableReference(String name, boolean isFunctionName) {
+        this.name = name;
+        this.isFunctionName = isFunctionName;
     }
 
     @Override

@@ -55,31 +55,37 @@ public class Parser {
                     if (blocks.size() > 1) {
                         Block finishedBlock = blocks.pop();
                         if (!finishedBlock.blockClosed()) {
-                            parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (1)");
+                            parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (block end)");
                         }
                     }
                 } else {
                     // meaningful statements
                     if (stmt instanceof ContinuingBlockStatementI) {
                         // if it sticks to the previous block, close that block, and append it
-                        if (blocks.size() > 1) {
-                            Block finishedBlock = blocks.pop();
-                            if (!finishedBlock.blockClosed()) {
-                                parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (2)");
-                            }
-                            boolean applied = ((ContinuingBlockStatementI) stmt).applyBlock(finishedBlock);
-                            if (!applied) {
-                                parseError(stmt.getClass().getSimpleName() + " cannot be applied to " + finishedBlock.getClass().getSimpleName());
-                            }
+//                        if (blocks.size() > 1) {
+                        Block finishedBlock = blocks.pop();
+                        if (!finishedBlock.blockClosed()) {
+                            parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (" + stmt.getClass().getSimpleName() + ")");
+//                            }
+//                            boolean applied = ((ContinuingBlockStatementI) stmt).applyBlock(finishedBlock);
+//                            if (!applied) {
+//                                parseError(stmt.getClass().getSimpleName() + " cannot be applied to " + finishedBlock.getClass().getSimpleName());
+//                            }
                         }
                     }
 
                     // append statement to current block
-                    blocks.peek().addStatement(stmt);
+                    if (!blocks.isEmpty()) {
+                        blocks.peek().addStatement(stmt);
+                    } else {
+                        parseError("Statement out of block");
+                    }
 
                     // open a new block if it's a block statement
                     if (stmt instanceof Block) {
-                        blocks.push((Block) stmt);
+                        Block block = (Block) stmt;
+                        block.setParent(blocks.peek());
+                        blocks.push(block);
                     }
 
                 }
@@ -96,7 +102,8 @@ public class Parser {
     }
 
     private void parseError(String msg) {
-        System.err.println("parse error: " + msg);
+        // System.err.println("parse error: " + msg);
+        throw new RuntimeException(msg);
     }
 
 }

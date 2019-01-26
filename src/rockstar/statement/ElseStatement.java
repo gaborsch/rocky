@@ -5,6 +5,8 @@
  */
 package rockstar.statement;
 
+import java.util.List;
+
 /**
  *
  * @author Gabor
@@ -12,11 +14,25 @@ package rockstar.statement;
 public class ElseStatement extends Block implements ContinuingBlockStatementI {
 
     @Override
-    public boolean applyBlock(Block finishedBlock) {
-        if (finishedBlock instanceof IfStatement) {
-            return true;
-        } 
+    boolean applyTo(Block block) {
+        List<Statement> blockStmts = block.getStatements();
+        if (blockStmts.size() >= 1) {
+            Statement lastStmt = blockStmts.get(blockStmts.size()-1);
+            if(lastStmt instanceof IfStatement) {
+                return true;
+            }
+        }
         return false;
     }
+
+//    @Override
+//    public boolean applyBlock(Block finishedBlock) {
+//        if (finishedBlock instanceof IfStatement) {
+//            return true;
+//        } 
+//        return false;
+//    }
+    
+    
  
 }

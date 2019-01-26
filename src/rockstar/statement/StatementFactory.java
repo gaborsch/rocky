@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import rockstar.expression.ConstantValue;
 import rockstar.expression.Expression;
+import rockstar.expression.FunctionCall;
 import rockstar.expression.VariableReference;
 import rockstar.parser.Line;
 
@@ -311,7 +312,8 @@ public class StatementFactory {
             if (match(1)) {
                 try {
                     Expression expression = ExpressionFactory.getExpressionFor(getResult()[1]);
-                    if (expression != null) {
+                    if (expression != null && 
+                            expression instanceof FunctionCall) {
                         return new ExpressionStatement(expression);
                     }
                 } catch (Exception e) {
@@ -447,7 +449,7 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            throw new RuntimeException("NoOp: " + line.getLine());
+            throw new RuntimeException("Invalid statement: " + line.getLine());
 //            return new NoOpStatement();
         }
     }

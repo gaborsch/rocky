@@ -93,8 +93,8 @@ public class ExpressionParser {
                 next();
                 return new ConstantValue(nv);
             }
-             if (RESERVED_KEYWORDS.contains(token)) {
-                 // reserved keywords are skipped
+            if (RESERVED_KEYWORDS.contains(token)) {
+                // reserved keywords are skipped
                 next();
                 return null;
             }
@@ -106,6 +106,7 @@ public class ExpressionParser {
 
     VariableReference parseVariableReference() {
         String name = null;
+        boolean isFunctionName = false;
         if (isFullyParsed()) {
             return null;
         }
@@ -118,19 +119,23 @@ public class ExpressionParser {
                 next(2);
             }
         }
-        if (name == null && Character.isUpperCase(token0.charAt(0))) {
+        if (name == null && token0.length() > 0 && Character.isUpperCase(token0.charAt(0))) {
             // proper variable
             next(); // first part processed
             StringBuilder sb = new StringBuilder(token0);
             while (!isFullyParsed()) {
                 String token = getCurrent();
                 // all parts of a Proper Name must start with capital letter
-                if (Character.isUpperCase(token.charAt(0))) {
+                if (token.length() > 0 && Character.isUpperCase(token.charAt(0))) {
                     next(); // next part processed
                     sb.append(" ").append(token);
                 } else {
                     break;
                 }
+            }
+            // if a Proper Name is followed by "taking", it is a function call
+            if (! isFullyParsed() && getCurrent().equals("taking")) {
+                isFunctionName = true;
             }
             name = sb.toString();
         }
@@ -143,8 +148,11 @@ public class ExpressionParser {
             }
         }
         if (name != null) {
-            ExpressionFactory.lastVariable = new VariableReference(name);
-            return ExpressionFactory.lastVariable;
+            VariableReference varRef = new VariableReference(name, isFunctionName);
+            if (! isFunctionName) {
+                ExpressionFactory.lastVariable = varRef;
+            } 
+            return varRef;
         }
         return null;
     }
@@ -219,7 +227,6 @@ public class ExpressionParser {
     }
 
     public CompoundExpression getOperator() {
-        String operator = this.getCurrent();
         String token = this.getCurrent();
         // logical operators
         if ("not".equals(token)) {
@@ -273,7 +280,7 @@ public class ExpressionParser {
                         case "great":
                         case "big":
                         case "strong":
-                            type = ComparisonType.GREATER_OR_EQUALS; 
+                            type = ComparisonType.GREATER_OR_EQUALS;
                             break;
                         case "low":
                         case "little":
@@ -297,19 +304,19 @@ public class ExpressionParser {
         }
 
         // arithmetical operators
-        if ("plus".equals(operator) || "with".equals(operator)) {
+        if ("plus".equals(token) || "with".equals(token)) {
             next();
             return new PlusExpression();
         }
-        if ("minus".equals(operator) || "without".equals(operator)) {
+        if ("minus".equals(token) || "without".equals(token)) {
             next();
             return new MinusExpression();
         }
-        if ("times".equals(operator) || "of".equals(operator)) {
+        if ("times".equals(token) || "of".equals(token)) {
             next();
             return new MultiplyExpression();
         }
-        if ("over".equals(operator)) {
+        if ("over".equals(token)) {
             next();
             return new DivideExpression();
         }
@@ -319,10 +326,21 @@ public class ExpressionParser {
             next();
             FunctionCall functionCall = new FunctionCall();
             SimpleExpression funcParam;
+            int savedIdx = this.idx;
+
             while (!isFullyParsed()) {
                 funcParam = parseSimpleExpression();
                 if (funcParam != null) {
+                    // if a function call is found in the parameters, we need to rewind
+                    // Example: say TrueFunc taking nothing and TrueFunc taking nothing
+                    if(funcParam instanceof VariableReference && 
+                            ((VariableReference)funcParam).isFunctionName()) {
+                        this.idx = savedIdx;
+                        break;
+                    }
+                    // otherwise save the parameter and the position
                     functionCall.addParameter(funcParam);
+                    savedIdx = this.idx;
                 } else {
                     // ERROR: invalid parameter
                     // TODO some better method to sign expression parse error

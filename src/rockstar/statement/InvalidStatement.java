@@ -9,9 +9,9 @@ package rockstar.statement;
  *
  * @author Gabor
  */
-public class NoOpStatement extends Statement {
+public class InvalidStatement extends Statement {
 
-    public NoOpStatement() {
+    public InvalidStatement() {
         var l = getLine();
         throw new RuntimeException("Statement parsing in "+l.getFileName()+" at line " + l.getLnum() + ":\n" + l.getOrigLine());
     }

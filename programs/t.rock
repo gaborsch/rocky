@@ -1,2 +1,9 @@
-say TrueFunc taking nothing and TrueFunc taking nothing
+Dummzfunc takes A
+if True
+say "hello"
+(end if)
+else
+say "world"
+(end else)
+(end func)
 

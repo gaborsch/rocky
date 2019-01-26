@@ -19,18 +19,21 @@ import rockstar.test.RockstarTest;
  */
 public class Rockstar {
 
-    public static void main1(String[] args) {
+    public static void main(String[] args) {
         RockstarTest.main(args);
     }
     
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         String filename = "programs/t.rock";
+//        String filename = "programs/tests/correct/factorial.rock";
 //        String filename = "programs/tests/correct/operators/andTest.rock";
+//        String filename = "programs/tests/parse-errors/elseOutsideIf.rock";
+//        String filename = "programs/tests/runtime-errors/andTest.rock";
+        System.out.println("Filename:" + filename);
         Map<String, Object> env = new HashMap<>();
-
         Rockstar rockstar = new Rockstar(System.in, System.out, System.err, env);
         rockstar.run(filename);
     }

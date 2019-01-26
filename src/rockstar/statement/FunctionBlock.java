@@ -15,9 +15,8 @@ import java.util.List;
  */
 public class FunctionBlock extends Block {
 
-    private String name;
-    private List<String> parameterNames = new ArrayList<>();
-    private boolean hasReturn = false;
+    private final String name;
+    private final List<String> parameterNames = new ArrayList<>();
 
     public FunctionBlock(String name) {
         this.name = name;
@@ -33,19 +32,6 @@ public class FunctionBlock extends Block {
 
     public List<String> getParameterNames() {
         return parameterNames;
-    }
-
-    @Override
-    public void addStatement(Statement stmt) {
-        super.addStatement(stmt);
-        hasReturn |= (stmt instanceof ReturnStatement);
-    }
-
-    @Override
-    public boolean blockClosed() {
-        // a function block is closeable properly if it has at least one return statement
-//        return hasReturn;
-        return true;
     }
 
     @Override

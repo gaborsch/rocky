@@ -35,5 +35,14 @@ public class Statement {
     public void setDebugInfo(Line line) {
         this.line = line;      
     }
+
+    /**
+     * This statement is applied to the block. 
+     * Statements could implement specific checks if they can be applied to the block or not
+     * @param block 
+     */
+    boolean applyTo(Block block) {
+        return true;
+    }
     
 }

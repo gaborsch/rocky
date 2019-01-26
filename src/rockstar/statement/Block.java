@@ -13,6 +13,8 @@ import java.util.List;
  * @author Gabor
  */
 public class Block extends Statement {
+
+    private Block parent;
     
     private List<Statement> statements = new ArrayList<>();
     
@@ -21,6 +23,9 @@ public class Block extends Statement {
     }
 
     public void addStatement(Statement stmt) {
+        if (! stmt.applyTo(this)) {
+            throw new RuntimeException(stmt.getClass().getSimpleName() + " cannot be applied to the block");
+        }
         statements.add(stmt);
     }
     
@@ -29,6 +34,14 @@ public class Block extends Statement {
             statements.get(statements.size()-1);
         }
         return null;
+    }
+
+    public void setParent(Block parent) {
+        this.parent = parent;
+    }
+
+    public Block getParent() {
+        return parent;
     }
 
     /**

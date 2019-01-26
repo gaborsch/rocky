@@ -6,6 +6,6 @@ package rockstar.statement;
  */
 public interface ContinuingBlockStatementI {
 
-    public boolean applyBlock(Block finishedBlock);
+//    public boolean applyBlock(Block finishedBlock);
     
 }

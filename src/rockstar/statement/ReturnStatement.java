@@ -12,7 +12,7 @@ import rockstar.expression.Expression;
  * @author Gabor
  */
 public class ReturnStatement extends Statement {
-    
+
     private final Expression expression;
 
     public ReturnStatement(Expression expression) {
@@ -21,11 +21,21 @@ public class ReturnStatement extends Statement {
 
     @Override
     public String toString() {
-        return super.toString() + 
-                "\n    RETURN " + expression ; 
+        return super.toString()
+                + "\n    RETURN " + expression;
     }
-    
-    
-    
-    
+
+    @Override
+    boolean applyTo(Block block) {
+        Block b = block;
+        while (b != null) {
+            if (b instanceof FunctionBlock) {
+                return true;
+            }
+            b = b.getParent();
+
+        }
+        return false;
+    }
+
 }

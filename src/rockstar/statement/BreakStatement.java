@@ -10,5 +10,17 @@ package rockstar.statement;
  * @author Gabor
  */
 public class BreakStatement extends Statement {
- 
+
+    @Override
+    boolean applyTo(Block block) {
+        Block b = block;
+        while (b != null) {
+            if (b instanceof WhileStatement) {
+                return true;
+            }
+            b = b.getParent();
+        }
+        return false;
+    }
+
 }

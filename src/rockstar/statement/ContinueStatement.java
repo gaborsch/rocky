@@ -10,5 +10,18 @@ package rockstar.statement;
  * @author Gabor
  */
 public class ContinueStatement extends Statement {
- 
+
+    @Override
+    boolean applyTo(Block block) {
+        Block b = block;
+        while (b != null) {
+            if (b instanceof WhileStatement) {
+                return true;
+            }
+            b = b.getParent();
+
+        }
+        return false;
+    }
+
 }
