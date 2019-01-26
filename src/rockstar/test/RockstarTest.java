@@ -58,13 +58,13 @@ public class RockstarTest {
                 TestResult result = new TestRun().execute(file.getAbsolutePath(), exp);
                 if (result.isPassed) {
                     passed++;
-                    System.out.printf("[OK  ] %-30s", file.getName());
+                    System.out.printf("   [OK  ] %-30s", file.getName());
                 } else {
                     failed++;
                     if (result.exception == null) {
-                        System.out.printf("[FAIL] %-40s %s", file.getName(), result.message);
+                        System.out.printf("!  [FAIL] %-40s %s", file.getName(), result.message);
                     } else {
-                        System.out.printf("[EXCP] %-40s %s %s", file.getName(), result.exception.getClass().getSimpleName(), result.message);
+                        System.out.printf("!! [EXCP] %-40s %s %s", file.getName(), result.exception.getClass().getSimpleName(), result.message);
                     }
 
                 }
