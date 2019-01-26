@@ -103,7 +103,7 @@ public class Parser {
 
     private void parseError(String msg) {
         // System.err.println("parse error: " + msg);
-        throw new RuntimeException(msg);
+        throw new ParseException(msg);
     }
 
 }

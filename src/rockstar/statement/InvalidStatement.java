@@ -5,6 +5,8 @@
  */
 package rockstar.statement;
 
+import rockstar.parser.ParseException;
+
 /**
  *
  * @author Gabor
@@ -13,7 +15,7 @@ public class InvalidStatement extends Statement {
 
     public InvalidStatement() {
         var l = getLine();
-        throw new RuntimeException("Statement parsing in "+l.getFileName()+" at line " + l.getLnum() + ":\n" + l.getOrigLine());
+        throw new ParseException("Statement parsing in "+l.getFileName()+" at line " + l.getLnum() + ":\n" + l.getOrigLine(), l);
     }
 
 }

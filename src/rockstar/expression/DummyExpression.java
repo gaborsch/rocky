@@ -7,6 +7,7 @@ package rockstar.expression;
 
 import java.util.ArrayList;
 import java.util.List;
+import rockstar.parser.ParseException;
 
 /**
  *
@@ -25,7 +26,7 @@ public class DummyExpression extends Expression {
             sb.append(token).append("/");
         });
 
-        throw new RuntimeException("Expression parsing" + sb.toString());
+        throw new ParseException("Expression parsing" + sb.toString());
     }
 
     public DummyExpression(List<String> tokens, int errorIdx, String errorMsg) {
@@ -47,7 +48,7 @@ public class DummyExpression extends Expression {
         tokens.forEach((token) -> {
             sb.append(token).append("/");
         });
-        throw new RuntimeException("Expression parsing: " + errorMsg + " " + sb.toString());
+        throw new ParseException("Expression parsing: " + errorMsg + " " + sb.toString());
     }
 
     final void setErrorIndex(int errorIdx) {

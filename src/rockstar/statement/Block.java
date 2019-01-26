@@ -7,6 +7,7 @@ package rockstar.statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import rockstar.parser.ParseException;
 
 /**
  *
@@ -24,7 +25,7 @@ public class Block extends Statement {
 
     public void addStatement(Statement stmt) {
         if (! stmt.applyTo(this)) {
-            throw new RuntimeException(stmt.getClass().getSimpleName() + " cannot be applied to the block");
+            throw new ParseException(stmt.getClass().getSimpleName() + " cannot be applied to the block", stmt.getLine());
         }
         statements.add(stmt);
     }

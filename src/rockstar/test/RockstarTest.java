@@ -21,7 +21,7 @@ import java.util.HashMap;
  */
 public class RockstarTest {
 
-    enum Expected {
+    public enum Expected {
         CORRECT,
         PARSE_ERROR,
         RUNTIME_ERROR
@@ -62,9 +62,9 @@ public class RockstarTest {
                 } else {
                     failed++;
                     if (result.exception == null) {
-                        System.out.printf("[FAIL] %-30s %s", file.getName(), result.message);
+                        System.out.printf("[FAIL] %-40s %s", file.getName(), result.message);
                     } else {
-                        System.out.printf("[EXCP] %-30s %s %s", file.getName(), result.exception.getClass().getSimpleName(), result.message);
+                        System.out.printf("[EXCP] %-40s %s %s", file.getName(), result.exception.getClass().getSimpleName(), result.message);
                     }
 
                 }

@@ -6,14 +6,13 @@
 package rockstar.statement;
 
 import rockstar.expression.ExpressionFactory;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import rockstar.expression.ConstantValue;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.VariableReference;
 import rockstar.parser.Line;
+import rockstar.parser.ParseException;
 
 /**
  *
@@ -449,7 +448,7 @@ public class StatementFactory {
 
         @Override
         Statement check() {
-            throw new RuntimeException("Invalid statement: " + line.getLine());
+            throw new ParseException("Invalid statement: " + line.getLine(), line);
 //            return new NoOpStatement();
         }
     }
