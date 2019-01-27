@@ -8,6 +8,7 @@ package rockstar.statement;
 import java.util.ArrayList;
 import java.util.List;
 import rockstar.parser.ParseException;
+import rockstar.runtime.BlockContext;
 
 /**
  *
@@ -51,5 +52,18 @@ public class Block extends Statement {
      */
     public boolean blockClosed() {
         return true;
+    }
+
+    /**
+     * Execute a block
+     * @param ctx 
+     */
+    @Override
+    public void execute(BlockContext ctx) {
+        super.execute(ctx);
+        BlockContext currentCtx = new BlockContext(ctx);
+        for (Statement statement : statements) {
+            statement.execute(currentCtx);
+        }
     }
 }

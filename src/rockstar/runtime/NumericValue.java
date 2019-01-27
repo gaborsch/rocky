@@ -88,11 +88,25 @@ public class NumericValue {
         return new NumericValue(value.pow(other.value.intValue()));
     }
     
+    public int compareTo(NumericValue other) {
+        return value.compareTo(other.value);
+    }
+    
     @Override
     public String toString() {
         return this.value.toPlainString();
     }
     
+    public long asLong() {
+        return value.longValue();
+    }
     
+    public int asInt() {
+        return value.intValue();
+    }
+    
+    public BigDecimal asBigDecimal() {
+        return value;
+    }
     
 }

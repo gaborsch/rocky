@@ -49,7 +49,8 @@ public abstract class Statement {
 
 //    public abstract void execute(BlockContext ctx);
     public void execute(BlockContext ctx) {
-        ctx.getOutput().println(this.getClass().getSimpleName());
+//        ctx.getOutput().println(this.getClass().getSimpleName());
+        ctx.getOutput().println(this.getClass().getSimpleName() + " " + this);
     }
     
 }

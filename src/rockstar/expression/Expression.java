@@ -5,11 +5,14 @@
  */
 package rockstar.expression;
 
+import rockstar.runtime.BlockContext;
+
 /**
  *
  * @author Gabor
  */
-public class Expression {
+public abstract class Expression {
+
     
     public enum Type {
         MYSTERIOUS,
@@ -25,5 +28,24 @@ public class Expression {
         return type;
     }
   
+    public ConstantValue evaluate(BlockContext ctx) {
+        return new ConstantValue(this.toString());
+    }
+    
+    public boolean isNumeric() {
+        return type == Type.NUMBER;
+    }
+    public boolean isNull() {
+        return type == Type.NULL;
+    }
+    public boolean isMysterious() {
+        return type == Type.MYSTERIOUS;
+    }
+    public boolean isBoolean() {
+        return type == Type.BOOLEAN;
+    }
+    public boolean isString() {
+        return type == Type.STRING;
+    }
 }
 

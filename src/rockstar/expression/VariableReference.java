@@ -5,6 +5,8 @@
  */
 package rockstar.expression;
 
+import rockstar.runtime.BlockContext;
+
 /**
  *
  * @author Gabor
@@ -38,4 +40,15 @@ public class VariableReference extends SimpleExpression {
         return "`" + name + "`";
     }
 
+    @Override
+    public ConstantValue evaluate(BlockContext ctx) {
+        ConstantValue value = ctx.getVariable(name);
+        if (value == null) {
+            value = new ConstantValue(Type.MYSTERIOUS);
+            ctx.setVariable(name, value);
+        }
+        return value;
+    }
+
+    
 }

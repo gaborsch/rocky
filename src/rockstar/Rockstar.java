@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementPrinter;
-import rockstar.runtime.Interpreter;
+import rockstar.runtime.BlockContext;
 import rockstar.test.RockstarTest;
 
 /**
@@ -44,14 +44,14 @@ public class Rockstar {
     private final PrintStream error;
     private final Map<String, Object> env;
 
-    private final Interpreter interpreter;
+    private final BlockContext ctx;
 
     public Rockstar(InputStream input, PrintStream output, PrintStream error, Map<String, Object> env) {
         this.input = input;
         this.output = output;
         this.error = error;
         this.env = env;
-        interpreter = new Interpreter(input, output, error, env);
+        ctx = new BlockContext(input, output, error, env);
     }
 
     public void run(String filename) {
@@ -62,8 +62,7 @@ public class Rockstar {
                 error.println("File parsed: ");
                 new StatementPrinter().print(prg, error);
             }
-            interpreter.execute(prg);
-            
+            prg.execute(ctx);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Rockstar.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -5,6 +5,9 @@
  */
 package rockstar.expression;
 
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
+
 /**
  *
  * @author Gabor
@@ -20,9 +23,28 @@ public class PlusExpression extends CompoundExpression {
     public int getPrecedence() {
         return 500;
     }
-    
+
     @Override
     public int getParameterCount() {
         return 2;
     }
+
+    @Override
+    public ConstantValue evaluate(BlockContext ctx) {
+        Expression expr1 = this.getParameters().get(0);
+        Expression expr2 = this.getParameters().get(1);
+        ConstantValue v1 = expr1.evaluate(ctx);
+        ConstantValue v2 = expr2.evaluate(ctx);
+        if (v1.isNumeric()) {
+            if (v2.isNumeric()) {
+                // numeric addition
+                return new ConstantValue(v1.getNumericValue().plus(v2.getNumericValue()));
+            }
+        } else if (v1.isString()) {
+            // String concatenation
+            return new ConstantValue(v1.getStringValue() + v2.getStringValue());
+        }
+        throw new RockstarRuntimeException(v1.getType() + " plus " + v2.getType());
+    }
+
 }
