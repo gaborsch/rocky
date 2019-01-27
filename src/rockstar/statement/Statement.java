@@ -6,12 +6,13 @@
 package rockstar.statement;
 
 import rockstar.parser.Line;
+import rockstar.runtime.BlockContext;
 
 /**
  *
  * @author Gabor
  */
-public class Statement {
+public abstract class Statement {
     
     private Line line;
 
@@ -43,6 +44,12 @@ public class Statement {
      */
     boolean applyTo(Block block) {
         return true;
+    }
+
+
+//    public abstract void execute(BlockContext ctx);
+    public void execute(BlockContext ctx) {
+        ctx.getOutput().println(this.getClass().getSimpleName());
     }
     
 }

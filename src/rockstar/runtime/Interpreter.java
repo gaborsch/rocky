@@ -19,28 +19,25 @@ import rockstar.statement.Statement;
  */
 public class Interpreter {
 
-    private final InputStream input;
-    private final PrintStream output;
-    private final PrintStream error;
-    private final Map<String, Object> env;
-
     private BlockContext ctx;
 
     public Interpreter(InputStream input, PrintStream output, PrintStream error, Map<String, Object> env) {
-        this.input = input;
-        this.output = output;
-        this.error = error;
-        this.env = env;
+        ctx = new BlockContext(input, output, error, env);
     }
 
     public void execute(Program prg) {
         executeBlock(prg);
+//        output.println("Running " + prg.getName().substring(prg.getName().lastIndexOf('\\')+1));
     }
-    
+
     public void executeBlock(Block block) {
         ctx = new BlockContext(ctx);
         List<Statement> stmtList = block.getStatements();
-        
+
+        for (Statement statement : stmtList) {
+            statement.execute(ctx);
+        }
+
         ctx = ctx.getParent();
     }
 

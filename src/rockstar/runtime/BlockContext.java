@@ -5,6 +5,8 @@
  */
 package rockstar.runtime;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import rockstar.expression.ConstantValue;
@@ -21,6 +23,20 @@ public class BlockContext {
     private final Map<String, ConstantValue> vars = new HashMap<>();
     private final Map<String, FunctionBlock> funcs = new HashMap<>();
 
+    private final InputStream input;
+    private final PrintStream output;
+    private final PrintStream error;
+    private final Map<String, Object> env;
+
+    public BlockContext(InputStream input, PrintStream output, PrintStream error, Map<String, Object> env) {
+        this.parent = null;
+        this.root = this;
+        this.input = input;
+        this.output = output;
+        this.error = error;
+        this.env = env;
+    }
+
     /**
      * Context initialization
      *
@@ -28,12 +44,34 @@ public class BlockContext {
      */
     public BlockContext(BlockContext parent) {
         this.parent = parent;
-        this.root = parent == null ? this : parent.root;
+        this.root = parent.root;
+        this.input = parent.input;
+        this.output = parent.output;
+        this.error = parent.error;
+        this.env = parent.env;
     }
 
     public BlockContext getParent() {
         return parent;
     }
+
+    public InputStream getInput() {
+        return input;
+    }
+
+    public PrintStream getOutput() {
+        return output;
+    }
+
+    public PrintStream getError() {
+        return error;
+    }
+
+    public Map<String, Object> getEnv() {
+        return env;
+    }
+    
+    
 
     public void setVariable(String name, ConstantValue value) {
         vars.put(name, value);
@@ -52,7 +90,7 @@ public class BlockContext {
     }
 
     public void defineFunction(String name, FunctionBlock function) {
-        root.funcs.put(name,function);
+        root.funcs.put(name, function);
     }
 
 }
