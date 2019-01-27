@@ -6,6 +6,7 @@
 package rockstar.expression;
 
 import java.util.List;
+import rockstar.parser.Line;
 import rockstar.runtime.NumericValue;
 
 /**
@@ -14,18 +15,44 @@ import rockstar.runtime.NumericValue;
  */
 public class ExpressionFactory {
 
-    public static Expression getExpressionFor(List<String> tokens) {
-        Expression parsed = new ExpressionParser(tokens).parse();
+    /**
+     * tries to parse an expression, returns null if failed
+     * @param tokens
+     * @param line
+     * @return 
+     */
+    public static Expression tryExpressionFor(List<String> tokens, Line line) {
+        Expression parsed = new ExpressionParser(tokens, line).parse();
+        if (parsed != null && !(parsed instanceof DummyExpression)) {
+            return parsed;
+        }
+        return null;
+    }
+    
+    /**
+     * Parse an expression, throw exception if failed
+     * @param tokens
+     * @param line
+     * @return 
+     */
+    public static Expression getExpressionFor(List<String> tokens, Line line) {
+        Expression parsed = new ExpressionParser(tokens, line).parse();
         if (parsed != null) {
             return parsed;
         }
-        return new DummyExpression(tokens);
+        return new DummyExpression(tokens, line);
     }
 
     static VariableReference lastVariable = null;
 
-    public static VariableReference getVariableReferenceFor(List<String> list) {
-        ExpressionParser parser = new ExpressionParser(list);
+    /**
+     * Try a variable reference, returns null if failed
+     * @param list
+     * @param line
+     * @return 
+     */
+    public static VariableReference tryVariableReferenceFor(List<String> list, Line line) {
+        ExpressionParser parser = new ExpressionParser(list, line);
         VariableReference varRef = parser.parseVariableReference();
         if (varRef != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
@@ -33,9 +60,15 @@ public class ExpressionFactory {
         }
         return null;
     }
-
-    public static ConstantValue getLiteralFor(List<String> list) {
-        ExpressionParser parser = new ExpressionParser(list);
+    
+    /**
+     * Try to parse a literal, returns null if failed
+     * @param list
+     * @param line
+     * @return 
+     */
+    public static ConstantValue tryLiteralFor(List<String> list, Line line) {
+        ExpressionParser parser = new ExpressionParser(list, line);
         ConstantValue value = parser.parseLiteral();
         if (value != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
@@ -44,23 +77,8 @@ public class ExpressionFactory {
         return null;
     }
 
-    public static SimpleExpression getParameterFor(List<String> list) {
-        ExpressionParser parser = new ExpressionParser(list);
-        VariableReference varRef = parser.parseVariableReference();
-        if (varRef != null && parser.isFullyParsed()) {
-            // has valid value and parsed through the list
-            return varRef;
-        }
-        ConstantValue value = parser.parseLiteral();
-        if (value != null && parser.isFullyParsed()) {
-            // has valid value and parsed through the list
-            return value;
-        }
-        return null;
-    }
-
-    public static ConstantValue getPoeticLiteralFor(List<String> list) {
-        ConstantValue literal = getLiteralFor(list);
+    public static ConstantValue getPoeticLiteralFor(List<String> list, Line line) {
+        ConstantValue literal = tryLiteralFor(list, line);
         if (literal != null) {
             return literal;
         }

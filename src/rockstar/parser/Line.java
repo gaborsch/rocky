@@ -94,7 +94,7 @@ public class Line {
     }
 
     private String purifyToken(String token) {
-        String t = token.replaceAll("[^a-zA-Z0-9.']", "");
+        String t = token; // .replaceAll("[^a-zA-Z0-9.']", "");
         if (t.endsWith("'s")) {
             t = t.substring(0, t.length()-2) + " is";
         }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Stack;
 import rockstar.expression.ComparisonExpression.ComparisonType;
 import rockstar.expression.LogicalExpression.LogicalType;
+import rockstar.parser.Line;
 import rockstar.runtime.NumericValue;
 
 /**
@@ -24,9 +25,11 @@ public class ExpressionParser {
     private int idx;
     // saved position
     private int savedIdx;
+    private final Line line;
 
-    ExpressionParser(List<String> list) {
+    ExpressionParser(List<String> list, Line line) {
         this.list = list;
+        this.line = line;
         idx = 0;
     }
 

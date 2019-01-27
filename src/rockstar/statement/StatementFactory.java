@@ -30,26 +30,28 @@ public class StatementFactory {
         new KnockDownChecker(),
         new FunctionDefChecker(),
         new WhileChecker(),
+        new UntilChecker(),
         new IfChecker(),
         new ElseChecker(),
         new GiveBackChecker(),
         new BlockEndChecker(),
         new PoeticAssignmentChecker(),
+        new PoeticStringAssignmentChecker(),
         new ExpressionStatementChecker(),
         new NoOpChecker()
     };
 
-    public static Statement getStatementFor(Line l) {
+    public static Statement getStatementFor(Line line) {
         Statement stmt = null;
         for (Checker checker : CHECKERS) {
-            stmt = checker.initialize(l).check();
+            stmt = checker.initialize(line).check();
             if (stmt != null) {
                 break;
             }
         }
 
         if (stmt != null) {
-            stmt.setDebugInfo(l);
+            stmt.setDebugInfo(line);
         }
 
         return stmt;
@@ -69,11 +71,6 @@ public class StatementFactory {
 
         public Checker initialize(Line l) {
             this.line = l;
-//            positionsMap.clear();
-//            int i = 0;
-//            for (String token : l.getTokens()) {
-//                positionsMap.putIfAbsent(token, i++);
-//            }
             this.hasMatch = false;
             return this;
         }
@@ -130,10 +127,13 @@ public class StatementFactory {
             List<String> tokens = line.getTokens();
             for (int idx = lastPos + 1; idx < tokens.size(); idx++) {
                 String token = tokens.get(idx);
+                if (token.length() != needle.length()) {
+                    continue;
+                }
                 if (token.equals(needle)) {
                     return idx;
-                } else if (idx == 0
-                        && Character.toUpperCase(token.charAt(0)) == needle.charAt(0)
+                } else if (/*idx == 0 
+                        &&*/Character.toUpperCase(token.charAt(0)) == Character.toUpperCase(needle.charAt(0))
                         && token.substring(1).equals(needle.substring(1))) {
                     // first token, first character may be lowercase
                     return idx;
@@ -144,12 +144,13 @@ public class StatementFactory {
         }
     }
 
+    /*
     private static class ListenChecker extends Checker {
 
         @Override
         Statement check() {
             if (match("Listen", "to", 1)) {
-                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
                 if (varRef != null) {
                     return new InputStatement(varRef);
                 }
@@ -158,6 +159,28 @@ public class StatementFactory {
             if (match("Listen", 1)) {
                 if (getResult()[1].isEmpty()) {
                     return new InputStatement();
+                }
+            }
+            return null;
+        }
+    }
+     */
+    private static class ListenChecker extends Checker {
+
+        @Override
+        Statement check() {
+            if (match("Listen", 1)) {
+                List<String> rest = getResult()[1];
+                if (rest.isEmpty()) {
+                    return new InputStatement();
+                }
+                if (rest.size() >= 2) {
+                    if (rest.get(0).equals("to")) {
+                        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(rest.subList(1, rest.size()), line);
+                        if (varRef != null) {
+                            return new InputStatement(varRef);
+                        }
+                    }
                 }
             }
             return null;
@@ -172,7 +195,7 @@ public class StatementFactory {
                     || match("Shout", 1)
                     || match("Whisper", 1)
                     || match("Scream", 1)) {
-                Expression expr = ExpressionFactory.getExpressionFor(getResult()[1]);
+                Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line);
                 if (expr != null) {
                     return new OutputStatement(expr);
                 }
@@ -209,13 +232,13 @@ public class StatementFactory {
             }
             if (paramCount >= 0) {
                 // function name is the same as a variable name
-                VariableReference nameRef = ExpressionFactory.getVariableReferenceFor(getResult()[0]);
+                VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line);
                 if (nameRef != null) {
                     FunctionBlock fb = new FunctionBlock(nameRef.getName());
 
                     VariableReference paramRef;
                     for (int i = 1; i <= paramCount; i++) {
-                        paramRef = ExpressionFactory.getVariableReferenceFor(getResult()[i]);
+                        paramRef = ExpressionFactory.tryVariableReferenceFor(getResult()[i], line);
                         if (paramRef != null) {
                             fb.addParameterName(paramRef.getName());
                         } else {
@@ -235,14 +258,21 @@ public class StatementFactory {
         @Override
         Statement check() {
             if (match("While", 1)) {
-                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1]);
+                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line);
                 if (condition != null) {
                     return new WhileStatement(condition);
                 }
             }
-            this.initialize(line);
+            return null;
+        }
+    }
+
+    private static class UntilChecker extends Checker {
+
+        @Override
+        Statement check() {
             if (match("Until", 1)) {
-                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1]);
+                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line);
                 if (condition != null) {
                     return new WhileStatement(condition, true);
                 }
@@ -257,7 +287,7 @@ public class StatementFactory {
         Statement check() {
             if (match("If", 1)
                     || match("When", 1)) {
-                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1]);
+                Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line);
                 if (condition != null) {
                     return new IfStatement(condition);
                 }
@@ -283,7 +313,7 @@ public class StatementFactory {
         @Override
         Statement check() {
             if (match("Give", "back", 1)) {
-                Expression expression = ExpressionFactory.getExpressionFor(getResult()[1]);
+                Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line);
                 if (expression != null) {
                     return new ReturnStatement(expression);
                 }
@@ -310,9 +340,9 @@ public class StatementFactory {
         Statement check() {
             if (match(1)) {
                 try {
-                    Expression expression = ExpressionFactory.getExpressionFor(getResult()[1]);
-                    if (expression != null && 
-                            expression instanceof FunctionCall) {
+                    Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line);
+                    if (expression != null
+                            && expression instanceof FunctionCall) {
                         return new ExpressionStatement(expression);
                     }
                 } catch (Exception e) {
@@ -331,8 +361,8 @@ public class StatementFactory {
             if (match("Put", 1, "into", 2)
                     || match("Let", 2, "be", 1)
                     || match(2, "thinks", 1)) {
-                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[2]);
-                Expression expr = ExpressionFactory.getExpressionFor(getResult()[1]);
+                VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[2], line);
+                Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line);
                 if (varRef != null && expr != null) {
                     return new AssignmentStatement(varRef, expr);
                 }
@@ -349,15 +379,34 @@ public class StatementFactory {
                     || match(1, "was", 2)
                     || match(1, "are", 2)
                     || match(1, "were", 2)) {
-                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
-                ConstantValue value = ExpressionFactory.getPoeticLiteralFor(getResult()[2]);
-                if (varRef != null && value != null) {
-                    return new AssignmentStatement(varRef, value);
+                VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+                if (varRef != null) {
+                    List<String> list2 = getResult()[2];
+                    // poetic expressions
+                    ConstantValue literalValue = ExpressionFactory.tryLiteralFor(list2.subList(0, 1), line);
+                    if (literalValue != null) {
+                        if (list2.size() == 1) {
+                            return new AssignmentStatement(varRef, literalValue);
+                        }
+                    } else {
+                        // poetic literals
+                        ConstantValue constValue = ExpressionFactory.getPoeticLiteralFor(list2, line);
+                        if (constValue != null) {
+                            return new AssignmentStatement(varRef, constValue);
+                        }
+                    }
                 }
             }
-            this.initialize(line);
+            return null;
+        }
+    }
+
+    private static class PoeticStringAssignmentChecker extends Checker {
+
+        @Override
+        Statement check() {
             if (match(1, "says", 2)) {
-                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
 
                 if (varRef != null) {
                     // grab original string from line
@@ -375,7 +424,7 @@ public class StatementFactory {
         @Override
         Statement check() {
             if (match("Build", 1, "up", 2)) {
-                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
                 int count = 1;
                 boolean isAndPossible = true;
                 for (String s : getResult()[2]) {
@@ -401,7 +450,7 @@ public class StatementFactory {
         @Override
         Statement check() {
             if (match("Knock", 1, "down", 2)) {
-                VariableReference varRef = ExpressionFactory.getVariableReferenceFor(getResult()[1]);
+                VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
                 int count = 1;
                 boolean isAndPossible = true;
                 for (String s : getResult()[2]) {

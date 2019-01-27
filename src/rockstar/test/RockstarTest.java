@@ -28,51 +28,69 @@ public class RockstarTest {
     }
 
     public static void main(String[] args) {
-        String correctDir = "C:\\work\\rocky\\tests\\rockstar\\tests\\correct";
-        String correctOpDir = "C:\\work\\rocky\\tests\\rockstar\\tests\\correct\\operators";
-        String parseErrorDir = "C:\\work\\rocky\\tests\\rockstar\\tests\\parse-errors";
-        String runtimeErrorDir = "C:\\work\\rocky\\tests\\rockstar\\tests\\runtime-errors";
-
-        RockstarTest tester = new RockstarTest();
-        tester.listAndExecuteDir(correctDir, Expected.CORRECT);
-        tester.listAndExecuteDir(correctOpDir, Expected.CORRECT);
-        tester.listAndExecuteDir(parseErrorDir, Expected.PARSE_ERROR);
-        tester.listAndExecuteDir(runtimeErrorDir, Expected.RUNTIME_ERROR);
-
-        System.out.println("Result> : " + tester.testCount + " tests, " + tester.passed + " passed, " + tester.failed + " failed");
-
+        String dir = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests";
+//        String dir = "C:\\work\\rocky\\tests\\rockstar\\tests";
+        new RockstarTest().executeDir(dir, null);
     }
 
     private int testCount = 0;
     private int passed = 0;
     private int failed = 0;
 
-    private void listAndExecuteDir(String dirname, Expected exp) {
+    private void executeDir(String dirname, Expected exp) {
         File dir = new File(dirname);
-        System.out.println(/*"Listing directory " + dirname + " for " +*/ exp + " tests");
-        File[] files = dir.listFiles((File file, String name) -> name.endsWith(".rock"));
+//        System.out.println("Listing directory " + dirname + (exp == null ? "" : ", testing "+ exp) );
+//        if (exp != null) { System.out.println(exp + " tests"); }
+        if (exp != null) {
+            System.out.println(exp + " tests in " + dirname);
+        }
+
+        File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
-//                System.out.println("processing file " + file.getName() + " for " + exp + " test");
-                testCount++;
-                TestResult result = new TestRun().execute(file.getAbsolutePath(), exp);
-                if (result.isPassed) {
-                    passed++;
-                    System.out.printf("   [OK  ] %-30s", file.getName());
-                } else {
-                    failed++;
-                    if (result.exception == null) {
-                        System.out.printf("!  [FAIL] %-40s %s", file.getName(), result.message);
-                    } else {
-                        System.out.printf("!! [EXCP] %-40s %s %s", file.getName(), result.exception.getClass().getSimpleName(), result.message);
+                if (file.getName().endsWith(".rock")) {
+                    executeFile(file, exp);
+                } else if (file.isDirectory()) {
+                    switch (file.getName()) {
+                        case "correct":
+                            executeDir(file.getPath(), Expected.CORRECT);
+                            break;
+                        case "parse-errors":
+                            executeDir(file.getPath(), Expected.PARSE_ERROR);
+                            break;
+                        case "runtime-errors":
+                            executeDir(file.getPath(), Expected.RUNTIME_ERROR);
+                            break;
+                        default:
+                            executeDir(file.getPath(), exp);
+                            break;
                     }
-
                 }
-                System.out.println();
+
             }
-        } else {
-            System.out.println("NO FILES IN " + dirname);
         }
+    }
+
+    private void executeFile(File file, Expected exp) {
+
+//        System.out.println("--- Processing file " + file.getName() + " for " + exp + " test");
+        testCount++;
+        TestResult result = new TestRun().execute(file.getAbsolutePath(), exp);
+        String message = result.getMessage();
+        Throwable exc = result.getException();
+        String excName = exc == null ? "" : exc.getClass().getSimpleName();
+        if (result.isPassed()) {
+            passed++;
+            System.out.printf("   [ OK ] %-30s", file.getName());
+        } else {
+            failed++;
+            if (exc == null) {
+                System.out.printf("!  [FAIL] %-40s %s", file.getName(), message);
+            } else {
+                System.out.printf("!! [EXCP] %-40s %s %s", file.getName(), excName, message);
+            }
+        }
+        System.out.println();
     }
 
 }

@@ -14,7 +14,7 @@ public class ParseException extends RuntimeException {
     private final Line line;
 
     public ParseException(String message, Line line) {
-        super(message);
+        super(message + " at line "+line.getLnum());
         this.line = line;
     }
 
@@ -22,8 +22,6 @@ public class ParseException extends RuntimeException {
         super(message);
         this.line = null;
     }
-    
-    
 
     public Line getLine() {
         return line;

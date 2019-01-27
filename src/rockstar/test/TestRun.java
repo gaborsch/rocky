@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import rockstar.Rockstar;
+import rockstar.parser.ParseException;
 
 /**
  *
@@ -20,11 +21,10 @@ import rockstar.Rockstar;
  */
 public class TestRun {
 
-    private static final TestResult RESULT_OK = new TestResult();
-
     public TestResult execute(String filename, RockstarTest.Expected exp) {
-
-//        return true;
+        
+        TestResult result = new TestResult(exp);
+        
         try {
             // input stream
             InputStream in = System.in;
@@ -47,11 +47,14 @@ public class TestRun {
 //            System.out.println("Output for file " + filename + ": " + result.length());
 //            System.out.println(result);
 
+        } catch (ParseException e) {
+            result.setMessage("Parse error:"+ e.getMessage());
         } catch (Exception e) {
-            return new TestResult(e);
+            result.setException(e);
+            result.setMessage(e.getMessage());
         }
 
-        return RESULT_OK;
+        return result;
     }
 
 }

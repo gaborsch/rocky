@@ -10,30 +10,58 @@ package rockstar.test;
  * @author Gabor
  */
 public class TestResult {
-    
-    boolean isPassed;
-    Throwable exception;
-    String message;
 
-    public TestResult(Throwable exception, String message) {
-        this.isPassed = false;
-        this.message = message;
+    private final RockstarTest.Expected expected;
+
+    private boolean isExecuted;
+    private Throwable exception;
+    private String message;
+
+    public TestResult(RockstarTest.Expected expected) {
+        this.isExecuted = true;
+        this.expected = expected;
+    }
+
+//    public void setExecuted(boolean isExecuted) {
+//        this.isExecuted = isExecuted;
+//    }
+    public void setException(Throwable exception) {
+        this.isExecuted = false;
         this.exception = exception;
     }
 
-    public TestResult(Throwable exception) {
-        this.isPassed = false;
-        this.message = exception.getMessage();
-        this.exception = exception;
-    }
-
-    public TestResult(String message) {
-        this.isPassed = false;
+    public void setMessage(String message) {
+        this.isExecuted = false;
         this.message = message;
     }
 
-    public TestResult() {
-        this.isPassed = true;
+    public String getMessage() {
+        return message != null ? message
+                : ("<" +  (isExecuted ? "" : "not ") + "executed"
+                + (exception == null ? "" : " with "+exception.getClass().getSimpleName()) + ">");
     }
-    
+
+    public Throwable getException() {
+        return exception;
+    }
+
+    /**
+     * whether the program was run correctly
+     *
+     * @return
+     */
+    public boolean isExecuted() {
+        return isExecuted;
+    }
+
+    /**
+     * Whether the test met the expectations
+     *
+     * @return
+     */
+    public boolean isPassed() {
+        // if and only if the test result is the same as expected
+        return isExecuted == (expected == RockstarTest.Expected.CORRECT);
+    }
+
 }
