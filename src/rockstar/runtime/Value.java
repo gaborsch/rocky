@@ -274,23 +274,23 @@ public class Value {
         return getValue(getNumeric().equals(other.getNumeric()));
     }
 
-    public Value isNotEquals(Value v2) {
+    public Value isNotEquals(Value other) {
+        return isEquals(other).negate();
+    }
+
+    public Value isLessThan(Value other) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Value isLessThan(Value v2) {
+    public Value isLessOrEquals(Value other) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Value isLessOrEquals(Value v2) {
+    public Value isGreaterThan(Value other) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Value isGreaterThan(Value v2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public Value isGreaterOrEquals(Value v2) {
+    public Value isGreaterOrEquals(Value other) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
