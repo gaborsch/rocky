@@ -6,7 +6,7 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -30,17 +30,11 @@ public class DivideExpression extends CompoundExpression {
     }
     
     @Override
-    public ConstantValue evaluate(BlockContext ctx) {
+    public Value evaluate(BlockContext ctx) {
         Expression expr1 = this.getParameters().get(0);
         Expression expr2 = this.getParameters().get(1);
-        ConstantValue v1 = expr1.evaluate(ctx);
-        ConstantValue v2 = expr2.evaluate(ctx);
-        if (v1.isNumeric()) {
-            if (v2.isNumeric()) {
-                // numeric subtraction
-                return new ConstantValue(v1.getNumericValue().divide(v2.getNumericValue()));
-            }
-        }
-        throw new RockstarRuntimeException(v1.getType() + " over " + v2.getType());
+        Value v1 = expr1.evaluate(ctx);
+        Value v2 = expr2.evaluate(ctx);
+        return v1.divide(v2);
     }    
 }

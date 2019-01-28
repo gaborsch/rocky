@@ -5,12 +5,13 @@
  */
 package rockstar.statement;
 
-import rockstar.expression.ConstantValue;
+import rockstar.expression.ConstantExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.NumericValue;
 import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -37,7 +38,7 @@ public class IncrementStatement extends Statement {
         if (plus == null) {
             plus = new PlusExpression();
             plus.addParameter(variable);
-            plus.addParameter(new ConstantValue(NumericValue.getValueFor(count)));
+            plus.addParameter(new ConstantExpression(NumericValue.getValueFor(count)));
         }
         return plus;
     }
@@ -45,16 +46,19 @@ public class IncrementStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         super.execute(ctx);
-        ConstantValue v = ctx.getVariable(variable.getName());
+        Value v = ctx.getVariable(variable.getName());
         if (v.isNumeric()) {
             // increment by count
-            ConstantValue value = getPlus().evaluate(ctx);
+            Value value = getPlus().evaluate(ctx);
             ctx.setVariable(variable.getName(), value);
         } else if (v.isBoolean()) {
+            // convert to boolean
+            v = v.asBoolean();
             if (count % 2 == 1) {
                 // negate boolean
-                ctx.setVariable(variable.getName(), new ConstantValue(!v.getBoolValue()));
+                v = v.negate();
             }
+            ctx.setVariable(variable.getName(), v);
         }
         throw new RockstarRuntimeException(v.getType() + " ++");
     }

@@ -5,9 +5,9 @@
  */
 package rockstar.statement;
 
-import rockstar.expression.ConstantValue;
 import rockstar.expression.Expression;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -31,8 +31,8 @@ public class OutputStatement extends Statement {
     public void execute(BlockContext ctx) {
         super.execute(ctx); //To change body of generated methods, choose Tools | Templates.
         
-        ConstantValue value = expression.evaluate(ctx);
-        ctx.getOutput().println(value.toString());
+        Value v = expression.evaluate(ctx);
+        ctx.getOutput().println(v.asString());
     }
     
     

@@ -5,10 +5,10 @@
  */
 package rockstar.statement;
 
-import rockstar.expression.ConstantValue;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -35,7 +35,7 @@ public class AssignmentStatement extends Statement {
         super.execute(ctx); //To change body of generated methods, choose Tools | Templates.
         
         String name = this.variable.getName();
-        ConstantValue value = expression.evaluate(ctx);
+        Value value = expression.evaluate(ctx);
         ctx.setVariable(name, value);
     }
     

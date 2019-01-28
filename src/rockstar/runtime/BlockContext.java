@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
-import rockstar.expression.ConstantValue;
 import rockstar.statement.FunctionBlock;
 
 /**
@@ -20,7 +19,7 @@ public class BlockContext {
 
     private final BlockContext parent;
     private final BlockContext root;
-    private final Map<String, ConstantValue> vars = new HashMap<>();
+    private final Map<String, Value> vars = new HashMap<>();
     private final Map<String, FunctionBlock> funcs = new HashMap<>();
 
     private final InputStream input;
@@ -73,12 +72,12 @@ public class BlockContext {
     
     
 
-    public void setVariable(String name, ConstantValue value) {
+    public void setVariable(String name, Value value) {
         vars.put(name, value);
     }
 
-    public ConstantValue getVariable(String name) {
-        ConstantValue value = vars.get(name);
+    public Value getVariable(String name) {
+        Value value = vars.get(name);
         if (value == null && parent != null) {
             value = parent.getVariable(name);
         }

@@ -77,35 +77,35 @@ public class ExpressionParser {
     private static final List<String> BOOLEAN_FALSE_KEYWORDS = Arrays.asList(new String[]{"false", "wrong", "no", "lies"});
     private static final List<String> RESERVED_KEYWORDS = Arrays.asList(new String[]{"definitely", "maybe"});
 
-    ConstantValue parseLiteral() {
+    ConstantExpression parseLiteral() {
         if (!isFullyParsed()) {
             String token = peekCurrent();
             if (token.startsWith("\"") && token.endsWith("\"") && token.length() >= 2) {
                 // string literal> strip quotes
                 next();
                 String literal = token.substring(1, token.length() - 1);
-                return new ConstantValue(literal);
+                return new ConstantExpression(literal);
             }
             if (MYSTERIOUS_KEYWORDS.contains(token)) {
                 next();
-                return new ConstantValue(Expression.Type.MYSTERIOUS);
+                return ConstantExpression.CONST_MYSTERIOUS;
             }
             if (NULL_KEYWORDS.contains(token)) {
                 next();
-                return new ConstantValue(Expression.Type.NULL);
+                return ConstantExpression.CONST_NULL;
             }
             if (BOOLEAN_TRUE_KEYWORDS.contains(token)) {
                 next();
-                return new ConstantValue(true);
+                return ConstantExpression.CONST_TRUE;
             }
             if (BOOLEAN_FALSE_KEYWORDS.contains(token)) {
                 next();
-                return new ConstantValue(false);
+                return ConstantExpression.CONST_FALSE;
             }
             NumericValue nv = NumericValue.parse(token);
             if (nv != null) {
                 next();
-                return new ConstantValue(nv);
+                return new ConstantExpression(nv);
             }
             if (RESERVED_KEYWORDS.contains(token)) {
                 // reserved keywords are skipped

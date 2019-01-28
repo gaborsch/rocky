@@ -7,7 +7,7 @@ package rockstar.statement;
 
 import rockstar.expression.ExpressionFactory;
 import java.util.List;
-import rockstar.expression.ConstantValue;
+import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.VariableReference;
@@ -383,14 +383,14 @@ public class StatementFactory {
                 if (varRef != null) {
                     List<String> list2 = getResult()[2];
                     // poetic expressions
-                    ConstantValue literalValue = ExpressionFactory.tryLiteralFor(list2.subList(0, 1), line);
+                    ConstantExpression literalValue = ExpressionFactory.tryLiteralFor(list2.subList(0, 1), line);
                     if (literalValue != null) {
                         if (list2.size() == 1) {
                             return new AssignmentStatement(varRef, literalValue);
                         }
                     } else {
                         // poetic literals
-                        ConstantValue constValue = ExpressionFactory.getPoeticLiteralFor(list2, line);
+                        ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line);
                         if (constValue != null) {
                             return new AssignmentStatement(varRef, constValue);
                         }
@@ -411,7 +411,7 @@ public class StatementFactory {
                 if (varRef != null) {
                     // grab original string from line
                     String poeticLiteralString = line.getOrigLine().substring(line.getOrigLine().indexOf("says ") + 5);
-                    ConstantValue value = new ConstantValue(poeticLiteralString);
+                    ConstantExpression value = new ConstantExpression(poeticLiteralString);
                     return new AssignmentStatement(varRef, value);
                 }
             }

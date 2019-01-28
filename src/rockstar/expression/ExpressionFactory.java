@@ -67,18 +67,18 @@ public class ExpressionFactory {
      * @param line
      * @return 
      */
-    public static ConstantValue tryLiteralFor(List<String> list, Line line) {
+    public static ConstantExpression tryLiteralFor(List<String> list, Line line) {
         ExpressionParser parser = new ExpressionParser(list, line);
-        ConstantValue value = parser.parseLiteral();
-        if (value != null && parser.isFullyParsed()) {
+        ConstantExpression literal = parser.parseLiteral();
+        if (literal != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
-            return value;
+            return literal;
         }
         return null;
     }
 
-    public static ConstantValue getPoeticLiteralFor(List<String> list, Line line) {
-        ConstantValue literal = tryLiteralFor(list, line);
+    public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line) {
+        ConstantExpression literal = tryLiteralFor(list, line);
         if (literal != null) {
             return literal;
         }
@@ -97,7 +97,7 @@ public class ExpressionFactory {
                 v = v.plus(frac.multiply(NumericValue.getValueFor(len % 10)));
             }
         }
-        return new ConstantValue(v);
+        return new ConstantExpression(v);
     }
 
 }
