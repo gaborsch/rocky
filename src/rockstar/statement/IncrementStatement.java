@@ -38,7 +38,7 @@ public class IncrementStatement extends Statement {
         if (plus == null) {
             plus = new PlusExpression();
             plus.addParameter(variable);
-            plus.addParameter(new ConstantExpression(NumericValue.getValueFor(count)));
+            plus.addParameter(new ConstantExpression(count));
         }
         return plus;
     }

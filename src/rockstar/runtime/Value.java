@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import rockstar.expression.ExpressionParser;
 import rockstar.expression.ExpressionType;
 
 /**
@@ -79,7 +80,19 @@ public class Value {
     }
 
     private NumericValue getNumeric() {
-        return numericValue;
+        switch (getType()) {
+            case NUMBER:
+                return numericValue;
+            case STRING:
+                return NumericValue.parse(stringValue);
+            case BOOLEAN:
+                return boolValue ? NumericValue.ONE : NumericValue.ZERO;
+            case MYSTERIOUS:
+                return NumericValue.ZERO;
+            case NULL:
+                return NumericValue.ZERO;
+        }
+        throw new RockstarRuntimeException("unknown numeric value");
     }
 
     private String getString() {
@@ -112,6 +125,16 @@ public class Value {
                 return false;
         }
         throw new RockstarRuntimeException("unknown bool value");
+    }
+
+    private static boolean getBoolFromStringAliases(String s) {
+        if (ExpressionParser.BOOLEAN_TRUE_KEYWORDS.contains(s)) {
+            return true;
+        }
+        if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s)) {
+            return false;
+        }
+        throw new RockstarRuntimeException("unknown bool value: " + s);
     }
 
     public Value asBoolean() {
@@ -174,7 +197,8 @@ public class Value {
                 return Value.getValue(getString().repeat(other.getNumeric().asInt()));
             }
         }
-        throw new RockstarRuntimeException(getType() + " times " + other.getType());    }
+        throw new RockstarRuntimeException(getType() + " times " + other.getType());
+    }
 
     public Value divide(Value other) {
         if (isNumeric()) {
@@ -183,7 +207,91 @@ public class Value {
                 return Value.getValue(getNumeric().divide(other.getNumeric()));
             }
         }
-        throw new RockstarRuntimeException(getType() + " over " + other.getType());    }
+        throw new RockstarRuntimeException(getType() + " over " + other.getType());
+    }
 
+    public Value and(Value other) {
+        return getValue(getBool() && other.getBool());
+    }
+
+    public Value or(Value other) {
+        return getValue(getBool() || other.getBool());
+    }
+
+    public Value nor(Value other) {
+        return getValue((!getBool()) && (!other.getBool()));
+
+    }
+
+    public Value isEquals(Value other) {
+        if (getType() == other.getType()) {
+            // Equal types: compare them without conversion
+            switch (getType()) {
+                case STRING:
+                    return getValue(stringValue.equals(other.stringValue));
+                case NUMBER:
+                    return getValue(numericValue.equals(other.numericValue));
+                case BOOLEAN:
+                    return getValue(boolValue == other.boolValue);
+                default:
+                    // null, mysterious
+                    return BOOLEAN_TRUE;
+            }
+        }
+
+        // Mysterious == Mysterious only
+        if (isMysterious() || other.isMysterious()) {
+            return BOOLEAN_FALSE;
+        }
+        // String with conversions
+        if (isString()) {
+            switch (other.getType()) {
+                case NULL:
+                    return BOOLEAN_FALSE;
+                case BOOLEAN:
+                    // convert String to bool
+                    return getValue(getBoolFromStringAliases(stringValue) == other.getBool());
+                case NUMBER:
+                    return getValue(getNumeric().equals(other.getNumeric()));
+            }
+        }
+        if (other.isString()) {
+            switch (getType()) {
+                case NULL:
+                    return BOOLEAN_FALSE;
+                case BOOLEAN:
+                    // convert String to bool
+                    return getValue(getBool() == getBoolFromStringAliases(other.stringValue));
+                case NUMBER:
+                    return getValue(getNumeric().equals(other.getNumeric()));
+            }
+        }
+        // booleans compare as truthiness values with number and null
+        if (isBoolean() || other.isBoolean()) {
+            return getValue(getBool() == other.getBool());
+        }
+        // number vs null
+        return getValue(getNumeric().equals(other.getNumeric()));
+    }
+
+    public Value isNotEquals(Value v2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Value isLessThan(Value v2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Value isLessOrEquals(Value v2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Value isGreaterThan(Value v2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Value isGreaterOrEquals(Value v2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

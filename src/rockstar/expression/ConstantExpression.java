@@ -13,12 +13,12 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public class ConstantExpression extends SimpleExpression {
-    
+
     public static ConstantExpression CONST_MYSTERIOUS = new ConstantExpression(Value.MYSTERIOUS);
     public static ConstantExpression CONST_NULL = new ConstantExpression(Value.NULL);
     public static ConstantExpression CONST_TRUE = new ConstantExpression(Value.BOOLEAN_TRUE);
     public static ConstantExpression CONST_FALSE = new ConstantExpression(Value.BOOLEAN_FALSE);
-            
+
     private final Value value;
 
     public ConstantExpression(String s) {
@@ -29,8 +29,8 @@ public class ConstantExpression extends SimpleExpression {
         this.value = Value.getValue(n);
     }
 
-    public ConstantExpression(boolean b) {
-        this.value = Value.getValue(b);
+    public ConstantExpression(int n) {
+        this.value = Value.getValue(NumericValue.getValueFor(n));
     }
 
     private ConstantExpression(Value value) {
@@ -40,7 +40,5 @@ public class ConstantExpression extends SimpleExpression {
     public Value getValue() {
         return value;
     }
-    
-    
-    
+
 }
