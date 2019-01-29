@@ -41,4 +41,11 @@ public class ConstantExpression extends SimpleExpression {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+    
+    
+
 }

@@ -172,6 +172,7 @@ public class Value {
             // String concatenation
             return Value.getValue(getString() + other.getString());
         }
+//        return Value.getValue(getNumeric().plus(other.getNumeric()));
         throw new RockstarRuntimeException(getType() + " plus " + other.getType());
     }
 
@@ -182,6 +183,7 @@ public class Value {
                 return Value.getValue(getNumeric().minus(other.getNumeric()));
             }
         }
+//        return Value.getValue(getNumeric().minus(other.getNumeric()));
         throw new RockstarRuntimeException(getType() + " minus " + other.getType());
     }
 
@@ -223,75 +225,136 @@ public class Value {
 
     }
 
-    public Value isEquals(Value other) {
+    /**
+     * General comparison. For String and Number, -1/0/1 comparators work For
+     * other types: 0 (equals) / 1 (non-equals)
+     *
+     * @param other
+     * @return
+     */
+    private int compareTo(Value other) {
         if (getType() == other.getType()) {
             // Equal types: compare them without conversion
             switch (getType()) {
                 case STRING:
-                    return getValue(stringValue.equals(other.stringValue));
+                    return stringValue.compareTo(other.stringValue);
                 case NUMBER:
-                    return getValue(numericValue.equals(other.numericValue));
+                    return numericValue.compareTo(other.numericValue);
                 case BOOLEAN:
-                    return getValue(boolValue == other.boolValue);
+                    return (boolValue == other.boolValue) ? 0 : 1;
                 default:
                     // null, mysterious
-                    return BOOLEAN_TRUE;
+                    return 0;
             }
         }
 
         // Mysterious == Mysterious only
         if (isMysterious() || other.isMysterious()) {
-            return BOOLEAN_FALSE;
+            return 1;
         }
         // String with conversions
         if (isString()) {
             switch (other.getType()) {
                 case NULL:
-                    return BOOLEAN_FALSE;
+                    return 1;
                 case BOOLEAN:
                     // convert String to bool
-                    return getValue(getBoolFromStringAliases(stringValue) == other.getBool());
+                    return (getBoolFromStringAliases(stringValue) == other.getBool()) ? 0 : 1;
                 case NUMBER:
-                    return getValue(getNumeric().equals(other.getNumeric()));
+                    return getNumeric().compareTo(other.getNumeric());
             }
         }
         if (other.isString()) {
             switch (getType()) {
                 case NULL:
-                    return BOOLEAN_FALSE;
+                    return 1;
                 case BOOLEAN:
                     // convert String to bool
-                    return getValue(getBool() == getBoolFromStringAliases(other.stringValue));
+                    return (getBool() == getBoolFromStringAliases(other.stringValue)) ? 0 : 1;
                 case NUMBER:
-                    return getValue(getNumeric().equals(other.getNumeric()));
+                    return getNumeric().compareTo(other.getNumeric());
             }
         }
         // booleans compare as truthiness values with number and null
         if (isBoolean() || other.isBoolean()) {
-            return getValue(getBool() == other.getBool());
+            return (getBool() == other.getBool()) ? 0 : 1;
         }
         // number vs null
-        return getValue(getNumeric().equals(other.getNumeric()));
+        return (getNumeric().equals(other.getNumeric())) ? 0 : 1;
     }
 
+    public Value isEquals(Value other) {
+        return getValue(compareTo(other) == 0);
+    }
+
+//    public Value isEquals(Value other) {
+//        if (getType() == other.getType()) {
+//            // Equal types: compare them without conversion
+//            switch (getType()) {
+//                case STRING:
+//                    return getValue(stringValue.equals(other.stringValue));
+//                case NUMBER:
+//                    return getValue(numericValue.equals(other.numericValue));
+//                case BOOLEAN:
+//                    return getValue(boolValue == other.boolValue);
+//                default:
+//                    // null, mysterious
+//                    return BOOLEAN_TRUE;
+//            }
+//        }
+//
+//        // Mysterious == Mysterious only
+//        if (isMysterious() || other.isMysterious()) {
+//            return BOOLEAN_FALSE;
+//        }
+//        // String with conversions
+//        if (isString()) {
+//            switch (other.getType()) {
+//                case NULL:
+//                    return BOOLEAN_FALSE;
+//                case BOOLEAN:
+//                    // convert String to bool
+//                    return getValue(getBoolFromStringAliases(stringValue) == other.getBool());
+//                case NUMBER:
+//                    return getValue(getNumeric().equals(other.getNumeric()));
+//            }
+//        }
+//        if (other.isString()) {
+//            switch (getType()) {
+//                case NULL:
+//                    return BOOLEAN_FALSE;
+//                case BOOLEAN:
+//                    // convert String to bool
+//                    return getValue(getBool() == getBoolFromStringAliases(other.stringValue));
+//                case NUMBER:
+//                    return getValue(getNumeric().equals(other.getNumeric()));
+//            }
+//        }
+//        // booleans compare as truthiness values with number and null
+//        if (isBoolean() || other.isBoolean()) {
+//            return getValue(getBool() == other.getBool());
+//        }
+//        // number vs null
+//        return getValue(getNumeric().equals(other.getNumeric()));
+//    }
     public Value isNotEquals(Value other) {
-        return isEquals(other).negate();
+        return getValue(compareTo(other) != 0);
     }
 
     public Value isLessThan(Value other) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public Value isLessOrEquals(Value other) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public Value isGreaterThan(Value other) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getValue(compareTo(other) < 0);
     }
 
     public Value isGreaterOrEquals(Value other) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getValue(compareTo(other) >= 0);
+    }
+
+    public Value isGreaterThan(Value other) {
+        return getValue(compareTo(other) > 0);
+    }
+
+    public Value isLessOrEquals(Value other) {
+        return getValue(compareTo(other) <= 0);
     }
 
 }
