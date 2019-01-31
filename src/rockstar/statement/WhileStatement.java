@@ -7,6 +7,10 @@ package rockstar.statement;
 
 import rockstar.expression.Expression;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarBreakException;
+import rockstar.runtime.RockstarContinueException;
+import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -14,6 +18,8 @@ import rockstar.runtime.BlockContext;
  */
 public class WhileStatement extends Block {
 
+    public static final int MAX_LOOP_ITERATIONS = 1024;
+    
     private final Expression condition;
     private boolean negateCondition = false;
 
@@ -38,7 +44,27 @@ public class WhileStatement extends Block {
 
     @Override
     public void execute(BlockContext ctx) {
-        super.execute(ctx); //To change body of generated methods, choose Tools | Templates.
+        int loopCount = 0;
+        Value v = condition.evaluate(ctx);
+        boolean loopCondition = v.asBoolean().getBool() ^ negateCondition;
+        while(loopCondition && loopCount <= MAX_LOOP_ITERATIONS) {
+            boolean canContinue = true;
+            try {
+                super.execute(ctx);
+            } catch (RockstarContinueException rce) {
+                // continue exits the block, but not the loop
+            } catch (RockstarBreakException rbe) {
+                // break exits the loop, too
+                canContinue = false;
+            }
+            // other exceptions like ReturnException are falling thru
+            
+            loopCount++;
+            loopCondition = canContinue && (v.asBoolean().getBool() ^ negateCondition);
+        }
+        if (loopCount == 0) {
+            throw new RockstarRuntimeException("Loop exceeded "+MAX_LOOP_ITERATIONS+" iterations");
+        }
     }
     
     

@@ -15,7 +15,7 @@ import rockstar.runtime.Value;
  */
 public class OutputStatement extends Statement {
     
-    private Expression expression;
+    private final Expression expression;
 
     public OutputStatement(Expression expression) {
         this.expression = expression;
@@ -29,8 +29,6 @@ public class OutputStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        super.execute(ctx); //To change body of generated methods, choose Tools | Templates.
-        
         Value v = expression.evaluate(ctx);
         ctx.getOutput().println(v.asString());
     }

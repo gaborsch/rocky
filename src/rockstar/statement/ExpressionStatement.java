@@ -6,13 +6,16 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.Value;
 
 /**
  *
  * @author Gabor
  */
 public class ExpressionStatement extends Statement {
-     private final Expression expr;
+
+    private final Expression expr;
 
     public ExpressionStatement(Expression expr) {
         this.expr = expr;
@@ -21,10 +24,16 @@ public class ExpressionStatement extends Statement {
     public Expression getExpression() {
         return expr;
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
-                "\n    EXPR: " + expr ; 
-    }   
+        return super.toString()
+                + "\n    EXPR: " + expr;
+    }
+
+    @Override
+    public void execute(BlockContext ctx) {
+        Value v = expr.evaluate(ctx);
+    }
+
 }

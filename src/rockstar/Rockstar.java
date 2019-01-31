@@ -1,8 +1,11 @@
 package rockstar;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import rockstar.statement.Program;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,19 +42,19 @@ public class Rockstar {
     }
 
 
-    private final InputStream input;
+    private final BufferedReader input;
     private final PrintStream output;
     private final PrintStream error;
     private final Map<String, Object> env;
 
     private final BlockContext ctx;
 
-    public Rockstar(InputStream input, PrintStream output, PrintStream error, Map<String, Object> env) {
-        this.input = input;
+    public Rockstar(InputStream inputstream, PrintStream output, PrintStream error, Map<String, Object> env) {
+        this.input = new BufferedReader(new InputStreamReader(inputstream));
         this.output = output;
         this.error = error;
         this.env = env;
-        ctx = new BlockContext(input, output, error, env);
+        ctx = new BlockContext(this.input, this.output, this.error, this.env);
     }
 
     public void run(String filename) {

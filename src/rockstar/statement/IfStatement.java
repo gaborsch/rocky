@@ -6,6 +6,8 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -14,6 +16,7 @@ import rockstar.expression.Expression;
 public class IfStatement extends Block {
 
     private final Expression condition;
+    private ElseStatement elseStatement = null;
 
     public IfStatement(Expression condition) {
         this.condition = condition;
@@ -22,10 +25,26 @@ public class IfStatement extends Block {
     public Expression getCondition() {
         return condition;
     }
-    
+
+    void setElseStatement(ElseStatement elseStmt) {
+        this.elseStatement = elseStmt;
+    }
+
     @Override
     public String toString() {
-        return super.toString() + 
-                "\n    COND: " + condition ; 
+        return super.toString()
+                + "\n    COND: " + condition;
     }
+
+    @Override
+    public void execute(BlockContext ctx) {
+        Value v = condition.evaluate(ctx);
+        if (v.getBool()) {
+            super.execute(ctx);
+        } else if (elseStatement != null) {
+            elseStatement.execute(ctx);
+        }
+
+    }
+
 }

@@ -79,7 +79,7 @@ public class Value {
         return type == ExpressionType.STRING;
     }
 
-    private NumericValue getNumeric() {
+    public NumericValue getNumeric() {
         switch (getType()) {
             case NUMBER:
                 return numericValue;
@@ -95,7 +95,7 @@ public class Value {
         throw new RockstarRuntimeException("unknown numeric value");
     }
 
-    private String getString() {
+    public String getString() {
         switch (getType()) {
             case STRING:
                 return stringValue;
@@ -111,7 +111,7 @@ public class Value {
         throw new RockstarRuntimeException("unknown string value");
     }
 
-    private boolean getBool() {
+    public boolean getBool() {
         switch (getType()) {
             case BOOLEAN:
                 return boolValue;

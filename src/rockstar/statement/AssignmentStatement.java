@@ -15,7 +15,7 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public class AssignmentStatement extends Statement {
-    
+
     private VariableReference variable;
     private Expression expression;
 
@@ -26,20 +26,15 @@ public class AssignmentStatement extends Statement {
 
     @Override
     public String toString() {
-        return super.toString() + 
-                "\n    " + variable+" := " + expression  ; 
+        return super.toString()
+                + "\n    " + variable + " := " + expression;
     }
 
     @Override
     public void execute(BlockContext ctx) {
-        super.execute(ctx); 
-        
         String name = this.variable.getName();
         Value value = expression.evaluate(ctx);
         ctx.setVariable(name, value);
     }
-    
-    
-    
-    
+
 }

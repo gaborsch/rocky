@@ -17,23 +17,23 @@ import rockstar.runtime.BlockContext;
 public class Block extends Statement {
 
     private Block parent;
-    
+
     private List<Statement> statements = new ArrayList<>();
-    
+
     public List<Statement> getStatements() {
         return statements;
     }
 
     public void addStatement(Statement stmt) {
-        if (! stmt.applyTo(this)) {
+        if (!stmt.applyTo(this)) {
             throw new ParseException(stmt.getClass().getSimpleName() + " cannot be applied to the block", stmt.getLine());
         }
         statements.add(stmt);
     }
-    
+
     public Statement lastStatement() {
-        if(statements.size() > 0) {
-            statements.get(statements.size()-1);
+        if (statements.size() > 0) {
+            statements.get(statements.size() - 1);
         }
         return null;
     }
@@ -47,23 +47,15 @@ public class Block extends Statement {
     }
 
     /**
-     * Called when a block is closed
-     * @return 
-     */
-    public boolean blockClosed() {
-        return true;
-    }
-
-    /**
      * Execute a block
-     * @param ctx 
+     *
+     * @param ctx
      */
     @Override
     public void execute(BlockContext ctx) {
-        super.execute(ctx);
         BlockContext currentCtx = new BlockContext(ctx);
-        for (Statement statement : statements) {
+        statements.forEach((statement) -> {
             statement.execute(currentCtx);
-        }
+        });
     }
 }

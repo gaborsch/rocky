@@ -5,14 +5,19 @@
  */
 package rockstar.statement;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.Value;
 
 /**
  *
  * @author Gabor
  */
 public class InputStatement extends Statement {
-    
+
     private final VariableReference variable;
 
     public InputStatement(VariableReference variable) {
@@ -22,11 +27,24 @@ public class InputStatement extends Statement {
     public InputStatement() {
         this.variable = null;
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
-                "\n    INPUT " + (variable==null ?  "" : variable.toString()); 
+        return super.toString()
+                + "\n    INPUT " + (variable == null ? "" : variable.toString());
     }
-    
+
+    @Override
+    public void execute(BlockContext ctx) {
+        String inputLine;
+        try {
+            inputLine = ctx.getInput().readLine();
+        } catch (IOException ex) {
+            inputLine = "";
+        }
+        if (variable != null) {
+            ctx.setVariable(variable.getName(), Value.getValue(inputLine));
+        }
+    }
+
 }

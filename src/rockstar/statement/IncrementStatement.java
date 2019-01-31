@@ -9,7 +9,6 @@ import rockstar.expression.ConstantExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.NumericValue;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
@@ -45,7 +44,6 @@ public class IncrementStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        super.execute(ctx);
         Value v = ctx.getVariableValue(variable.getName());
         if (v.isNumeric()) {
             // increment by count

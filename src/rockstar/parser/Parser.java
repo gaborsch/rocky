@@ -54,24 +54,12 @@ public class Parser {
                     // simple block closing: no need to add it anywhere
                     if (blocks.size() > 1) {
                         Block finishedBlock = blocks.pop();
-                        if (!finishedBlock.blockClosed()) {
-                            parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (block end)");
-                        }
                     }
                 } else {
                     // meaningful statements
                     if (stmt instanceof ContinuingBlockStatementI) {
                         // if it sticks to the previous block, close that block, and append it
-//                        if (blocks.size() > 1) {
                         Block finishedBlock = blocks.pop();
-                        if (!finishedBlock.blockClosed()) {
-                            parseError(finishedBlock.getClass().getSimpleName() + " is not finished properly (" + stmt.getClass().getSimpleName() + ")");
-//                            }
-//                            boolean applied = ((ContinuingBlockStatementI) stmt).applyBlock(finishedBlock);
-//                            if (!applied) {
-//                                parseError(stmt.getClass().getSimpleName() + " cannot be applied to " + finishedBlock.getClass().getSimpleName());
-//                            }
-                        }
                     }
 
                     // append statement to current block

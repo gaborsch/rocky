@@ -29,7 +29,6 @@ public class ContinueStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        super.execute(ctx);
         throw new RockstarContinueException();
     }
 

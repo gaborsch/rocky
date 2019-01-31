@@ -5,7 +5,8 @@
  */
 package rockstar.runtime;
 
-import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +23,12 @@ public class BlockContext {
     private final Map<String, Value> vars = new HashMap<>();
     private final Map<String, FunctionBlock> funcs = new HashMap<>();
 
-    private final InputStream input;
+    private final BufferedReader input;
     private final PrintStream output;
     private final PrintStream error;
     private final Map<String, Object> env;
 
-    public BlockContext(InputStream input, PrintStream output, PrintStream error, Map<String, Object> env) {
+    public BlockContext(BufferedReader input, PrintStream output, PrintStream error, Map<String, Object> env) {
         this.parent = null;
         this.root = this;
         this.input = input;
@@ -54,7 +55,7 @@ public class BlockContext {
         return parent;
     }
 
-    public InputStream getInput() {
+    public BufferedReader getInput() {
         return input;
     }
 

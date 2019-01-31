@@ -6,6 +6,7 @@
 package rockstar.statement;
 
 import java.util.List;
+import rockstar.parser.ParseException;
 
 /**
  *
@@ -17,22 +18,21 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
     boolean applyTo(Block block) {
         List<Statement> blockStmts = block.getStatements();
         if (blockStmts.size() >= 1) {
-            Statement lastStmt = blockStmts.get(blockStmts.size()-1);
-            if(lastStmt instanceof IfStatement) {
+            Statement lastStmt = blockStmts.get(blockStmts.size() - 1);
+            if (lastStmt instanceof IfStatement) {
                 return true;
             }
         }
         return false;
     }
 
-//    @Override
-//    public boolean applyBlock(Block finishedBlock) {
-//        if (finishedBlock instanceof IfStatement) {
-//            return true;
-//        } 
-//        return false;
-//    }
-    
-    
- 
+    @Override
+    public void appendTo(Block finishedBlock) {
+        if (finishedBlock instanceof IfStatement) {
+            ((IfStatement) finishedBlock).setElseStatement(this);
+        } else {
+            throw new ParseException("Else statement after " + finishedBlock.getClass().getSimpleName(), getLine());
+        }
+    }
+
 }

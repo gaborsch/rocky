@@ -5,10 +5,19 @@
  */
 package rockstar.statement;
 
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
+
 /**
  *
  * @author Gabor
  */
 public class BlockEnd extends Statement {
+
+    @Override
+    public void execute(BlockContext ctx) {
+        throw new RockstarRuntimeException("Not supported.");        
+        
+    }
 
 }
