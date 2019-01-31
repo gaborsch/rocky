@@ -5,6 +5,7 @@
  */
 package rockstar.expression;
 
+import rockstar.runtime.BlockContext;
 import rockstar.runtime.NumericValue;
 import rockstar.runtime.Value;
 
@@ -44,6 +45,11 @@ public class ConstantExpression extends SimpleExpression {
     @Override
     public String toString() {
         return value.toString();
+    }
+
+    @Override
+    public Value evaluate(BlockContext ctx) {
+        return value;
     }
     
     

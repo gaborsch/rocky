@@ -44,7 +44,7 @@ public class DecrementStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         super.execute(ctx);
-        Value v = ctx.getVariable(variable.getName());
+        Value v = ctx.getVariableValue(variable.getName());
         if (v.isNumeric()) {
             // increment by count
             Value value = getMinus().evaluate(ctx);

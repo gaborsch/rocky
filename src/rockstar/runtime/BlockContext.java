@@ -73,15 +73,30 @@ public class BlockContext {
     
 
     public void setVariable(String name, Value value) {
-        vars.put(name, value);
+        BlockContext ctx = findVariableContext(name);
+        if (ctx == null) {
+            ctx = this;
+        }
+        ctx.vars.put(name, value);
     }
 
-    public Value getVariable(String name) {
-        Value value = vars.get(name);
-        if (value == null && parent != null) {
-            value = parent.getVariable(name);
+    public void setLocalVariable(String name, Value value) {
+        vars.put(name, value);
+    }
+    
+    public Value getVariableValue(String name) {
+        BlockContext ctx = findVariableContext(name);
+        if (ctx != null) {
+            return ctx.vars.get(name);
         }
-        return value;
+        return Value.MYSTERIOUS;
+    }
+    
+    private BlockContext findVariableContext(String name) {
+        if (vars.containsKey(name)) {
+            return this;
+        }
+        return (parent == null) ? null : parent.findVariableContext(name);
     }
 
     public FunctionBlock retrieveFunction(String name) {

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -65,4 +68,11 @@ public class DummyExpression extends Expression {
         });
         return sb.toString() + (errorMsg == null ? "" : ("\n    " + errorMsg));
     }
+
+    @Override
+    public Value evaluate(BlockContext ctx) {
+        throw new RockstarRuntimeException(errorMsg); 
+    }
+    
+    
 }

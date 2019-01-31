@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.expression;
+package rockstar.runtime;
 
 /**
  *
  * @author Gabor
  */
-public abstract class SimpleExpression extends Expression {
+public class RockstarBreakException extends RuntimeException {
+   
+    public RockstarBreakException() {
+    }
     
 }

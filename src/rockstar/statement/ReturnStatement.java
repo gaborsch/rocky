@@ -6,6 +6,9 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
+import rockstar.runtime.RockstarReturnException;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -33,9 +36,16 @@ public class ReturnStatement extends Statement {
                 return true;
             }
             b = b.getParent();
-
         }
         return false;
     }
+
+    @Override
+    public void execute(BlockContext ctx) {
+        Value value = expression.evaluate(ctx);
+        throw new RockstarReturnException(value);
+    }
+    
+    
 
 }

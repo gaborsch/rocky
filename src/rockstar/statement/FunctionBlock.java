@@ -5,9 +5,13 @@
  */
 package rockstar.statement;
 
+import rockstar.runtime.RockstarReturnException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -39,4 +43,44 @@ public class FunctionBlock extends Block {
         return super.toString()
                 + "\n    FUNCDEF: " + name + "(" + Arrays.deepToString(parameterNames.toArray()) + ")";
     }
+
+    /**
+     * Define a function
+     *
+     * @param ctx
+     */
+    @Override
+    public void execute(BlockContext ctx) {
+        // define function
+        ctx.defineFunction(name, this);
+    }
+
+    /**
+     * Execute a function call
+     *
+     * @param ctx Context for execution
+     * @param values function parameters
+     * @return
+     */
+    public Value call(BlockContext ctx, List<Value> values) {
+        BlockContext funcCtx = new BlockContext(ctx);
+        List<String> names = this.parameterNames;
+        if (names.size() != values.size()) {
+            throw new RockstarRuntimeException("Wrong number of arguments for function " + this.name + ": expected " + names.size() + ", got " + values.size());
+        }
+
+        for (int i = 0; i < values.size(); i++) {
+            funcCtx.setLocalVariable(names.get(i), values.get(i));
+        }
+
+        try {
+            // execute the function body
+            super.execute(funcCtx);
+        } catch (RockstarReturnException retExp) {
+            return retExp.getReturnValue();
+        }
+        // return value is set by
+        return Value.MYSTERIOUS;
+    }
+
 }

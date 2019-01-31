@@ -5,6 +5,9 @@
  */
 package rockstar.statement;
 
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarContinueException;
+
 /**
  *
  * @author Gabor
@@ -22,6 +25,12 @@ public class ContinueStatement extends Statement {
 
         }
         return false;
+    }
+
+    @Override
+    public void execute(BlockContext ctx) {
+        super.execute(ctx);
+        throw new RockstarContinueException();
     }
 
 }

@@ -32,7 +32,7 @@ public class AssignmentStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        super.execute(ctx); //To change body of generated methods, choose Tools | Templates.
+        super.execute(ctx); 
         
         String name = this.variable.getName();
         Value value = expression.evaluate(ctx);

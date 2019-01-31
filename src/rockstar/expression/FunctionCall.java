@@ -1,6 +1,11 @@
 package rockstar.expression;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.Value;
+import rockstar.statement.FunctionBlock;
 
 /**
  *
@@ -45,6 +50,21 @@ public class FunctionCall extends CompoundExpression {
         Expression nameExpr = getParameters().remove(0);
         name = ((VariableReference)nameExpr).getName();
     }
+
+    @Override
+    public Value evaluate(BlockContext ctx) {
+        FunctionBlock funcBlock = ctx.retrieveFunction(name);
+        
+        List<Expression> params = getParameters();
+        List<Value> values = new ArrayList<>(params.size());
+        params.forEach((expr) -> {
+            values.add(expr.evaluate(ctx));
+        });
+        // call the functon
+        Value retValue = funcBlock.call(ctx, values);
+        // return the return value
+        return retValue == null ? Value.NULL : retValue;
+ }
     
     
 

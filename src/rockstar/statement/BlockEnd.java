@@ -10,5 +10,5 @@ package rockstar.statement;
  * @author Gabor
  */
 public class BlockEnd extends Statement {
-    
+
 }

@@ -1,0 +1,14 @@
+Put 1 into GlobalVar
+
+Modulus takes Number and Divisor
+Put 2 into GlobalVar
+Put Number plus Divisor into LocalVar
+Give back LocalVar
+
+say Modulus taking 2, 7
+say Modulus taking 10, 7
+say Modulus taking 10 and 3
+say Modulus taking 1 and 3
+
+say GlobalVar
+

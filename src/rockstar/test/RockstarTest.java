@@ -28,7 +28,7 @@ public class RockstarTest {
     }
 
     public static void main(String[] args) {
-        String dir = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests";
+        String dir = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_\\test";
 //        String dir = "C:\\work\\rocky\\tests\\rockstar\\tests";
         new RockstarTest().executeDir(dir, null);
     }
@@ -49,7 +49,7 @@ public class RockstarTest {
         if (files != null) {
             for (File file : files) {
                 if (file.getName().endsWith(".rock")) {
-                    executeFile(file, exp);
+                    executeFile(file, exp==null ? Expected.CORRECT : exp);
                 } else if (file.isDirectory()) {
                     switch (file.getName()) {
                         case "correct":

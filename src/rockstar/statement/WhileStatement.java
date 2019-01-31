@@ -6,6 +6,7 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
+import rockstar.runtime.BlockContext;
 
 /**
  *
@@ -33,6 +34,13 @@ public class WhileStatement extends Block {
     public String toString() {
         return super.toString() + 
                 "\n    COND: " + (negateCondition ? "not " : "") + condition ; 
-    }   
+    }
+
+    @Override
+    public void execute(BlockContext ctx) {
+        super.execute(ctx); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 
 }

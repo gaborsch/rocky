@@ -5,6 +5,9 @@
  */
 package rockstar.statement;
 
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarBreakException;
+
 /**
  *
  * @author Gabor
@@ -21,6 +24,12 @@ public class BreakStatement extends Statement {
             b = b.getParent();
         }
         return false;
+    }
+
+    @Override
+    public void execute(BlockContext ctx) {
+        super.execute(ctx);
+        throw new RockstarBreakException();
     }
 
 }

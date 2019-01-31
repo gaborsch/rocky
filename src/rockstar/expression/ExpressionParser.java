@@ -11,7 +11,9 @@ import java.util.Stack;
 import rockstar.expression.ComparisonExpression.ComparisonType;
 import rockstar.expression.LogicalExpression.LogicalType;
 import rockstar.parser.Line;
+import rockstar.runtime.BlockContext;
 import rockstar.runtime.NumericValue;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -388,6 +390,13 @@ public class ExpressionParser {
         protected int getParameterCount() {
             return 0;
         }
+
+        @Override
+        public Value evaluate(BlockContext ctx) {
+            return null;
+        }
+        
+        
 
     }
 
