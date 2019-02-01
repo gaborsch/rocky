@@ -28,8 +28,8 @@ public class RockstarTest {
     }
 
     public static void main(String[] args) {
-        String dir = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_\\test";
-//        String dir = "C:\\work\\rocky\\tests\\rockstar\\tests";
+//        String dir = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_\\test";
+        String dir = "C:\\work\\rocky\\tests\\rockstar\\tests";
         new RockstarTest().executeDir(dir, null);
     }
 

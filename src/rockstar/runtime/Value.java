@@ -5,7 +5,7 @@
  */
 package rockstar.runtime;
 
-import rockstar.expression.ExpressionParser;
+import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
 
 /**
@@ -128,13 +128,13 @@ public class Value {
     }
 
     private static boolean getBoolFromStringAliases(String s) {
-        if (ExpressionParser.BOOLEAN_TRUE_KEYWORDS.contains(s)) {
+        if (ExpressionParser.BOOLEAN_TRUE_KEYWORDS.contains(s.toLowerCase())) {
             return true;
         }
-        if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s)) {
+//        if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s.toLowerCase())) {
             return false;
-        }
-        throw new RockstarRuntimeException("unknown bool value: " + s);
+//        }
+//        throw new RockstarRuntimeException("unknown bool value: " + s);
     }
 
     public Value asBoolean() {
@@ -164,10 +164,10 @@ public class Value {
 
     public Value plus(Value other) {
         if (isNumeric()) {
-            if (other.isNumeric()) {
-                // numeric addition
-                return Value.getValue(getNumeric().plus(other.getNumeric()));
-            }
+//            if (other.isNumeric()) {
+            // numeric addition
+            return Value.getValue(getNumeric().plus(other.getNumeric()));
+//            }
         } else if (isString()) {
             // String concatenation
             return Value.getValue(getString() + other.getString());
@@ -177,39 +177,40 @@ public class Value {
     }
 
     public Value minus(Value other) {
-        if (isNumeric()) {
-            if (other.isNumeric()) {
-                // numeric subtraction
-                return Value.getValue(getNumeric().minus(other.getNumeric()));
-            }
-        }
+//        if (isNumeric()) {
+//            if (other.isNumeric()) {
+            // numeric subtraction
+            return Value.getValue(getNumeric().minus(other.getNumeric()));
+//            }
+//        }
 //        return Value.getValue(getNumeric().minus(other.getNumeric()));
-        throw new RockstarRuntimeException(getType() + " minus " + other.getType());
+//        throw new RockstarRuntimeException(getType() + " minus " + other.getType());
     }
 
     public Value multiply(Value other) {
-        if (isNumeric()) {
-            if (other.isNumeric()) {
-                // numeric multiplication
-                return Value.getValue(getNumeric().multiply(other.getNumeric()));
-            }
-        } else if (isString()) {
+        if (isString()) {
             if (other.isNumeric()) {
                 // String repeating
                 return Value.getValue(getString().repeat(other.getNumeric().asInt()));
             }
+        } else // if (isNumeric()) 
+        {
+//            if (other.isNumeric()) {
+            // numeric multiplication
+            return Value.getValue(getNumeric().multiply(other.getNumeric()));
+//            }
         }
         throw new RockstarRuntimeException(getType() + " times " + other.getType());
     }
 
     public Value divide(Value other) {
-        if (isNumeric()) {
-            if (other.isNumeric()) {
-                // numeric subtraction
-                return Value.getValue(getNumeric().divide(other.getNumeric()));
-            }
-        }
-        throw new RockstarRuntimeException(getType() + " over " + other.getType());
+//        if (isNumeric()) {
+//            if (other.isNumeric()) {
+        // numeric subtraction
+        return Value.getValue(getNumeric().divide(other.getNumeric()));
+//            }
+//        }
+//        throw new RockstarRuntimeException(getType() + " over " + other.getType());
     }
 
     public Value and(Value other) {

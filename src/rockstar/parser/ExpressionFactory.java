@@ -3,9 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.expression;
+package rockstar.parser;
 
 import java.util.List;
+import rockstar.expression.ConstantExpression;
+import rockstar.expression.DummyExpression;
+import rockstar.expression.Expression;
+import rockstar.expression.VariableReference;
 import rockstar.parser.Line;
 import rockstar.runtime.NumericValue;
 

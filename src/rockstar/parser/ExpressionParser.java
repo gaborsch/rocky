@@ -3,13 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rockstar.expression;
+package rockstar.parser;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import rockstar.expression.ComparisonExpression;
 import rockstar.expression.ComparisonExpression.ComparisonType;
+import rockstar.expression.CompoundExpression;
+import rockstar.expression.ConstantExpression;
+import rockstar.expression.DivideExpression;
+import rockstar.expression.DummyExpression;
+import rockstar.expression.Expression;
+import rockstar.expression.FunctionCall;
+import rockstar.expression.LogicalExpression;
 import rockstar.expression.LogicalExpression.LogicalType;
+import rockstar.expression.MinusExpression;
+import rockstar.expression.MultiplyExpression;
+import rockstar.expression.NotExpression;
+import rockstar.expression.PlusExpression;
+import rockstar.expression.SimpleExpression;
+import rockstar.expression.VariableReference;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.NumericValue;
@@ -88,6 +102,7 @@ public class ExpressionParser {
                 String literal = token.substring(1, token.length() - 1);
                 return new ConstantExpression(literal);
             }
+            token = token.toLowerCase();
             if (MYSTERIOUS_KEYWORDS.contains(token)) {
                 next();
                 return ConstantExpression.CONST_MYSTERIOUS;
@@ -382,12 +397,12 @@ public class ExpressionParser {
         }
 
         @Override
-        protected String getFormat() {
+        public String getFormat() {
             return "$";
         }
 
         @Override
-        protected int getParameterCount() {
+        public int getParameterCount() {
             return 0;
         }
 

@@ -9,6 +9,7 @@ import rockstar.expression.ConstantExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.NumericValue;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
@@ -45,10 +46,15 @@ public class IncrementStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         Value v = ctx.getVariableValue(variable.getName());
+        if (v.isMysterious() || v.isNull()) {
+            v = Value.getValue(NumericValue.ZERO);
+            ctx.setVariable(variable.getName(), v);
+        }
         if (v.isNumeric()) {
             // increment by count
             Value value = getPlus().evaluate(ctx);
             ctx.setVariable(variable.getName(), value);
+            return;
         } else if (v.isBoolean()) {
             // convert to boolean
             v = v.asBoolean();
@@ -57,6 +63,7 @@ public class IncrementStatement extends Statement {
                 v = v.negate();
             }
             ctx.setVariable(variable.getName(), v);
+            return;
         }
         throw new RockstarRuntimeException(v.getType() + " ++");
     }

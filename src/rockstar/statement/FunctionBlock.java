@@ -26,7 +26,7 @@ public class FunctionBlock extends Block {
         this.name = name;
     }
 
-    void addParameterName(String paramName) {
+    public void addParameterName(String paramName) {
         parameterNames.add(paramName);
     }
 

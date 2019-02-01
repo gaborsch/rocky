@@ -15,7 +15,7 @@ import rockstar.runtime.Value;
 public class PlusExpression extends CompoundExpression {
 
     @Override
-    protected String getFormat() {
+    public String getFormat() {
         return "(%s + %s)";
     }
 

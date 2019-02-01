@@ -42,7 +42,7 @@ public class ComparisonExpression extends CompoundExpression {
     }
 
     @Override
-    protected String getFormat() {
+    public String getFormat() {
         return "(%s " + type.getSign() + " %s)";
     }
 

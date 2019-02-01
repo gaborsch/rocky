@@ -28,7 +28,7 @@ public class FunctionCall extends CompoundExpression {
     
 
     @Override
-    protected String getFormat() {
+    public String getFormat() {
         StringBuilder sb = new StringBuilder("CALL ");
         sb.append(name);
         sb.append("(");

@@ -18,7 +18,7 @@ import rockstar.runtime.Value;
  */
 public class WhileStatement extends Block {
 
-    public static final int MAX_LOOP_ITERATIONS = 20;
+    public static final int MAX_LOOP_ITERATIONS = 200;
 
     private final Expression condition;
     private boolean negateCondition = false;

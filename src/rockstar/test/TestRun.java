@@ -68,12 +68,12 @@ public class TestRun {
 
             String output = os.toString(Charset.defaultCharset());
 
-            if (output != null && output.length() > 0) {
-                System.out.println("Output for " + filename + ": " + output.length() + " chars");
-                System.out.println(output);
-            } else if (expectedOutput.length() > 0) {
-                result.setMessage("No output received");
-            }
+//            if (output != null && output.length() > 0) {
+//                System.out.println("Output for " + filename + ": " + output.length() + " chars");
+//                System.out.println(output);
+//            } else if (expectedOutput.length() > 0) {
+//                result.setMessage("No output received");
+//            }
 
         } catch (ParseException e) {
             result.setMessage("Parse error:" + e.getMessage());

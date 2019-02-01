@@ -16,7 +16,7 @@ import rockstar.runtime.Value;
 public class MinusExpression extends CompoundExpression {
 
     @Override
-    protected String getFormat() {
+    public String getFormat() {
         return "(%s - %s)";
     }
 

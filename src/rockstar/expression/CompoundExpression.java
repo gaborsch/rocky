@@ -56,9 +56,9 @@ public abstract class CompoundExpression extends Expression {
      */
     public abstract int getPrecedence();
     
-    protected abstract int getParameterCount();
+    public abstract int getParameterCount();
     
-    protected abstract String getFormat();
+    public abstract String getFormat();
 
     @Override
     public String toString() {
