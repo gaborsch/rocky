@@ -47,4 +47,8 @@ public class InputStatement extends Statement {
         }
     }
 
+    @Override
+    public String explain(BlockContext ctx) {
+        return null;
+    }
 }

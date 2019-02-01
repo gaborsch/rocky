@@ -83,4 +83,10 @@ public class FunctionBlock extends Block {
         return Value.MYSTERIOUS;
     }
 
+    @Override
+    public String explain(BlockContext ctx) {
+        return "FUNCDEF: " + name + "(" + Arrays.deepToString(parameterNames.toArray()) + ")";
+    }
+
+    
 }

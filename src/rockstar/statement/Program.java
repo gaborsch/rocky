@@ -5,6 +5,8 @@
  */
 package rockstar.statement;
 
+import rockstar.runtime.BlockContext;
+
 /**
  *
  * @author Gabor
@@ -25,7 +27,10 @@ public class Program extends Block {
     public String toString() {
         return "( Program " + name + ")";
     }
-    
-    
+
+    @Override
+    public String explain(BlockContext ctx) {
+        return null;
+    }
     
 }

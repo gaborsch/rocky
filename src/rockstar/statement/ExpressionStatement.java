@@ -36,4 +36,9 @@ public class ExpressionStatement extends Statement {
         Value v = expr.evaluate(ctx);
     }
 
+        
+    @Override
+    public String explain(BlockContext ctx) {
+        return null;
+    }
 }

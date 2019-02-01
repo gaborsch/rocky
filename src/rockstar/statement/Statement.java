@@ -53,4 +53,6 @@ public abstract class Statement {
 ////        ctx.getOutput().println(this.getClass().getSimpleName() + " " + this);
 //    }
     
+    public abstract String explain(BlockContext ctx);
+    
 }

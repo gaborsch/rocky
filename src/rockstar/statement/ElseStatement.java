@@ -7,6 +7,7 @@ package rockstar.statement;
 
 import java.util.List;
 import rockstar.parser.ParseException;
+import rockstar.runtime.BlockContext;
 
 /**
  *
@@ -34,5 +35,12 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
             throw new ParseException("Else statement after " + finishedBlock.getClass().getSimpleName(), getLine());
         }
     }
+
+    @Override
+    public String explain(BlockContext ctx) {
+        return null;
+    }
+    
+    
 
 }

@@ -40,12 +40,18 @@ public class ReturnStatement extends Statement {
         return false;
     }
 
+    private Value lastValue = Value.MYSTERIOUS;
+
     @Override
     public void execute(BlockContext ctx) {
         Value value = expression.evaluate(ctx);
+        lastValue = value;
         throw new RockstarReturnException(value);
     }
-    
-    
+
+    @Override
+    public String explain(BlockContext ctx) {
+        return lastValue.toString();
+    }
 
 }

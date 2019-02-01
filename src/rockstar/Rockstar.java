@@ -22,10 +22,12 @@ import rockstar.test.RockstarTest;
  */
 public class Rockstar {
 
+    public static boolean DEBUG = false;
+
     public static void main(String[] args) {
         RockstarTest.main(args);
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -40,7 +42,6 @@ public class Rockstar {
         Rockstar rockstar = new Rockstar(System.in, System.out, System.err, env);
         rockstar.run(filename);
     }
-
 
     private final BufferedReader input;
     private final PrintStream output;
@@ -70,5 +71,9 @@ public class Rockstar {
             Logger.getLogger(Rockstar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    public String getLogString() {
+        return ctx.getLogString();
+    }
+
 }

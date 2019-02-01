@@ -35,6 +35,11 @@ public class AssignmentStatement extends Statement {
         String name = this.variable.getName();
         Value value = expression.evaluate(ctx);
         ctx.setVariable(name, value);
+        ctx.logStatement(this, null);
     }
 
+    @Override
+    public String explain(BlockContext ctx) {
+        return variable.getName() + " = " + ctx.getVariableValue(variable.getName());
+    }
 }

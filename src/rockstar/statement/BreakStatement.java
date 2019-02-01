@@ -30,5 +30,9 @@ public class BreakStatement extends Statement {
     public void execute(BlockContext ctx) {
         throw new RockstarBreakException();
     }
-
+    
+    @Override
+    public String explain(BlockContext ctx) {
+        return null;
+    }
 }

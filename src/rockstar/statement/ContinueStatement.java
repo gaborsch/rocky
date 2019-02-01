@@ -31,5 +31,9 @@ public class ContinueStatement extends Statement {
     public void execute(BlockContext ctx) {
         throw new RockstarContinueException();
     }
-
+    
+    @Override
+    public String explain(BlockContext ctx) {
+        return null;
+    }
 }

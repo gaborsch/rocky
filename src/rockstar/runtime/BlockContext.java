@@ -5,12 +5,15 @@
  */
 package rockstar.runtime;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.PrintStream;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import rockstar.Rockstar;
+import rockstar.parser.Line;
 import rockstar.statement.FunctionBlock;
+import rockstar.statement.Statement;
 
 /**
  *
@@ -28,6 +31,8 @@ public class BlockContext {
     private final PrintStream error;
     private final Map<String, Object> env;
 
+    private final StringWriter log;
+
     public BlockContext(BufferedReader input, PrintStream output, PrintStream error, Map<String, Object> env) {
         this.parent = null;
         this.root = this;
@@ -35,6 +40,7 @@ public class BlockContext {
         this.output = output;
         this.error = error;
         this.env = env;
+        this.log = new StringWriter();
     }
 
     /**
@@ -49,6 +55,7 @@ public class BlockContext {
         this.output = parent.output;
         this.error = parent.error;
         this.env = parent.env;
+        this.log = parent.log;
     }
 
     public BlockContext getParent() {
@@ -70,8 +77,10 @@ public class BlockContext {
     public Map<String, Object> getEnv() {
         return env;
     }
-    
-    
+
+    public String getLogString() {
+        return log.toString();
+    }
 
     public void setVariable(String name, Value value) {
         BlockContext ctx = findVariableContext(name);
@@ -84,7 +93,7 @@ public class BlockContext {
     public void setLocalVariable(String name, Value value) {
         vars.put(name, value);
     }
-    
+
     public Value getVariableValue(String name) {
         BlockContext ctx = findVariableContext(name);
         if (ctx != null) {
@@ -92,7 +101,7 @@ public class BlockContext {
         }
         return Value.MYSTERIOUS;
     }
-    
+
     private BlockContext findVariableContext(String name) {
         if (vars.containsKey(name)) {
             return this;
@@ -106,6 +115,18 @@ public class BlockContext {
 
     public void defineFunction(String name, FunctionBlock function) {
         root.funcs.put(name, function);
+    }
+
+    public void logStatement(Statement stmt, String msg) {
+        if (Rockstar.DEBUG) {
+            Line l = stmt.getLine();
+            log.write(String.format("[%2d] %-8s %s\n",
+                    l.getLnum(), msg == null ? "" : msg, l.getOrigLine()));
+            String explained = stmt.explain(this);
+            if (explained != null) {
+                log.write(String.format("              %s\n", explained));
+            }
+        }
     }
 
 }

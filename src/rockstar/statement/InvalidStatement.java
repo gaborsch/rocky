@@ -25,4 +25,8 @@ public class InvalidStatement extends Statement {
         throw new UnsupportedOperationException("InvalidStatement not supported."); 
     }
 
+    @Override
+    public String explain(BlockContext ctx) {
+        return null;
+    }
 }

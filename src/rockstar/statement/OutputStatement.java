@@ -27,13 +27,23 @@ public class OutputStatement extends Statement {
                 "\n    OUTPUT " + expression ; 
     }
 
+    private Value lastValue = Value.MYSTERIOUS;
+    
     @Override
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
-        ctx.getOutput().println(v.asString());
+        lastValue = v;
+        ctx.getOutput().println(v.getString());
+    }
+
+    @Override
+    public String explain(BlockContext ctx) {
+        return lastValue.getString();
     }
     
     
+
+
     
     
     

@@ -14,7 +14,7 @@ import rockstar.runtime.BlockContext;
  *
  * @author Gabor
  */
-public class Block extends Statement {
+public abstract class Block extends Statement {
 
     private Block parent;
 

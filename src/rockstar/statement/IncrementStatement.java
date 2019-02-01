@@ -61,4 +61,8 @@ public class IncrementStatement extends Statement {
         throw new RockstarRuntimeException(v.getType() + " ++");
     }
 
+    @Override
+    public String explain(BlockContext ctx) {
+        return variable.getName() + " = " + ctx.getVariableValue(variable.getName());
+    }
 }

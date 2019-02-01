@@ -29,6 +29,7 @@ public class TestRun {
 
         TestResult result = new TestResult(exp);
 
+        Rockstar rockstar = null;
         try {
             // input stream
             InputStream in;
@@ -62,7 +63,7 @@ public class TestRun {
             ByteArrayOutputStream errs = new ByteArrayOutputStream();
             PrintStream err = new PrintStream(errs);
 
-            Rockstar rockstar = new Rockstar(in, out, err, new HashMap<>());
+            rockstar = new Rockstar(in, out, err, new HashMap<>());
             rockstar.run(filename);
 
             String output = os.toString(Charset.defaultCharset());
@@ -73,8 +74,6 @@ public class TestRun {
             } else if (expectedOutput.length() > 0) {
                 result.setMessage("No output received");
             }
-            
-            
 
         } catch (ParseException e) {
             result.setMessage("Parse error:" + e.getMessage());
@@ -82,6 +81,11 @@ public class TestRun {
             result.setException(e);
             result.setMessage(e.getMessage());
         }
+
+        // print log
+//        if (rockstar != null) {
+//            System.out.println(rockstar.getLogString());
+//        }
 
         return result;
     }

@@ -18,8 +18,8 @@ import rockstar.runtime.Value;
  */
 public class WhileStatement extends Block {
 
-    public static final int MAX_LOOP_ITERATIONS = 1024;
-    
+    public static final int MAX_LOOP_ITERATIONS = 20;
+
     private final Expression condition;
     private boolean negateCondition = false;
 
@@ -31,23 +31,27 @@ public class WhileStatement extends Block {
         this.condition = condition;
         this.negateCondition = negateCondition;
     }
-    
+
     public Expression getCondition() {
         return condition;
     }
-    
-     @Override
+
+    @Override
     public String toString() {
-        return super.toString() + 
-                "\n    COND: " + (negateCondition ? "not " : "") + condition ; 
+        return super.toString()
+                + "\n    COND: " + (negateCondition ? "not " : "") + condition;
     }
 
+    private boolean lastCondition = false;
+            
     @Override
     public void execute(BlockContext ctx) {
         int loopCount = 0;
         Value v = condition.evaluate(ctx);
-        boolean loopCondition = v.asBoolean().getBool() ^ negateCondition;
-        while(loopCondition && loopCount <= MAX_LOOP_ITERATIONS) {
+        boolean lastCondition = v.asBoolean().getBool() ^ negateCondition;
+        ctx.logStatement(this, "LOOP_BGN");
+        while (lastCondition && loopCount <= MAX_LOOP_ITERATIONS) {
+            ctx.logStatement(this, "LOOP" + loopCount);
             boolean canContinue = true;
             try {
                 super.execute(ctx);
@@ -58,15 +62,21 @@ public class WhileStatement extends Block {
                 canContinue = false;
             }
             // other exceptions like ReturnException are falling thru
-            
+
             loopCount++;
-            loopCondition = canContinue && (v.asBoolean().getBool() ^ negateCondition);
+            
+            v = condition.evaluate(ctx);
+            lastCondition = canContinue && (v.asBoolean().getBool() ^ negateCondition);
         }
-        if (loopCount == 0) {
-            throw new RockstarRuntimeException("Loop exceeded "+MAX_LOOP_ITERATIONS+" iterations");
+        ctx.logStatement(this, "LOOP_END");
+        if (loopCount > MAX_LOOP_ITERATIONS) {
+            throw new RockstarRuntimeException("Loop exceeded " + MAX_LOOP_ITERATIONS + " iterations");
         }
     }
-    
-    
+
+    @Override
+    public String explain(BlockContext ctx) {
+        return "Loop condition: " + lastCondition;
+    }
 
 }
