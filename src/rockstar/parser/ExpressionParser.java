@@ -24,7 +24,6 @@ import rockstar.expression.NotExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.NumericValue;
 import rockstar.runtime.Value;
@@ -234,7 +233,7 @@ public class ExpressionParser {
 
         // interpret 
         while (!operatorStack.isEmpty()
-                && (operatorStack.peek().getPrecedence() < operator.getPrecedence())) {
+                && (operatorStack.peek().getPrecedence() <= operator.getPrecedence())) {
 
             // take the operator from the top of the operator stack
             CompoundExpression op = operatorStack.pop();

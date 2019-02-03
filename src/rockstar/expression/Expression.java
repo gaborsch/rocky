@@ -15,9 +15,7 @@ import rockstar.runtime.Value;
 public abstract class Expression {
   
     public abstract Value evaluate(BlockContext ctx); 
-//    {
-//        return Value.getValue(this.toString());
-//    }
+
 
 }
 
