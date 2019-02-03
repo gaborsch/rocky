@@ -36,6 +36,7 @@ public class AssignmentStatement extends Statement {
         Value value = expression.evaluate(ctx);
         ctx.setVariable(name, value);
         ctx.logStatement(this, null);
+        // TODO determine if global or local scope, set global or local variable
     }
 
     @Override

@@ -281,7 +281,7 @@ public class Value {
             return (getBool() == other.getBool()) ? 0 : 1;
         }
         // number vs null
-        return (getNumeric().equals(other.getNumeric())) ? 0 : 1;
+        return getNumeric().compareTo(other.getNumeric());
     }
 
     public Value isEquals(Value other) {

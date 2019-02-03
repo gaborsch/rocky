@@ -59,6 +59,7 @@ public class Parser {
                     if (stmt instanceof ContinuingBlockStatementI) {
                         // if it sticks to the previous block, close that block, and append it
                         Block finishedBlock = blocks.pop();
+                        ((ContinuingBlockStatementI) stmt).appendTo(finishedBlock);
                     }
 
                     // append statement to current block

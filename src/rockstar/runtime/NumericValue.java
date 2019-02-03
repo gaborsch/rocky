@@ -89,7 +89,8 @@ public class NumericValue {
     }
     
     public int compareTo(NumericValue other) {
-        return value.compareTo(other.value);
+        int cmp = value.compareTo(other.value);
+        return cmp;
     }
     
     @Override

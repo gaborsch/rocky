@@ -40,6 +40,19 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
     public String explain(BlockContext ctx) {
         return null;
     }
+
+    @Override
+    public void execute(BlockContext ctx) {
+        // ELSE statement is skipped in normal esexution flow
+    }
+    /**
+     * Executes an Else block. 
+     * @param ctx 
+     */
+    public void executeElse(BlockContext ctx) {
+        super.execute(ctx);
+    }
+    
     
     
 

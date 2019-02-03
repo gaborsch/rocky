@@ -80,6 +80,9 @@ public class TestRun {
         } catch (Throwable e) {
             result.setException(e);
             result.setMessage(e.getMessage());
+//            if (rockstar != null) {
+//                System.err.println(rockstar.getLogString());
+//            }
         }
 
         // print log

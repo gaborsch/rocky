@@ -6,6 +6,7 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
@@ -53,9 +54,12 @@ public abstract class Block extends Statement {
      */
     @Override
     public void execute(BlockContext ctx) {
-        BlockContext currentCtx = new BlockContext(ctx);
-        statements.forEach((statement) -> {
-            statement.execute(currentCtx);
-        });
+        for (Statement statement : statements) {
+            statement.execute(ctx);
+        }
+//        statements.forEach((statement) -> {
+//            statement.execute(ctx);
+//        });
     }
+
 }

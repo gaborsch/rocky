@@ -103,10 +103,11 @@ public class BlockContext {
     }
 
     private BlockContext findVariableContext(String name) {
+//        return root;
         if (vars.containsKey(name)) {
             return this;
         }
-        return (parent == null) ? null : parent.findVariableContext(name);
+        return (parent == this || parent == null) ? null : parent.findVariableContext(name);
     }
 
     public FunctionBlock retrieveFunction(String name) {

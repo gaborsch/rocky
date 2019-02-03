@@ -45,7 +45,7 @@ public class IfStatement extends Block {
         if (v.getBool()) {
             super.execute(ctx);
         } else if (elseStatement != null) {
-            elseStatement.execute(ctx);
+            elseStatement.executeElse(ctx);
         }
 
     }
