@@ -5,6 +5,7 @@
  */
 package rockstar.statement;
 
+import rockstar.expression.ConstantExpression;
 import rockstar.expression.MinusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
@@ -37,7 +38,7 @@ public class DecrementStatement extends Statement {
         if (minus == null) {
             minus = new MinusExpression();
             minus.addParameter(variable);
-//            minus.addParameter(new ConstantExpression(count));
+            minus.addParameter(new ConstantExpression(count));
         }
         return minus;
     }
