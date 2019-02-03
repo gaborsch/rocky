@@ -48,7 +48,7 @@ public class WhileStatement extends Block {
     public void execute(BlockContext ctx) {
         int loopCount = 0;
         Value v = condition.evaluate(ctx);
-        boolean lastCondition = v.asBoolean().getBool() ^ negateCondition;
+        lastCondition = v.asBoolean().getBool() ^ negateCondition;
         ctx.logStatement(this, "LOOP_BGN");
         while (lastCondition && loopCount <= MAX_LOOP_ITERATIONS) {
             ctx.logStatement(this, "LOOP" + loopCount);

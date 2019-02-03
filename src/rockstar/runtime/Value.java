@@ -84,7 +84,11 @@ public class Value {
             case NUMBER:
                 return numericValue;
             case STRING:
-                return NumericValue.parse(stringValue);
+                try {
+                    return NumericValue.parse(stringValue);
+                } catch (NumberFormatException nfe) {
+                    return null;
+                }
             case BOOLEAN:
                 return boolValue ? NumericValue.ONE : NumericValue.ZERO;
             case MYSTERIOUS:
@@ -132,7 +136,7 @@ public class Value {
             return true;
         }
 //        if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s.toLowerCase())) {
-            return false;
+        return false;
 //        }
 //        throw new RockstarRuntimeException("unknown bool value: " + s);
     }
@@ -159,58 +163,65 @@ public class Value {
     }
 
     public Value negate() {
+        // bool negation
         return getBool() ? BOOLEAN_FALSE : BOOLEAN_TRUE;
     }
 
     public Value plus(Value other) {
-        if (isNumeric()) {
-//            if (other.isNumeric()) {
-            // numeric addition
-            return Value.getValue(getNumeric().plus(other.getNumeric()));
-//            }
-        } else if (isString()) {
+        if (isString() || other.isString()) {
             // String concatenation
             return Value.getValue(getString() + other.getString());
+        } else {
+            NumericValue v1 = getNumeric();
+            NumericValue v2 = other.getNumeric();
+            if (v1 != null && v2 != null) {
+                // numeric addition (cannot be String)
+                return Value.getValue(v1.plus(v2));
+            }
         }
-//        return Value.getValue(getNumeric().plus(other.getNumeric()));
         throw new RockstarRuntimeException(getType() + " plus " + other.getType());
     }
 
     public Value minus(Value other) {
-//        if (isNumeric()) {
-//            if (other.isNumeric()) {
+        NumericValue v1 = getNumeric();
+        NumericValue v2 = other.getNumeric();
+        if (v1 != null && v2 != null) {
             // numeric subtraction
-            return Value.getValue(getNumeric().minus(other.getNumeric()));
-//            }
-//        }
-//        return Value.getValue(getNumeric().minus(other.getNumeric()));
-//        throw new RockstarRuntimeException(getType() + " minus " + other.getType());
+            return Value.getValue(v1.minus(v2));
+        }
+        throw new RockstarRuntimeException(getType() + " minus " + other.getType());
     }
 
     public Value multiply(Value other) {
+        NumericValue v2 = other.getNumeric();
         if (isString()) {
-            if (other.isNumeric()) {
-                // String repeating
-                return Value.getValue(getString().repeat(other.getNumeric().asInt()));
+            if (v2 != null) {
+                // String repeating (STRING times NUMBER)
+                return Value.getValue(getString().repeat(v2.asInt()));
             }
-        } else // if (isNumeric()) 
-        {
-//            if (other.isNumeric()) {
-            // numeric multiplication
-            return Value.getValue(getNumeric().multiply(other.getNumeric()));
-//            }
+        } else if (other.isString()) {
+            NumericValue v1 = getNumeric();
+            if (v1 != null) {
+                // String repeating (NUMBER times STRING)
+                return Value.getValue(other.getString().repeat(v1.asInt()));
+            }
+        } else {
+            if (v2 != null) {
+                // numeric multiplication (cannot be String)
+                return Value.getValue(getNumeric().multiply(v2));
+            }
         }
         throw new RockstarRuntimeException(getType() + " times " + other.getType());
     }
 
     public Value divide(Value other) {
-//        if (isNumeric()) {
-//            if (other.isNumeric()) {
-        // numeric subtraction
-        return Value.getValue(getNumeric().divide(other.getNumeric()));
-//            }
-//        }
-//        throw new RockstarRuntimeException(getType() + " over " + other.getType());
+        NumericValue v1 = getNumeric();
+        NumericValue v2 = other.getNumeric();
+        if (v1 != null && v2 != null) {
+            // numeric division
+            return Value.getValue(v1.divide(v2));
+        }
+        throw new RockstarRuntimeException(getType() + " over " + other.getType());
     }
 
     public Value and(Value other) {
@@ -262,7 +273,9 @@ public class Value {
                     // convert String to bool
                     return (getBoolFromStringAliases(stringValue) == other.getBool()) ? 0 : 1;
                 case NUMBER:
-                    return getNumeric().compareTo(other.getNumeric());
+                    NumericValue v1 = getNumeric();
+                    return (v1 == null) ? 1 : v1.compareTo(other.getNumeric());
+
             }
         }
         if (other.isString()) {
@@ -273,7 +286,8 @@ public class Value {
                     // convert String to bool
                     return (getBool() == getBoolFromStringAliases(other.stringValue)) ? 0 : 1;
                 case NUMBER:
-                    return getNumeric().compareTo(other.getNumeric());
+                     NumericValue v2 = other.getNumeric();
+                    return (v2 == null) ? -1 : getNumeric().compareTo(v2);
             }
         }
         // booleans compare as truthiness values with number and null
