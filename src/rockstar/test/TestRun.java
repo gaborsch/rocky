@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Scanner;
 import rockstar.Rockstar;
 import rockstar.parser.ParseException;
 
@@ -29,7 +30,7 @@ public class TestRun {
 
         TestResult result = new TestResult(exp);
 
-        Rockstar rockstar = null;
+//        Rockstar rockstar = null;
         try {
             // input stream
             InputStream in;
@@ -49,7 +50,7 @@ public class TestRun {
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = rdr.readLine()) != null) {
-                    sb.append(line);
+                    sb.append(line).append('\n');
                 }
                 expectedOutput = sb.toString();
 //                System.out.println("Output validation file " + outValidationFile.getName() + " found, " + expectedOutput.length() + " chars");
@@ -63,17 +64,12 @@ public class TestRun {
             ByteArrayOutputStream errs = new ByteArrayOutputStream();
             PrintStream err = new PrintStream(errs);
 
-            rockstar = new Rockstar(in, out, err, new HashMap<>());
+            Rockstar rockstar = new Rockstar(in, out, err, new HashMap<>());
             rockstar.run(filename);
 
             String output = os.toString(Charset.defaultCharset());
 
-//            if (output != null && output.length() > 0) {
-//                System.out.println("Output for " + filename + ": " + output.length() + " chars");
-//                System.out.println(output);
-//            } else if (expectedOutput.length() > 0) {
-//                result.setMessage("No output received");
-//            }
+            compareOutput(expectedOutput, output, result);
 
         } catch (ParseException e) {
             result.setMessage("Parse error:" + e.getMessage());
@@ -89,8 +85,30 @@ public class TestRun {
 //        if (rockstar != null) {
 //            System.out.println(rockstar.getLogString());
 //        }
-
         return result;
+    }
+
+    private void compareOutput(String expectedOutput, String output, TestResult result) {
+        int lineNum = 1;
+        Scanner exp = new Scanner(expectedOutput).useDelimiter("\\r?\\n");
+        Scanner act = new Scanner(output).useDelimiter("\\r?\\n");
+
+        while (exp.hasNext()&& act.hasNext()) {
+            String expLine = exp.next();
+            String actLine = act.next();
+            if (!expLine.equals(actLine)) {
+                String msg = "OUTPUT MISMATCH at line " + lineNum + ": expected '" + expLine + "', got '" + actLine + "'";
+                result.setMessage(msg);
+                return;
+            }
+            lineNum++;
+        }
+        if (exp.hasNext()) {
+            result.setMessage("PREMATURE END OF OUTPUT at line " + lineNum);
+        } else if (act.hasNext()) {
+            result.setMessage("SURPLUS OUTPUT at line " + lineNum);
+        }
+
     }
 
 }
