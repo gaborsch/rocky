@@ -48,6 +48,7 @@ public class IncrementStatement extends Statement {
         Value v = ctx.getVariableValue(variable.getName());
         if (v.isMysterious() || v.isNull()) {
             v = Value.getValue(NumericValue.ZERO);
+            // v is set to a numeric value
             ctx.setVariable(variable.getName(), v);
         }
         if (v.isNumeric()) {

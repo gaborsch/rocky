@@ -58,8 +58,8 @@ public class BlockContext {
         this.log = parent.log;
     }
 
-    public BlockContext getParent() {
-        return parent;
+    public boolean isGlobalContext() {
+        return this == parent;
     }
 
     public BufferedReader getInput() {
@@ -81,34 +81,54 @@ public class BlockContext {
     public String getLogString() {
         return log.toString();
     }
-
+    
+    /**
+     * Set a variable value in the proper context
+     * @param name
+     * @param value 
+     */
     public void setVariable(String name, Value value) {
-        BlockContext ctx = findVariableContext(name);
-        if (ctx == null) {
-            ctx = this;
+        if (this.vars.containsKey(name)) {
+            // if it is already defined locally, set it locallz
+            setLocalVariable(name, value);
+        } else if (root.vars.containsKey(name)) {
+            // if it is already defined globally, set in the root context
+            root.setLocalVariable(name, value);
         }
-        ctx.vars.put(name, value);
+        // define locally or globally, whichecer context we are in
+        setLocalVariable(name, value);
     }
 
+    /**
+     * Set a variable in the local context, hiding global variables (e.g. function parameters)
+     * @param name
+     * @param value 
+     */
     public void setLocalVariable(String name, Value value) {
         vars.put(name, value);
     }
 
+    /**
+     * Get a variable value, either from local or from global context
+     * @param name
+     * @return 
+     */
     public Value getVariableValue(String name) {
-        BlockContext ctx = findVariableContext(name);
-        if (ctx != null) {
-            return ctx.vars.get(name);
+        // a variable is either local or global
+        Value v = this.vars.get(name);
+        if(v == null) { 
+            v = root.vars.get(name);
         }
-        return Value.MYSTERIOUS;
+        return v == null ? Value.MYSTERIOUS : v;
     }
 
-    private BlockContext findVariableContext(String name) {
-//        return root;
-        if (vars.containsKey(name)) {
-            return this;
-        }
-        return (parent == this || parent == null) ? null : parent.findVariableContext(name);
-    }
+//    private BlockContext findVariableContext(String name) {
+////        return root;
+//        if (vars.containsKey(name)) {
+//            return this;
+//        }
+//        return (parent == this || parent == null) ? null : parent.findVariableContext(name);
+//    }
 
     public FunctionBlock retrieveFunction(String name) {
         return root.funcs.get(name);
