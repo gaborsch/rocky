@@ -79,7 +79,7 @@ public class Value {
         return type == ExpressionType.STRING;
     }
 
-    public NumericValue getNumeric() {
+    private NumericValue getNumeric() {
         switch (getType()) {
             case NUMBER:
                 return numericValue;
@@ -131,14 +131,14 @@ public class Value {
         throw new RockstarRuntimeException("unknown bool value");
     }
 
-    private static boolean getBoolFromStringAliases(String s) {
+    private static Boolean getBoolFromStringAliases(String s) {
         if (ExpressionParser.BOOLEAN_TRUE_KEYWORDS.contains(s.toLowerCase())) {
-            return true;
+            return Boolean.TRUE;
         }
-//        if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s.toLowerCase())) {
-        return false;
-//        }
-//        throw new RockstarRuntimeException("unknown bool value: " + s);
+        if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s.toLowerCase())) {
+            return Boolean.FALSE;
+        }
+        return null;
     }
 
     public Value asBoolean() {
@@ -271,7 +271,8 @@ public class Value {
                     return 1;
                 case BOOLEAN:
                     // convert String to bool
-                    return (getBoolFromStringAliases(stringValue) == other.getBool()) ? 0 : 1;
+                    Boolean b = getBoolFromStringAliases(stringValue);
+                    return ( b != null && b == other.getBool()) ? 0 : 1;
                 case NUMBER:
                     NumericValue v1 = getNumeric();
                     return (v1 == null) ? 1 : v1.compareTo(other.getNumeric());
@@ -284,9 +285,10 @@ public class Value {
                     return 1;
                 case BOOLEAN:
                     // convert String to bool
-                    return (getBool() == getBoolFromStringAliases(other.stringValue)) ? 0 : 1;
+                    Boolean b = getBoolFromStringAliases(other.stringValue);
+                    return (b != null && getBool() == b) ? 0 : 1;
                 case NUMBER:
-                     NumericValue v2 = other.getNumeric();
+                    NumericValue v2 = other.getNumeric();
                     return (v2 == null) ? -1 : getNumeric().compareTo(v2);
             }
         }
