@@ -102,4 +102,16 @@ public class Line {
         return t;
     }
     
+    public String getOrigLineAfter(String token) {
+        int pos = origLine.indexOf(token);
+        pos += token.length();
+        while (pos < origLine.length() && origLine.charAt(pos)==' ') {
+            pos++;
+        }
+        if (pos < origLine.length()){ 
+            return origLine.substring(pos);
+        }
+        return "";
+    }
+    
 }

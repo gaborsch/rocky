@@ -32,7 +32,10 @@ public class PoeticAssignmentChecker extends Checker {
                     }
                 } else {
                     // poetic literals
-                    ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line);
+                    String matched = getMatchedStringObject(1); // the matched string: "is", "was", ...
+                    String orig = line.getOrigLine();
+                    String origEnd = orig.substring(orig.indexOf(matched) + matched.length() + 1);
+                    ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line, origEnd);
                     if (constValue != null) {
                         return new AssignmentStatement(varRef, constValue);
                     }

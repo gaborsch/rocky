@@ -19,6 +19,7 @@ public abstract class Checker {
     //        private final Map<String, Integer> positionsMap = new HashMap<>();
     private final List<String>[] result = new List[10];
     private boolean hasMatch = false;
+    private Object[] matchedParams;
 
     public List<String>[] getResult() {
         return result;
@@ -27,6 +28,7 @@ public abstract class Checker {
     public Checker initialize(Line l) {
         this.line = l;
         this.hasMatch = false;
+        this.matchedParams = null;
         return this;
     }
 
@@ -75,6 +77,7 @@ public abstract class Checker {
             return false;
         }
         this.hasMatch = true;
+        this.matchedParams = params;
         return true;
     }
 
@@ -94,6 +97,19 @@ public abstract class Checker {
             }
         }
         return -1;
+    }
+    
+    protected String getMatchedStringObject(int n) {
+        int cnt = 0;
+        for (Object param : matchedParams) {
+            if(param instanceof String) {
+                cnt++;
+                if (cnt == n) {
+                    return (String) param;
+                }
+            }
+        }
+        return null;
     }
     
 }

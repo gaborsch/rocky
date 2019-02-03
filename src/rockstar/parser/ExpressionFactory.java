@@ -81,7 +81,39 @@ public class ExpressionFactory {
         return null;
     }
 
-    public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line) {
+    public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line, String orig) {
+        ConstantExpression literal = tryLiteralFor(list, line);
+        if (literal != null) {
+            return literal;
+        }
+        NumericValue v = NumericValue.ZERO;
+        boolean isFraction = false;
+//        int digit = 0;
+//        int pos = 0;
+//        while (pos < orig.length()) {
+//            char c = orig.charAt(pos);
+//            while(pos < orig.length() && Character.is)
+//        }
+//        
+        
+        
+        NumericValue frac = NumericValue.ONE;
+        for (String token : list) {
+            int len = token.replace(".", "").length();
+            if (!isFraction) {
+                // integer part
+                v = v.multiply(NumericValue.TEN).plus(NumericValue.getValueFor(len % 10));
+                isFraction = token.endsWith(".");
+            } else {
+                // fraction part
+                frac = frac.divide(NumericValue.TEN);
+                v = v.plus(frac.multiply(NumericValue.getValueFor(len % 10)));
+            }
+        }
+        return new ConstantExpression(v);
+    }
+
+    private static ConstantExpression getPoeticLiteralForDELETEIT(List<String> list, Line line) {
         ConstantExpression literal = tryLiteralFor(list, line);
         if (literal != null) {
             return literal;
