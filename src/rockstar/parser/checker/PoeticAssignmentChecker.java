@@ -9,6 +9,7 @@ import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
+import rockstar.parser.ParseException;
 import rockstar.statement.AssignmentStatement;
 import rockstar.statement.Statement;
 
@@ -17,7 +18,7 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class PoeticAssignmentChecker extends Checker {
-    
+
     @Override
     public Statement check() {
         if (match(1, "is", 2) || match(1, "was", 2) || match(1, "are", 2) || match(1, "were", 2)) {
@@ -34,7 +35,20 @@ public class PoeticAssignmentChecker extends Checker {
                     // poetic literals
                     String matched = getMatchedStringObject(1); // the matched string: "is", "was", ...
                     String orig = line.getOrigLine();
-                    String origEnd = orig.substring(orig.indexOf(matched) + matched.length() + 1);
+                    int p = orig.indexOf(matched);
+                    if (p >= 0) {
+                        p = p + matched.length() + 1;
+                    } else {
+                        // maybe "'s" was expanded to " is "
+                        p = orig.indexOf("'s");
+                        if (p >= 0) {
+                            p = p + 3; // "'s ".length()
+                        } else {
+                            // was expecting either the matching word, or "'s", neither found
+                            throw new ParseException("Unparsed poetic number assignment", line);
+                        }
+                    }
+                    String origEnd = orig.substring(p);
                     ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line, origEnd);
                     if (constValue != null) {
                         return new AssignmentStatement(varRef, constValue);
@@ -44,5 +58,5 @@ public class PoeticAssignmentChecker extends Checker {
         }
         return null;
     }
-    
+
 }

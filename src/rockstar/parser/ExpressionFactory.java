@@ -21,9 +21,10 @@ public class ExpressionFactory {
 
     /**
      * tries to parse an expression, returns null if failed
+     *
      * @param tokens
      * @param line
-     * @return 
+     * @return
      */
     public static Expression tryExpressionFor(List<String> tokens, Line line) {
         Expression parsed = new ExpressionParser(tokens, line).parse();
@@ -32,12 +33,13 @@ public class ExpressionFactory {
         }
         return null;
     }
-    
+
     /**
      * Parse an expression, throw exception if failed
+     *
      * @param tokens
      * @param line
-     * @return 
+     * @return
      */
     public static Expression getExpressionFor(List<String> tokens, Line line) {
         Expression parsed = new ExpressionParser(tokens, line).parse();
@@ -51,9 +53,10 @@ public class ExpressionFactory {
 
     /**
      * Try a variable reference, returns null if failed
+     *
      * @param list
      * @param line
-     * @return 
+     * @return
      */
     public static VariableReference tryVariableReferenceFor(List<String> list, Line line) {
         ExpressionParser parser = new ExpressionParser(list, line);
@@ -64,12 +67,13 @@ public class ExpressionFactory {
         }
         return null;
     }
-    
+
     /**
      * Try to parse a literal, returns null if failed
+     *
      * @param list
      * @param line
-     * @return 
+     * @return
      */
     public static ConstantExpression tryLiteralFor(List<String> list, Line line) {
         ExpressionParser parser = new ExpressionParser(list, line);
@@ -82,33 +86,39 @@ public class ExpressionFactory {
     }
 
     public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line, String orig) {
+        // if a literal word like "nothing", then use that
         ConstantExpression literal = tryLiteralFor(list, line);
         if (literal != null) {
             return literal;
         }
+
+        // parse the orig String
         NumericValue v = NumericValue.ZERO;
-        boolean isFraction = false;
-//        int digit = 0;
-//        int pos = 0;
-//        while (pos < orig.length()) {
-//            char c = orig.charAt(pos);
-//            while(pos < orig.length() && Character.is)
-//        }
-//        
-        
-        
         NumericValue frac = NumericValue.ONE;
-        for (String token : list) {
-            int len = token.replace(".", "").length();
-            if (!isFraction) {
-                // integer part
-                v = v.multiply(NumericValue.TEN).plus(NumericValue.getValueFor(len % 10));
-                isFraction = token.endsWith(".");
-            } else {
-                // fraction part
-                frac = frac.divide(NumericValue.TEN);
-                v = v.plus(frac.multiply(NumericValue.getValueFor(len % 10)));
+        boolean isFraction = false;
+        int digit = 0;
+        int pos = 0;
+        while (pos <= orig.length()) {
+            char c = (pos < orig.length()) ? orig.charAt(pos) : ' ';
+            if (Character.isLetter(c)) {
+                digit++;
+            } else if (c == '.' || c == ' ') {
+                if (digit > 0) {
+                    if (!isFraction) {
+                        // integer part
+                        v = v.multiply(NumericValue.TEN).plus(NumericValue.getValueFor(digit % 10));
+                    } else {
+                        // fraction part
+                        frac = frac.divide(NumericValue.TEN);
+                        v = v.plus(frac.multiply(NumericValue.getValueFor(digit % 10)));
+                    }
+                }
+                if (c == '.') {
+                    isFraction = true;
+                }
+                digit = 0;
             }
+            pos++;
         }
         return new ConstantExpression(v);
     }
