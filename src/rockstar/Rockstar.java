@@ -62,10 +62,10 @@ public class Rockstar {
         try {
             // TODO code application logic here
             Program prg = new Parser(filename).parse();
-            if (true) {
-                error.println("File parsed: ");
-                new StatementPrinter().print(prg, error);
-            }
+//            if (true) {
+//                error.println("File parsed: ");
+//                new StatementPrinter().print(prg, error);
+//            }
             prg.execute(ctx);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Rockstar.class.getName()).log(Level.SEVERE, null, ex);

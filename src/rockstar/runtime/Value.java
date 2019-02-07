@@ -116,13 +116,13 @@ public class Value {
     }
 
     public boolean getBool() {
-        switch (getType()) {
+            switch (getType()) {
             case BOOLEAN:
                 return boolValue;
             case NUMBER:
                 return numericValue.compareTo(NumericValue.ZERO) != 0;
             case STRING:
-                return true;
+                return this.stringValue.length() > 0;
             case MYSTERIOUS:
                 return false;
             case NULL:
