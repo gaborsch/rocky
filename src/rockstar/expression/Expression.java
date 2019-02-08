@@ -16,6 +16,8 @@ public abstract class Expression {
   
     public abstract Value evaluate(BlockContext ctx); 
 
+    public abstract String format();
+
 
 }
 

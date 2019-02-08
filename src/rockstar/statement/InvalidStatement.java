@@ -17,16 +17,21 @@ public class InvalidStatement extends Statement {
 
     public InvalidStatement() {
         Line l = getLine();
-        throw new ParseException("Statement parsing in "+l.getFileName()+" at line " + l.getLnum() + ":\n" + l.getOrigLine(), l);
+        throw new ParseException("Statement parsing in " + l.getFileName() + " at line " + l.getLnum() + ":\n" + l.getOrigLine(), l);
     }
 
     @Override
     public void execute(BlockContext ctx) {
-        throw new UnsupportedOperationException("InvalidStatement not supported."); 
+        throw new UnsupportedOperationException("InvalidStatement not supported.");
     }
 
     @Override
     public String explain(BlockContext ctx) {
         return null;
+    }
+    
+    @Override
+    protected String list() {
+        return "!!!INVALID!!!";
     }
 }

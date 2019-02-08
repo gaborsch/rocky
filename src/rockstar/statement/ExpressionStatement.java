@@ -15,30 +15,35 @@ import rockstar.runtime.Value;
  */
 public class ExpressionStatement extends Statement {
 
-    private final Expression expr;
+    private final Expression expression;
 
-    public ExpressionStatement(Expression expr) {
-        this.expr = expr;
+    public ExpressionStatement(Expression expression) {
+        this.expression = expression;
     }
 
     public Expression getExpression() {
-        return expr;
+        return expression;
     }
 
     @Override
     public String toString() {
         return super.toString()
-                + "\n    EXPR: " + expr;
+                + "\n    EXPR: " + expression;
     }
 
     @Override
     public void execute(BlockContext ctx) {
-        Value v = expr.evaluate(ctx);
+        Value v = expression.evaluate(ctx);
     }
 
         
     @Override
     public String explain(BlockContext ctx) {
         return null;
+    }
+    
+    @Override
+    protected String list() {
+        return expression.format();
     }
 }

@@ -24,4 +24,11 @@ public class BlockEnd extends Statement {
     public String explain(BlockContext ctx) {
         return null;
     }
+
+    @Override
+    protected String list() {
+        return "";
+    }
+    
+    
 }

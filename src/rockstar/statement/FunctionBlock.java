@@ -88,5 +88,10 @@ public class FunctionBlock extends Block {
         return "FUNCDEF: " + name + "(" + Arrays.deepToString(parameterNames.toArray()) + ")";
     }
 
+    @Override
+    protected String list() {
+        return "function " + name + ": " + Arrays.deepToString(parameterNames.toArray());
+    }
+
     
 }

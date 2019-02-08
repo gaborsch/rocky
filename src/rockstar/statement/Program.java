@@ -32,5 +32,14 @@ public class Program extends Block {
     public String explain(BlockContext ctx) {
         return null;
     }
+
+    @Override
+    protected String list() {
+        return "PROGRAM " + name;
+    }
+
+    public String listProgram() {
+        return list(0);
+    }
     
 }

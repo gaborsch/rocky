@@ -73,4 +73,9 @@ public class DecrementStatement extends Statement {
     public String explain(BlockContext ctx) {
         return variable.getName() + " = " + ctx.getVariableValue(variable.getName());
     }
+    
+    @Override
+    protected String list() {
+        return variable.getName()+ " -= " + count;
+    }
 }

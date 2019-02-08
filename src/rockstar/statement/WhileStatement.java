@@ -43,7 +43,7 @@ public class WhileStatement extends Block {
     }
 
     private boolean lastCondition = false;
-            
+
     @Override
     public void execute(BlockContext ctx) {
         int loopCount = 0;
@@ -64,7 +64,7 @@ public class WhileStatement extends Block {
             // other exceptions like ReturnException are falling thru
 
             loopCount++;
-            
+
             v = condition.evaluate(ctx);
             lastCondition = canContinue && (v.asBoolean().getBool() ^ negateCondition);
         }
@@ -77,6 +77,15 @@ public class WhileStatement extends Block {
     @Override
     public String explain(BlockContext ctx) {
         return "Loop condition: " + lastCondition;
+    }
+
+    @Override
+    protected String list() {
+        if (negateCondition) {
+            return "until(" + condition.format() + ")";
+        } else {
+            return "while(" + condition.format() + ")";
+        }
     }
 
 }

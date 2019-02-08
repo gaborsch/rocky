@@ -6,7 +6,6 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;

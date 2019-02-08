@@ -65,4 +65,11 @@ public abstract class CompoundExpression extends Expression {
         return String.format(getFormat(), parameters.toArray());
     }
 
+    @Override
+    public String format() {
+        List<String> formattedParams = new LinkedList<>();
+        parameters.forEach((param) -> formattedParams.add(param.format()));
+        return String.format(getFormat(), formattedParams.toArray());
+    }
+
 }

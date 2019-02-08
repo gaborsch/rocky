@@ -36,4 +36,9 @@ public class ContinueStatement extends Statement {
     public String explain(BlockContext ctx) {
         return null;
     }
+    
+    @Override
+    protected String list() {
+        return "continue";
+    }
 }

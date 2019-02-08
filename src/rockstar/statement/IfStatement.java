@@ -49,9 +49,14 @@ public class IfStatement extends Block {
         }
 
     }
-    
+
     @Override
     public String explain(BlockContext ctx) {
         return lastValue.toString();
+    }
+
+    @Override
+    protected String list() {
+        return "if(" + condition.format() + ")";
     }
 }

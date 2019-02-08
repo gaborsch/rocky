@@ -51,5 +51,12 @@ public class VariableReference extends SimpleExpression {
         return value;
     }
 
+    @Override
+    public String format() {
+        return name;
+    }
+    
+    
+
     
 }

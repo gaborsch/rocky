@@ -51,6 +51,13 @@ public class ConstantExpression extends SimpleExpression {
     public Value evaluate(BlockContext ctx) {
         return value;
     }
+
+    @Override
+    public String format() {
+        return this.value.toString();
+    }
+    
+    
     
     
 

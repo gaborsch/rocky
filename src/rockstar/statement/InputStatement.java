@@ -51,4 +51,9 @@ public class InputStatement extends Statement {
     public String explain(BlockContext ctx) {
         return null;
     }
+    
+    @Override
+    protected String list() {
+        return "input " + (variable == null ? "<line>" : variable.getName());
+    }
 }

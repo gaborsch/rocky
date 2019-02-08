@@ -73,6 +73,11 @@ public class DummyExpression extends Expression {
     public Value evaluate(BlockContext ctx) {
         throw new RockstarRuntimeException(errorMsg); 
     }
+
+    @Override
+    public String format() {
+        return "!!!DummyExpression!!!";
+    }
     
     
 }

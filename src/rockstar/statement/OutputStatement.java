@@ -41,10 +41,9 @@ public class OutputStatement extends Statement {
         return lastValue.getString();
     }
     
-    
-
-
-    
-    
+    @Override
+    protected String list() {
+        return "output " + expression.format();
+    }
     
 }

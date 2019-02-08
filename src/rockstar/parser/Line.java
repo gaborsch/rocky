@@ -85,11 +85,12 @@ public class Line {
                     pos = nextCB + 1;
                     break;
                 default:
-                    int limit = pos + 1;
+                    int limit = pos;
                     StringBuilder tokenBuilder = new StringBuilder();
                     boolean endOfToken = false;
                     while (!endOfToken) {
-                        while (limit < len && Character.isLetter(line.charAt(limit))) {
+                        while (limit < len && 
+                                (Character.isLetterOrDigit(line.charAt(limit)) || line.charAt(limit) == '.')) {
                             limit++;
                         }
                         tokenBuilder.append(line.substring(pos, limit));
@@ -99,7 +100,7 @@ public class Line {
                             char c = line.charAt(limit);
                             String right = line.substring(limit);
                             if (c == '\'') {
-                                if (right.matches("'s\\W")) {
+                                if (right.matches("'s\\b.*")) {
                                     // "'s" becomes " is "
                                     endOfToken = true;
                                     nextToken = "is";
@@ -122,7 +123,11 @@ public class Line {
                                 endOfToken = true;
                                 nextToken = "and";
                                 limit++;
-                            }
+                            } else {
+                                // skip character, end token if word separator
+                                limit++;
+                                endOfToken = (c == ' ');
+                            } 
                         }
                     }
                     if (tokenBuilder.length() > 0) {

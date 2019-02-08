@@ -1,6 +1,5 @@
 package rockstar;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import rockstar.statement.Program;
 import java.io.FileNotFoundException;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import rockstar.parser.Parser;
-import rockstar.parser.StatementPrinter;
 import rockstar.runtime.BlockContext;
 import rockstar.test.RockstarTest;
 
@@ -58,18 +56,20 @@ public class Rockstar {
         ctx = new BlockContext(this.input, this.output, this.error, this.env);
     }
 
-    public void run(String filename) {
+    public Program run(String filename) {
+        Program prg = null;
         try {
             // TODO code application logic here
-            Program prg = new Parser(filename).parse();
-//            if (true) {
-//                error.println("File parsed: ");
-//                new StatementPrinter().print(prg, error);
-//            }
+            prg = new Parser(filename).parse();
+            
+            // list the parsed program
+//            System.out.println(prg.list(0));
+
             prg.execute(ctx);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Rockstar.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return prg;
     }
 
     public String getLogString() {

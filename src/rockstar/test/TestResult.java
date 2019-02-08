@@ -16,6 +16,7 @@ public class TestResult {
     private boolean isExecuted;
     private Throwable exception;
     private String message;
+    private String debugInfo;
 
     public TestResult(RockstarTest.Expected expected) {
         this.isExecuted = true;
@@ -64,4 +65,12 @@ public class TestResult {
         return isExecuted == (expected == RockstarTest.Expected.CORRECT);
     }
 
+    public String getDebugInfo() {
+        return debugInfo;
+    }
+
+    public void setDebugInfo(String debugInfo) {
+        this.debugInfo = debugInfo;
+    }
+    
 }

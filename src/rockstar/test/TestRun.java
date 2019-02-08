@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import rockstar.Rockstar;
 import rockstar.parser.ParseException;
+import rockstar.statement.Program;
 
 /**
  *
@@ -30,7 +31,7 @@ public class TestRun {
 
         TestResult result = new TestResult(exp);
 
-//        Rockstar rockstar = null;
+        Program prg = null;
         try {
             // input stream
             InputStream in;
@@ -65,7 +66,7 @@ public class TestRun {
             PrintStream err = new PrintStream(errs);
 
             Rockstar rockstar = new Rockstar(in, out, err, new HashMap<>());
-            rockstar.run(filename);
+            prg = rockstar.run(filename);
 
             String output = os.toString(Charset.defaultCharset());
 
@@ -85,6 +86,10 @@ public class TestRun {
 //        if (rockstar != null) {
 //            System.out.println(rockstar.getLogString());
 //        }
+        if (! result.isPassed()) {
+            result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram());
+        }
+
         return result;
     }
 
@@ -93,7 +98,7 @@ public class TestRun {
         Scanner exp = new Scanner(expectedOutput).useDelimiter("\\r?\\n");
         Scanner act = new Scanner(output).useDelimiter("\\r?\\n");
 
-        while (exp.hasNext()&& act.hasNext()) {
+        while (exp.hasNext() && act.hasNext()) {
             String expLine = exp.next();
             String actLine = act.next();
             if (!expLine.equals(actLine)) {

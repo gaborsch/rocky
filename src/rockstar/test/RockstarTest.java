@@ -78,6 +78,7 @@ public class RockstarTest {
         TestResult result = new TestRun().execute(file.getAbsolutePath(), exp);
         String message = result.getMessage();
         Throwable exc = result.getException();
+        String debugInfo = result.getDebugInfo();
         String excName = exc == null ? "" : exc.getClass().getSimpleName();
         if (result.isPassed()) {
             passed++;
@@ -85,9 +86,11 @@ public class RockstarTest {
         } else {
             failed++;
             if (exc == null) {
-                System.out.printf("!  [FAIL] %-40s %s", file.getName(), message);
+                System.out.printf("!  [FAIL] %-40s %s\n", file.getName(), message);
+                System.out.println(debugInfo);
             } else {
-                System.out.printf("!! [EXCP] %-40s %s %s", file.getName(), excName, message);
+                System.out.printf("!! [EXCP] %-40s %s %s\n", file.getName(), excName, message);
+                System.out.println(debugInfo);
             }
         }
         System.out.println();

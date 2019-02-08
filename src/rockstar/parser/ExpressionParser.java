@@ -409,6 +409,11 @@ public class ExpressionParser {
         public Value evaluate(BlockContext ctx) {
             return null;
         }
+
+        @Override
+        public String format() {
+            return "$";
+        }
         
         
 
