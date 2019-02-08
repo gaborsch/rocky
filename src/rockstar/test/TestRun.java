@@ -67,6 +67,7 @@ public class TestRun {
 
             Rockstar rockstar = new Rockstar(in, out, err, new HashMap<>());
             prg = rockstar.run(filename);
+            result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram());
 
             String output = os.toString(Charset.defaultCharset());
 
@@ -74,20 +75,10 @@ public class TestRun {
 
         } catch (ParseException e) {
             result.setMessage("Parse error:" + e.getMessage());
+            result.setDebugInfo(e.getLine().getOrigLine());
         } catch (Throwable e) {
             result.setException(e);
             result.setMessage(e.getMessage());
-//            if (rockstar != null) {
-//                System.err.println(rockstar.getLogString());
-//            }
-        }
-
-        // print log
-//        if (rockstar != null) {
-//            System.out.println(rockstar.getLogString());
-//        }
-        if (! result.isPassed()) {
-            result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram());
         }
 
         return result;
