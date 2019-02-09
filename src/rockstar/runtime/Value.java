@@ -21,14 +21,14 @@ public class Value {
 
     private ExpressionType type = null;
     private String stringValue;
-    private NumericValue numericValue;
+    private Dec64 numericValue;
     private Boolean boolValue;
 
     public static Value getValue(String s) {
         return new Value(s);
     }
 
-    public static Value getValue(NumericValue n) {
+    public static Value getValue(Dec64 n) {
         return new Value(n);
     }
 
@@ -45,7 +45,7 @@ public class Value {
         this.type = ExpressionType.STRING;
     }
 
-    private Value(NumericValue numericValue) {
+    private Value(Dec64 numericValue) {
         this.numericValue = numericValue;
         this.type = ExpressionType.NUMBER;
     }
@@ -79,22 +79,22 @@ public class Value {
         return type == ExpressionType.STRING;
     }
 
-    private NumericValue getNumeric() {
+    private Dec64 getNumeric() {
         switch (getType()) {
             case NUMBER:
                 return numericValue;
             case STRING:
                 try {
-                    return NumericValue.parse(stringValue);
+                    return Dec64.parse(stringValue);
                 } catch (NumberFormatException nfe) {
                     return null;
                 }
             case BOOLEAN:
-                return boolValue ? NumericValue.ONE : NumericValue.ZERO;
+                return boolValue ? Dec64.ONE : Dec64.ZERO;
             case MYSTERIOUS:
-                return NumericValue.ZERO;
+                return Dec64.ZERO;
             case NULL:
-                return NumericValue.ZERO;
+                return Dec64.ZERO;
         }
         throw new RockstarRuntimeException("unknown numeric value");
     }
@@ -120,7 +120,7 @@ public class Value {
             case BOOLEAN:
                 return boolValue;
             case NUMBER:
-                return numericValue.compareTo(NumericValue.ZERO) != 0;
+                return numericValue.compareTo(Dec64.ZERO) != 0;
             case STRING:
                 return this.stringValue.length() > 0;
             case MYSTERIOUS:
@@ -172,35 +172,35 @@ public class Value {
             // String concatenation
             return Value.getValue(getString() + other.getString());
         } else {
-            NumericValue v1 = getNumeric();
-            NumericValue v2 = other.getNumeric();
+            Dec64 v1 = getNumeric();
+            Dec64 v2 = other.getNumeric();
             if (v1 != null && v2 != null) {
                 // numeric addition (cannot be String)
-                return Value.getValue(v1.plus(v2));
+                return Value.getValue(v1.add(v2));
             }
         }
         throw new RockstarRuntimeException(getType() + " plus " + other.getType());
     }
 
     public Value minus(Value other) {
-        NumericValue v1 = getNumeric();
-        NumericValue v2 = other.getNumeric();
+        Dec64 v1 = getNumeric();
+        Dec64 v2 = other.getNumeric();
         if (v1 != null && v2 != null) {
             // numeric subtraction
-            return Value.getValue(v1.minus(v2));
+            return Value.getValue(v1.subtract(v2));
         }
         throw new RockstarRuntimeException(getType() + " minus " + other.getType());
     }
 
     public Value multiply(Value other) {
-        NumericValue v2 = other.getNumeric();
+        Dec64 v2 = other.getNumeric();
         if (isString()) {
             if (v2 != null) {
                 // String repeating (STRING times NUMBER)
                 return Value.getValue(getString().repeat(v2.asInt()));
             }
         } else if (other.isString()) {
-            NumericValue v1 = getNumeric();
+            Dec64 v1 = getNumeric();
             if (v1 != null) {
                 // String repeating (NUMBER times STRING)
                 return Value.getValue(other.getString().repeat(v1.asInt()));
@@ -215,8 +215,8 @@ public class Value {
     }
 
     public Value divide(Value other) {
-        NumericValue v1 = getNumeric();
-        NumericValue v2 = other.getNumeric();
+        Dec64 v1 = getNumeric();
+        Dec64 v2 = other.getNumeric();
         if (v1 != null && v2 != null) {
             // numeric division
             return Value.getValue(v1.divide(v2));
@@ -274,7 +274,7 @@ public class Value {
                     Boolean b = getBoolFromStringAliases(stringValue);
                     return ( b != null && b == other.getBool()) ? 0 : 1;
                 case NUMBER:
-                    NumericValue v1 = getNumeric();
+                    Dec64 v1 = getNumeric();
                     return (v1 == null) ? 1 : v1.compareTo(other.getNumeric());
 
             }
@@ -288,7 +288,7 @@ public class Value {
                     Boolean b = getBoolFromStringAliases(other.stringValue);
                     return (b != null && getBool() == b) ? 0 : 1;
                 case NUMBER:
-                    NumericValue v2 = other.getNumeric();
+                    Dec64 v2 = other.getNumeric();
                     return (v2 == null) ? -1 : getNumeric().compareTo(v2);
             }
         }

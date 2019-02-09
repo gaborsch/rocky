@@ -90,7 +90,7 @@ public class Line {
                     boolean endOfToken = false;
                     while (!endOfToken) {
                         while (limit < len && 
-                                (Character.isLetterOrDigit(line.charAt(limit)) || line.charAt(limit) == '.')) {
+                                (Character.isLetterOrDigit(line.charAt(limit)) || line.charAt(limit) == '.' || line.charAt(limit) == '-')) {
                             limit++;
                         }
                         tokenBuilder.append(line.substring(pos, limit));
@@ -113,6 +113,7 @@ public class Line {
                                 } else {
                                     // skip single quote within word
                                     limit++;
+                                    pos = limit;
                                 }
                             } else if (right.startsWith(", and")) {
                                 // double and: skip the first
@@ -126,6 +127,7 @@ public class Line {
                             } else {
                                 // skip character, end token if word separator
                                 limit++;
+                                pos = limit;
                                 endOfToken = (c == ' ');
                             } 
                         }

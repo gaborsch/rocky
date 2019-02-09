@@ -10,8 +10,7 @@ import rockstar.expression.ConstantExpression;
 import rockstar.expression.DummyExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.Line;
-import rockstar.runtime.NumericValue;
+import rockstar.runtime.Dec64;
 
 /**
  *
@@ -93,8 +92,8 @@ public class ExpressionFactory {
         }
 
         // parse the orig String
-        NumericValue v = NumericValue.ZERO;
-        NumericValue frac = NumericValue.ONE;
+        Dec64 v = Dec64.ZERO;
+        Dec64 frac = Dec64.ONE;
         boolean isFraction = false;
         int digit = 0;
         int pos = 0;
@@ -106,11 +105,11 @@ public class ExpressionFactory {
                 if (digit > 0) {
                     if (!isFraction) {
                         // integer part
-                        v = v.multiply(NumericValue.TEN).plus(NumericValue.getValueFor(digit % 10));
+                        v = v.multiply(Dec64.TEN).add(Dec64.getValue(digit % 10));
                     } else {
                         // fraction part
-                        frac = frac.divide(NumericValue.TEN);
-                        v = v.plus(frac.multiply(NumericValue.getValueFor(digit % 10)));
+                        frac = frac.divide(Dec64.TEN);
+                        v = v.add(frac.multiply(Dec64.getValue(digit % 10)));
                     }
                 }
                 if (c == '.') {

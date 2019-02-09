@@ -83,6 +83,7 @@ public class RockstarTest {
             } else {
                 System.out.printf("!! [EXCP] %-40s %s %s\n", file.getName(), excName, message);
                 System.out.println(debugInfo);
+                throw new RuntimeException(exc);
             }
         }
         System.out.println();

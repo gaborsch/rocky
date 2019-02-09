@@ -30,7 +30,7 @@ public class Rockstar {
      * @param args the command line arguments
      */
     public static void main1(String[] args) {
-        String filename = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\parse-errors\\invalidPoeticLiteralAssignment.rock";
+        String filename = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock";
 //        String filename = "programs/tests/correct/factorial.rock";
 //        String filename = "programs/tests/correct/operators/andTest.rock";
 //        String filename = "programs/tests/parse-errors/elseOutsideIf.rock";

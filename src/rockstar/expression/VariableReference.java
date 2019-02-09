@@ -32,7 +32,7 @@ public class VariableReference extends SimpleExpression {
     }
 
     public VariableReference(String name, boolean isFunctionName) {
-        this.name = name;
+        this.name = name; 
         this.isFunctionName = isFunctionName;
     }
 

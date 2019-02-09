@@ -25,7 +25,7 @@ import rockstar.expression.PlusExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.NumericValue;
+import rockstar.runtime.Dec64;
 import rockstar.runtime.Value;
 
 /**
@@ -77,15 +77,15 @@ public class ExpressionParser {
         String next = list.get(idx + offset);
         return next;
     }
-    
+
     private void savePos() {
         savedIdx = idx;
     }
-    
+
     private void restorePos() {
         idx = savedIdx;
     }
-    
+
     public static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
     public static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
     public static final List<String> BOOLEAN_TRUE_KEYWORDS = Arrays.asList(new String[]{"true", "right", "yes", "ok"});
@@ -118,7 +118,7 @@ public class ExpressionParser {
                 next();
                 return ConstantExpression.CONST_FALSE;
             }
-            NumericValue nv = NumericValue.parse(token);
+            Dec64 nv = Dec64.parse(token);
             if (nv != null) {
                 next();
                 return new ConstantExpression(nv);
@@ -164,7 +164,7 @@ public class ExpressionParser {
                 }
             }
             // if a Proper Name is followed by "taking", it is a function call
-            if (! isFullyParsed() && peekCurrent().equals("taking")) {
+            if (!isFullyParsed() && peekCurrent().equals("taking")) {
                 isFunctionName = true;
             }
             name = sb.toString();
@@ -179,9 +179,9 @@ public class ExpressionParser {
         }
         if (name != null) {
             VariableReference varRef = new VariableReference(name, isFunctionName);
-            if (! isFunctionName) {
+            if (!isFunctionName) {
                 ExpressionFactory.lastVariable = varRef;
-            } 
+            }
             return varRef;
         }
         return null;
@@ -207,8 +207,8 @@ public class ExpressionParser {
             if (operator != null) {
                 // operator found
                 pushOperator(operator);
-                // after operators a value us requires, except FunctionCall that consumers values, too
-                operatorRequired = (operator instanceof FunctionCall);
+                // after operators a value is required, except FunctionCall that consumers values, too
+                operatorRequired = false;
             } else if (operatorRequired) {
                 // operator not found, but required
                 return new DummyExpression(list, idx, "Operator required");
@@ -232,8 +232,18 @@ public class ExpressionParser {
     private void pushOperator(CompoundExpression operator) {
 
         // interpret 
-        while (!operatorStack.isEmpty()
-                && (operatorStack.peek().getPrecedence() <= operator.getPrecedence())) {
+        while (!operatorStack.isEmpty()) {
+            int topPrec = operatorStack.peek().getPrecedence();
+            int newPrec = operator.getPrecedence();
+            
+            if (topPrec == 600 && newPrec == 600) {
+                // Logical NOT (right-associative)
+                break;
+            } 
+            if (topPrec > newPrec) {
+                // other (left-associative)
+                break;
+            }
 
             // take the operator from the top of the operator stack
             CompoundExpression op = operatorStack.pop();
@@ -363,8 +373,8 @@ public class ExpressionParser {
                 if (funcParam != null) {
                     // if a function call is found in the parameters, we need to rewind
                     // Example: say TrueFunc taking nothing and TrueFunc taking nothing
-                    if(funcParam instanceof VariableReference && 
-                            ((VariableReference)funcParam).isFunctionName()) {
+                    if (funcParam instanceof VariableReference
+                            && ((VariableReference) funcParam).isFunctionName()) {
                         restorePos();
                         break;
                     }
@@ -386,6 +396,7 @@ public class ExpressionParser {
             return functionCall;
         }
         return null;
+
     }
 
     private static class EndOfExpression extends CompoundExpression {
@@ -414,8 +425,6 @@ public class ExpressionParser {
         public String format() {
             return "$";
         }
-        
-        
 
     }
 
