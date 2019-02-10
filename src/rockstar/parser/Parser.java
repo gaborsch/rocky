@@ -12,7 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Stack;
+import rockstar.runtime.Utils;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
 import rockstar.statement.Program;
@@ -33,8 +35,12 @@ public class Parser {
     }
 
     public Parser(InputStream is, String filename) throws FileNotFoundException {
-        this.filename = filename;
-        rdr = new BufferedReader(new InputStreamReader(is));
+        try {
+            this.filename = filename;
+            rdr = new BufferedReader(new InputStreamReader(is, Utils.UTF8));
+        } catch (UnsupportedEncodingException ex) {
+            System.err.println(Utils.UTF8+" charset is not supported");
+        }
     }
 
     public Program parse() {

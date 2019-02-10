@@ -271,7 +271,7 @@ public class Dec64 {
         if (e == 0) {
             return rawM;
         } else if (e > 0) {
-            return rawM + "0".repeat(e);
+            return rawM + Utils.repeat("0", e);
         } else {
             boolean isPositive = (m >= 0);
             int i = rawM.length() + e;
@@ -291,5 +291,5 @@ public class Dec64 {
     public String rawString() {
         return "(" + mantissa + " E" + exponent + ")";
     }
-
+    
 }

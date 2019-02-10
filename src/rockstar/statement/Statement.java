@@ -8,6 +8,7 @@ package rockstar.statement;
 import java.util.List;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Utils;
 
 /**
  *
@@ -49,7 +50,7 @@ public abstract class Statement {
     
     protected final String list(int indent) {
         StringBuilder sb = new StringBuilder();
-        sb.append(line == null ? "" : String.format("%3d", line.getLnum())).append(" ").append("  ".repeat(indent)).append(list()).append("\n");
+        sb.append(line == null ? "" : String.format("%3d", line.getLnum())).append(" ").append(Utils.repeat("  ", indent)).append(list()).append("\n");
         if (this instanceof Block) {
             List<Statement> stmts = ((Block) this).getStatements();
             ((Block) this).getStatements().forEach((stmt) -> {

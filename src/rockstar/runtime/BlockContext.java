@@ -9,7 +9,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import rockstar.statement.FunctionBlock;
@@ -33,7 +33,12 @@ public class BlockContext {
     public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
         this.parent = null;
         this.root = this;
-        this.input = new BufferedReader(new InputStreamReader(inputstream));
+        InputStreamReader rdr = null;
+        try {
+            rdr = new InputStreamReader(inputstream, Utils.UTF8);
+        } catch (UnsupportedEncodingException ex) {
+        }
+        this.input = (rdr == null) ? null : new BufferedReader(rdr);
         this.output = output;
         this.error = error;
         this.env = env;
@@ -80,12 +85,12 @@ public class BlockContext {
     public Map<String, FunctionBlock> getFunctions() {
         return funcs;
     }
-    
-   
+
     /**
      * Set a variable value in the proper context
+     *
      * @param name
-     * @param value 
+     * @param value
      */
     public void setVariable(String name, Value value) {
         if (this.vars.containsKey(name)) {
@@ -100,9 +105,11 @@ public class BlockContext {
     }
 
     /**
-     * Set a variable in the local context, hiding global variables (e.g. function parameters)
+     * Set a variable in the local context, hiding global variables (e.g.
+     * function parameters)
+     *
      * @param name
-     * @param value 
+     * @param value
      */
     public void setLocalVariable(String name, Value value) {
         vars.put(name, value);
@@ -110,13 +117,14 @@ public class BlockContext {
 
     /**
      * Get a variable value, either from local or from global context
+     *
      * @param name
-     * @return 
+     * @return
      */
     public Value getVariableValue(String name) {
         // a variable is either local or global
         Value v = this.vars.get(name);
-        if(v == null) { 
+        if (v == null) {
             v = root.vars.get(name);
         }
         if (v == null) {

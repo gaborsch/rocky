@@ -11,19 +11,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Utils;
 import rockstar.statement.Program;
 
 /**
@@ -58,13 +59,14 @@ public class TestRun {
             try {
                 // find and load expected outpu from .out file
                 File outValidationFile = new File(filename + ".out");
-                BufferedReader rdr = new BufferedReader(new FileReader(outValidationFile));
-                StringBuilder sb = new StringBuilder();
+                FileInputStream ois = new FileInputStream(outValidationFile);
+                BufferedReader ordr = new BufferedReader(new InputStreamReader(ois, Utils.UTF8));
+                StringBuilder osb = new StringBuilder();
                 String line;
-                while ((line = rdr.readLine()) != null) {
-                    sb.append(line).append('\n');
+                while ((line = ordr.readLine()) != null) {
+                    osb.append(line).append('\n');
                 }
-                expectedOutput = sb.toString();
+                expectedOutput = osb.toString();
 //                System.out.println("Output validation file " + outValidationFile.getName() + " found, " + expectedOutput.length() + " chars");
             } catch (FileNotFoundException ex) {
                 expectedOutput = "";
@@ -72,9 +74,9 @@ public class TestRun {
 
             // output stream
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            PrintStream out = new PrintStream(os);
+            PrintStream out = new PrintStream(os, true, Utils.UTF8);
             ByteArrayOutputStream errs = new ByteArrayOutputStream();
-            PrintStream err = new PrintStream(errs);
+            PrintStream err = new PrintStream(errs, true, Utils.UTF8);
 
             BlockContext ctx = new BlockContext(in, out, err, options);
             try {
@@ -85,7 +87,12 @@ public class TestRun {
             }
             result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram());
 
-            String output = os.toString(Charset.defaultCharset());
+            String output = null;
+            try {
+                output = os.toString(Utils.UTF8);
+            } catch (UnsupportedEncodingException ex) {
+                throw ex;
+            }
 
             compareOutput(filename, expectedOutput, output, result);
 
@@ -131,10 +138,11 @@ public class TestRun {
     private void writeCurrentOutput(String rockFilename, String output) {
         boolean writeOutput = options.containsKey("-w") || options.containsKey("--write-output");
         if (writeOutput) {
-            FileWriter w = null;
+            Writer w = null;
             String filename = rockFilename + ".current";
             try {
-                w = new FileWriter(filename);
+                FileOutputStream fos = new FileOutputStream(filename);
+                w = new OutputStreamWriter(fos, Utils.UTF8);
                 w.write(output);
             } catch (IOException ex) {
                 System.err.println("Error writing file: " + filename);

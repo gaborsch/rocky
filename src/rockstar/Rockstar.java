@@ -14,6 +14,7 @@ import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementFactory;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Utils;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
 import rockstar.statement.ContinuingBlockStatementI;
@@ -45,7 +46,10 @@ public class Rockstar {
 //        args = new String[]{"test", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests"};
 //        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
 //        args = new String[]{"help", "run"};
-        args = new String[]{"-", "-x"};
+//        args = new String[]{"-", "-x"};
+//        args = new String[]{"run", "programs/tests/correct/umlauts.rock"};
+
+
 
         List<String> argl = new LinkedList<>(Arrays.asList(args));
 
@@ -109,7 +113,7 @@ public class Rockstar {
 
     private static void doHelp(String cmd, Map<String, String> options) {
         System.out.println(CLI_HEADER);
-        System.out.println("-".repeat(CLI_HEADER.length()));
+        System.out.println(Utils.repeat("-",CLI_HEADER.length()));
         System.out.println("Usage:");
         if (cmd == null || cmd.equals("run")) {
             System.out.println(CLI_WRAPPER + " <filename> ...");
@@ -230,7 +234,7 @@ public class Rockstar {
         boolean explain = options.containsKey("-x") || options.containsKey("--explain");
 
         System.out.println(CLI_HEADER);
-        System.out.println("-".repeat(CLI_HEADER.length()));
+        System.out.println(Utils.repeat("-",CLI_HEADER.length()));
         System.out.println("Type 'exit' to quit.");
 
         Stack<Block> blocks = new Stack();

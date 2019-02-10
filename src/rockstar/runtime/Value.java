@@ -218,13 +218,13 @@ public class Value {
         if (isString()) {
             if (v2 != null) {
                 // String repeating (STRING times NUMBER)
-                return Value.getValue(getString().repeat(v2.asInt()));
+                return Value.getValue(Utils.repeat(getString(),v2.asInt()));
             }
         } else if (other.isString()) {
             Dec64 v1 = getNumeric();
             if (v1 != null) {
                 // String repeating (NUMBER times STRING)
-                return Value.getValue(other.getString().repeat(v1.asInt()));
+                return Value.getValue(Utils.repeat(other.getString(), v1.asInt()));
             }
         } else {
             if (v2 != null) {
