@@ -273,8 +273,13 @@ public class Dec64 {
         } else if (e > 0) {
             return rawM + "0".repeat(e);
         } else {
+            boolean isPositive = (m >= 0);
             int i = rawM.length() + e;
-            return (i == 0 ? "0" : "") + rawM.substring(0, i) + "." + rawM.substring(i);
+            if (isPositive) {
+                return (i == 0 ? "0" : "") + rawM.substring(0, i) + "." + rawM.substring(i);
+            } else {
+                return (i == 1 ? "-0" : "-") + rawM.substring(1, i) + "." + rawM.substring(i);
+            }
         }
     }
 
