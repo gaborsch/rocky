@@ -30,8 +30,6 @@ public class BlockContext {
     private final PrintStream error;
     private final Map<String, String> env;
 
-    private final StringWriter log;
-
     public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
         this.parent = null;
         this.root = this;
@@ -39,7 +37,6 @@ public class BlockContext {
         this.output = output;
         this.error = error;
         this.env = env;
-        this.log = new StringWriter();
     }
 
     /**
@@ -54,7 +51,6 @@ public class BlockContext {
         this.output = parent.output;
         this.error = parent.error;
         this.env = parent.env;
-        this.log = parent.log;
     }
 
     public boolean isGlobalContext() {
@@ -77,10 +73,15 @@ public class BlockContext {
         return env.get(key);
     }
 
-    public String getLogString() {
-        return log.toString();
+    public Map<String, Value> getVariables() {
+        return vars;
+    }
+
+    public Map<String, FunctionBlock> getFunctions() {
+        return funcs;
     }
     
+   
     /**
      * Set a variable value in the proper context
      * @param name

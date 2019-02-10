@@ -16,8 +16,6 @@ public class BlockEnd extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        throw new RockstarRuntimeException("Not supported.");        
-        
     }
 
     @Override

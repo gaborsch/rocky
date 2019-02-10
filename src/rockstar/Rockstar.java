@@ -2,13 +2,22 @@ package rockstar;
 
 import rockstar.statement.Program;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+import rockstar.parser.Line;
+import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
+import rockstar.parser.StatementFactory;
 import rockstar.runtime.BlockContext;
+import rockstar.statement.Block;
+import rockstar.statement.BlockEnd;
+import rockstar.statement.ContinuingBlockStatementI;
+import rockstar.statement.Statement;
 import rockstar.test.RockstarTest;
 
 /**
@@ -21,6 +30,9 @@ public class Rockstar {
     public static final int MAX_LOOP_ITERATIONS = 1000;
 
     // CLI commands
+    private static final String CLI_WRAPPER = "rockstar";
+    private static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99";
+
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test"}));
 
     public static void main(String[] args) {
@@ -31,8 +43,9 @@ public class Rockstar {
 //        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests"};
-        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
+//        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
 //        args = new String[]{"help", "run"};
+        args = new String[]{"-", "-x"};
 
         List<String> argl = new LinkedList<>(Arrays.asList(args));
 
@@ -62,19 +75,18 @@ public class Rockstar {
         }
 
         if (command == null) {
+            // no explicit command defined
             if (options.containsKey("-h") || options.containsKey("--help")) {
                 command = "help";
             } else if (!files.isEmpty()) {
                 command = "run";
             } else {
-                System.err.println("Unknown command.");
-                return;
+                command = "help";
             }
         }
         switch (command) {
             case "help":
-                String helpcmd = files.isEmpty() ? null : files.get(0);
-                doHelp(helpcmd, options);
+                doHelp(files.isEmpty() ? null : files.get(0), options);
                 break;
             case "run":
                 doRun(files, options);
@@ -90,17 +102,18 @@ public class Rockstar {
                 break;
             default:
                 System.err.println("Unknown command: " + command);
+                doHelp(files.isEmpty() ? null : files.get(0), options);
                 break;
         }
     }
 
     private static void doHelp(String cmd, Map<String, String> options) {
-        System.out.println("Rockstar Java by gaborsch, Version 0.99");
-        System.out.println("---------------------------------------");
+        System.out.println(CLI_HEADER);
+        System.out.println("-".repeat(CLI_HEADER.length()));
         System.out.println("Usage:");
         if (cmd == null || cmd.equals("run")) {
-            System.out.println("rockstar <filename> ...");
-            System.out.println("rockstar run [--options ...] <filename> ...");
+            System.out.println(CLI_WRAPPER + " <filename> ...");
+            System.out.println(CLI_WRAPPER + " run [--options ...] <filename> ...");
             System.out.println("    Execute a program. Input is taken from standard input, output is printed to standard output.");
             if (cmd != null) {
                 System.out.println("Options:");
@@ -111,22 +124,26 @@ public class Rockstar {
             }
         }
         if (cmd == null || cmd.equals("list")) {
-            System.out.println("rockstar list [--options ...] <filename> ...");
+            System.out.println(CLI_WRAPPER + " list [--options ...] <filename> ...");
             System.out.println("    Parse and list a program. Useful for syntax checking.");
         }
         if (cmd == null || cmd.equals("repl")) {
-            System.out.println("rockstar -");
-            System.out.println("rockstar repl");
+            System.out.println(CLI_WRAPPER + " - [<filename> ...]");
+            System.out.println(CLI_WRAPPER + " repl [<filename> ...]");
             System.out.println("    Start an interactive session (Read-Evaluate-Print Loop). Enter commands and execute them immediately.");
-            System.out.println("    Special commands are available.");
+            System.out.println("    The specified programs are pre-run (e.g. defining functions, etc). Special commands are available.");
             if (cmd != null) {
                 System.out.println("Options:");
+                System.out.println("    -x --explain");
+                System.out.println("        Explain all statements and expressions parsed from input.");
+                System.out.println("    --infinite-loops");
+                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
             }
         }
         if (cmd == null || cmd.equals("test")) {
-            System.out.println("rockstar test [--options ...] <filename> ...");
-            System.out.println("rockstar test --testdir <testdirectory>");
-            System.out.println("    Execute unit tests. Special rules apply.");
+            System.out.println(CLI_WRAPPER + " test [--options ...] <filename> ...");
+            System.out.println(CLI_WRAPPER + " test --testdir <directoryname>");
+            System.out.println("    Execute unit tests. Special rules apply, check `" + CLI_WRAPPER + " help test` for details");
             if (cmd != null) {
                 System.out.println("    Directories with name starting with '.' or '_' are skipped.");
                 System.out.println("    Files under 'parse-error' directory (and subdirectories) must produce parse error");
@@ -136,16 +153,18 @@ public class Rockstar {
                 System.out.println();
                 System.out.println("Options:");
                 System.out.println("    -a, --all-directories");
-                System.out.println("    Also include directories with name starting with '.' or '_'.");
+                System.out.println("        Also include directories with name starting with '.' or '_'.");
                 System.out.println("    -w, --write-output");
-                System.out.println("    Write actual output into *.rock.current file, if the output does not match the expected.");
+                System.out.println("        Write actual output into *.rock.current file, if the output does not match the expected.");
+                System.out.println("    --infinite-loops");
+                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
             }
         }
         if (cmd == null || cmd.equals("help")) {
-            System.out.println("rockstar [-h|--help]");
-            System.out.println("rockstar help");
+            System.out.println(CLI_WRAPPER + " [-h|--help]");
+            System.out.println(CLI_WRAPPER + " help");
             System.out.println("    Print this help.");
-            System.out.println("rockstar help <command>");
+            System.out.println(CLI_WRAPPER + " help <command>");
             System.out.println("    Print help about the command.");
         }
     }
@@ -186,10 +205,6 @@ public class Rockstar {
         });
     }
 
-    private static void doRepl(List<String> files, Map<String, String> options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     private static void doTest(List<String> dirs, Map<String, String> options) {
         if (dirs.isEmpty()) {
             doHelp("test", options);
@@ -198,6 +213,105 @@ public class Rockstar {
         dirs.forEach((dir) -> {
             new RockstarTest(options).executeDir(dir, null);
         });
+    }
+
+    private static void doRepl(List<String> files, Map<String, String> options) {
+        BlockContext ctx = new BlockContext(System.in, System.out, System.err, options);
+
+        // pre-run any programs defined as parameter
+        for (String filename : files) {
+            try {
+                Program prg = new Parser(filename).parse();
+                prg.execute(ctx);
+            } catch (FileNotFoundException ex) {
+                System.err.println("File not found: " + filename);
+            }
+        }
+        boolean explain = options.containsKey("-x") || options.containsKey("--explain");
+
+        System.out.println(CLI_HEADER);
+        System.out.println("-".repeat(CLI_HEADER.length()));
+        System.out.println("Type 'exit' to quit.");
+
+        Stack<Block> blocks = new Stack();
+        blocks.push(new Program("-"));
+        try {
+            while (true) {
+                String line = ctx.getInput().readLine();
+
+                if (line.equals("exit")) {
+                    break;
+                }
+                if (line.startsWith("show")) {
+                    if (line.startsWith("show var")) {
+                        System.out.println("Variables:");
+                        ctx.getVariables().forEach((name, value) -> {
+                            System.out.println(name + " = " + value);
+                        });
+                    } else if (line.startsWith("show func")) {
+                        System.out.println("Functions:");
+                        ctx.getFunctions().forEach((name, func) -> {
+                            System.out.println(name + " taking " + func.getParameterNames());
+                        });
+                    } else {
+                        System.out.println("Show commands: show var, show func");
+                    }
+                } else {
+                    try {
+                        // parse the statement
+                        Statement stmt = StatementFactory.getStatementFor(new Line(line, "<input>", 1));
+                        
+                        if (stmt == null) {
+                            throw new ParseException("Unknown statement");
+                        }
+                        
+                        // explain if needed
+                        if (explain) {
+                            System.out.println(stmt.toString());
+                        }
+                        if (stmt instanceof BlockEnd) {
+                            // simple block closing: no need to add it anywhere
+                            if (blocks.size() > 1) {
+                                stmt = blocks.pop();
+                            }
+                        } else {
+                            // meaningful statements
+                            if (stmt instanceof ContinuingBlockStatementI) {
+                                // if it sticks to the previous block, close that block, and append it
+                                Block finishedBlock = blocks.pop();
+                                ((ContinuingBlockStatementI) stmt).appendTo(finishedBlock);
+                            }
+
+                            // append statement to current block
+                            if (!blocks.isEmpty()) {
+                                blocks.peek().addStatement(stmt);
+                            } else {
+                                throw new ParseException("Statement out of block");
+                            }
+
+                            // open a new block if it's a block statement
+                            if (stmt instanceof Block) {
+                                Block block = (Block) stmt;
+                                block.setParent(blocks.peek());
+                                blocks.push(block);
+                            }
+
+                        }
+                        // execute only the top level commands
+                        if (blocks.size() == 1) {
+                            stmt.execute(ctx);
+                        }
+
+                    } catch (ParseException e) {
+                        System.out.println("Parse error.");
+                    } catch (Throwable t) {
+                        System.out.println(t.getClass().getSimpleName() + ": " + t.getMessage());
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            // end of input: silently ignore
+        }
     }
 
 }

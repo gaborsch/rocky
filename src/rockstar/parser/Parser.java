@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
 import rockstar.statement.Program;
@@ -81,7 +79,7 @@ public class Parser {
                 lnum++;
             }
         } catch (IOException ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            parseError(ex.getClass().getSimpleName() + ": "+ ex.getMessage());
         }
         if (blocks.size() > 1) {
             parseError(blocks.size() + " blocks at the end");
