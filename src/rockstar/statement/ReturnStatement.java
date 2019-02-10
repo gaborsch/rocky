@@ -23,12 +23,6 @@ public class ReturnStatement extends Statement {
     }
 
     @Override
-    public String toString() {
-        return super.toString()
-                + "\n    RETURN " + expression;
-    }
-
-    @Override
     boolean applyTo(Block block) {
         Block b = block;
         while (b != null) {
@@ -40,12 +34,9 @@ public class ReturnStatement extends Statement {
         return false;
     }
 
-    private Value lastValue = Value.MYSTERIOUS;
-
     @Override
     public void execute(BlockContext ctx) {
         Value value = expression.evaluate(ctx);
-        lastValue = value;
         throw new RockstarReturnException(value);
     }
 

@@ -16,18 +16,12 @@ import rockstar.runtime.Value;
  */
 public class AssignmentStatement extends Statement {
 
-    private VariableReference variable;
-    private Expression expression;
+    private final VariableReference variable;
+    private final Expression expression;
 
     public AssignmentStatement(VariableReference variable, Expression expression) {
         this.variable = variable;
         this.expression = expression;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString()
-                + "\n    " + variable + " := " + expression;
     }
 
     @Override

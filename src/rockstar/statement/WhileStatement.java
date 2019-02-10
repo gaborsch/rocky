@@ -37,12 +37,6 @@ public class WhileStatement extends Block {
     }
 
     @Override
-    public String toString() {
-        return super.toString()
-                + "\n    COND: " + (negateCondition ? "not " : "") + condition;
-    }
-
-    @Override
     public void execute(BlockContext ctx) {
         int loopCount = 0;
         Value v = condition.evaluate(ctx);

@@ -24,11 +24,6 @@ public class Program extends Block {
     }
 
     @Override
-    public String toString() {
-        return "( Program " + name + ")";
-    }
-
-    @Override
     protected String list() {
         return "PROGRAM " + name;
     }

@@ -26,12 +26,6 @@ public class ExpressionStatement extends Statement {
     }
 
     @Override
-    public String toString() {
-        return super.toString()
-                + "\n    EXPR: " + expression;
-    }
-
-    @Override
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
     }

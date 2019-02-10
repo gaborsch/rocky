@@ -27,12 +27,6 @@ public class InputStatement extends Statement {
     }
 
     @Override
-    public String toString() {
-        return super.toString()
-                + "\n    INPUT " + (variable == null ? "" : variable.toString());
-    }
-
-    @Override
     public void execute(BlockContext ctx) {
         String inputLine;
         try {

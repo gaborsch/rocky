@@ -21,12 +21,6 @@ public class OutputStatement extends Statement {
         this.expression = expression;
     }
 
-    @Override
-    public String toString() {
-        return super.toString() + 
-                "\n    OUTPUT " + expression ; 
-    }
-
     private Value lastValue = Value.MYSTERIOUS;
     
     @Override
@@ -38,7 +32,7 @@ public class OutputStatement extends Statement {
 
     @Override
     protected String list() {
-        return "output " + expression.format();
+        return "print " + expression.format();
     }
     
 }

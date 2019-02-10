@@ -31,17 +31,8 @@ public class IfStatement extends Block {
     }
 
     @Override
-    public String toString() {
-        return super.toString()
-                + "\n    COND: " + condition;
-    }
-
-    private Value lastValue = Value.MYSTERIOUS;
-
-    @Override
     public void execute(BlockContext ctx) {
         Value v = condition.evaluate(ctx);
-        lastValue = v;
         if (v.getBool()) {
             super.execute(ctx);
         } else if (elseStatement != null) {

@@ -129,14 +129,6 @@ public class BlockContext {
         return v == null ? Value.MYSTERIOUS : v;
     }
 
-//    private BlockContext findVariableContext(String name) {
-////        return root;
-//        if (vars.containsKey(name)) {
-//            return this;
-//        }
-//        return (parent == this || parent == null) ? null : parent.findVariableContext(name);
-//    }
-
     public FunctionBlock retrieveFunction(String name) {
         return root.funcs.get(name);
     }

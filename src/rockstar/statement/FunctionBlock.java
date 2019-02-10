@@ -38,12 +38,6 @@ public class FunctionBlock extends Block {
         return parameterNames;
     }
 
-    @Override
-    public String toString() {
-        return super.toString()
-                + "\n    FUNCDEF: " + name + "(" + Arrays.deepToString(parameterNames.toArray()) + ")";
-    }
-
     /**
      * Define a function
      *

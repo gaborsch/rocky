@@ -56,9 +56,6 @@ public abstract class Block extends Statement {
         for (Statement statement : statements) {
             statement.execute(ctx);
         }
-//        statements.forEach((statement) -> {
-//            statement.execute(ctx);
-//        });
     }
 
 }

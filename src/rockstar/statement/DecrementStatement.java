@@ -28,12 +28,6 @@ public class DecrementStatement extends Statement {
         this.count = count;
     }
 
-    @Override
-    public String toString() {
-        return super.toString()
-                + "\n    " + variable + " --".repeat(count);
-    }
-
     private MinusExpression getMinus() {
         if (minus == null) {
             minus = new MinusExpression();

@@ -25,13 +25,7 @@ public abstract class Statement {
     
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (line != null) {
-            line.getTokens().forEach((token) -> {
-                sb.append(token).append("/");
-            });
-        }
-        return sb.toString(); 
+        return list();
     }
     
     public void setDebugInfo(Line line) {

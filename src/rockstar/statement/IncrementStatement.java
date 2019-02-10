@@ -28,12 +28,6 @@ public class IncrementStatement extends Statement {
         this.count = count;
     }
 
-    @Override
-    public String toString() {
-        return super.toString()
-                + "\n    " + variable + " ++".repeat(count);
-    }
-
     private PlusExpression getPlus() {
         if (plus == null) {
             plus = new PlusExpression();
