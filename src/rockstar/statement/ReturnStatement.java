@@ -50,11 +50,6 @@ public class ReturnStatement extends Statement {
     }
 
     @Override
-    public String explain(BlockContext ctx) {
-        return lastValue.toString();
-    }
-    
-    @Override
     protected String list() {
         return "return " + expression.format();
     }

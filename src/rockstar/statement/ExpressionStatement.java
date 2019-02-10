@@ -35,12 +35,6 @@ public class ExpressionStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
     }
-
-        
-    @Override
-    public String explain(BlockContext ctx) {
-        return null;
-    }
     
     @Override
     protected String list() {

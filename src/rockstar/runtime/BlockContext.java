@@ -145,16 +145,4 @@ public class BlockContext {
         root.funcs.put(name, function);
     }
 
-    public void logStatement(Statement stmt, String msg) {
-        if (Rockstar.DEBUG) {
-            Line l = stmt.getLine();
-            log.write(String.format("[%2d] %-8s %s\n",
-                    l.getLnum(), msg == null ? "" : msg, l.getOrigLine()));
-            String explained = stmt.explain(this);
-            if (explained != null) {
-                log.write(String.format("              %s\n", explained));
-            }
-        }
-    }
-
 }

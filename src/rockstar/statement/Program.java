@@ -29,11 +29,6 @@ public class Program extends Block {
     }
 
     @Override
-    public String explain(BlockContext ctx) {
-        return null;
-    }
-
-    @Override
     protected String list() {
         return "PROGRAM " + name;
     }

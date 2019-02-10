@@ -47,12 +47,6 @@ public class IfStatement extends Block {
         } else if (elseStatement != null) {
             elseStatement.executeElse(ctx);
         }
-
-    }
-
-    @Override
-    public String explain(BlockContext ctx) {
-        return lastValue.toString();
     }
 
     @Override

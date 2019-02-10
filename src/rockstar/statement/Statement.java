@@ -47,14 +47,11 @@ public abstract class Statement {
         return true;
     }
 
-
+    /**
+     * Execute the statement within the given context
+     * @param ctx 
+     */
     public abstract void execute(BlockContext ctx);
-//    public void execute(BlockContext ctx) {
-////        ctx.getOutput().println(this.getClass().getSimpleName());
-////        ctx.getOutput().println(this.getClass().getSimpleName() + " " + this);
-//    }
-    
-    public abstract String explain(BlockContext ctx);
     
     protected final String list(int indent) {
         StringBuilder sb = new StringBuilder();

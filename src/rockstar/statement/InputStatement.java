@@ -6,8 +6,6 @@
 package rockstar.statement;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
@@ -47,11 +45,6 @@ public class InputStatement extends Statement {
         }
     }
 
-    @Override
-    public String explain(BlockContext ctx) {
-        return null;
-    }
-    
     @Override
     protected String list() {
         return "input " + (variable == null ? "<line>" : variable.getName());

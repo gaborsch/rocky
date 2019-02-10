@@ -19,11 +19,6 @@ public class BlockEnd extends Statement {
         throw new RockstarRuntimeException("Not supported.");        
         
     }
-    
-    @Override
-    public String explain(BlockContext ctx) {
-        return null;
-    }
 
     @Override
     protected String list() {

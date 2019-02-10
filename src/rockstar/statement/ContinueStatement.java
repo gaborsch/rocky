@@ -33,11 +33,6 @@ public class ContinueStatement extends Statement {
     }
     
     @Override
-    public String explain(BlockContext ctx) {
-        return null;
-    }
-    
-    @Override
     protected String list() {
         return "continue";
     }

@@ -84,11 +84,6 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    public String explain(BlockContext ctx) {
-        return "FUNCDEF: " + name + "(" + Arrays.deepToString(parameterNames.toArray()) + ")";
-    }
-
-    @Override
     protected String list() {
         return "function " + name + ": " + Arrays.deepToString(parameterNames.toArray());
     }

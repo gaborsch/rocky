@@ -37,11 +37,6 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
     }
 
     @Override
-    public String explain(BlockContext ctx) {
-        return null;
-    }
-
-    @Override
     public void execute(BlockContext ctx) {
         // ELSE statement is skipped in normal esexution flow
     }
