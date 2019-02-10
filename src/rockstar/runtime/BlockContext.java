@@ -119,6 +119,13 @@ public class BlockContext {
         if(v == null) { 
             v = root.vars.get(name);
         }
+        if (v == null) {
+            // is it a function reference?
+            FunctionBlock f = retrieveFunction(name);
+            if (f != null) {
+                return Value.BOOLEAN_TRUE;
+            }
+        }
         return v == null ? Value.MYSTERIOUS : v;
     }
 

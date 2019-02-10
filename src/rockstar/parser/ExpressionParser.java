@@ -289,6 +289,7 @@ public class ExpressionParser {
             next();
             if (containsAtLeast(3)) {
                 if ("than".equals(peekNext())) {
+                    // "is ... than"
                     String comparator = this.peekCurrent();
                     ComparisonType type = null;
                     switch (comparator) {
@@ -313,6 +314,7 @@ public class ExpressionParser {
             }
             if (containsAtLeast(4)) {
                 if ("as".equals(peekCurrent()) && "as".equals(peekNext(2))) {
+                    // "is as ... as"
                     String comparator = this.peekNext(1);
                     ComparisonType type = null;
                     switch (comparator) {
@@ -335,7 +337,12 @@ public class ExpressionParser {
                     }
                 }
             }
-            // simple "is"
+            if ("not".equals(peekCurrent())) {
+                // "is not"
+                next();
+                return new ComparisonExpression(ComparisonType.NOT_EQUALS);
+            }
+            // simple "is" 
             return new ComparisonExpression(ComparisonType.EQUALS);
         }
         if ("isnt".equals(token) || "aint".equals(token)) {
