@@ -6,14 +6,13 @@
 package rockstar.runtime;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import rockstar.Rockstar;
-import rockstar.parser.Line;
 import rockstar.statement.FunctionBlock;
-import rockstar.statement.Statement;
 
 /**
  *
@@ -29,14 +28,14 @@ public class BlockContext {
     private final BufferedReader input;
     private final PrintStream output;
     private final PrintStream error;
-    private final Map<String, Object> env;
+    private final Map<String, String> env;
 
     private final StringWriter log;
 
-    public BlockContext(BufferedReader input, PrintStream output, PrintStream error, Map<String, Object> env) {
+    public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
         this.parent = null;
         this.root = this;
-        this.input = input;
+        this.input = new BufferedReader(new InputStreamReader(inputstream));
         this.output = output;
         this.error = error;
         this.env = env;
@@ -74,8 +73,8 @@ public class BlockContext {
         return error;
     }
 
-    public Map<String, Object> getEnv() {
-        return env;
+    public String getEnv(String key) {
+        return env.get(key);
     }
 
     public String getLogString() {

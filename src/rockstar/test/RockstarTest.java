@@ -6,6 +6,7 @@
 package rockstar.test;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  *
@@ -13,26 +14,25 @@ import java.io.File;
  */
 public class RockstarTest {
 
+    private final Map<String, String> options;
+
+    public RockstarTest(Map<String, String> options) {
+        this.options = options;
+    }
+
     public enum Expected {
         CORRECT,
         PARSE_ERROR,
         RUNTIME_ERROR
     }
 
-    public static void main(String[] args) {
-//        String dir = "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_\\test";
-        String dir = "C:\\work\\rocky\\tests\\rockstar\\tests";
-        new RockstarTest().executeDir(dir, null);
-    }
-
     private int testCount = 0;
     private int passed = 0;
     private int failed = 0;
 
-    private void executeDir(String dirname, Expected exp) {
+    public void executeDir(String dirname, Expected exp) {
         File dir = new File(dirname);
-//        System.out.println("Listing directory " + dirname + (exp == null ? "" : ", testing "+ exp) );
-//        if (exp != null) { System.out.println(exp + " tests"); }
+
         if (exp != null) {
             System.out.println(exp + " tests in " + dirname);
         }
@@ -67,7 +67,7 @@ public class RockstarTest {
 
 //        System.out.println("--- Processing file " + file.getName() + " for " + exp + " test");
         testCount++;
-        TestResult result = new TestRun().execute(file.getAbsolutePath(), exp);
+        TestResult result = new TestRun(options).execute(file.getAbsolutePath(), exp);
         String message = result.getMessage();
         Throwable exc = result.getException();
         String debugInfo = result.getDebugInfo();
@@ -83,7 +83,7 @@ public class RockstarTest {
             } else {
                 System.out.printf("!! [EXCP] %-40s %s %s\n", file.getName(), excName, message);
                 System.out.println(debugInfo);
-                throw new RuntimeException(exc);
+                // throw new RuntimeException(exc);
             }
         }
         System.out.println();

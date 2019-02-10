@@ -53,9 +53,9 @@ public abstract class Block extends Statement {
      */
     @Override
     public void execute(BlockContext ctx) {
-        for (Statement statement : statements) {
+        statements.forEach((statement) -> {
             statement.execute(ctx);
-        }
+        });
     }
 
 }

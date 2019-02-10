@@ -16,9 +16,12 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import rockstar.Rockstar;
 import rockstar.parser.ParseException;
+import rockstar.parser.Parser;
+import rockstar.runtime.BlockContext;
 import rockstar.statement.Program;
 
 /**
@@ -26,6 +29,12 @@ import rockstar.statement.Program;
  * @author Gabor
  */
 public class TestRun {
+
+    private final Map<String, String> options;
+
+    TestRun(Map<String, String> options) {
+        this.options = options;
+    }
 
     public TestResult execute(String filename, RockstarTest.Expected exp) {
 
@@ -65,8 +74,13 @@ public class TestRun {
             ByteArrayOutputStream errs = new ByteArrayOutputStream();
             PrintStream err = new PrintStream(errs);
 
-            Rockstar rockstar = new Rockstar(in, out, err, new HashMap<>());
-            prg = rockstar.run(filename);
+            BlockContext ctx = new BlockContext(in, out, err, options);
+            try {
+                prg = new Parser(filename).parse();
+                prg.execute(ctx);
+            } catch (FileNotFoundException ex) {
+                result.setException(ex);
+            }
             result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram());
 
             String output = os.toString(Charset.defaultCharset());
