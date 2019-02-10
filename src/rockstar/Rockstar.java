@@ -235,7 +235,7 @@ public class Rockstar {
 
         System.out.println(CLI_HEADER);
         System.out.println(Utils.repeat("-",CLI_HEADER.length()));
-        System.out.println("Type 'exit' to quit.");
+        System.out.println("Type 'exit' to quit, 'show' to get more info.");
 
         Stack<Block> blocks = new Stack();
         blocks.push(new Program("-"));
@@ -258,7 +258,9 @@ public class Rockstar {
                             System.out.println(name + " taking " + func.getParameterNames());
                         });
                     } else {
-                        System.out.println("Show commands: show var, show func");
+                        System.out.println("Show commands: ");
+                        System.out.println("    show var: list global variables and current values");
+                        System.out.println("    show func: list functions and parameters");
                     }
                 } else {
                     try {
