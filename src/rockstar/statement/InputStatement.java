@@ -34,8 +34,11 @@ public class InputStatement extends Statement {
         } catch (IOException ex) {
             inputLine = "";
         }
+        if (inputLine == null) {
+            inputLine = "";
+        }
         if (variable != null) {
-            ctx.setVariable(variable.getName(), Value.getValue(inputLine));
+            ctx.setVariable(variable.getName(), Value.parse(inputLine));
         }
     }
 

@@ -17,25 +17,24 @@ import rockstar.test.RockstarTest;
  */
 public class Rockstar {
 
-    public static boolean DEBUG = false;
+    // implementation constants
+    public static final int MAX_LOOP_ITERATIONS = 1000;
 
+    // CLI commands
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test"}));
 
     public static void main(String[] args) {
 
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
-//        args = new String[]{"-s","programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
+//        args = new String[]{"run","-s", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
+//        args = new String[]{"list", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
 //        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
-        args = new String[]{"test","--testdir","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests"};
+//        args = new String[]{"test", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests"};
+        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
 //        args = new String[]{"help", "run"};
 
         List<String> argl = new LinkedList<>(Arrays.asList(args));
-        System.out.println("rockstar.Rockstar.main(), argc:" + argl.size());
-        System.out.println("Args:");
-        argl.forEach((arg) -> {
-            System.out.println(arg);
-        });
 
         List<String> files = new LinkedList<>();
         Map<String, String> options = new HashMap<>();
@@ -107,6 +106,8 @@ public class Rockstar {
                 System.out.println("Options:");
                 System.out.println("    -s, --same-context");
                 System.out.println("        Use the same context for each consecutive program. (Default: create new context)");
+                System.out.println("    --infinite-loops");
+                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
             }
         }
         if (cmd == null || cmd.equals("list")) {
@@ -118,12 +119,27 @@ public class Rockstar {
             System.out.println("rockstar repl");
             System.out.println("    Start an interactive session (Read-Evaluate-Print Loop). Enter commands and execute them immediately.");
             System.out.println("    Special commands are available.");
+            if (cmd != null) {
+                System.out.println("Options:");
+            }
         }
         if (cmd == null || cmd.equals("test")) {
             System.out.println("rockstar test [--options ...] <filename> ...");
             System.out.println("rockstar test --testdir <testdirectory>");
-            System.out.println("    Execute unit tests. Files under 'parse-error' must produce parse error, files under 'runtime-error' must produce runtime error.");
-            System.out.println("    All others must compile and run. Expected output is in *.rock.out files, input is taken from *.rock.in' files, if present.");
+            System.out.println("    Execute unit tests. Special rules apply.");
+            if (cmd != null) {
+                System.out.println("    Directories with name starting with '.' or '_' are skipped.");
+                System.out.println("    Files under 'parse-error' directory (and subdirectories) must produce parse error");
+                System.out.println("    Files under 'runtime-error' directory (and subdirectories) must produce runtime error.");
+                System.out.println("    Files under 'correct' directory must compile and run properly. This is the default.");
+                System.out.println("    All correct tests must compile and run. Expected output is in *.rock.out files, input is taken from *.rock.in' files, if present.");
+                System.out.println();
+                System.out.println("Options:");
+                System.out.println("    -a, --all-directories");
+                System.out.println("    Also include directories with name starting with '.' or '_'.");
+                System.out.println("    -w, --write-output");
+                System.out.println("    Write actual output into *.rock.current file, if the output does not match the expected.");
+            }
         }
         if (cmd == null || cmd.equals("help")) {
             System.out.println("rockstar [-h|--help]");
@@ -145,7 +161,7 @@ public class Rockstar {
         for (String filename : files) {
             try {
                 Program prg = new Parser(filename).parse();
-                if(ctx == null || !sameContext) {
+                if (ctx == null || !sameContext) {
                     ctx = new BlockContext(System.in, System.out, System.err, options);
                 }
                 prg.execute(ctx);
@@ -179,9 +195,9 @@ public class Rockstar {
             doHelp("test", options);
             return;
         }
-        for (String dir : dirs) {
+        dirs.forEach((dir) -> {
             new RockstarTest(options).executeDir(dir, null);
-        }        
+        });
     }
 
 }

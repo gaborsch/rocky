@@ -12,13 +12,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import rockstar.Rockstar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.runtime.BlockContext;
@@ -85,7 +87,7 @@ public class TestRun {
 
             String output = os.toString(Charset.defaultCharset());
 
-            compareOutput(expectedOutput, output, result);
+            compareOutput(filename, expectedOutput, output, result);
 
         } catch (ParseException e) {
             result.setMessage("Parse error:" + e.getMessage());
@@ -98,7 +100,7 @@ public class TestRun {
         return result;
     }
 
-    private void compareOutput(String expectedOutput, String output, TestResult result) {
+    private void compareOutput(String filename, String expectedOutput, String output, TestResult result) {
         int lineNum = 1;
         Scanner exp = new Scanner(expectedOutput).useDelimiter("\\r?\\n");
         Scanner act = new Scanner(output).useDelimiter("\\r?\\n");
@@ -109,16 +111,42 @@ public class TestRun {
             if (!expLine.equals(actLine)) {
                 String msg = "OUTPUT MISMATCH at line " + lineNum + ": expected '" + expLine + "', got '" + actLine + "'";
                 result.setMessage(msg);
+                writeCurrentOutput(filename, output);
                 return;
             }
             lineNum++;
         }
         if (exp.hasNext()) {
-            result.setMessage("PREMATURE END OF OUTPUT at line " + lineNum);
+            result.setMessage("MORE OUTPUT EXPECTED at line " + lineNum);
+            result.setDebugInfo(exp.next());
+            writeCurrentOutput(filename, output);
         } else if (act.hasNext()) {
             result.setMessage("SURPLUS OUTPUT at line " + lineNum);
+            result.setDebugInfo(act.next());
+            writeCurrentOutput(filename, output);
         }
 
     }
 
+    private void writeCurrentOutput(String rockFilename, String output) {
+        boolean writeOutput = options.containsKey("-w") || options.containsKey("--write-output");
+        if (writeOutput) {
+            FileWriter w = null;
+            String filename = rockFilename + ".current";
+            try {
+                w = new FileWriter(filename);
+                w.write(output);
+            } catch (IOException ex) {
+                System.err.println("Error writing file: " + filename);
+            } finally {
+                try {
+                    if (w != null) {
+                        w.close();
+                    }
+                } catch (IOException ex) {
+                    System.err.println("Error writing file: " + filename);
+                }
+            }
+        }
+    }
 }

@@ -36,7 +36,7 @@ public abstract class CompoundExpression extends Expression {
     public void addParameterReverse(Expression parameter) {
         parameters.add(0, parameter);
     }
-    
+
     public void setupFinished() {
     }
 
@@ -55,9 +55,9 @@ public abstract class CompoundExpression extends Expression {
     200: function call
      */
     public abstract int getPrecedence();
-    
+
     public abstract int getParameterCount();
-    
+
     public abstract String getFormat();
 
     @Override

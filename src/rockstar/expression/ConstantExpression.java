@@ -56,9 +56,5 @@ public class ConstantExpression extends SimpleExpression {
     public String format() {
         return this.value.toString();
     }
-    
-    
-    
-    
 
 }

@@ -38,7 +38,7 @@ public class VariableReference extends SimpleExpression {
 
     @Override
     public String toString() {
-        return "`" + name + "`";
+        return name;
     }
 
     @Override

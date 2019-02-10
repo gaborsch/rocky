@@ -35,6 +35,27 @@ public class Value {
     public static Value getValue(boolean b) {
         return b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     }
+    
+    public static Value parse(String s) {
+        if (ExpressionParser.MYSTERIOUS_KEYWORDS.contains(s)) {
+            return MYSTERIOUS;
+        } else if (ExpressionParser.NULL_KEYWORDS.contains(s)) {
+            return NULL;
+        } else if (ExpressionParser.BOOLEAN_TRUE_KEYWORDS.contains(s)) {
+            return BOOLEAN_TRUE;
+        } else if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s)) {
+            return BOOLEAN_FALSE;
+        } else {
+            Dec64 numericValue = Dec64.parse(s);
+            if (numericValue != null) {
+                return getValue(numericValue);
+            }
+        } 
+        if(s.length() >= 2 && s.matches("\".*\"")) {
+            s = s.substring(1, s.length() - 1);
+        }
+        return getValue(s);
+    }
 
     private Value(ExpressionType type) {
         this.type = type;

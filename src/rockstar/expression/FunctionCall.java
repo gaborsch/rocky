@@ -1,7 +1,6 @@
 package rockstar.expression;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;

@@ -5,6 +5,7 @@
  */
 package rockstar.statement;
 
+import rockstar.Rockstar;
 import rockstar.expression.Expression;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarBreakException;
@@ -18,7 +19,6 @@ import rockstar.runtime.Value;
  */
 public class WhileStatement extends Block {
 
-    public static final int MAX_LOOP_ITERATIONS = 200;
 
     private final Expression condition;
     private boolean negateCondition = false;
@@ -39,9 +39,10 @@ public class WhileStatement extends Block {
     @Override
     public void execute(BlockContext ctx) {
         int loopCount = 0;
+        boolean isInfiniteLoopsAllowed = (ctx.getEnv("--infinite-loops") != null);
         Value v = condition.evaluate(ctx);
         boolean lastCondition = v.asBoolean().getBool() ^ negateCondition;
-        while (lastCondition && loopCount <= MAX_LOOP_ITERATIONS) {
+        while (lastCondition && (isInfiniteLoopsAllowed || loopCount <= Rockstar.MAX_LOOP_ITERATIONS)) {
             boolean canContinue = true;
             try {
                 super.execute(ctx);
@@ -58,8 +59,8 @@ public class WhileStatement extends Block {
             v = condition.evaluate(ctx);
             lastCondition = canContinue && (v.asBoolean().getBool() ^ negateCondition);
         }
-        if (loopCount > MAX_LOOP_ITERATIONS) {
-            throw new RockstarRuntimeException("Loop exceeded " + MAX_LOOP_ITERATIONS + " iterations");
+        if (!isInfiniteLoopsAllowed && loopCount > Rockstar.MAX_LOOP_ITERATIONS) {
+            throw new RockstarRuntimeException("Loop exceeded " + Rockstar.MAX_LOOP_ITERATIONS + " iterations");
         }
     }
 

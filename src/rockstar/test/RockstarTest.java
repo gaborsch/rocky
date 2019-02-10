@@ -36,26 +36,30 @@ public class RockstarTest {
         if (exp != null) {
             System.out.println(exp + " tests in " + dirname);
         }
+        boolean allDirectories = options.containsKey("-a") || options.containsKey("--all-directories");
 
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.getName().endsWith(".rock")) {
-                    executeFile(file, exp==null ? Expected.CORRECT : exp);
+                    executeFile(file, exp == null ? Expected.CORRECT : exp);
                 } else if (file.isDirectory()) {
-                    switch (file.getName()) {
-                        case "correct":
-                            executeDir(file.getPath(), Expected.CORRECT);
-                            break;
-                        case "parse-errors":
-                            executeDir(file.getPath(), Expected.PARSE_ERROR);
-                            break;
-                        case "runtime-errors":
-                            executeDir(file.getPath(), Expected.RUNTIME_ERROR);
-                            break;
-                        default:
-                            executeDir(file.getPath(), exp);
-                            break;
+                    if (allDirectories || !file.getName().matches("^[._].*")) {
+                        // skip directories starting with "." or "_"
+                        switch (file.getName()) {
+                            case "correct":
+                                executeDir(file.getPath(), Expected.CORRECT);
+                                break;
+                            case "parse-errors":
+                                executeDir(file.getPath(), Expected.PARSE_ERROR);
+                                break;
+                            case "runtime-errors":
+                                executeDir(file.getPath(), Expected.RUNTIME_ERROR);
+                                break;
+                            default:
+                                executeDir(file.getPath(), exp);
+                                break;
+                        }
                     }
                 }
 
