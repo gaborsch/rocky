@@ -8,7 +8,11 @@ Features include:
 * Interactive terminal mode (REPL - Read - Eval - Print Loop)
 * List command (parse a file without running it)
 
-It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers makes it easy to execute on Windows and Unix
+It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers makes it easy to execute on Windows and Unix.
+
+### Install
+
+To install and run, you only need the `dist/rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`). Everythin else is for development.
 
 ### Usage
 ```
@@ -34,6 +38,9 @@ rockstar help
 rockstar help <command>
     Print help about the command.
 ```
+
+Each command has a more detailed help with options, so try `rockstar help run`, `rockstar help test`, `rockstar help repl`, etc.
+
 
 ### Test results:
 ```
