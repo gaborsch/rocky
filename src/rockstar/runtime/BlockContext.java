@@ -29,6 +29,7 @@ public class BlockContext {
     private final PrintStream output;
     private final PrintStream error;
     private final Map<String, String> env;
+    private String name;
 
     public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
         this.parent = null;
@@ -42,24 +43,23 @@ public class BlockContext {
         this.output = output;
         this.error = error;
         this.env = env;
+        this.name = "<RockStar>";
     }
 
     /**
      * Context initialization
      *
      * @param parent
+     * @param name name of the context
      */
-    public BlockContext(BlockContext parent) {
+    public BlockContext(BlockContext parent, String name) {
         this.parent = parent;
         this.root = parent.root;
         this.input = parent.input;
         this.output = parent.output;
         this.error = parent.error;
         this.env = parent.env;
-    }
-
-    public boolean isGlobalContext() {
-        return this == parent;
+        this.name = name;
     }
 
     public BufferedReader getInput() {
@@ -93,15 +93,37 @@ public class BlockContext {
      * @param value
      */
     public void setVariable(String name, Value value) {
-        if (this.vars.containsKey(name)) {
-            // if it is already defined locally, set it locallz
-            setLocalVariable(name, value);
-        } else if (root.vars.containsKey(name)) {
-            // if it is already defined globally, set in the root context
-            root.setLocalVariable(name, value);
+        // find the context where the variable was defined (if possible)
+        BlockContext ctx = this;
+        // find the first block with the same name
+        Map<String, BlockContext> firstBlock = new HashMap<>();
+        firstBlock.put(ctx.name, ctx);
+        while(ctx != null && !ctx.vars.containsKey(name)) {
+            ctx = ctx.parent;
+            if (ctx != null && !firstBlock.containsKey(ctx.name)) {
+                firstBlock.put(ctx.name, ctx);
+            }
         }
-        // define locally or globally, whichecer context we are in
-        setLocalVariable(name, value);
+        // if we found the variable in a block, save it in the first instance
+        if (ctx != null) {
+            ctx = firstBlock.get(ctx.name);
+            ctx.setLocalVariable(name, value);
+        } else {
+            // otherwise set it locally, wherever we are now
+            setLocalVariable(name, value);
+        }
+        // we can set either local or global variables
+//        boolean hasGlobal = root.vars.containsKey(name);
+//        if(this.vars.containsKey(name)) {
+//            // overwrite local variable
+//            setLocalVariable(name, value);
+//        } else if (hasGlobal) {
+//            // overwrite global variable
+//            root.setLocalVariable(name, value);
+//        } else {
+//            // initialize local variable
+//            setLocalVariable(name, value);
+//        }
     }
 
     /**
@@ -122,11 +144,14 @@ public class BlockContext {
      * @return
      */
     public Value getVariableValue(String name) {
-        // a variable is either local or global
-        Value v = this.vars.get(name);
-        if (v == null) {
-            v = root.vars.get(name);
+        // find the context where the variable was defined 
+        Value v = null;
+        BlockContext ctx = this;
+        while(v == null && ctx != null) {
+            v = ctx.vars.get(name);
+            ctx = ctx.parent;
         }
+
         if (v == null) {
             // is it a function reference?
             FunctionBlock f = retrieveFunction(name);
@@ -138,11 +163,17 @@ public class BlockContext {
     }
 
     public FunctionBlock retrieveFunction(String name) {
-        return root.funcs.get(name);
+        FunctionBlock f = null;
+        BlockContext ctx = this;
+        while(f == null && ctx != null) {
+            f = ctx.funcs.get(name);
+            ctx = ctx.parent;
+        }
+        return f;
     }
 
     public void defineFunction(String name, FunctionBlock function) {
-        root.funcs.put(name, function);
+        funcs.put(name, function);
     }
 
 }

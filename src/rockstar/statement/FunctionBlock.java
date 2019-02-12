@@ -57,7 +57,7 @@ public class FunctionBlock extends Block {
      * @return
      */
     public Value call(BlockContext ctx, List<Value> values) {
-        BlockContext funcCtx = new BlockContext(ctx);
+        BlockContext funcCtx = new BlockContext(ctx, name);
         List<String> names = this.parameterNames;
         if (names.size() != values.size()) {
             throw new RockstarRuntimeException("Wrong number of arguments for function " + this.name + ": expected " + names.size() + ", got " + values.size());
