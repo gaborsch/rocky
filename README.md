@@ -12,7 +12,7 @@ It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrapper
 
 ### Install
 
-To install and run, you only need the `dist/rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`). Everything else is for development.
+To install and run, you only need the `rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`). Everything else is for development.
 
 ### Usage
 ```

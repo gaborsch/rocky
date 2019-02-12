@@ -1,1 +1,1 @@
-java -classpath dist/rocky.jar rockstar.Rockstar %*
+java -classpath rocky.jar rockstar.Rockstar %*
