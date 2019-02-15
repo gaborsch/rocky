@@ -70,4 +70,8 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <target name="-post-jar">
+        <copy file="dist/rocky.jar" tofile="rocky.jar"/>
+    </target>
 </project>
