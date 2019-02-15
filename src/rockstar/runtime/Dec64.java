@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author Gabor
  */
-public class Dec64 {
+public class Dec64 extends RockNumber {
 
     private final long mantissa;
     private final int exponent;
@@ -172,55 +172,79 @@ public class Dec64 {
         return a.add(b);
     }
 
-    public Dec64 add(Dec64 b) {
-        int commonE = Integer.min(normalE(this), normalE(b));
-        long am = transformM(this, commonE);
-        long bm = transformM(b, commonE);
-        return getFromCache(am + bm, commonE);
+    @Override
+    public Dec64 add(RockNumber bn) {
+        if (bn instanceof RockNumber) {
+            Dec64 b = (Dec64) bn;
+            int commonE = Integer.min(normalE(this), normalE(b));
+            long am = transformM(this, commonE);
+            long bm = transformM(b, commonE);
+            return getFromCache(am + bm, commonE);
+        }
+        throw new RockstarRuntimeException("Dec64-Double mix");
     }
 
     public static Dec64 subtract(Dec64 a, Dec64 b) {
         return a.subtract(b);
     }
 
-    public Dec64 subtract(Dec64 b) {
-        int commonE = Integer.min(normalE(this), normalE(b));
-        long am = transformM(this, commonE);
-        long bm = transformM(b, commonE);
-        return getFromCache(am - bm, commonE);
+    @Override
+    public Dec64 subtract(RockNumber bn) {
+        if (bn instanceof RockNumber) {
+            Dec64 b = (Dec64) bn;
+            int commonE = Integer.min(normalE(this), normalE(b));
+            long am = transformM(this, commonE);
+            long bm = transformM(b, commonE);
+            return getFromCache(am - bm, commonE);
+        }
+        throw new RockstarRuntimeException("Dec64-Double mix");
     }
 
     public static Dec64 multiply(Dec64 a, Dec64 b) {
         return a.multiply(b);
     }
 
-    public Dec64 multiply(Dec64 b) {
-        int ae = normalE(this);
-        int be = normalE(b);
-        long m = transformM(this, ae) * transformM(b, be);
-        return getFromCache(m, ae + be);
+    @Override
+    public Dec64 multiply(RockNumber bn) {
+        if (bn instanceof RockNumber) {
+            Dec64 b = (Dec64) bn;
+            int ae = normalE(this);
+            int be = normalE(b);
+            long m = transformM(this, ae) * transformM(b, be);
+            return getFromCache(m, ae + be);
+        }
+        throw new RockstarRuntimeException("Dec64-Double mix");
     }
 
     public static Dec64 intDivide(Dec64 a, Dec64 b) {
         return a.intDivide(b);
     }
 
-    public Dec64 intDivide(Dec64 b) {
-        int ae = normalE(this);
-        int be = normalE(b);
-        long m = transformM(this, ae) / transformM(b, be);
-        return getFromCache(m, ae - be);
+    public Dec64 intDivide(RockNumber bn) {
+        if (bn instanceof RockNumber) {
+            Dec64 b = (Dec64) bn;
+            int ae = normalE(this);
+            int be = normalE(b);
+            long m = transformM(this, ae) / transformM(b, be);
+            return getFromCache(m, ae - be);
+        }
+        throw new RockstarRuntimeException("Dec64-Double mix");
     }
 
     public static Dec64 divide(Dec64 a, Dec64 b) {
         return a.divide(b);
     }
 
-    public Dec64 divide(Dec64 b) {
-        int ae = maxE(this);
-        int be = normalE(b);
-        long m = transformM(this, ae) / transformM(b, be);
-        return getFromCache(m, ae - be);
+    @Override
+    public Dec64 divide(RockNumber bn) {
+        if (bn instanceof RockNumber) {
+            Dec64 b = (Dec64) bn;
+            int ae = maxE(this);
+            int be = normalE(b);
+            long m = transformM(this, ae) / transformM(b, be);
+            return getFromCache(m, ae - be);
+        }
+        throw new RockstarRuntimeException("Dec64-Double mix");
     }
 
     public static Dec64 negate(Dec64 a) {
@@ -243,9 +267,14 @@ public class Dec64 {
         return a.compareTo(b);
     }
 
-    public int compareTo(Dec64 b) {
-        int commonE = Integer.min(normalE(this), normalE(b));
-        return Long.compare(transformM(this, commonE), transformM(b, commonE));
+    @Override
+    public int compareTo(RockNumber bn) {
+        if (bn instanceof RockNumber) {
+            Dec64 b = (Dec64) bn;
+            int commonE = Integer.min(normalE(this), normalE(b));
+            return Long.compare(transformM(this, commonE), transformM(b, commonE));
+        }
+        throw new RockstarRuntimeException("Dec64-Double mix");
     }
 
     public static long asLong(Dec64 a) {
@@ -291,5 +320,5 @@ public class Dec64 {
     public String rawString() {
         return "(" + mantissa + " E" + exponent + ")";
     }
-    
+
 }

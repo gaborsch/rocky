@@ -21,14 +21,14 @@ public class Value {
 
     private ExpressionType type = null;
     private String stringValue;
-    private Dec64 numericValue;
+    private RockNumber numericValue;
     private Boolean boolValue;
 
     public static Value getValue(String s) {
         return new Value(s);
     }
 
-    public static Value getValue(Dec64 n) {
+    public static Value getValue(RockNumber n) {
         return new Value(n);
     }
 
@@ -46,7 +46,7 @@ public class Value {
         } else if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s)) {
             return BOOLEAN_FALSE;
         } else {
-            Dec64 numericValue = Dec64.parse(s);
+            RockNumber numericValue = RockNumber.parse(s);
             if (numericValue != null) {
                 return getValue(numericValue);
             }
@@ -66,7 +66,7 @@ public class Value {
         this.type = ExpressionType.STRING;
     }
 
-    private Value(Dec64 numericValue) {
+    private Value(RockNumber numericValue) {
         this.numericValue = numericValue;
         this.type = ExpressionType.NUMBER;
     }
@@ -100,22 +100,22 @@ public class Value {
         return type == ExpressionType.STRING;
     }
 
-    private Dec64 getNumeric() {
+    private RockNumber getNumeric() {
         switch (getType()) {
             case NUMBER:
                 return numericValue;
             case STRING:
                 try {
-                    return Dec64.parse(stringValue);
+                    return RockNumber.parse(stringValue);
                 } catch (NumberFormatException nfe) {
                     return null;
                 }
             case BOOLEAN:
-                return boolValue ? Dec64.ONE : Dec64.ZERO;
+                return boolValue ? RockNumber.ONE : RockNumber.ZERO;
             case MYSTERIOUS:
-                return Dec64.ZERO;
+                return RockNumber.ZERO;
             case NULL:
-                return Dec64.ZERO;
+                return RockNumber.ZERO;
         }
         throw new RockstarRuntimeException("unknown numeric value");
     }
@@ -141,7 +141,7 @@ public class Value {
             case BOOLEAN:
                 return boolValue;
             case NUMBER:
-                return numericValue.compareTo(Dec64.ZERO) != 0;
+                return numericValue.compareTo(RockNumber.ZERO) != 0;
             case STRING:
                 return this.stringValue.length() > 0;
             case MYSTERIOUS:
@@ -193,8 +193,8 @@ public class Value {
             // String concatenation
             return Value.getValue(getString() + other.getString());
         } else {
-            Dec64 v1 = getNumeric();
-            Dec64 v2 = other.getNumeric();
+            RockNumber v1 = getNumeric();
+            RockNumber v2 = other.getNumeric();
             if (v1 != null && v2 != null) {
                 // numeric addition (cannot be String)
                 return Value.getValue(v1.add(v2));
@@ -204,8 +204,8 @@ public class Value {
     }
 
     public Value minus(Value other) {
-        Dec64 v1 = getNumeric();
-        Dec64 v2 = other.getNumeric();
+        RockNumber v1 = getNumeric();
+        RockNumber v2 = other.getNumeric();
         if (v1 != null && v2 != null) {
             // numeric subtraction
             return Value.getValue(v1.subtract(v2));
@@ -214,14 +214,14 @@ public class Value {
     }
 
     public Value multiply(Value other) {
-        Dec64 v2 = other.getNumeric();
+        RockNumber v2 = other.getNumeric();
         if (isString()) {
             if (v2 != null) {
                 // String repeating (STRING times NUMBER)
                 return Value.getValue(Utils.repeat(getString(),v2.asInt()));
             }
         } else if (other.isString()) {
-            Dec64 v1 = getNumeric();
+            RockNumber v1 = getNumeric();
             if (v1 != null) {
                 // String repeating (NUMBER times STRING)
                 return Value.getValue(Utils.repeat(other.getString(), v1.asInt()));
@@ -236,8 +236,8 @@ public class Value {
     }
 
     public Value divide(Value other) {
-        Dec64 v1 = getNumeric();
-        Dec64 v2 = other.getNumeric();
+        RockNumber v1 = getNumeric();
+        RockNumber v2 = other.getNumeric();
         if (v1 != null && v2 != null) {
             // numeric division
             return Value.getValue(v1.divide(v2));
@@ -295,7 +295,7 @@ public class Value {
                     Boolean b = getBoolFromStringAliases(stringValue);
                     return ( b != null && b == other.getBool()) ? 0 : 1;
                 case NUMBER:
-                    Dec64 v1 = getNumeric();
+                    RockNumber v1 = getNumeric();
                     return (v1 == null) ? 1 : v1.compareTo(other.getNumeric());
 
             }
@@ -309,7 +309,7 @@ public class Value {
                     Boolean b = getBoolFromStringAliases(other.stringValue);
                     return (b != null && getBool() == b) ? 0 : 1;
                 case NUMBER:
-                    Dec64 v2 = other.getNumeric();
+                    RockNumber v2 = other.getNumeric();
                     return (v2 == null) ? -1 : getNumeric().compareTo(v2);
             }
         }

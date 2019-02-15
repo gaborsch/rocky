@@ -25,7 +25,7 @@ import rockstar.expression.PlusExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.Dec64;
+import rockstar.runtime.RockNumber;
 import rockstar.runtime.Value;
 
 /**
@@ -118,7 +118,7 @@ public class ExpressionParser {
                 next();
                 return ConstantExpression.CONST_FALSE;
             }
-            Dec64 nv = Dec64.parse(token);
+            RockNumber nv = RockNumber.parse(token);
             if (nv != null) {
                 next();
                 return new ConstantExpression(nv);

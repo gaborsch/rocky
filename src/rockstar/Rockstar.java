@@ -40,7 +40,7 @@ public class Rockstar {
 
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "-w", "programs/tests/correct/fibonacci.rock"};
-        args = new String[]{"list", "-s", "programs/tests/correct/nested_function_scopes.rock"};
+//        args = new String[]{"list", "-s", "programs/tests/correct/nested_function_scopes.rock"};
 //        args = new String[]{"list", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
 //        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
