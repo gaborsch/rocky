@@ -79,7 +79,8 @@ public class FunctionBlock extends Block {
 
     @Override
     protected String list() {
-        return "function " + name + ": " + Arrays.deepToString(parameterNames.toArray());
+        String paramsList = parameterNames.toString();
+        return "function " + name + "(" + paramsList.substring(1, paramsList.length()-1 )+")";
     }
 
     

@@ -28,7 +28,7 @@ public class FunctionCall extends CompoundExpression {
 
     @Override
     public String getFormat() {
-        StringBuilder sb = new StringBuilder("CALL ");
+        StringBuilder sb = new StringBuilder();
         sb.append(name);
         sb.append("(");
         final List<Expression> parameters = getParameters();

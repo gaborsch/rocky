@@ -93,37 +93,18 @@ public class BlockContext {
      * @param value
      */
     public void setVariable(String name, Value value) {
-        // find the context where the variable was defined (if possible)
-        BlockContext ctx = this;
-        // find the first block with the same name
-        Map<String, BlockContext> firstBlock = new HashMap<>();
-        firstBlock.put(ctx.name, ctx);
-        while(ctx != null && !ctx.vars.containsKey(name)) {
-            ctx = ctx.parent;
-            if (ctx != null && !firstBlock.containsKey(ctx.name)) {
-                firstBlock.put(ctx.name, ctx);
-            }
-        }
-        // if we found the variable in a block, save it in the first instance
-        if (ctx != null) {
-            ctx = firstBlock.get(ctx.name);
-            ctx.setLocalVariable(name, value);
+        // we can set either local or global variables
+        boolean hasGlobal = root.vars.containsKey(name);
+        if(this.vars.containsKey(name)) {
+            // overwrite local variable
+            setLocalVariable(name, value);
+        } else if (hasGlobal) {
+            // overwrite global variable
+            root.setLocalVariable(name, value);
         } else {
-            // otherwise set it locally, wherever we are now
+            // initialize local variable
             setLocalVariable(name, value);
         }
-        // we can set either local or global variables
-//        boolean hasGlobal = root.vars.containsKey(name);
-//        if(this.vars.containsKey(name)) {
-//            // overwrite local variable
-//            setLocalVariable(name, value);
-//        } else if (hasGlobal) {
-//            // overwrite global variable
-//            root.setLocalVariable(name, value);
-//        } else {
-//            // initialize local variable
-//            setLocalVariable(name, value);
-//        }
     }
 
     /**

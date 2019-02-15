@@ -42,6 +42,6 @@ public class IfStatement extends Block {
 
     @Override
     protected String list() {
-        return "if(" + condition.format() + ")";
+        return "if " + condition.format();
     }
 }
