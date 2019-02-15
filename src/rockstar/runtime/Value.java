@@ -35,7 +35,7 @@ public class Value {
     public static Value getValue(boolean b) {
         return b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     }
-    
+
     public static Value parse(String s) {
         if (ExpressionParser.MYSTERIOUS_KEYWORDS.contains(s)) {
             return MYSTERIOUS;
@@ -50,8 +50,8 @@ public class Value {
             if (numericValue != null) {
                 return getValue(numericValue);
             }
-        } 
-        if(s.length() >= 2 && s.matches("\".*\"")) {
+        }
+        if (s.length() >= 2 && s.matches("\".*\"")) {
             s = s.substring(1, s.length() - 1);
         }
         return getValue(s);
@@ -137,7 +137,7 @@ public class Value {
     }
 
     public boolean getBool() {
-            switch (getType()) {
+        switch (getType()) {
             case BOOLEAN:
                 return boolValue;
             case NUMBER:
@@ -218,7 +218,7 @@ public class Value {
         if (isString()) {
             if (v2 != null) {
                 // String repeating (STRING times NUMBER)
-                return Value.getValue(Utils.repeat(getString(),v2.asInt()));
+                return Value.getValue(Utils.repeat(getString(), v2.asInt()));
             }
         } else if (other.isString()) {
             RockNumber v1 = getNumeric();
@@ -292,8 +292,9 @@ public class Value {
                     return 1;
                 case BOOLEAN:
                     // convert String to bool
-                    Boolean b = getBoolFromStringAliases(stringValue);
-                    return ( b != null && b == other.getBool()) ? 0 : 1;
+//                    Boolean b = getBoolFromStringAliases(stringValue);
+                    Boolean b = stringValue != null;
+                    return (b != null && b == other.getBool()) ? 0 : 1;
                 case NUMBER:
                     RockNumber v1 = getNumeric();
                     return (v1 == null) ? 1 : v1.compareTo(other.getNumeric());
@@ -306,7 +307,8 @@ public class Value {
                     return 1;
                 case BOOLEAN:
                     // convert String to bool
-                    Boolean b = getBoolFromStringAliases(other.stringValue);
+//                    Boolean b = getBoolFromStringAliases(other.stringValue);
+                    Boolean b = other.stringValue != null;
                     return (b != null && getBool() == b) ? 0 : 1;
                 case NUMBER:
                     RockNumber v2 = other.getNumeric();
