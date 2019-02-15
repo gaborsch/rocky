@@ -86,9 +86,7 @@ public class Parser {
         } catch (IOException ex) {
             parseError(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         }
-        if (blocks.size() > 1) {
-            parseError(blocks.size() + " blocks at the end");
-        }
+
         return prg;
     }
 
