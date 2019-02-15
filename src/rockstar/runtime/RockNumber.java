@@ -6,7 +6,7 @@
 package rockstar.runtime;
 
 /**
- *
+ * RockNumber is the number abstraction layer for Rockstar
  * @author Gabor
  */
 public class RockNumber {
@@ -30,7 +30,7 @@ public class RockNumber {
     public static RockNumber ZERO;
 
     static {
-        setDec64(true);
+        setDec64(false);
     }
 
     public static RockNumber parse(String stringValue) {
@@ -62,8 +62,8 @@ public class RockNumber {
         }
     }
 
-    public int compareTo(RockNumber b) {
-        return 0;
+    public int compareTo(RockNumber rn) {
+        return dblValue.compareTo(rn.dblValue);
     }
 
     public RockNumber add(RockNumber rn) {
@@ -92,7 +92,12 @@ public class RockNumber {
 
     @Override
     public String toString() {
-        return dblValue.toString();
+        String s = dblValue.toString();
+        if (s.endsWith(".0")) {
+            // chop fraction if integral value
+            return s.substring(0, s.length()-2);
+        }
+        return s;
     }
     
     

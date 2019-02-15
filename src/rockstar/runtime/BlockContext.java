@@ -29,7 +29,7 @@ public class BlockContext {
     private final PrintStream output;
     private final PrintStream error;
     private final Map<String, String> env;
-    private String name;
+    private final String name;
 
     public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
         this.parent = null;
@@ -43,7 +43,7 @@ public class BlockContext {
         this.output = output;
         this.error = error;
         this.env = env;
-        this.name = "<RockStar>";
+        this.name = "RockStar";
     }
 
     /**
