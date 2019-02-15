@@ -39,7 +39,8 @@ public class Rockstar {
     public static void main(String[] args) {
 
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
-//        args = new String[]{"run","-s", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
+//        args = new String[]{"test", "-w", "programs/tests/correct/fibonacci.rock"};
+        args = new String[]{"list", "-s", "programs/tests/correct/nested_function_scopes.rock"};
 //        args = new String[]{"list", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
 //        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
@@ -48,8 +49,6 @@ public class Rockstar {
 //        args = new String[]{"help", "run"};
 //        args = new String[]{"-", "-x"};
 //        args = new String[]{"run", "programs/tests/correct/umlauts.rock"};
-
-
 
         List<String> argl = new LinkedList<>(Arrays.asList(args));
 
@@ -113,7 +112,7 @@ public class Rockstar {
 
     private static void doHelp(String cmd, Map<String, String> options) {
         System.out.println(CLI_HEADER);
-        System.out.println(Utils.repeat("-",CLI_HEADER.length()));
+        System.out.println(Utils.repeat("-", CLI_HEADER.length()));
         System.out.println("Usage:");
         if (cmd == null || cmd.equals("run")) {
             System.out.println(CLI_WRAPPER + " <filename> ...");
@@ -209,14 +208,24 @@ public class Rockstar {
         });
     }
 
-    private static void doTest(List<String> dirs, Map<String, String> options) {
-        if (dirs.isEmpty()) {
+    private static void doTest(List<String> files, Map<String, String> options) {
+        if (files.isEmpty()) {
             doHelp("test", options);
             return;
         }
-        dirs.forEach((dir) -> {
-            new RockstarTest(options).executeDir(dir, null);
-        });
+        boolean isDirectory = options.containsKey("--testdir");
+        if (isDirectory) {
+            // 
+            files.forEach((dir) -> {
+                new RockstarTest(options).executeDir(dir, null);
+            });
+        } else {
+            // files
+            files.forEach((file) -> {
+                new RockstarTest(options).executeFile(file, null);
+            });
+            
+        }
     }
 
     private static void doRepl(List<String> files, Map<String, String> options) {
@@ -234,7 +243,7 @@ public class Rockstar {
         boolean explain = options.containsKey("-x") || options.containsKey("--explain");
 
         System.out.println(CLI_HEADER);
-        System.out.println(Utils.repeat("-",CLI_HEADER.length()));
+        System.out.println(Utils.repeat("-", CLI_HEADER.length()));
         System.out.println("Type 'exit' to quit, 'show' to get more info.");
 
         Stack<Block> blocks = new Stack();
@@ -266,11 +275,11 @@ public class Rockstar {
                     try {
                         // parse the statement
                         Statement stmt = StatementFactory.getStatementFor(new Line(line, "<input>", 1));
-                        
+
                         if (stmt == null) {
                             throw new ParseException("Unknown statement");
                         }
-                        
+
                         // explain if needed
                         if (explain) {
                             System.out.println(stmt.toString());

@@ -67,9 +67,9 @@ public class WhileStatement extends Block {
     @Override
     protected String list() {
         if (negateCondition) {
-            return "until(" + condition.format() + ")";
+            return "until " + condition.format();
         } else {
-            return "while(" + condition.format() + ")";
+            return "while " + condition.format();
         }
     }
 

@@ -66,6 +66,10 @@ public class RockstarTest {
             }
         }
     }
+    
+    public void executeFile(String file, Expected exp) {
+        executeFile(new File(file), exp == null ? Expected.CORRECT : exp);
+    }
 
     private void executeFile(File file, Expected exp) {
 
@@ -78,7 +82,7 @@ public class RockstarTest {
         String excName = exc == null ? "" : exc.getClass().getSimpleName();
         if (result.isPassed()) {
             passed++;
-            System.out.printf("   [ OK ] %-30s", file.getName());
+            System.out.printf("   [ OK ] %-40s", file.getName());
         } else {
             failed++;
             if (exc == null) {
