@@ -44,6 +44,7 @@ public class LogicalExpression extends CompoundExpression {
 
     @Override
     public Value evaluate(BlockContext ctx) {
+        ctx.beforeExpression(this);
         Expression expr1 = this.getParameters().get(0);
         Expression expr2 = this.getParameters().get(1);
         Value v1 = expr1.evaluate(ctx);
@@ -51,20 +52,20 @@ public class LogicalExpression extends CompoundExpression {
         switch (type) {
             case AND:
                 if (v1.asBoolean().equals(Value.BOOLEAN_TRUE)) {
-                    return v1.and(expr2.evaluate(ctx));
+                    return ctx.afterExpression(this, v1.and(expr2.evaluate(ctx)));
                 }
-                return v1;
+                return ctx.afterExpression(this, v1);
             case OR:
                 if (v1.asBoolean().equals(Value.BOOLEAN_FALSE)) {
-                    return v1.or(expr2.evaluate(ctx));
+                    return ctx.afterExpression(this, v1.or(expr2.evaluate(ctx)));
                 }
-                return v1;
+                return ctx.afterExpression(this, v1);
             case NOR:
                 if (v1.asBoolean().equals(Value.BOOLEAN_FALSE)) {
-                    return v1.nor(expr2.evaluate(ctx));
+                    return ctx.afterExpression(this, v1.nor(expr2.evaluate(ctx)));
                 }
-                return Value.BOOLEAN_FALSE;
+                return ctx.afterExpression(this, Value.BOOLEAN_FALSE);
         }
-        return null;
+        return ctx.afterExpression(this, null);
     }
 }

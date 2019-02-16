@@ -25,8 +25,6 @@ public class VariableReference extends SimpleExpression {
         return isFunctionName;
     }
     
-    
-
     public VariableReference(String name) {
         this.name = name;
     }
@@ -43,20 +41,18 @@ public class VariableReference extends SimpleExpression {
 
     @Override
     public Value evaluate(BlockContext ctx) {
+        ctx.beforeExpression(this);
         Value value = ctx.getVariableValue(name);
         if (value == null) {
             value = Value.MYSTERIOUS;
             ctx.setVariable(name, value);
         }
-        return value;
+        return ctx.afterExpression(this, value);
     }
 
     @Override
     public String format() {
         return name;
     }
-    
-    
-
     
 }

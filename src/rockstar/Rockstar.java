@@ -14,6 +14,7 @@ import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementFactory;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.LoggerListener;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.statement.Block;
@@ -127,6 +128,10 @@ public class Rockstar {
                 System.out.println("        Use the same context for each consecutive program. (Default: create new context)");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
+                System.out.println("    --runlog");
+                System.out.println("        Log the execution path to the stdout");
+                System.out.println("    --exprlog");
+                System.out.println("        Log the execution path and expression evaluations to the stdout");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
             }
@@ -184,12 +189,15 @@ public class Rockstar {
         }
         boolean sameContext = options.containsKey("-s") || options.containsKey("--same-context");
         
+        LoggerListener logger = new LoggerListener(options);
+        
         BlockContext ctx = null;
         for (String filename : files) {
             try {
                 Program prg = new Parser(filename).parse();
                 if (ctx == null || !sameContext) {
                     ctx = new BlockContext(System.in, System.out, System.err, options);
+                    ctx.setListener(logger);
                 }
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {

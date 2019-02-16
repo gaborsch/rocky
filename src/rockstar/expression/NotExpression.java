@@ -31,9 +31,10 @@ public class NotExpression extends CompoundExpression {
 
     @Override
     public Value evaluate(BlockContext ctx) {
+        ctx.beforeExpression(this);
         Expression expr = this.getParameters().get(0);
         Value v = expr.evaluate(ctx);
-        return v.negate();
+        return ctx.afterExpression(this, v.negate());
     }
 
 }

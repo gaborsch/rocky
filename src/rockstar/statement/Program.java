@@ -5,8 +5,6 @@
  */
 package rockstar.statement;
 
-import rockstar.runtime.BlockContext;
-
 /**
  *
  * @author Gabor

@@ -18,7 +18,7 @@ public abstract class Block extends Statement {
 
     private Block parent;
 
-    private List<Statement> statements = new ArrayList<>();
+    private final List<Statement> statements = new ArrayList<>();
 
     public List<Statement> getStatements() {
         return statements;
@@ -54,6 +54,7 @@ public abstract class Block extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         statements.forEach((statement) -> {
+            ctx.beforeStatement(statement);
             statement.execute(ctx);
         });
     }

@@ -52,6 +52,7 @@ public class FunctionCall extends CompoundExpression {
 
     @Override
     public Value evaluate(BlockContext ctx) {
+        ctx.beforeExpression(this);
         FunctionBlock funcBlock = ctx.retrieveFunction(name);
         
         List<Expression> params = getParameters();
@@ -62,7 +63,7 @@ public class FunctionCall extends CompoundExpression {
         // call the functon
         Value retValue = funcBlock.call(ctx, values);
         // return the return value
-        return retValue == null ? Value.NULL : retValue;
+        return ctx.afterExpression(this, retValue == null ? Value.NULL : retValue);
  }
     
     

@@ -12,7 +12,9 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import rockstar.expression.Expression;
 import rockstar.statement.FunctionBlock;
+import rockstar.statement.Statement;
 
 /**
  *
@@ -30,6 +32,8 @@ public class BlockContext {
     private final PrintStream error;
     private final Map<String, String> env;
     private final String name;
+    
+    private BlockContextListener listener = null;
 
     public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
         this.parent = null;
@@ -59,9 +63,14 @@ public class BlockContext {
         this.output = parent.output;
         this.error = parent.error;
         this.env = parent.env;
+        this.listener = parent.listener;
         this.name = name;
     }
 
+    public void setListener(BlockContextListener listener) {
+        this.listener = listener;
+    }
+    
     public BufferedReader getInput() {
         return input;
     }
@@ -155,6 +164,25 @@ public class BlockContext {
 
     public void defineFunction(String name, FunctionBlock function) {
         funcs.put(name, function);
+    }
+    
+    public void beforeStatement(Statement stmt) {
+        if (listener != null) {
+            listener.beforeStatement(this, stmt);
+        }
+    }
+
+    public void beforeExpression(Expression exp) {
+        if (listener != null) {
+            listener.beforeExpression(this, exp);
+        }
+    }
+
+    public Value afterExpression(Expression exp, Value v) {
+        if (listener != null) {
+            listener.afterExpression(this, exp, v);
+        }
+        return v;
     }
 
 }

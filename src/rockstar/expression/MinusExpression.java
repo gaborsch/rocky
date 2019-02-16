@@ -6,7 +6,6 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -32,11 +31,12 @@ public class MinusExpression extends CompoundExpression {
 
     @Override
     public Value evaluate(BlockContext ctx) {
+        ctx.beforeExpression(this);
         Expression expr1 = this.getParameters().get(0);
         Expression expr2 = this.getParameters().get(1);
         Value v1 = expr1.evaluate(ctx);
         Value v2 = expr2.evaluate(ctx);
-        return v1.minus(v2);
+        return ctx.afterExpression(this, v1.minus(v2));
     }
 
 }

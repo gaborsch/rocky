@@ -71,6 +71,7 @@ public class DummyExpression extends Expression {
 
     @Override
     public Value evaluate(BlockContext ctx) {
+        ctx.beforeExpression(this);
         throw new RockstarRuntimeException(errorMsg); 
     }
 
