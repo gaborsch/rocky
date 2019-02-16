@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import rockstar.runtime.Utils;
 
 /**
  *
@@ -28,14 +29,37 @@ public class RockstarTest {
         RUNTIME_ERROR
     }
 
+    private boolean allDirectories;
+    private boolean isQuiet;
+    private boolean isVerbose;
+
     private int testCount = 0;
     private int passed = 0;
     private int failed = 0;
 
-    public void executeDir(String dirname, Expected exp) {
-        File dir = new File(dirname);
+    public void executeDir(String dirname) {
 
-        boolean allDirectories = options.containsKey("-a") || options.containsKey("--all-directories");
+        allDirectories = options.containsKey("-a") || options.containsKey("--all-directories");
+        isQuiet = options.containsKey("-q") || options.containsKey("--quiet");
+        isVerbose = options.containsKey("-v") || options.containsKey("--verbose");
+
+        executeDir(dirname, null);
+
+        String SEPARATOR = Utils.repeat("=", 60);
+        System.out.println();
+        System.out.println(SEPARATOR);
+        System.out.println("Test results for " + dirname + ":");
+        System.out.println(SEPARATOR);
+        System.out.format("All tests:    %d\n", testCount);
+        System.out.format("Failed tests: %d\n", failed);
+        System.out.format("Passed tests: %d\n", passed);
+        System.out.format("Pass ratio:   %3.2f%%\n", (testCount > 0) ? 100f * passed / testCount : 0.0d);
+        System.out.println(SEPARATOR);
+        System.out.println();
+    }
+
+    private void executeDir(String dirname, Expected exp) {
+        File dir = new File(dirname);
 
         boolean isFirstFileInDir = true;
         File[] files = dir.listFiles();
@@ -45,7 +69,9 @@ public class RockstarTest {
                 if (file.getName().endsWith(".rock")) {
                     if (isFirstFileInDir) {
                         if (exp != null) {
-                            System.out.println(exp + " tests in " + dirname);
+                            if (!isQuiet) {
+                                System.out.println(exp + " tests in " + dirname);
+                            }
                         }
                         isFirstFileInDir = false;
                     }
@@ -76,6 +102,7 @@ public class RockstarTest {
                 }
             }
         }
+
     }
 
     public void executeFile(String file, Expected exp) {
@@ -93,19 +120,28 @@ public class RockstarTest {
         String excName = exc == null ? "" : exc.getClass().getSimpleName();
         if (result.isPassed()) {
             passed++;
-            System.out.printf("   [ OK ] %-40s", file.getName());
+            if (!isQuiet) {
+                System.out.printf("   [ OK ] %-40s\n", file.getName());
+            }
         } else {
             failed++;
             if (exc == null) {
-                System.out.printf("!  [FAIL] %-40s %s\n", file.getName(), message);
-                System.out.println(debugInfo);
+                if (!isQuiet) {
+                    System.out.printf("!  [FAIL] %-40s %s\n", file.getName(), message);
+                    if (isVerbose) {
+                        System.out.println(debugInfo);
+                    }
+                }
             } else {
-                System.out.printf("!! [EXCP] %-40s %s %s\n", file.getName(), excName, message);
-                System.out.println(debugInfo);
+                if (!isQuiet) {
+                    System.out.printf("!! [EXCP] %-40s %s %s\n", file.getName(), excName, message);
+                    if (isVerbose) {
+                        System.out.println(debugInfo);
+                    }
+                }
                 // throw new RuntimeException(exc);
             }
         }
-        System.out.println();
     }
 
 }

@@ -175,6 +175,10 @@ public class Rockstar {
                 System.out.println("Options:");
                 System.out.println("    -a, --all-directories");
                 System.out.println("        Also include directories with name starting with '.' or '_'.");
+                System.out.println("    -q, --quiet");
+                System.out.println("        Quiet mode, print statistics only.");
+                System.out.println("    -v, --verbode");
+                System.out.println("        Verbose mode, print more information for failed tests.");
                 System.out.println("    -w, --write-output");
                 System.out.println("        Write actual output into *.rock.current file, if the output does not match the expected.");
                 System.out.println("    --infinite-loops");
@@ -238,7 +242,7 @@ public class Rockstar {
         if (isDirectory) {
             // 
             files.forEach((dir) -> {
-                new RockstarTest(options).executeDir(dir, null);
+                new RockstarTest(options).executeDir(dir);
             });
         } else {
             // files
