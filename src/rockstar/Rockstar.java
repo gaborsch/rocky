@@ -2,25 +2,18 @@ package rockstar;
 
 import rockstar.statement.Program;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
-import rockstar.parser.Line;
-import rockstar.parser.ParseException;
+import rockstar.debugger.RockstarDebugger;
 import rockstar.parser.Parser;
-import rockstar.parser.StatementFactory;
+import rockstar.repl.RockstarRepl;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.LoggerListener;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
-import rockstar.statement.Block;
-import rockstar.statement.BlockEnd;
-import rockstar.statement.ContinuingBlockStatementI;
-import rockstar.statement.Statement;
 import rockstar.test.RockstarTest;
 
 /**
@@ -34,9 +27,9 @@ public class Rockstar {
 
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
-    private static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99";
+    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99";
     
-    private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test"}));
+    private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test", "debug"}));
     
     public static void main(String[] args) {
 
@@ -104,6 +97,8 @@ public class Rockstar {
             case "repl":
                 doRepl(files, options);
                 break;
+            case "debug":
+                doDebug(files, options);
             case "test":
                 doTest(files, options);
                 break;
@@ -134,6 +129,18 @@ public class Rockstar {
                 System.out.println("        Log the execution path and expression evaluations to the stdout");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+            }
+        }
+        if (cmd == null || cmd.equals("debug")) {
+            System.out.println(CLI_WRAPPER + " debug [--options ...] <filename> ...");
+            System.out.println("    Debug a program interactively. Stop at breakpoints, lines, display and watch variables.");
+            if (cmd != null) {
+                System.out.println("Options:");
+                System.out.println("    --infinite-loops");
+                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
+                System.out.println("    --dec64");
+                System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+                RockstarDebugger.printDebuggerHelp("");
             }
         }
         if (cmd == null || cmd.equals("list")) {
@@ -242,106 +249,14 @@ public class Rockstar {
     }
     
     private static void doRepl(List<String> files, Map<String, String> options) {
-        BlockContext ctx = new BlockContext(System.in, System.out, System.err, options);
-
-        // pre-run any programs defined as parameter
-        for (String filename : files) {
-            try {
-                Program prg = new Parser(filename).parse();
-                prg.execute(ctx);
-            } catch (FileNotFoundException ex) {
-                System.err.println("File not found: " + filename);
-            }
-        }
-        boolean explain = options.containsKey("-x") || options.containsKey("--explain");
-        
-        System.out.println(CLI_HEADER);
-        System.out.println(Utils.repeat("-", CLI_HEADER.length()));
-        System.out.println("Type 'exit' to quit, 'show' to get more info.");
-        
-        Stack<Block> blocks = new Stack();
-        blocks.push(new Program("-"));
-        try {
-            while (true) {
-                String line = ctx.getInput().readLine();
-                
-                if (line.equals("exit")) {
-                    break;
-                }
-                if (line.startsWith("show")) {
-                    if (line.startsWith("show var")) {
-                        System.out.println("Variables:");
-                        ctx.getVariables().forEach((name, value) -> {
-                            System.out.println(name + " = " + value);
-                        });
-                    } else if (line.startsWith("show func")) {
-                        System.out.println("Functions:");
-                        ctx.getFunctions().forEach((name, func) -> {
-                            System.out.println(name + " taking " + func.getParameterNames());
-                        });
-                    } else {
-                        System.out.println("Show commands: ");
-                        System.out.println("    show var: list global variables and current values");
-                        System.out.println("    show func: list functions and parameters");
-                    }
-                } else {
-                    try {
-                        // parse the statement
-                        Statement stmt = StatementFactory.getStatementFor(new Line(line, "<input>", 1));
-                        
-                        if (stmt == null) {
-                            throw new ParseException("Unknown statement");
-                        }
-
-                        // explain if needed
-                        if (explain) {
-                            System.out.println(stmt.toString());
-                        }
-                        if (stmt instanceof BlockEnd) {
-                            // simple block closing: no need to add it anywhere
-                            if (blocks.size() > 1) {
-                                stmt = blocks.pop();
-                            }
-                        } else {
-                            // meaningful statements
-                            if (stmt instanceof ContinuingBlockStatementI) {
-                                // if it sticks to the previous block, close that block, and append it
-                                Block finishedBlock = blocks.pop();
-                                ((ContinuingBlockStatementI) stmt).appendTo(finishedBlock);
-                            }
-
-                            // append statement to current block
-                            if (!blocks.isEmpty()) {
-                                blocks.peek().addStatement(stmt);
-                            } else {
-                                throw new ParseException("Statement out of block");
-                            }
-
-                            // open a new block if it's a block statement
-                            if (stmt instanceof Block) {
-                                Block block = (Block) stmt;
-                                block.setParent(blocks.peek());
-                                blocks.push(block);
-                            }
-                            
-                        }
-                        // execute only the top level commands
-                        if (blocks.size() == 1) {
-                            stmt.execute(ctx);
-                        }
-                        
-                    } catch (ParseException e) {
-                        System.out.println("Parse error.");
-                    } catch (Throwable t) {
-                        System.out.println(t.getClass().getSimpleName() + ": " + t.getMessage());
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            // end of input: silently ignore
-        }
+        new RockstarRepl(options).repl(files);
     }
     
+        
+    private static void doDebug(List<String> files, Map<String, String> options) {
+        new RockstarDebugger(options).debug(files);
+
+    }
     private static void setGlobalOptions(Map<String, String> options) {
         boolean dec64 = options.containsKey("--dec64");
         RockNumber.setDec64(dec64);

@@ -24,6 +24,7 @@ public class BlockContext {
 
     private final BlockContext parent;
     private final BlockContext root;
+    private int level = 0;
     private final Map<String, Value> vars = new HashMap<>();
     private final Map<String, FunctionBlock> funcs = new HashMap<>();
 
@@ -59,12 +60,13 @@ public class BlockContext {
     public BlockContext(BlockContext parent, String name) {
         this.parent = parent;
         this.root = parent.root;
+        this.level = parent.level + 1;
         this.input = parent.input;
         this.output = parent.output;
         this.error = parent.error;
         this.env = parent.env;
         this.listener = parent.listener;
-        this.name = name;
+        this.name = name + "#" + this.level;
     }
 
     public void setListener(BlockContextListener listener) {
@@ -95,6 +97,18 @@ public class BlockContext {
         return funcs;
     }
 
+    public String getName() {
+        return name;
+    }
+    
+    public BlockContext getParent() {
+        return parent;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+    
     /**
      * Set a variable value in the proper context
      *
