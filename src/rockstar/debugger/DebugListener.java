@@ -15,6 +15,7 @@ import rockstar.parser.ExpressionParser;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.BlockContextListener;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 import rockstar.statement.Statement;
 
@@ -149,9 +150,12 @@ public class DebugListener implements BlockContextListener {
                             System.out.println("Wrong line number");
                         }
                     } else if (line.startsWith("?")) {
-                        // add breakpoint
+                        // show help
                         String helpCmd = line.substring(1).trim();
                         RockstarDebugger.printDebuggerHelp(helpCmd);
+                    } else if (line.equals("exit")) {
+                        // exit
+                        throw new RockstarRuntimeException("exit commad");
                     } else {
                         System.out.println("Wrong command, use '?' for command help");
                     }

@@ -11,6 +11,7 @@ import java.util.Map;
 import rockstar.Rockstar;
 import rockstar.parser.Parser;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
 
@@ -34,8 +35,9 @@ public class RockstarDebugger {
 
         System.out.println(Rockstar.CLI_HEADER);
         System.out.println(Utils.repeat("-", Rockstar.CLI_HEADER.length()));
-        System.out.println("Type 'exit' to quit, 'show' to get more info.");
+        System.out.println("Type 'exit' to quit, '?' to get more help on debugger commands. Press enter after each command.");
 
+        try {
         // pre-run any programs defined as parameter
         files.forEach((filename) -> {
             try {
@@ -45,6 +47,9 @@ public class RockstarDebugger {
                 System.err.println("File not found: " + filename);
             }
         });
+        } catch (RockstarRuntimeException rrex) {
+            System.out.println("Rockstar Debugger finished by " + rrex.getMessage());
+        }
 
     }
 

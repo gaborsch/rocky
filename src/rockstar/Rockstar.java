@@ -99,6 +99,7 @@ public class Rockstar {
                 break;
             case "debug":
                 doDebug(files, options);
+                break;
             case "test":
                 doTest(files, options);
                 break;
