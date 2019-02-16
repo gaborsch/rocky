@@ -4,7 +4,7 @@ This is my RockStar interpreter in Java, have fun and play with it.
 I like to receive feedbacks, should you have any issues, requests, wishes or troubles, open a ticket for it and I'll help you to resolve. Contributors are also welcome!
 
 Features include:
-* (Almost) fully compliant Rockstar implementation to date (89% of the new test are OK)
+* (Almost) fully compliant Rockstar implementation to date (more than 90% of the new test are OK)
 * Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable)
 * Interactive terminal mode (REPL - Read - Eval - Print Loop)
 * List command (parse a file without running it)

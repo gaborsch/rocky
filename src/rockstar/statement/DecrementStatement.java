@@ -39,16 +39,17 @@ public class DecrementStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        Value v = ctx.getVariableValue(variable.getName());
+        String varName = variable.getName(ctx);
+        Value v = ctx.getVariableValue(varName);
         if (v.isMysterious() || v.isNull()) {
             v = Value.getValue(RockNumber.ZERO);
             // v is set to a numeric value
-            ctx.setVariable(variable.getName(), v);
+            ctx.setVariable(varName, v);
         }
         if (v.isNumeric()) {
             // increment by count
             Value value = getMinus().evaluate(ctx);
-            ctx.setVariable(variable.getName(), value);
+            ctx.setVariable(varName, value);
             return;
         } else if (v.isBoolean()) {
             // convert to boolean
@@ -57,7 +58,7 @@ public class DecrementStatement extends Statement {
                 // negate boolean
                 v = v.negate();
             }
-            ctx.setVariable(variable.getName(), v);
+            ctx.setVariable(varName, v);
             return;
         }
         throw new RockstarRuntimeException(v.getType() + " ++");
@@ -65,6 +66,6 @@ public class DecrementStatement extends Statement {
     
     @Override
     protected String list() {
-        return variable.getName()+ " -= " + count;
+        return variable.format()+ " -= " + count;
     }
 }

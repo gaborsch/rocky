@@ -47,7 +47,7 @@ public class FunctionCall extends CompoundExpression {
     @Override
     public void setupFinished() {
         Expression nameExpr = getParameters().remove(0);
-        name = ((VariableReference)nameExpr).getName();
+        name = ((VariableReference)nameExpr).getFunctionName();
     }
 
     @Override

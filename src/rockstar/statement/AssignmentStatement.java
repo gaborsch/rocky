@@ -26,13 +26,13 @@ public class AssignmentStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        String name = this.variable.getName();
+        String name = this.variable.getName(ctx);
         Value value = expression.evaluate(ctx);
         ctx.setVariable(name, value);
     }
 
     @Override
     protected String list() {
-        return variable.getName() + " := " + expression.format();
+        return variable.format() + " := " + expression.format();
     }
 }

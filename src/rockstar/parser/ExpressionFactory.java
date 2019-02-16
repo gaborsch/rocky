@@ -48,8 +48,6 @@ public class ExpressionFactory {
         return new DummyExpression(tokens, line);
     }
 
-    static VariableReference lastVariable = null;
-
     /**
      * Try a variable reference, returns null if failed
      *

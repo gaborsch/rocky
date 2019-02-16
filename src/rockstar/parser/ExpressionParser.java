@@ -169,19 +169,19 @@ public class ExpressionParser {
             }
             name = sb.toString();
         }
+        // not a proper variable
         if (name == null && containsAtLeast(1)) {
             // Variable backreference
             // TODO start of the line capitalization
             if (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(token0)) {
                 next();
-                return ExpressionFactory.lastVariable;
+                VariableReference varRef = new VariableReference(token0, false, true);
+                return varRef;
             }
         }
+
         if (name != null) {
-            VariableReference varRef = new VariableReference(name, isFunctionName);
-            if (!isFunctionName) {
-                ExpressionFactory.lastVariable = varRef;
-            }
+            VariableReference varRef = new VariableReference(name, isFunctionName, false);
             return varRef;
         }
         return null;
@@ -235,11 +235,11 @@ public class ExpressionParser {
         while (!operatorStack.isEmpty()) {
             int topPrec = operatorStack.peek().getPrecedence();
             int newPrec = operator.getPrecedence();
-            
+
             if (topPrec == 600 && newPrec == 600) {
                 // Logical NOT (right-associative)
                 break;
-            } 
+            }
             if (topPrec > newPrec) {
                 // other (left-associative)
                 break;

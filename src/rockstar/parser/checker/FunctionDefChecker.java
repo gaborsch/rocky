@@ -44,12 +44,12 @@ public class FunctionDefChecker extends Checker {
             // function name is the same as a variable name
             VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line);
             if (nameRef != null) {
-                FunctionBlock fb = new FunctionBlock(nameRef.getName());
+                FunctionBlock fb = new FunctionBlock(nameRef.getFunctionName());
                 VariableReference paramRef;
                 for (int i = 1; i <= paramCount; i++) {
                     paramRef = ExpressionFactory.tryVariableReferenceFor(getResult()[i], line);
                     if (paramRef != null) {
-                        fb.addParameterName(paramRef.getName());
+                        fb.addParameterName(paramRef.getFunctionName());
                     } else {
                         return null;
                     }

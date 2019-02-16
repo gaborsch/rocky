@@ -109,6 +109,13 @@ public class BlockContext {
         return level;
     }
     
+    // last assigned variable name in this context
+    private String lastVariableName = null;
+
+    public String getLastVariableName() {
+        return lastVariableName;
+    }
+    
     /**
      * Set a variable value in the proper context
      *
@@ -128,6 +135,9 @@ public class BlockContext {
             // initialize local variable
             setLocalVariable(name, value);
         }
+        
+        // last assigned variable name
+        this.lastVariableName = name;
     }
 
     /**
