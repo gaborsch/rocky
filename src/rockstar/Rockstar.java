@@ -14,6 +14,7 @@ import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementFactory;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
@@ -33,9 +34,9 @@ public class Rockstar {
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
     private static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99";
-
+    
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test"}));
-
+    
     public static void main(String[] args) {
 
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
@@ -49,12 +50,11 @@ public class Rockstar {
 //        args = new String[]{"help", "run"};
 //        args = new String[]{"-", "-x"};
 //        args = new String[]{"run", "programs/tests/correct/umlauts.rock"};
-
         List<String> argl = new LinkedList<>(Arrays.asList(args));
-
+        
         List<String> files = new LinkedList<>();
         Map<String, String> options = new HashMap<>();
-
+        
         String command = null;
         if (!argl.isEmpty()) {
             String a1 = argl.get(0);
@@ -62,7 +62,7 @@ public class Rockstar {
                 command = argl.remove(0);
             }
         }
-
+        
         while (!argl.isEmpty()) {
             String a = argl.remove(0);
             if (a.equals("-")) {
@@ -76,7 +76,7 @@ public class Rockstar {
                 files.add(a);
             }
         }
-
+        
         if (command == null) {
             // no explicit command defined
             if (options.containsKey("-h") || options.containsKey("--help")) {
@@ -87,6 +87,9 @@ public class Rockstar {
                 command = "help";
             }
         }
+        
+        setGlobalOptions(options);
+        
         switch (command) {
             case "help":
                 doHelp(files.isEmpty() ? null : files.get(0), options);
@@ -109,7 +112,7 @@ public class Rockstar {
                 break;
         }
     }
-
+    
     private static void doHelp(String cmd, Map<String, String> options) {
         System.out.println(CLI_HEADER);
         System.out.println(Utils.repeat("-", CLI_HEADER.length()));
@@ -124,6 +127,8 @@ public class Rockstar {
                 System.out.println("        Use the same context for each consecutive program. (Default: create new context)");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
+                System.out.println("    --dec64");
+                System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
             }
         }
         if (cmd == null || cmd.equals("list")) {
@@ -168,17 +173,17 @@ public class Rockstar {
             System.out.println(CLI_WRAPPER + " help");
             System.out.println("    Print this help.");
             System.out.println(CLI_WRAPPER + " help <command>");
-            System.out.println("    Print help about the command.");
+            System.out.println("    Print more detailed help about the given command.");
         }
     }
-
+    
     private static void doRun(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
             doHelp("run", options);
             return;
         }
         boolean sameContext = options.containsKey("-s") || options.containsKey("--same-context");
-
+        
         BlockContext ctx = null;
         for (String filename : files) {
             try {
@@ -192,7 +197,7 @@ public class Rockstar {
             }
         }
     }
-
+    
     private static void doList(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
             doHelp("list", options);
@@ -207,7 +212,7 @@ public class Rockstar {
             }
         });
     }
-
+    
     private static void doTest(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
             doHelp("test", options);
@@ -227,7 +232,7 @@ public class Rockstar {
             
         }
     }
-
+    
     private static void doRepl(List<String> files, Map<String, String> options) {
         BlockContext ctx = new BlockContext(System.in, System.out, System.err, options);
 
@@ -241,17 +246,17 @@ public class Rockstar {
             }
         }
         boolean explain = options.containsKey("-x") || options.containsKey("--explain");
-
+        
         System.out.println(CLI_HEADER);
         System.out.println(Utils.repeat("-", CLI_HEADER.length()));
         System.out.println("Type 'exit' to quit, 'show' to get more info.");
-
+        
         Stack<Block> blocks = new Stack();
         blocks.push(new Program("-"));
         try {
             while (true) {
                 String line = ctx.getInput().readLine();
-
+                
                 if (line.equals("exit")) {
                     break;
                 }
@@ -275,7 +280,7 @@ public class Rockstar {
                     try {
                         // parse the statement
                         Statement stmt = StatementFactory.getStatementFor(new Line(line, "<input>", 1));
-
+                        
                         if (stmt == null) {
                             throw new ParseException("Unknown statement");
                         }
@@ -310,13 +315,13 @@ public class Rockstar {
                                 block.setParent(blocks.peek());
                                 blocks.push(block);
                             }
-
+                            
                         }
                         // execute only the top level commands
                         if (blocks.size() == 1) {
                             stmt.execute(ctx);
                         }
-
+                        
                     } catch (ParseException e) {
                         System.out.println("Parse error.");
                     } catch (Throwable t) {
@@ -328,5 +333,10 @@ public class Rockstar {
             // end of input: silently ignore
         }
     }
-
+    
+    private static void setGlobalOptions(Map<String, String> options) {
+        boolean dec64 = options.containsKey("--dec64");
+        RockNumber.setDec64(dec64);
+    }
+    
 }

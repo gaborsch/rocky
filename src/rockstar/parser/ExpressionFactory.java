@@ -10,7 +10,7 @@ import rockstar.expression.ConstantExpression;
 import rockstar.expression.DummyExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.Dec64;
+import rockstar.runtime.RockNumber;
 
 /**
  *
@@ -92,10 +92,9 @@ public class ExpressionFactory {
         }
 
         // parse the orig String
-        Dec64 v = Dec64.ZERO;
-        Dec64 frac = Dec64.ONE;
-        boolean isFraction = false;
         int digit = 0;
+        StringBuilder sb = new StringBuilder();
+        
         int pos = 0;
         while (pos <= orig.length()) {
             char c = (pos < orig.length()) ? orig.charAt(pos) : ' ';
@@ -103,22 +102,18 @@ public class ExpressionFactory {
                 digit++;
             } else if (c == '.' || c == ' ') {
                 if (digit > 0) {
-                    if (!isFraction) {
-                        // integer part
-                        v = v.multiply(Dec64.TEN).add(Dec64.getValue(digit % 10));
-                    } else {
-                        // fraction part
-                        frac = frac.divide(Dec64.TEN);
-                        v = v.add(frac.multiply(Dec64.getValue(digit % 10)));
-                    }
+                    sb.append((char)('0'+ (digit % 10)));
                 }
                 if (c == '.') {
-                    isFraction = true;
+                    sb.append(c);
                 }
                 digit = 0;
             }
             pos++;
         }
-        return new ConstantExpression(v);
+        // parse the concatenated string
+        return new ConstantExpression(RockNumber.parse(sb.toString()));
     }
+
+
 }

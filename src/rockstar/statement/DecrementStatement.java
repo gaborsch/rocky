@@ -9,7 +9,7 @@ import rockstar.expression.ConstantExpression;
 import rockstar.expression.MinusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.Dec64;
+import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
@@ -41,7 +41,7 @@ public class DecrementStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value v = ctx.getVariableValue(variable.getName());
         if (v.isMysterious() || v.isNull()) {
-            v = Value.getValue(Dec64.ZERO);
+            v = Value.getValue(RockNumber.ZERO);
             // v is set to a numeric value
             ctx.setVariable(variable.getName(), v);
         }

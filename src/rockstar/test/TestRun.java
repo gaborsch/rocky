@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Scanner;
+import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.runtime.BlockContext;
@@ -48,10 +49,17 @@ public class TestRun {
             // input stream
             InputStream in;
             File inFile = new File(filename + ".in'");
-            try {
-                in = new FileInputStream(inFile);
+            if (!inFile.exists()) {
+                inFile = new File(filename + ".in");
+            }
+            if (inFile.exists()) {
+                try {
+                    in = new FileInputStream(inFile);
 //                System.out.println("Input file " + inFile.getName() + " found");
-            } catch (FileNotFoundException ex) {
+                } catch (FileNotFoundException ex) {
+                    in = new ByteArrayInputStream(new byte[0]);
+                }
+            } else {
                 in = new ByteArrayInputStream(new byte[0]);
             }
 
@@ -98,7 +106,10 @@ public class TestRun {
 
         } catch (ParseException e) {
             result.setMessage("Parse error:" + e.getMessage());
-            result.setDebugInfo(e.getLine().getOrigLine());
+            Line line = e.getLine();
+            if (line != null) {
+                result.setDebugInfo(line.getOrigLine());
+            }
         } catch (Throwable e) {
             result.setException(e);
             result.setMessage(e.getMessage());

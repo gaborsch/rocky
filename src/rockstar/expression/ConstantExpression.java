@@ -6,7 +6,7 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.Dec64;
+import rockstar.runtime.RockNumber;
 import rockstar.runtime.Value;
 
 /**
@@ -26,12 +26,12 @@ public class ConstantExpression extends SimpleExpression {
         this.value = Value.getValue(s);
     }
 
-    public ConstantExpression(Dec64 n) {
+    public ConstantExpression(RockNumber n) {
         this.value = Value.getValue(n);
     }
 
     public ConstantExpression(long n) {
-        this.value = Value.getValue(Dec64.getValue(n));
+        this.value = Value.getValue(RockNumber.getValue(n));
     }
 
     private ConstantExpression(Value value) {

@@ -6,6 +6,8 @@
 package rockstar.test;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,40 +35,49 @@ public class RockstarTest {
     public void executeDir(String dirname, Expected exp) {
         File dir = new File(dirname);
 
-        if (exp != null) {
-            System.out.println(exp + " tests in " + dirname);
-        }
         boolean allDirectories = options.containsKey("-a") || options.containsKey("--all-directories");
 
+        boolean isFirstFileInDir = true;
         File[] files = dir.listFiles();
+        List<File> dirs = new LinkedList<>();
         if (files != null) {
             for (File file : files) {
                 if (file.getName().endsWith(".rock")) {
+                    if (isFirstFileInDir) {
+                        if (exp != null) {
+                            System.out.println(exp + " tests in " + dirname);
+                        }
+                        isFirstFileInDir = false;
+                    }
                     executeFile(file, exp == null ? Expected.CORRECT : exp);
                 } else if (file.isDirectory()) {
                     if (allDirectories || !file.getName().matches("^[._].*")) {
                         // skip directories starting with "." or "_"
-                        switch (file.getName()) {
-                            case "correct":
-                                executeDir(file.getPath(), Expected.CORRECT);
-                                break;
-                            case "parse-errors":
-                                executeDir(file.getPath(), Expected.PARSE_ERROR);
-                                break;
-                            case "runtime-errors":
-                                executeDir(file.getPath(), Expected.RUNTIME_ERROR);
-                                break;
-                            default:
-                                executeDir(file.getPath(), exp);
-                                break;
-                        }
+                        dirs.add(file);
                     }
                 }
-
+            }
+            for (File file : dirs) {
+                switch (file.getName()) {
+                    case "correct":
+                    case "fixtures":
+                        executeDir(file.getPath(), Expected.CORRECT);
+                        break;
+                    case "parse-errors":
+                    case "failures":
+                        executeDir(file.getPath(), Expected.PARSE_ERROR);
+                        break;
+                    case "runtime-errors":
+                        executeDir(file.getPath(), Expected.RUNTIME_ERROR);
+                        break;
+                    default:
+                        executeDir(file.getPath(), exp);
+                        break;
+                }
             }
         }
     }
-    
+
     public void executeFile(String file, Expected exp) {
         executeFile(new File(file), exp == null ? Expected.CORRECT : exp);
     }
