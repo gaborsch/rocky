@@ -66,7 +66,7 @@ public class RockstarDebugger {
         System.out.println("    b [linenum]     Add line breakpoint, default: current line");
         System.out.println("    br [linenum]    Remove line breakpoint, default: current line");
         System.out.println("    bl              List breakpoints");
-        System.out.println("    s <variable>    Show variable (no expressions are possible)");
+        System.out.println("    s [<variable>]  Show variable (no expressions are possible). Default: show all variables");
         System.out.println("    w <variable>    Watch variable (no expressions). Watches evaluated before every statement.");
         System.out.println("    wr <variable>   Remove watch. '#1' refers to the first watch");
     }

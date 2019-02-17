@@ -90,6 +90,16 @@ public class DebugListener implements BlockContextListener {
                     } else if (line.equals("8")) {
                         // step run
                         continueRun = true;
+                    } else if (line.equals("s")) {
+                        BlockContext currCtx = ctx;
+                        while (currCtx != null) {
+                            String ctxName = currCtx.getName();
+                            currCtx.getVariables().forEach(
+                                    (name, value) -> {
+                                        System.out.format("  @%s: %s = %s\n", ctxName, name, value.toString());
+                                    });
+                            currCtx = currCtx.getParent();
+                        }
                     } else if (line.startsWith("s ")) {
                         // show variable
                         String varName = line.substring(2).trim();
@@ -131,7 +141,7 @@ public class DebugListener implements BlockContextListener {
                             System.out.println("Unknown breakpoint");
                         }
                     } else if (line.startsWith("bl")) {
-                        // list breakpoints
+                        // explain breakpoints
                         for (int i = 0; i < breakpoints.size(); i++) {
                             Integer brLine = breakpoints.get(i);
                             System.out.format("Breakpoint #%d at line %d\n", i + 1, brLine);
@@ -139,7 +149,7 @@ public class DebugListener implements BlockContextListener {
                     } else if (line.startsWith("b")) {
                         // add breakpoint
                         String lineStr = line.substring(1).trim();
-                        Integer lineNum = null;
+                        Integer lineNum;
                         if (lineStr.equals("")) {
                             // default: current line
                             lineNum = l.getLnum();
