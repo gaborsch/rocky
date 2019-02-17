@@ -19,6 +19,11 @@ public class RockstarTest {
 
     private final Map<String, String> options;
 
+    private boolean allDirectories;
+    private boolean isQuiet;
+    private boolean isVerbose;
+    private boolean isVeryVerbose;
+
     public RockstarTest(Map<String, String> options) {
         this.options = options;
     }
@@ -29,9 +34,6 @@ public class RockstarTest {
         RUNTIME_ERROR
     }
 
-    private boolean allDirectories;
-    private boolean isQuiet;
-    private boolean isVerbose;
 
     private int testCount = 0;
     private int passed = 0;
@@ -41,7 +43,8 @@ public class RockstarTest {
 
         allDirectories = options.containsKey("-a") || options.containsKey("--all-directories");
         isQuiet = options.containsKey("-q") || options.containsKey("--quiet");
-        isVerbose = options.containsKey("-v") || options.containsKey("--verbose");
+        isVeryVerbose = options.containsKey("-vv") || options.containsKey("--very-verbose");
+        isVerbose = isVeryVerbose || options.containsKey("-v") || options.containsKey("--verbose");
 
         executeDir(dirname, null);
 
@@ -69,7 +72,7 @@ public class RockstarTest {
                 if (file.getName().endsWith(".rock")) {
                     if (isFirstFileInDir) {
                         if (exp != null) {
-                            if (!isQuiet) {
+                            if (isVerbose) {
                                 System.out.println(exp + " tests in " + dirname);
                             }
                         }
@@ -120,22 +123,28 @@ public class RockstarTest {
         String excName = exc == null ? "" : exc.getClass().getSimpleName();
         if (result.isPassed()) {
             passed++;
-            if (!isQuiet) {
+            if (isVerbose) {
                 System.out.printf("   [ OK ] %-40s\n", file.getName());
             }
         } else {
             failed++;
             if (exc == null) {
                 if (!isQuiet) {
+                    if (!isVerbose) {
+                        System.out.println(exp + " test for " + file.getPath());
+                    }
                     System.out.printf("!  [FAIL] %-40s %s\n", file.getName(), message);
-                    if (isVerbose) {
+                    if (isVeryVerbose) {
                         System.out.println(debugInfo);
                     }
                 }
             } else {
                 if (!isQuiet) {
+                    if (!isVerbose) {
+                        System.out.println(exp + " test for " + file.getPath());
+                    }
                     System.out.printf("!! [EXCP] %-40s %s %s\n", file.getName(), excName, message);
-                    if (isVerbose) {
+                    if (isVeryVerbose) {
                         System.out.println(debugInfo);
                     }
                 }

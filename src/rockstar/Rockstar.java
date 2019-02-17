@@ -176,9 +176,11 @@ public class Rockstar {
                 System.out.println("    -a, --all-directories");
                 System.out.println("        Also include directories with name starting with '.' or '_'.");
                 System.out.println("    -q, --quiet");
-                System.out.println("        Quiet mode, print statistics only.");
-                System.out.println("    -v, --verbode");
-                System.out.println("        Verbose mode, print more information for failed tests.");
+                System.out.println("        Quiet mode, print statistics only. Default: print failed tests and the statistics.");
+                System.out.println("    -v, --verbose");
+                System.out.println("        Verbose mode, print all executed test, including passed tests.");
+                System.out.println("    -vv, --very-verbose");
+                System.out.println("        Very verbose mode, print more information for failed tests.");
                 System.out.println("    -w, --write-output");
                 System.out.println("        Write actual output into *.rock.current file, if the output does not match the expected.");
                 System.out.println("    --infinite-loops");
