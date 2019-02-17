@@ -1,14 +1,15 @@
 # Rocky - Rockstar Java interpreter
 
-This is my RockStar interpreter in Java, have fun and play with it. 
+This is my 100% Rockstar compatible RockStar Interpreter in Java, have fun and play with it. 
 I like to receive feedbacks, should you have any issues, requests, wishes or troubles, open a ticket for it and I'll help you to resolve. Contributors are also welcome!
 
 Features include:
-* (Almost) fully compliant Rockstar implementation to date (more than 90% of the new test are OK)
+* Fully compliant Rockstar implementation to date (all of the new test are OK, except the reported bugs)
 * Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable)
 * Interactive terminal mode (REPL - Read - Eval - Print Loop)
 * List command (parse a file without running it)
 * Detailed help with options explanation
+* IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
 
 It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix.
 
@@ -45,5 +46,97 @@ rockstar help <command>
 
 Each command has a more detailed help with options, so try `rockstar help run`, `rockstar help debug`, `rockstar help repl`, etc.
 
+### Test results
 
+*100%* of the tests have passed! With some buggy test cases fixed locally ( https://github.com/RockstarLang/rockstar/issues/202 and https://github.com/RockstarLang/rockstar/issues/203 ), everything works!
+
+```
+$ ./rockstar test --testdir programs/tests/ -v
+PARSE_ERROR tests in programs\tests\failures
+   [ OK ] invalid_comments.rock
+CORRECT tests in programs\tests\fixtures\comments
+   [ OK ] complex_comments.rock
+   [ OK ] simpleComments.rock
+   [ OK ] simple_comment.rock
+CORRECT tests in programs\tests\fixtures\conditionals
+   [ OK ] empty_if.rock
+   [ OK ] simpleConditionals.rock
+   [ OK ] truthinessTest.rock
+CORRECT tests in programs\tests\fixtures\constants
+   [ OK ] constants.rock
+CORRECT tests in programs\tests\fixtures\control-flow
+   [ OK ] nested_loops.rock
+   [ OK ] simpleLoops.rock
+CORRECT tests in programs\tests\fixtures\equality
+   [ OK ] booleans.rock
+   [ OK ] equalityComparison.rock
+   [ OK ] mysterious.rock
+   [ OK ] negation.rock
+   [ OK ] nothing.rock
+   [ OK ] null.rock
+   [ OK ] numbers.rock
+   [ OK ] strings.rock
+CORRECT tests in programs\tests\fixtures\examples
+   [ OK ] 99_beers.rock
+   [ OK ] factorial.rock
+   [ OK ] fibonacci.rock
+   [ OK ] fizzbuzz-idiomatic.rock
+   [ OK ] fizzbuzz-minimalist.rock
+CORRECT tests in programs\tests\fixtures\functions
+   [ OK ] functionCalls.rock
+   [ OK ] nested_functions.rock
+   [ OK ] nested_function_scopes.rock
+   [ OK ] recursion.rock
+   [ OK ] simpleFunctions.rock
+CORRECT tests in programs\tests\fixtures\io
+   [ OK ] hello_number.rock
+   [ OK ] hello_world.rock
+   [ OK ] inputTest.rock
+   [ OK ] inputTest2.rock
+CORRECT tests in programs\tests\fixtures\literals
+   [ OK ] literalAliases.rock
+   [ OK ] literalstrings.rock
+   [ OK ] poeticLiterals.rock
+   [ OK ] poeticNumbers.rock
+CORRECT tests in programs\tests\fixtures\math
+   [ OK ] operators.rock
+   [ OK ] operator_aliases.rock
+   [ OK ] operator_precedence.rock
+CORRECT tests in programs\tests\fixtures\operators
+   [ OK ] addOperator.rock
+   [ OK ] andTest.rock
+   [ OK ] booleans.rock
+   [ OK ] divisionOperator.rock
+   [ OK ] incrementAndDecrement.rock
+   [ OK ] multiplicationOperator.rock
+   [ OK ] notTest.rock
+   [ OK ] orderingComparison.rock
+   [ OK ] orNorTest.rock
+   [ OK ] subtractOperator.rock
+CORRECT tests in programs\tests\fixtures\variables
+   [ OK ] common_variables.rock
+   [ OK ] globalVariables.rock
+   [ OK ] poeticStrings.rock
+   [ OK ] pronouns.rock
+   [ OK ] proper_variables.rock
+   [ OK ] simple_pronouns.rock
+   [ OK ] umlauts.rock
+CORRECT tests in programs\tests\fixtures\whitespace
+   [ OK ] apostrophesIgnored.rock
+   [ OK ] leading_blank_lines.rock
+   [ OK ] leading_empty_lines.rock
+   [ OK ] leading_whitespace.rock
+   [ OK ] no_newline_at_eof.rock
+   [ OK ] trailing_blank_lines.rock
+   [ OK ] trailing_empty_lines.rock
+
+============================================================
+Test results for programs/tests/:
+============================================================
+All tests:    63
+Failed tests: 0
+Passed tests: 63
+Pass ratio:   100.00%
+============================================================
+```
 
