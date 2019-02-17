@@ -78,7 +78,7 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    protected String list() {
+    protected String explain() {
         String paramsList = parameterNames.toString();
         return "function " + name + "(" + paramsList.substring(1, paramsList.length()-1 )+")";
     }

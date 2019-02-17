@@ -31,7 +31,7 @@ public class OutputStatement extends Statement {
     }
 
     @Override
-    protected String list() {
+    protected String explain() {
         return "print " + expression.format();
     }
     

@@ -5,8 +5,6 @@
  */
 package rockstar.statement;
 
-import java.util.List;
-import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
 
 /**
@@ -38,7 +36,7 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
 
     @Override
     public void execute(BlockContext ctx) {
-        // ELSE statement is skipped in normal esexution flow
+        // ELSE statement is skipped in normal execution flow
     }
     /**
      * Executes an Else block. 
@@ -49,7 +47,7 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
     }
     
     @Override
-    protected String list() {
+    protected String explain() {
         return "else";
     }
     

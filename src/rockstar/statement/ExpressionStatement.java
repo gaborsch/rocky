@@ -31,7 +31,7 @@ public class ExpressionStatement extends Statement {
     }
     
     @Override
-    protected String list() {
+    protected String explain() {
         return expression.format();
     }
 }

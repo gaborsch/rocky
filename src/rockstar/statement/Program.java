@@ -22,12 +22,12 @@ public class Program extends Block {
     }
 
     @Override
-    protected String list() {
+    protected String explain() {
         return "PROGRAM " + name;
     }
 
-    public String listProgram() {
-        return list(0);
+    public String listProgram(boolean explained) {
+        return list(0, explained);
     }
     
 }

@@ -35,9 +35,9 @@ public class Rockstar {
 
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "-w", "programs/tests/correct/fibonacci.rock"};
-//        args = new String[]{"list", "-s", "programs/tests/correct/nested_function_scopes.rock"};
-//        args = new String[]{"list", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
-//        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
+//        args = new String[]{"explain", "-s", "programs/tests/correct/nested_function_scopes.rock"};
+//        args = new String[]{"explain", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
+//        args = new String[]{"explain", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests"};
 //        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
@@ -147,6 +147,11 @@ public class Rockstar {
         if (cmd == null || cmd.equals("list")) {
             System.out.println(CLI_WRAPPER + " list [--options ...] <filename> ...");
             System.out.println("    Parse and list a program. Useful for syntax checking.");
+            if (cmd != null) {
+                System.out.println("Options:");
+                System.out.println("    -x --explain");
+                System.out.println("        Explain all statements and expressions parsed from input.");
+            }
         }
         if (cmd == null || cmd.equals("repl")) {
             System.out.println(CLI_WRAPPER + " - [<filename> ...]");
@@ -225,10 +230,11 @@ public class Rockstar {
             doHelp("list", options);
             return;
         }
+        boolean explained = options.containsKey("-x") || options.containsKey("--explain");
         files.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename).parse();
-                System.out.println(prg.listProgram());
+                System.out.println(prg.listProgram(explained));
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
             }

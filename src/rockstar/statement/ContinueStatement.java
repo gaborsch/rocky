@@ -33,7 +33,7 @@ public class ContinueStatement extends Statement {
     }
     
     @Override
-    protected String list() {
+    protected String explain() {
         return "continue";
     }
 }

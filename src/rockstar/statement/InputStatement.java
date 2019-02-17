@@ -43,7 +43,7 @@ public class InputStatement extends Statement {
     }
 
     @Override
-    protected String list() {
+    protected String explain() {
         return "input " + (variable == null ? "<line>" : variable.format());
     }
 }

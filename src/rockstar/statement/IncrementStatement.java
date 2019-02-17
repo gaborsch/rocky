@@ -65,7 +65,7 @@ public class IncrementStatement extends Statement {
     }
     
     @Override
-    protected String list() {
+    protected String explain() {
         return variable.format()+ " += " + count;
     }
 }

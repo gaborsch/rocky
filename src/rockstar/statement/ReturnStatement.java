@@ -41,7 +41,7 @@ public class ReturnStatement extends Statement {
     }
 
     @Override
-    protected String list() {
+    protected String explain() {
         return "return " + expression.format();
     }
 

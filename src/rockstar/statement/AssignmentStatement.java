@@ -32,7 +32,7 @@ public class AssignmentStatement extends Statement {
     }
 
     @Override
-    protected String list() {
+    protected String explain() {
         return variable.format() + " := " + expression.format();
     }
 }

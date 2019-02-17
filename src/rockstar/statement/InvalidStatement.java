@@ -26,7 +26,7 @@ public class InvalidStatement extends Statement {
     }
 
     @Override
-    protected String list() {
+    protected String explain() {
         return "!!!INVALID!!!";
     }
 }
