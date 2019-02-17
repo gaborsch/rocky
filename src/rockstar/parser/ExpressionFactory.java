@@ -19,25 +19,10 @@ import rockstar.runtime.RockNumber;
 public class ExpressionFactory {
 
     /**
-     * tries to parse an expression, returns null if failed
-     *
-     * @param tokens
-     * @param line
-     * @return
-     */
-    public static Expression tryExpressionFor(List<String> tokens, Line line) {
-        Expression parsed = new ExpressionParser(tokens, line).parse();
-        if (parsed != null && !(parsed instanceof DummyExpression)) {
-            return parsed;
-        }
-        return null;
-    }
-
-    /**
      * Parse an expression, throw exception if failed
      *
-     * @param tokens
-     * @param line
+     * @param tokens the tokens to parse
+     * @param line the Line
      * @return
      */
     public static Expression getExpressionFor(List<String> tokens, Line line) {
@@ -92,7 +77,7 @@ public class ExpressionFactory {
         // parse the orig String
         int digit = 0;
         StringBuilder sb = new StringBuilder();
-        
+
         int pos = 0;
         while (pos <= orig.length()) {
             char c = (pos < orig.length()) ? orig.charAt(pos) : ' ';
@@ -100,7 +85,7 @@ public class ExpressionFactory {
                 digit++;
             } else if (c == '.' || c == ' ') {
                 if (digit > 0) {
-                    sb.append((char)('0'+ (digit % 10)));
+                    sb.append((char) ('0' + (digit % 10)));
                 }
                 if (c == '.') {
                     sb.append(c);
@@ -112,6 +97,5 @@ public class ExpressionFactory {
         // parse the concatenated string
         return new ConstantExpression(RockNumber.parse(sb.toString()));
     }
-
 
 }

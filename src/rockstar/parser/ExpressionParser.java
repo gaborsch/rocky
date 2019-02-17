@@ -132,8 +132,11 @@ public class ExpressionParser {
         }
         return null;
     }
-    private static final List<String> COMMON_VARIABLE_KEYWORDS = Arrays.asList(new String[]{"a", "an", "the", "my", "your", "A", "An", "The", "My", "Your"});
-    private static final List<String> LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS = Arrays.asList(new String[]{"it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver"});
+    private static final List<String> COMMON_VARIABLE_KEYWORDS = Arrays.asList(new String[]{
+        "a", "an", "the", "my", "your", "A", "An", "The", "My", "Your"});
+    private static final List<String> LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS = Arrays.asList(new String[]{
+        "it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver",
+        "It", "He", "She", "Him", "Her", "They", "Them", "Ze", "Hir", "Zie", "Zir", "Xe", "Xem", "Ve", "Ver"});
 
     VariableReference parseVariableReference() {
         String name = null;
@@ -146,6 +149,7 @@ public class ExpressionParser {
             // common variable
             String token1 = peekNext();
             if (token1.toLowerCase().equals(token1)) {
+                // common variables are lowercased, not to conflict with uppercased proper variables
                 name = token0.toLowerCase() + " " + token1.toLowerCase();
                 next(2);
             }
@@ -153,27 +157,27 @@ public class ExpressionParser {
         if (name == null && token0.length() > 0 && Character.isUpperCase(token0.charAt(0))) {
             // proper variable
             next(); // first part processed
-            StringBuilder sb = new StringBuilder(token0);
+            StringBuilder sb = new StringBuilder(token0.toLowerCase());
             while (!isFullyParsed()) {
                 String token = peekCurrent();
                 // all parts of a Proper Name must start with capital letter
                 if (token.length() > 0 && Character.isUpperCase(token.charAt(0))) {
                     next(); // next part processed
-                    sb.append(" ").append(token);
+                    // proper variables are uppercased, not to conflict with common variables
+                    sb.append(" ").append(token.toLowerCase());
                 } else {
                     break;
                 }
             }
-            // if a Proper Name is followed by "taking", it is a function call
-            if (!isFullyParsed() && peekCurrent().equals("taking")) {
+            // if a Proper Name is followed by "taking" or "takes", it is a function call
+            if (!isFullyParsed() && (peekCurrent().equals("taking") || peekCurrent().equals("takes"))) {
                 isFunctionName = true;
             }
-            name = sb.toString().toLowerCase();
+            name = sb.toString();
         }
         // not a proper variable
         if (name == null && containsAtLeast(1)) {
             // Variable backreference
-            // TODO start of the line capitalization
             if (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(token0)) {
                 next();
                 VariableReference varRef = new VariableReference(token0, false, true);
@@ -357,7 +361,7 @@ public class ExpressionParser {
             next();
             return new UnaryMinusExpression();
         }
-        
+
         if ("plus".equals(token) || "with".equals(token) || "+".equals(token)) {
             next();
             return new PlusExpression();
