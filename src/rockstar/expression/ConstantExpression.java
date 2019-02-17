@@ -50,8 +50,7 @@ public class ConstantExpression extends SimpleExpression {
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
-        // for constants we do not log the value
-        return value;
+        return ctx.afterExpression(this, value);
     }
 
     @Override

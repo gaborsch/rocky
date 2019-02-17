@@ -41,24 +41,27 @@ public class DebugListener implements BlockContextListener {
 
     @Override
     public void beforeExpression(BlockContext ctx, Expression exp) {
-        if (!evalMode) {
+        if (stepIntoExpr && !evalMode) {
         }
     }
 
     @Override
     public void afterExpression(BlockContext ctx, Expression exp, Value v) {
-        if (!evalMode) {
+        if (!evalMode && stepIntoExpr) {
+            logExpression(ctx, exp, v);
         }
     }
 
     private final List<String> watches = new LinkedList<>();
 
     private void atStatement(BlockContext ctx, Statement stmt) {
+        // expression debug is stopped at new statement
+        stepIntoExpr = false;
 
         if (stopAtStetement(ctx, stmt)) {
             Line l = stmt.getLine();
 
-            System.out.format("%4d %s\n", l.getLnum(), l.getOrigLine());
+            System.out.format("Line %d: %s\n", l.getLnum(), l.getOrigLine());
             for (int i = 0; i < watches.size(); i++) {
                 String varName = watches.get(i);
                 Value value = ctx.getVariableValue(varName);
@@ -71,7 +74,12 @@ public class DebugListener implements BlockContextListener {
                 try {
                     String line = ctx.getInput().readLine();
 
-                    if (line.equals("5") || line.equals("")) {
+                    if (line.equals("1") || line.equals("x")) {
+                        // step into expression
+                        stepIntoExpr = true;
+                        stepInto = true;
+                        continueRun = true;
+                    } else if (line.equals("5") || line.equals("")) {
                         // step into
                         stepInto = true;
                         continueRun = true;
@@ -184,6 +192,7 @@ public class DebugListener implements BlockContextListener {
     }
 
     private boolean stepInto = true;
+    private boolean stepIntoExpr = true;
     private final Stack<BlockContext> stepOvers = new Stack<>();
     private final List<Integer> breakpoints = new LinkedList<>();
 
@@ -204,5 +213,12 @@ public class DebugListener implements BlockContextListener {
         }
         return false;
     }
+
+    private void logExpression(BlockContext ctx, Expression exp, Value v) {
+        System.out.format("Evaluated: %s => %s\n", exp.format(), v.toString());
+    }
+
+
+   
 
 }
