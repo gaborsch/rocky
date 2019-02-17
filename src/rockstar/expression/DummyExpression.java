@@ -8,7 +8,6 @@ package rockstar.expression;
 import java.util.ArrayList;
 import java.util.List;
 import rockstar.parser.Line;
-import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -26,19 +25,19 @@ public class DummyExpression extends Expression {
     public DummyExpression(List<String> tokens, Line line) {
         this.tokens = new ArrayList<>(tokens);
         this.line = line;
-        
-        StringBuilder sb = new StringBuilder();
+        setErrorIndex(0);
+
+        StringBuilder sb = new StringBuilder("Parse error near ");
 
         tokens.forEach((token) -> {
-            sb.append(token).append("/");
+            sb.append(token).append(" ");
         });
 
-        throw new ParseException("Expression parsing" + sb.toString(), line);
+        errorMsg = sb.toString();
     }
 
     public DummyExpression(List<String> tokens, int errorIdx, String errorMsg) {
         this.tokens = new ArrayList<>(tokens);
-        this.errorMsg = errorMsg;
         setErrorIndex(errorIdx);
 
         StringBuilder sb = new StringBuilder();
@@ -49,10 +48,10 @@ public class DummyExpression extends Expression {
             } else {
                 sb.append(token);
             }
-            sb.append("/");
+            sb.append(" ");
             idx++;
         }
-//        throw new ParseException("Expression parsing: " + errorMsg + " " + sb.toString());
+        this.errorMsg = errorMsg + " at " + sb.toString();
     }
 
     final void setErrorIndex(int errorIdx) {
@@ -61,24 +60,18 @@ public class DummyExpression extends Expression {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("DUMMYEXPR:/");
-
-        tokens.forEach((token) -> {
-            sb.append(token).append("/");
-        });
-        return sb.toString() + (errorMsg == null ? "" : ("\n    " + errorMsg));
+        return errorMsg;
     }
 
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
-        throw new RockstarRuntimeException(errorMsg); 
+        throw new RockstarRuntimeException(errorMsg);
     }
 
     @Override
     public String format() {
         return "!!!DummyExpression!!!";
     }
-    
-    
+
 }

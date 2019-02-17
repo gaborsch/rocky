@@ -89,14 +89,40 @@ public class Line {
                     StringBuilder tokenBuilder = new StringBuilder();
                     boolean endOfToken = false;
                     while (!endOfToken) {
-                        while (limit < len && 
-                                (Character.isLetterOrDigit(line.charAt(limit)) || line.charAt(limit) == '.' || line.charAt(limit) == '-')) {
+                        char cl = (limit < len) ? line.charAt(limit) : '\0';
+                        if ("0123456789.".indexOf(cl) >= 0 //                                || (cl == '-' && limit < len - 1 && "0123456789.".indexOf(line.charAt(limit + 1)) >= 0)
+                                ) {
+                            // regular decimal number (integral or fraction)
+                            while (limit < len
+                                    && (Character.isDigit(cl) || cl == '.' || cl == 'e' || cl == 'E')) {
+                                limit++;
+                                if (limit < len) {
+                                    cl = line.charAt(limit);
+                                }
+                            }
+                            nextToken = line.substring(pos, limit);
+                            pos = limit;
+                            endOfToken = true;
+                        } else if ("+*/-".indexOf(cl) >= 0) {
+                            // single operators are single char
                             limit++;
+                            nextToken = line.substring(pos, limit);
+                            pos = limit;
+                            endOfToken = true;
+                        } else {
+                            // identifier
+                            while (limit < len && Character.isLetterOrDigit(cl)) {
+                                limit++;
+                                if (limit < len) {
+                                    cl = line.charAt(limit);
+                                }
+
+                            }
                         }
                         tokenBuilder.append(line.substring(pos, limit));
                         if (limit >= len) {
                             endOfToken = true;
-                        } else {
+                        } else if (!endOfToken) {
                             char c = line.charAt(limit);
                             String right = line.substring(limit);
                             if (c == '\'') {
@@ -129,7 +155,7 @@ public class Line {
                                 limit++;
                                 pos = limit;
                                 endOfToken = (c == ' ');
-                            } 
+                            }
                         }
                     }
                     if (tokenBuilder.length() > 0) {
@@ -281,5 +307,12 @@ public class Line {
         }
         return "";
     }
+
+    @Override
+    public String toString() {
+        return this.origLine;
+    }
+    
+    
 
 }

@@ -23,6 +23,7 @@ import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.SimpleExpression;
+import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
@@ -201,16 +202,16 @@ public class ExpressionParser {
     public Expression parse() {
         operatorStack = new Stack<>();
         valueStack = new Stack<>();
-        boolean operatorRequired = false;
+        boolean isAfterOperator = true;
         while (!isFullyParsed()) {
-            CompoundExpression operator = getOperator();
+            CompoundExpression operator = getOperator(isAfterOperator);
             if (operator != null) {
                 // operator found
                 pushOperator(operator);
                 // after operators a value is required, except FunctionCall that consumers values, too
-                operatorRequired = false;
-            } else if (operatorRequired) {
-                // operator not found, but required
+                isAfterOperator = true;
+            } else if (!isAfterOperator) {
+                // two values cannot follow
                 return new DummyExpression(list, idx, "Operator required");
             } else {
                 Expression value = parseSimpleExpression();
@@ -221,7 +222,7 @@ public class ExpressionParser {
                     // neither operator nor value found
                     return new DummyExpression(list, idx, "Operator or value required");
                 }
-                operatorRequired = true;
+                isAfterOperator = false;
             }
         }
         // compact operators
@@ -266,7 +267,7 @@ public class ExpressionParser {
         operatorStack.push(operator);
     }
 
-    public CompoundExpression getOperator() {
+    public CompoundExpression getOperator(boolean isAfterOperator) {
         String token = this.peekCurrent();
         // logical operators
         if ("not".equals(token)) {
@@ -351,19 +352,25 @@ public class ExpressionParser {
         }
 
         // arithmetical operators
-        if ("plus".equals(token) || "with".equals(token)) {
+        if (isAfterOperator && "-".equals(token)) {
+            // unary minus
+            next();
+            return new UnaryMinusExpression();
+        }
+        
+        if ("plus".equals(token) || "with".equals(token) || "+".equals(token)) {
             next();
             return new PlusExpression();
         }
-        if ("minus".equals(token) || "without".equals(token)) {
+        if ("minus".equals(token) || "without".equals(token) || "-".equals(token)) {
             next();
             return new MinusExpression();
         }
-        if ("times".equals(token) || "of".equals(token)) {
+        if ("times".equals(token) || "of".equals(token) || "*".equals(token)) {
             next();
             return new MultiplyExpression();
         }
-        if ("over".equals(token)) {
+        if ("over".equals(token) || "/".equals(token)) {
             next();
             return new DivideExpression();
         }
