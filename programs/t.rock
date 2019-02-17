@@ -1,9 +1,6 @@
-Dummzfunc takes A
-if True
-say "hello"
-(end if)
-else
-say "world"
-(end else)
-(end func)
+my heart is "\t"
+My heart is "\n"
+My Heart is 3
 
+say my heart
+say My Heart

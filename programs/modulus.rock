@@ -1,0 +1,14 @@
+Modulus takes Number and Divisor
+Put Divisor into Big Divisor
+While Big Divisor is less than Number
+Put Big Divisor times 2 into Big Divisor
+    (blank line ending While block)
+While Big Divisor is as high as Divisor
+If Number is as high as Big Divisor
+Put Number minus Big Divisor into Number
+    (blank line ending If block)
+Put Big Divisor over 2 into Big Divisor
+    (blank line ending While block)
+Give back Number
+
+say 

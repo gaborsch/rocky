@@ -100,6 +100,8 @@ public class ExpressionParser {
                 // string literal> strip quotes
                 next();
                 String literal = token.substring(1, token.length() - 1);
+                // replace escaped backslash sequences with characters
+                literal = literal.replace("\\t", "\t").replace("\\r", "\r").replace("\\n", "\n").replace("\\\\", "\\");
                 return new ConstantExpression(literal);
             }
             token = token.toLowerCase();
