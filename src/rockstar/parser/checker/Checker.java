@@ -34,8 +34,14 @@ public abstract class Checker {
 
     public abstract Statement check();
 
-    // 1, "this", 3, "that" "other" 2
-    boolean match(Object... params) {
+    /**
+     * Matches a statement pattern, e.g. [1, "this", 3, "that" "other" 2]
+     * Numbers represent placeholders, result[n] will be set to the matched sub-list
+     * Strings represent string tokens
+     * @param params
+     * @return 
+     */
+    public boolean match(Object... params) {
         // do not overwrite existing result
         if (this.hasMatch) {
             return false;
@@ -85,14 +91,7 @@ public abstract class Checker {
         List<String> tokens = line.getTokens();
         for (int idx = lastPos + 1; idx < tokens.size(); idx++) {
             String token = tokens.get(idx);
-            if (token.length() != needle.length()) {
-                continue;
-            }
-            if (token.equals(needle)) {
-                return idx;
-            } else if ( /*idx == 0
-            &&*/ Character.toUpperCase(token.charAt(0)) == Character.toUpperCase(needle.charAt(0)) && token.substring(1).equals(needle.substring(1))) {
-                // first token, first character may be lowercase
+            if (token.equalsIgnoreCase(needle)) {
                 return idx;
             }
         }
