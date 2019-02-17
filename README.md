@@ -5,7 +5,7 @@ I like to receive feedbacks, should you have any issues, requests, wishes or tro
 
 Features include:
 * Fully compliant Rockstar implementation to date (all of the new test are OK, except the reported bugs)
-* Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable)
+* Advanced Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable, trace expression evaluation!)
 * Interactive terminal mode (REPL - Read - Eval - Print Loop)
 * List command (parse a file without running it)
 * Detailed help with options explanation
