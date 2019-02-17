@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import rockstar.Rockstar;
+import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
@@ -42,9 +43,12 @@ public class RockstarDebugger {
         files.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename).parse();
+                System.out.println("Debugging " + filename);       
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
+            } catch (ParseException ex) {
+                System.out.println("!!! Could not parse " + filename);       
             }
         });
         } catch (RockstarRuntimeException rrex) {
@@ -61,6 +65,7 @@ public class RockstarDebugger {
         System.out.println("    8               Step Run (stop at line breakpoints)");
         System.out.println("    b [linenum]     Add line breakpoint, default: current line");
         System.out.println("    br [linenum]    Remove line breakpoint, default: current line");
+        System.out.println("    bl              List breakpoints");
         System.out.println("    s <variable>    Show variable (no expressions are possible)");
         System.out.println("    w <variable>    Watch variable (no expressions). Watches evaluated before every statement.");
         System.out.println("    wr <variable>   Remove watch. '#1' refers to the first watch");

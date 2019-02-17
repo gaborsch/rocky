@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import rockstar.expression.Expression;
-import rockstar.parser.ExpressionParser;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.BlockContextListener;
@@ -120,32 +119,40 @@ public class DebugListener implements BlockContextListener {
                         }
                     } else if (line.startsWith("br")) {
                         // remove breakpoint
-                        String lineNum = line.substring(2).trim();
-                        if (lineNum.equals("")) {
+                        String lineStr = line.substring(2).trim();
+                        Integer lineNum = null;
+                        if (lineStr.equals("")) {
                             // default: current line
-                            lineNum = Integer.toString(l.getLnum());
+                            lineNum = l.getLnum();
                         }
                         if (breakpoints.remove(lineNum)) {
-                            System.out.format("Breakpoint removed: %s\n", lineNum);
+                            System.out.format("Breakpoint removed from line %d\n", lineNum);
                         } else {
                             System.out.println("Unknown breakpoint");
                         }
+                    } else if (line.startsWith("bl")) {
+                        // list breakpoints
+                        for (int i = 0; i < breakpoints.size(); i++) {
+                            Integer brLine = breakpoints.get(i);
+                            System.out.format("Breakpoint #%d at line %d\n", i + 1, brLine);
+                        }
                     } else if (line.startsWith("b")) {
                         // add breakpoint
-                        String lineNum = line.substring(1).trim();
-                        if (lineNum.equals("")) {
+                        String lineStr = line.substring(1).trim();
+                        Integer lineNum = null;
+                        if (lineStr.equals("")) {
                             // default: current line
-                            lineNum = Integer.toString(l.getLnum());
+                            lineNum = l.getLnum();
                         } else {
                             try {
-                                Integer.parseInt(lineNum);
+                                lineNum = Integer.parseInt(lineStr);
                             } catch (NumberFormatException ex) {
                                 lineNum = null;
                             }
                         }
                         if (lineNum != null) {
                             breakpoints.add(lineNum);
-                            System.out.format("Breakpoint added at line %s\n", lineNum);
+                            System.out.format("Breakpoint added at line %d\n", lineNum);
                         } else {
                             System.out.println("Wrong line number");
                         }
@@ -168,7 +175,7 @@ public class DebugListener implements BlockContextListener {
 
     private boolean stepInto = true;
     private final Stack<BlockContext> stepOvers = new Stack<>();
-    private final List<String> breakpoints = new LinkedList<>();
+    private final List<Integer> breakpoints = new LinkedList<>();
 
     private boolean stopAtStetement(BlockContext ctx, Statement stmt) {
         // stop at each statement if stepInto mode
@@ -182,7 +189,7 @@ public class DebugListener implements BlockContextListener {
             return true;
         }
         // stop at a line number
-        if (!breakpoints.isEmpty() && breakpoints.contains(Integer.toString(stmt.getLine().getLnum()))) {
+        if (breakpoints.contains(stmt.getLine().getLnum())) {
             return true;
         }
         return false;
