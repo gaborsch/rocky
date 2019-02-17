@@ -19,16 +19,22 @@ public abstract class Checker {
     //        private final Map<String, Integer> positionsMap = new HashMap<>();
     private final List<String>[] result = new List[10];
     private boolean hasMatch = false;
+    private int matchCounter = 0;
     private Object[] matchedParams;
 
     public List<String>[] getResult() {
         return result;
     }
 
+    public int getMatchCounter() {
+        return matchCounter;
+    }
+    
     public Checker initialize(Line l) {
         this.line = l;
         this.hasMatch = false;
         this.matchedParams = null;
+        this.matchCounter = 0;
         return this;
     }
 
@@ -46,6 +52,7 @@ public abstract class Checker {
         if (this.hasMatch) {
             return false;
         }
+        matchCounter++;
         List<String> tokens = line.getTokens();
         // clear previous result
         for (int i = 0; i < result.length; i++) {
