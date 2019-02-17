@@ -21,7 +21,7 @@ public class UnaryMinusExpression extends CompoundExpression {
 
     @Override
     public int getPrecedence() {
-        return 950;
+        return 100;
     }
 
     @Override
