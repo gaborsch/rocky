@@ -146,7 +146,7 @@ public class ExpressionParser {
             // common variable
             String token1 = peekNext();
             if (token1.toLowerCase().equals(token1)) {
-                name = token0.toLowerCase() + " " + token1;
+                name = token0.toLowerCase() + " " + token1.toLowerCase();
                 next(2);
             }
         }
@@ -168,7 +168,7 @@ public class ExpressionParser {
             if (!isFullyParsed() && peekCurrent().equals("taking")) {
                 isFunctionName = true;
             }
-            name = sb.toString();
+            name = sb.toString().toLowerCase();
         }
         // not a proper variable
         if (name == null && containsAtLeast(1)) {
