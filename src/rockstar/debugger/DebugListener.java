@@ -198,20 +198,21 @@ public class DebugListener implements BlockContextListener {
 
     private boolean stopAtStetement(BlockContext ctx, Statement stmt) {
         // stop at each statement if stepInto mode
+        boolean stop = false;
         if (stepInto) {
             stepInto = false;
-            return true;
+            stop = true;
         }
         // stop at the next statement of a specific context
         if (stepOvers.size() > 0 && stepOvers.peek() == ctx) {
             stepOvers.pop();
-            return true;
+            stop =  true;
         }
         // stop at a line number
         if (breakpoints.contains(stmt.getLine().getLnum())) {
-            return true;
+            stop =  true;
         }
-        return false;
+        return stop;
     }
 
     private void logExpression(BlockContext ctx, Expression exp, Value v) {
