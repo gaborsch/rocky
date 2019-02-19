@@ -5,6 +5,10 @@
  */
 package rockstar.runtime;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
 
@@ -23,6 +27,8 @@ public class Value {
     private String stringValue;
     private RockNumber numericValue;
     private Boolean boolValue;
+    private List<Value> listArrayValue;
+    private Map<Value, Value> assocArrayValue;
 
     public static Value getValue(String s) {
         return new Value(s);
@@ -274,7 +280,7 @@ public class Value {
                 case NUMBER:
                     return numericValue.compareTo(other.numericValue);
                 case BOOLEAN:
-                    return (boolValue == other.boolValue) ? 0 : 1;
+                    return (Objects.equals(boolValue, other.boolValue)) ? 0 : 1;
                 default:
                     // null, mysterious
                     return 0;
@@ -293,8 +299,8 @@ public class Value {
                 case BOOLEAN:
                     // convert String to bool
 //                    Boolean b = getBoolFromStringAliases(stringValue);
-                    Boolean b = stringValue != null;
-                    return (b != null && b == other.getBool()) ? 0 : 1;
+                    boolean b = stringValue != null;
+                    return (b == other.getBool()) ? 0 : 1;
                 case NUMBER:
                     RockNumber v1 = getNumeric();
                     return (v1 == null) ? 1 : v1.compareTo(other.getNumeric());
@@ -307,9 +313,8 @@ public class Value {
                     return 1;
                 case BOOLEAN:
                     // convert String to bool
-//                    Boolean b = getBoolFromStringAliases(other.stringValue);
-                    Boolean b = other.stringValue != null;
-                    return (b != null && getBool() == b) ? 0 : 1;
+                    boolean b = other.stringValue != null;
+                    return (getBool() == b) ? 0 : 1;
                 case NUMBER:
                     RockNumber v2 = other.getNumeric();
                     return (v2 == null) ? -1 : getNumeric().compareTo(v2);
@@ -327,56 +332,6 @@ public class Value {
         return getValue(compareTo(other) == 0);
     }
 
-//    public Value isEquals(Value other) {
-//        if (getType() == other.getType()) {
-//            // Equal types: compare them without conversion
-//            switch (getType()) {
-//                case STRING:
-//                    return getValue(stringValue.equals(other.stringValue));
-//                case NUMBER:
-//                    return getValue(numericValue.equals(other.numericValue));
-//                case BOOLEAN:
-//                    return getValue(boolValue == other.boolValue);
-//                default:
-//                    // null, mysterious
-//                    return BOOLEAN_TRUE;
-//            }
-//        }
-//
-//        // Mysterious == Mysterious only
-//        if (isMysterious() || other.isMysterious()) {
-//            return BOOLEAN_FALSE;
-//        }
-//        // String with conversions
-//        if (isString()) {
-//            switch (other.getType()) {
-//                case NULL:
-//                    return BOOLEAN_FALSE;
-//                case BOOLEAN:
-//                    // convert String to bool
-//                    return getValue(getBoolFromStringAliases(stringValue) == other.getBool());
-//                case NUMBER:
-//                    return getValue(getNumeric().equals(other.getNumeric()));
-//            }
-//        }
-//        if (other.isString()) {
-//            switch (getType()) {
-//                case NULL:
-//                    return BOOLEAN_FALSE;
-//                case BOOLEAN:
-//                    // convert String to bool
-//                    return getValue(getBool() == getBoolFromStringAliases(other.stringValue));
-//                case NUMBER:
-//                    return getValue(getNumeric().equals(other.getNumeric()));
-//            }
-//        }
-//        // booleans compare as truthiness values with number and null
-//        if (isBoolean() || other.isBoolean()) {
-//            return getValue(getBool() == other.getBool());
-//        }
-//        // number vs null
-//        return getValue(getNumeric().equals(other.getNumeric()));
-//    }
     public Value isNotEquals(Value other) {
         return getValue(compareTo(other) != 0);
     }
@@ -395,6 +350,81 @@ public class Value {
 
     public Value isLessOrEquals(Value other) {
         return getValue(compareTo(other) <= 0);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Value) {
+            Value o = (Value) obj;
+            if (this.type != o.type) {
+                return false;
+            }
+            switch (this.type) {
+                case NUMBER:
+                    return numericValue.equals(o.numericValue);
+                case STRING:
+                    return stringValue.equals(o.stringValue);
+                case MYSTERIOUS:
+                    return true;
+                case NULL:
+                    return true;
+                case BOOLEAN:
+                    return Objects.equals(boolValue, o.boolValue);
+                case LIST_ARRAY:
+                    return isListEquals(listArrayValue, o.listArrayValue);
+                case ASSOC_ARRAY:
+                    return isMapEquals(assocArrayValue, o.assocArrayValue);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.type);
+        hash = 89 * hash + Objects.hashCode(this.stringValue);
+        hash = 89 * hash + Objects.hashCode(this.numericValue);
+        hash = 89 * hash + Objects.hashCode(this.boolValue);
+        return hash;
+    }
+
+    private boolean isListEquals(List<Value> l1, List<Value> l2) {
+        if (l1 == null && l2 == null) {
+            return true;
+        }
+        if ((null == l1 || null == l2) || (l1.size() != l2.size())) {
+            return false;
+        }
+        Iterator<Value> it1 = l1.iterator();
+        Iterator<Value> it2 = l2.iterator();
+        while (it1.hasNext()) {
+            Value v1 = it1.next();
+            Value v2 = it2.next();
+            if (!v1.equals(v2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isMapEquals(Map<Value, Value> m1, Map<Value, Value> m2) {
+        if (m1 == null && m2 == null) {
+            return true;
+        }
+        if ((null == m1 || null == m2) || (m1.size() != m2.size())) {
+            return false;
+        }
+        Iterator<Value> it1 = m1.keySet().iterator();
+        while (it1.hasNext()) {
+            Value key1 = it1.next();
+            Value v1 = m2.get(key1);
+            Value v2 = m2.get(key1);
+            if (v2 == null || !v1.equals(v2)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

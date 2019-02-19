@@ -5,8 +5,11 @@
  */
 package rockstar.runtime;
 
+import java.util.Objects;
+
 /**
  * RockNumber is the number abstraction layer for Rockstar
+ *
  * @author Gabor
  */
 public class RockNumber {
@@ -95,11 +98,29 @@ public class RockNumber {
         String s = dblValue.toString();
         if (s.endsWith(".0")) {
             // chop fraction if integral value
-            return s.substring(0, s.length()-2);
+            return s.substring(0, s.length() - 2);
         }
         return s;
     }
-    
-    
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof RockNumber) {
+            RockNumber o = (RockNumber) obj;
+            if (o instanceof Dec64) {
+                return false;
+            }
+            return Objects.equals(this.dblValue, o.dblValue);
+        }
+
+        return false;
+    }    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.dblValue);
+        return hash;
+    }
+    
 }

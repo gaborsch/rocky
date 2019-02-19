@@ -10,6 +10,11 @@ package rockstar.expression;
  * @author Gabor
  */
 public enum ExpressionType {
-    MYSTERIOUS, NULL, BOOLEAN, NUMBER, STRING
-    
+    MYSTERIOUS,
+    NULL,
+    BOOLEAN,
+    NUMBER,
+    STRING,
+    LIST_ARRAY,
+    ASSOC_ARRAY
 }
