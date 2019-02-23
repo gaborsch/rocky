@@ -179,7 +179,7 @@ public class ExpressionParser {
         }
         // not a proper variable
         if (name == null && containsAtLeast(1)) {
-            // Variable backreference
+            // Variable backreference: 'it'
             if (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(token0)) {
                 next();
                 VariableReference varRef = new VariableReference(token0, false, true);
@@ -380,7 +380,7 @@ public class ExpressionParser {
             next();
             return new DivideExpression();
         }
-
+        
         // function call
         if ("taking".equals(token)) {
             next();

@@ -1,14 +1,5 @@
-the members were containing “Johnny” for “guitars”, “Jack” for “keyboard”, “Jake” for “drums” and “Jamie” for “singer”
-the roles are keys of the members (create a list for the keys)
-While the roles ain’t nothing (we iterate through the keys)
-	the role is the roles in nothing (get the first element at index 0)
-	knock down the roles by the role (remove the element from the key list)
-	let the man be the members for my role (get the value from the assoc array)
-	Say “The awesome man for “ with the role plus “ is ” with the man
-(end while)
-
-the members were containing “Johnny” for “guitars”, “Jack” for “keyboard”, “Jake” for “drums” and “Jamie” for “singer”
+the members were containing "Johnny" for "guitars", "Jack" for "keyboard", "Jake" for "drums" and "Jamie" for "singer"
 While the members alike the man for the role
-	Say “The awesome man for “ with the role plus “ is ” with the man
+	Say "The awesome man for " with the role plus " is " with the man
 (end while)
 

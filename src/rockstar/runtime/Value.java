@@ -5,12 +5,15 @@
  */
 package rockstar.runtime;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
+import rockstar.expression.Ref;
 
 /**
  *
@@ -23,7 +26,7 @@ public class Value {
     public static Value BOOLEAN_TRUE = new Value(true);
     public static Value BOOLEAN_FALSE = new Value(false);
 
-    private ExpressionType type = null;
+    private final ExpressionType type;
     private String stringValue;
     private RockNumber numericValue;
     private Boolean boolValue;
@@ -40,6 +43,10 @@ public class Value {
 
     public static Value getValue(boolean b) {
         return b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+    }
+
+    private static Value getValue(Ref.Type refType) {
+        return new Value(refType == Ref.Type.LIST ? ExpressionType.LIST_ARRAY : ExpressionType.ASSOC_ARRAY);
     }
 
     public static Value parse(String s) {
@@ -65,6 +72,11 @@ public class Value {
 
     private Value(ExpressionType type) {
         this.type = type;
+        if (type == ExpressionType.LIST_ARRAY) {
+            listArrayValue = new LinkedList<>();
+        } else if (type == ExpressionType.ASSOC_ARRAY) {
+            assocArrayValue = new HashMap<>();
+        }
     }
 
     private Value(String stringValue) {
@@ -106,7 +118,15 @@ public class Value {
         return type == ExpressionType.STRING;
     }
 
-    private RockNumber getNumeric() {
+    public boolean isListArray() {
+        return type == ExpressionType.LIST_ARRAY;
+    }
+
+    public boolean isAssocArray() {
+        return type == ExpressionType.ASSOC_ARRAY;
+    }
+
+    RockNumber getNumeric() {
         switch (getType()) {
             case NUMBER:
                 return numericValue;
@@ -122,6 +142,10 @@ public class Value {
                 return RockNumber.ZERO;
             case NULL:
                 return RockNumber.ZERO;
+            case LIST_ARRAY:
+                return RockNumber.getValue(listArrayValue.size());
+            case ASSOC_ARRAY:
+                return RockNumber.getValue(assocArrayValue.size());
         }
         throw new RockstarRuntimeException("unknown numeric value");
     }
@@ -138,6 +162,24 @@ public class Value {
                 return "mysterious";
             case NULL:
                 return "null";
+            case LIST_ARRAY: {
+                StringBuilder sb = new StringBuilder();
+                listArrayValue.forEach(v -> {
+                    sb.append(sb.length() == 0 ? "" : ",")
+                            .append(v);
+                });
+                return sb.toString();
+            }
+            case ASSOC_ARRAY: {
+                StringBuilder sb = new StringBuilder();
+                assocArrayValue.forEach((k, v) -> {
+                    sb.append(sb.length() == 0 ? "" : ",")
+                            .append(k)
+                            .append(":")
+                            .append(v);
+                });
+                return sb.toString();
+            }
         }
         throw new RockstarRuntimeException("unknown string value");
     }
@@ -154,26 +196,30 @@ public class Value {
                 return false;
             case NULL:
                 return false;
+            case LIST_ARRAY:
+                return listArrayValue.size() > 0;
+            case ASSOC_ARRAY:
+                return assocArrayValue.size() > 0;
         }
         throw new RockstarRuntimeException("unknown bool value");
-    }
-
-    private static Boolean getBoolFromStringAliases(String s) {
-        if (ExpressionParser.BOOLEAN_TRUE_KEYWORDS.contains(s.toLowerCase())) {
-            return Boolean.TRUE;
-        }
-        if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s.toLowerCase())) {
-            return Boolean.FALSE;
-        }
-        return null;
     }
 
     public Value asBoolean() {
         return getValue(getBool());
     }
 
-    public Value asString() {
-        return getValue(getString());
+    public List<Value> asListArray() {
+        if (type == ExpressionType.LIST_ARRAY) {
+            return this.listArrayValue;
+        }
+        return new LinkedList<>();
+    }
+
+    public Map<Value, Value> asAssocArray() {
+        if (type == ExpressionType.ASSOC_ARRAY) {
+            return this.assocArrayValue;
+        }
+        return new HashMap<>();
     }
 
     @Override
@@ -185,6 +231,10 @@ public class Value {
                 return "\"" + stringValue + "\"";
             case BOOLEAN:
                 return Boolean.toString(boolValue);
+            case LIST_ARRAY:
+                return listArrayValue.toString();
+            case ASSOC_ARRAY:
+                return assocArrayValue.toString();
         }
         return this.type.toString();
     }
@@ -195,6 +245,32 @@ public class Value {
     }
 
     public Value plus(Value other) {
+        if (isAssocArray() && other.isAssocArray()) {
+            // merge assoc arrays
+            Value v = Value.getValue(Ref.Type.ASSOC_ARRAY);
+            v.assocArrayValue.putAll(asAssocArray());
+            v.assocArrayValue.putAll(other.asAssocArray());
+        }
+        if (isListArray() && !other.isAssocArray()) {
+            // append to list or concatenate
+            Value v = Value.getValue(Ref.Type.LIST);
+            v.listArrayValue.addAll(asListArray());
+            if (other.isListArray() || other.isNull()) {
+                // concatenate list
+                v.listArrayValue.addAll(other.asListArray());
+            } else {
+                v.listArrayValue.add(other);
+            }
+            return v;
+        }
+        if (other.isListArray() && !isAssocArray()) {
+            // prepend to list
+            Value v = Value.getValue(Ref.Type.LIST);
+            v.listArrayValue.add(this);
+            v.listArrayValue.addAll(other.listArrayValue);
+            return v;
+        }
+
         if (isString() || other.isString()) {
             // String concatenation
             return Value.getValue(getString() + other.getString());
@@ -210,12 +286,43 @@ public class Value {
     }
 
     public Value minus(Value other) {
+        if (isAssocArray()) {
+            // remove subset of assoc arrays
+            Value v = Value.getValue(Ref.Type.ASSOC_ARRAY);
+            v.assocArrayValue.putAll(asAssocArray());
+            if (other.isAssocArray()) {
+                // remove all matching keys (ignoring values)
+                other.asAssocArray().forEach((k, x) -> {
+                    v.assocArrayValue.remove(k);
+                });
+            } else if (other.isListArray()) {
+                // remove all list elements as keys
+                other.asListArray().forEach(k -> {
+                    v.assocArrayValue.remove(k);
+                });
+            } else {
+                // remove by key expression
+                v.assocArrayValue.remove(other);
+            }
+            return v;
+        }
+
+        if (isListArray() && !other.isAssocArray()) {
+            // remove element by index
+            Value v = Value.getValue(Ref.Type.LIST);
+            v.listArrayValue.addAll(asListArray());
+            int idx = other.getNumeric().asInt();
+            v.listArrayValue.remove(idx);
+            return v;
+        }
+
         RockNumber v1 = getNumeric();
         RockNumber v2 = other.getNumeric();
         if (v1 != null && v2 != null) {
             // numeric subtraction
             return Value.getValue(v1.subtract(v2));
         }
+
         throw new RockstarRuntimeException(getType() + " minus " + other.getType());
     }
 
@@ -281,6 +388,10 @@ public class Value {
                     return numericValue.compareTo(other.numericValue);
                 case BOOLEAN:
                     return (Objects.equals(boolValue, other.boolValue)) ? 0 : 1;
+                case ASSOC_ARRAY:
+                    return Integer.compare(this.asAssocArray().size(), other.asAssocArray().size());
+                case LIST_ARRAY:
+                    return Integer.compare(this.asListArray().size(), other.asListArray().size());
                 default:
                     // null, mysterious
                     return 0;
@@ -373,7 +484,7 @@ public class Value {
                 case LIST_ARRAY:
                     return isListEquals(listArrayValue, o.listArrayValue);
                 case ASSOC_ARRAY:
-                    return isMapEquals(assocArrayValue, o.assocArrayValue);
+                    return isMapEquals(asAssocArray(), o.asAssocArray());
             }
         }
         return false;
@@ -386,6 +497,8 @@ public class Value {
         hash = 89 * hash + Objects.hashCode(this.stringValue);
         hash = 89 * hash + Objects.hashCode(this.numericValue);
         hash = 89 * hash + Objects.hashCode(this.boolValue);
+        hash = 89 * hash + Objects.hashCode(this.listArrayValue);
+        hash = 89 * hash + Objects.hashCode(this.assocArrayValue);
         return hash;
     }
 
@@ -425,6 +538,20 @@ public class Value {
             }
         }
         return true;
+    }
+
+    public Value dereference(Value indexValue) {
+        if (isAssocArray()) {
+            return this.assocArrayValue.getOrDefault(indexValue, Value.MYSTERIOUS);
+        } else if (isListArray()) {
+            int idx = indexValue.getNumeric().asInt();
+            if (listArrayValue != null && idx >= 0 && idx < listArrayValue.size()) {
+                return listArrayValue.get(idx);
+            } else {
+                return MYSTERIOUS;
+            }
+        }
+        return MYSTERIOUS;
     }
 
 }

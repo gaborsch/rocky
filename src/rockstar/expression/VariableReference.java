@@ -6,7 +6,6 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -15,9 +14,21 @@ import rockstar.runtime.Value;
  */
 public class VariableReference extends SimpleExpression {
 
-    private String name;
+    private final String name;
     private boolean isFunctionName = false;
     private boolean isLastVariable = false;
+
+    private Ref ref = null;
+
+    public VariableReference(String name, boolean isFunctionName, boolean isLastVariable) {
+        this.name = name;
+        this.isFunctionName = isFunctionName;
+        this.isLastVariable = isLastVariable;
+    }
+
+    public void addRef(Ref ref) {
+        this.ref = ref;
+    }
 
     public String getName(BlockContext ctx) {
         String effectiveName = this.name;
@@ -35,10 +46,8 @@ public class VariableReference extends SimpleExpression {
         return isFunctionName;
     }
 
-    public VariableReference(String name, boolean isFunctionName, boolean isLastVariable) {
-        this.name = name;
-        this.isFunctionName = isFunctionName;
-        this.isLastVariable = isLastVariable;
+    public Ref getRef() {
+        return ref;
     }
 
     @Override
@@ -57,6 +66,17 @@ public class VariableReference extends SimpleExpression {
         if (value == null) {
             value = Value.MYSTERIOUS;
             ctx.setVariable(effectiveName, value);
+        } else if (ref != null) {
+            // needs dereference
+            if (value.getType() == ExpressionType.LIST_ARRAY
+                    && ref.getType() == Ref.Type.LIST) {
+                Value indexValue = ref.getExpression().evaluate(ctx);
+                value = value.dereference(indexValue);
+            } else if (value.getType() == ExpressionType.ASSOC_ARRAY
+                    && ref.getType() == Ref.Type.ASSOC_ARRAY) {
+                Value indexValue = ref.getExpression().evaluate(ctx);
+                value = value.dereference(indexValue);
+            }
         }
         return ctx.afterExpression(this, value);
     }
