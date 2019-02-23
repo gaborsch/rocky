@@ -540,18 +540,50 @@ public class Value {
         return true;
     }
 
-    public Value dereference(Value indexValue) {
+    public Value dereference(Value refValue) {
         if (isAssocArray()) {
-            return this.assocArrayValue.getOrDefault(indexValue, Value.MYSTERIOUS);
+            return this.assocArrayValue.getOrDefault(refValue, Value.MYSTERIOUS);
         } else if (isListArray()) {
-            int idx = indexValue.getNumeric().asInt();
+            int idx = refValue.getNumeric().asInt();
             if (listArrayValue != null && idx >= 0 && idx < listArrayValue.size()) {
                 return listArrayValue.get(idx);
             } else {
                 return MYSTERIOUS;
             }
         }
-        return MYSTERIOUS;
+        throw new RockstarRuntimeException("Dereferencing " + getType() + " type");
+    }
+
+    public Value assign(Ref.Type refType, Value refValue, Value setValue) {
+        // NULL or MYSTERIOUS are treated as empty array
+        Value v = (getType() == ExpressionType.NULL || getType() == ExpressionType.MYSTERIOUS)
+                ? getValue(refType) : this;
+        if (refType == Ref.Type.LIST) {
+            int idx = refValue.getNumeric().asInt();
+            if (idx >= 0) {
+                if (v.getType() == ExpressionType.LIST_ARRAY) {
+                    if (idx < v.listArrayValue.size()) {
+                        v.listArrayValue.set(idx, setValue);
+                    } else {
+                        v.listArrayValue.add(setValue);
+                    }
+                    return this;
+                } else {
+                    throw new RockstarRuntimeException("Indexing " + getType() + " type");
+                }
+            } else {
+                throw new RockstarRuntimeException("Negative array index: " + idx);
+            }
+        } else if (refType == Ref.Type.ASSOC_ARRAY) {
+            if (getType() == ExpressionType.ASSOC_ARRAY) {
+                v.assocArrayValue.put(refValue, setValue);
+                return v;
+            } else {
+                throw new RockstarRuntimeException("Referencing " + getType() + " type");
+            }
+        }
+        // should not reach here
+        throw new RuntimeException("Unknown reference type");
     }
 
 }

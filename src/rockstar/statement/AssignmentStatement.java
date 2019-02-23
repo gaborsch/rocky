@@ -6,6 +6,7 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
+import rockstar.expression.Ref;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
@@ -26,9 +27,15 @@ public class AssignmentStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
+        Ref ref = variable.getRef();
         String name = this.variable.getName(ctx);
         Value value = expression.evaluate(ctx);
-        ctx.setVariable(name, value);
+        if (ref == null) {
+            ctx.setVariable(name, value);
+        } else {
+            Value refValue = ref.getExpression().evaluate(ctx);
+            ctx.setVariable(name, ctx.getVariableValue(name).assign(ref.getType(), refValue, value));
+        }
     }
 
     @Override
