@@ -31,4 +31,19 @@ public class Ref {
     public Expression getExpression() {
         return expression;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof Ref) {
+            Ref o = (Ref) obj;
+            return type == o.type 
+                    && expression.equals(o.expression);
+        }
+        return false;
+    }
+    
+    
 }

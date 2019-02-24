@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.function.BiConsumer;
 import rockstar.Rockstar;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
@@ -20,6 +21,7 @@ import rockstar.runtime.Utils;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
 import rockstar.statement.ContinuingBlockStatementI;
+import rockstar.statement.FunctionBlock;
 import rockstar.statement.Program;
 import rockstar.statement.Statement;
 
@@ -70,8 +72,8 @@ public class RockstarRepl {
                         });
                     } else if (line.startsWith("show func")) {
                         System.out.println("Functions:");
-                        ctx.getFunctions().forEach((name, func) -> {
-                            System.out.println(name + " taking " + func.getParameterNames());
+                        ctx.getFunctions().forEach((String name, FunctionBlock func) -> {
+                            System.out.println(name + " taking " + func.getParameterRefs());
                         });
                     } else {
                         System.out.println("Show commands: ");

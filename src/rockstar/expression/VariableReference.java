@@ -5,6 +5,7 @@
  */
 package rockstar.expression;
 
+import com.sun.org.apache.xpath.internal.operations.Equals;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -31,11 +32,11 @@ public class VariableReference extends SimpleExpression {
     }
 
     public String getName(BlockContext ctx) {
-        String effectiveName = this.name;
+        VariableReference vref = this;
         if (isLastVariable) {
-            effectiveName = ctx.getLastVariableName();
+            vref = ctx.getLastVariableRef();
         }
-        return effectiveName;
+        return vref.name;
     }
 
     public String getFunctionName() {
@@ -52,22 +53,38 @@ public class VariableReference extends SimpleExpression {
 
     @Override
     public String toString() {
-        return name;
+        if (ref == null) {
+            return name;
+        }
+        if (ref.getType() == Ref.Type.LIST) {
+            return name + " at " + ref.getExpression();
+        } else {
+            return name + " for " + ref.getExpression();
+        }
     }
 
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
-        String effectiveName = this.name;
+        VariableReference effectiveVRef = this;
         if (isLastVariable) {
-            effectiveName = ctx.getLastVariableName();
+            effectiveVRef = ctx.getLastVariableRef();
         }
-        Value value = ctx.getVariableValue(effectiveName);
+        Value value = evaluate(effectiveVRef, ctx);
+
         if (value == null) {
             value = Value.MYSTERIOUS;
-            ctx.setVariable(effectiveName, value);
-        } else if (ref != null) {
-            // needs dereference
+            ctx.setVariable(this, value);
+        }
+
+        return ctx.afterExpression(this, value);
+    }
+
+    private static Value evaluate(VariableReference vref, BlockContext ctx) {
+        Value value = ctx.getVariableValue(vref);
+        Ref ref = vref.getRef();
+        if (ref != null) {
+            // requires dereference
             if (value.getType() == ExpressionType.LIST_ARRAY
                     && ref.getType() == Ref.Type.LIST) {
                 Value indexValue = ref.getExpression().evaluate(ctx);
@@ -76,14 +93,41 @@ public class VariableReference extends SimpleExpression {
                     && ref.getType() == Ref.Type.ASSOC_ARRAY) {
                 Value indexValue = ref.getExpression().evaluate(ctx);
                 value = value.dereference(indexValue);
+            } else {
+                // should not reach here
+                throw new RuntimeException("Unknown reference type");
             }
         }
-        return ctx.afterExpression(this, value);
+        return value;
+    }
+
+    public boolean isLastVariable() {
+        return isLastVariable;
     }
 
     @Override
     public String format() {
         return isLastVariable ? "<it>" : name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof VariableReference) {
+            VariableReference o = (VariableReference) obj;
+            if (name.equals(o.name)) {
+                if (ref == null && o.ref == null) {
+                    return true;
+                }
+                if (ref == null || o.ref == null) {
+                    return false;
+                }
+                return ref.equals(o.ref);
+            }
+        }
+        return false;
     }
 
 }

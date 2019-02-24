@@ -38,7 +38,7 @@ public class InputStatement extends Statement {
             inputLine = "";
         }
         if (variable != null) {
-            ctx.setVariable(variable.getName(ctx), Value.parse(inputLine));
+            ctx.setVariable(variable, Value.parse(inputLine));
         }
     }
 

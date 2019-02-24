@@ -58,4 +58,18 @@ public class ConstantExpression extends SimpleExpression {
         return this.value.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ConstantExpression) {
+            ConstantExpression o = (ConstantExpression) obj;
+            return value.equals(o.value);
+        }
+        return false;
+    }
+    
+    
+
 }

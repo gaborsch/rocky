@@ -27,15 +27,8 @@ public class AssignmentStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        Ref ref = variable.getRef();
-        String name = this.variable.getName(ctx);
         Value value = expression.evaluate(ctx);
-        if (ref == null) {
-            ctx.setVariable(name, value);
-        } else {
-            Value refValue = ref.getExpression().evaluate(ctx);
-            ctx.setVariable(name, ctx.getVariableValue(name).assign(ref.getType(), refValue, value));
-        }
+        ctx.setVariable(this.variable, value);
     }
 
     @Override

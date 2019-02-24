@@ -10,6 +10,7 @@ import java.util.List;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Utils;
 import rockstar.runtime.Value;
 
 /**
@@ -73,5 +74,19 @@ public class DummyExpression extends Expression {
     public String format() {
         return "!!!DummyExpression!!!";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof DummyExpression) {
+            DummyExpression o = (DummyExpression) obj;
+            return Utils.isListEquals(tokens, o.tokens);
+        }
+        return false;
+    }
+    
+    
 
 }

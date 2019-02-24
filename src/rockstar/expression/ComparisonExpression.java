@@ -80,4 +80,18 @@ public class ComparisonExpression extends CompoundExpression {
         return ctx.afterExpression(this, null);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ComparisonExpression) {
+            ComparisonExpression o = (ComparisonExpression) obj;
+            return type == o.type && super.equals(obj);
+        }
+        return false;
+    }
+    
+    
+
 }

@@ -465,6 +465,9 @@ public class Value {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
         if (obj instanceof Value) {
             Value o = (Value) obj;
             if (this.type != o.type) {
@@ -482,9 +485,9 @@ public class Value {
                 case BOOLEAN:
                     return Objects.equals(boolValue, o.boolValue);
                 case LIST_ARRAY:
-                    return isListEquals(listArrayValue, o.listArrayValue);
+                    return Utils.isListEquals(listArrayValue, o.listArrayValue);
                 case ASSOC_ARRAY:
-                    return isMapEquals(asAssocArray(), o.asAssocArray());
+                    return Utils.isMapEquals(asAssocArray(), o.asAssocArray());
             }
         }
         return false;
@@ -500,44 +503,6 @@ public class Value {
         hash = 89 * hash + Objects.hashCode(this.listArrayValue);
         hash = 89 * hash + Objects.hashCode(this.assocArrayValue);
         return hash;
-    }
-
-    private boolean isListEquals(List<Value> l1, List<Value> l2) {
-        if (l1 == null && l2 == null) {
-            return true;
-        }
-        if ((null == l1 || null == l2) || (l1.size() != l2.size())) {
-            return false;
-        }
-        Iterator<Value> it1 = l1.iterator();
-        Iterator<Value> it2 = l2.iterator();
-        while (it1.hasNext()) {
-            Value v1 = it1.next();
-            Value v2 = it2.next();
-            if (!v1.equals(v2)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isMapEquals(Map<Value, Value> m1, Map<Value, Value> m2) {
-        if (m1 == null && m2 == null) {
-            return true;
-        }
-        if ((null == m1 || null == m2) || (m1.size() != m2.size())) {
-            return false;
-        }
-        Iterator<Value> it1 = m1.keySet().iterator();
-        while (it1.hasNext()) {
-            Value key1 = it1.next();
-            Value v1 = m2.get(key1);
-            Value v2 = m2.get(key1);
-            if (v2 == null || !v1.equals(v2)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public Value dereference(Value refValue) {
@@ -585,5 +550,4 @@ public class Value {
         // should not reach here
         throw new RuntimeException("Unknown reference type");
     }
-
 }

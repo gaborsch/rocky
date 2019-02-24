@@ -323,6 +323,9 @@ public class Dec64 extends RockNumber {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
         if(obj instanceof Dec64) {
             Dec64 o = (Dec64) obj;
             int commonE = Integer.min(normalE(this), normalE(o));

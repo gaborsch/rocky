@@ -105,6 +105,9 @@ public class RockNumber {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
         if (obj instanceof RockNumber) {
             RockNumber o = (RockNumber) obj;
             if (o instanceof Dec64) {

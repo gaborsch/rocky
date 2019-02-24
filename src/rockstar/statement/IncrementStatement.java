@@ -39,17 +39,16 @@ public class IncrementStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        String varName = variable.getName(ctx);
-        Value v = ctx.getVariableValue(varName);
+        Value v = ctx.getVariableValue(variable);
         if (v.isMysterious() || v.isNull()) {
             v = Value.getValue(RockNumber.ZERO);
             // v is set to a numeric value
-            ctx.setVariable(varName, v);
+            ctx.setVariable(variable, v);
         }
         if (v.isNumeric()) {
             // increment by count
             Value value = getPlus().evaluate(ctx);
-            ctx.setVariable(varName, value);
+            ctx.setVariable(variable, value);
             return;
         } else if (v.isBoolean()) {
             // convert to boolean
@@ -58,7 +57,7 @@ public class IncrementStatement extends Statement {
                 // negate boolean
                 v = v.negate();
             }
-            ctx.setVariable(varName, v);
+            ctx.setVariable(variable, v);
             return;
         }
         throw new RockstarRuntimeException(v.getType() + " ++");
