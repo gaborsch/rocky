@@ -34,7 +34,7 @@ public class ConstantExpression extends SimpleExpression {
         this.value = Value.getValue(RockNumber.getValue(n));
     }
 
-    private ConstantExpression(Value value) {
+    public ConstantExpression(Value value) {
         this.value = value;
     }
 

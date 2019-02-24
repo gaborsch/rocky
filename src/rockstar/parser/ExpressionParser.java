@@ -22,6 +22,7 @@ import rockstar.expression.MinusExpression;
 import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
 import rockstar.expression.PlusExpression;
+import rockstar.expression.Ref;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
@@ -49,6 +50,11 @@ public class ExpressionParser {
         idx = 0;
     }
 
+    /**
+     * checks if we have parsed all tokens
+     *
+     * @return
+     */
     boolean isFullyParsed() {
         return idx == list.size();
     }
@@ -86,13 +92,18 @@ public class ExpressionParser {
     private void restorePos() {
         idx = savedIdx;
     }
-
+    
     public static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
     public static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
     public static final List<String> BOOLEAN_TRUE_KEYWORDS = Arrays.asList(new String[]{"true", "right", "yes", "ok"});
     public static final List<String> BOOLEAN_FALSE_KEYWORDS = Arrays.asList(new String[]{"false", "wrong", "no", "lies"});
     public static final List<String> RESERVED_KEYWORDS = Arrays.asList(new String[]{"definitely", "maybe"});
 
+    /**
+     * Parses a String, numeric, bool, null or mysterious literal
+     *
+     * @return ConstantExpression on success, null otherwise
+     */
     ConstantExpression parseLiteral() {
         if (!isFullyParsed()) {
             String token = peekCurrent();
@@ -140,6 +151,11 @@ public class ExpressionParser {
         "it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver",
         "It", "He", "She", "Him", "Her", "They", "Them", "Ze", "Hir", "Zie", "Zir", "Xe", "Xem", "Ve", "Ver"});
 
+    /**
+     * parses a variable name or function name (including "it" backreference)
+     *
+     * @return VariableReference on success, null otherwise
+     */
     VariableReference parseVariableReference() {
         String name = null;
         boolean isFunctionName = false;
@@ -186,14 +202,36 @@ public class ExpressionParser {
                 return varRef;
             }
         }
+        Ref ref = null;
+        if (name != null && !isFullyParsed()) {
+            String token = peekCurrent();
+            Ref.Type refType = "at".equals(token) ? Ref.Type.LIST
+                    : "for".equals(token) ? Ref.Type.ASSOC_ARRAY
+                    : null;
+            if (refType != null) {
+                next();
+                Expression indexExpr = parse();
+                if (indexExpr != null && isFullyParsed()) {
+                    ref = new Ref(refType, indexExpr);
+                }
+            }
+        }
 
         if (name != null) {
             VariableReference varRef = new VariableReference(name, isFunctionName, false);
+            if (ref != null) {
+                varRef.addRef(ref);
+            }
             return varRef;
         }
         return null;
     }
 
+    /**
+     * Parses a literal or a variable name
+     *
+     * @return SimpleExpression on success, null otherwise
+     */
     public SimpleExpression parseSimpleExpression() {
         SimpleExpression expr = parseLiteral();
         if (expr == null) {
@@ -380,7 +418,7 @@ public class ExpressionParser {
             next();
             return new DivideExpression();
         }
-        
+
         // function call
         if ("taking".equals(token)) {
             next();

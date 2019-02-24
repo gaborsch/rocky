@@ -34,9 +34,6 @@ public class Ref {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
         if (obj instanceof Ref) {
             Ref o = (Ref) obj;
             return type == o.type 

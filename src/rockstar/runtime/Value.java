@@ -6,7 +6,6 @@
 package rockstar.runtime;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -245,13 +244,16 @@ public class Value {
     }
 
     public Value plus(Value other) {
-        if (isAssocArray() && other.isAssocArray()) {
+        if (isNull() && other.isNull()) {
+            return NULL;
+        }
+        if ((isAssocArray() || isNull()) && (other.isAssocArray() || other.isNull())) {
             // merge assoc arrays
             Value v = Value.getValue(Ref.Type.ASSOC_ARRAY);
             v.assocArrayValue.putAll(asAssocArray());
             v.assocArrayValue.putAll(other.asAssocArray());
         }
-        if (isListArray() && !other.isAssocArray()) {
+        if ((isListArray() || isNull()) && !other.isAssocArray()) {
             // append to list or concatenate
             Value v = Value.getValue(Ref.Type.LIST);
             v.listArrayValue.addAll(asListArray());

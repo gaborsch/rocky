@@ -17,6 +17,13 @@ public class Utils {
 
     public static String UTF8 = "UTF-8";
 
+    /**
+     * Repeats a String 'count' times
+     *
+     * @param s
+     * @param count
+     * @return
+     */
     public static String repeat(String s, int count) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < count; i++) {
@@ -25,6 +32,14 @@ public class Utils {
         return sb.toString();
     }
 
+    /**
+     * compares two lists
+     *
+     * @param <T>
+     * @param l1
+     * @param l2
+     * @return
+     */
     public static <T> boolean isListEquals(List<T> l1, List<T> l2) {
         if (l1 == null && l2 == null) {
             return true;
@@ -44,6 +59,15 @@ public class Utils {
         return true;
     }
 
+    /**
+     * Compares two maps (keys and values)
+     *
+     * @param <T>
+     * @param <T2>
+     * @param m1
+     * @param m2
+     * @return
+     */
     public static <T, T2> boolean isMapEquals(Map<T, T2> m1, Map<T, T2> m2) {
         if (m1 == null && m2 == null) {
             return true;
@@ -61,6 +85,26 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    /**
+     * searches for an element in a list, returns its position if not found,
+     * returns the list size
+     *
+     * @param <T>
+     * @param list
+     * @param v
+     * @param startIdx
+     * @return
+     */
+    public static <T> int findInList(List<T> list, T v, int startIdx) {
+        for (int i = startIdx; i < list.size(); i++) {
+            T t = list.get(i);
+            if (t.equals(v)) {
+                return i;
+            }
+        }
+        return list.size();
     }
 
 }

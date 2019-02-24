@@ -1,0 +1,35 @@
+(empty array)
+my sack is empty
+say my sack (null)
+
+(one-element list)
+Evils are containing "demonic"
+say Evils at 0 ("demonic")
+say Evils at nowhere ("demonic")
+
+(multi-element list)
+RGB Colors are containing "red", "green" and "blue"
+say RGB Colors at 0 ("red")
+say RGB Colors at 1 ("green")
+say RGB Colors at 2 ("blue")
+
+(single-element map)
+my keys are containing 123 for "house"
+say my keys for "door" (123)
+
+(multi-element map)
+my keys are containing 123 for "house", 456 for "office"
+say my keys for "office" (456)
+
+
+T was a lovestruck ladykiller
+Put "apple pie" into V
+
+(variable for map key)
+my map is containing V for 10
+say my keys for 10 ("apple pie")
+
+(variable for map value)
+my map is containing V for T
+say my keys for 100 ("apple pie")
+

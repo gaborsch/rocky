@@ -22,6 +22,7 @@ import rockstar.parser.checker.BreakItDownChecker;
 import rockstar.parser.checker.KnockDownChecker;
 import rockstar.parser.checker.ElseChecker;
 import rockstar.parser.checker.FunctionDefChecker;
+import rockstar.parser.checker.PoeticArrayAssignmentChecker;
 import rockstar.parser.checker.TakeItToTheTopChecker;
 import rockstar.statement.Statement;
 
@@ -46,6 +47,7 @@ public class StatementFactory {
         new ElseChecker(),
         new GiveBackChecker(),
         new BlockEndChecker(),
+        new PoeticArrayAssignmentChecker(),
         new PoeticAssignmentChecker(),
         new PoeticStringAssignmentChecker(),
         new ExpressionStatementChecker(),
