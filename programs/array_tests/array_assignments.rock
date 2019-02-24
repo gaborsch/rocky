@@ -15,10 +15,11 @@ say RGB Colors at 2 ("blue")
 
 (single-element map)
 my keys are containing 123 for "house"
-say my keys for "door" (123)
+say my keys for "house" (123)
 
 (multi-element map)
-my keys are containing 123 for "house", 456 for "office"
+my keys are containing 234 for "house", 456 for "office"
+say my keys for "house" (234)
 say my keys for "office" (456)
 
 
@@ -27,9 +28,9 @@ Put "apple pie" into V
 
 (variable for map key)
 my map is containing V for 10
-say my keys for 10 ("apple pie")
+say my map for 10 ("apple pie")
 
 (variable for map value)
 my map is containing V for T
-say my keys for 100 ("apple pie")
+say my map for 100 ("apple pie")
 

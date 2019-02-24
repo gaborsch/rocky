@@ -6,7 +6,6 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
-import rockstar.expression.Ref;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;

@@ -9,7 +9,7 @@ import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.DummyExpression;
 import rockstar.expression.Expression;
-import rockstar.expression.SimpleExpression;
+import rockstar.expression.ReferenceExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.RockNumber;
 
@@ -70,10 +70,11 @@ public class ExpressionFactory {
 
     /**
      * Parses a poetic number literal
+     *
      * @param list
      * @param line
      * @param orig
-     * @return 
+     * @return
      */
     public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line, String orig) {
         // if a literal word like "nothing", then use that
@@ -108,16 +109,17 @@ public class ExpressionFactory {
 
     /**
      * Parses a simple expression (literal or varable reference)
+     *
      * @param list
      * @param line
-     * @return 
+     * @return
      */
-    public static SimpleExpression tryArrayExpressionFor(List<String> list, Line line) {
+    public static Expression tryExpressionFor(List<String> list, Line line) {
         ExpressionParser parser = new ExpressionParser(list, line);
-        SimpleExpression literal = parser.parseSimpleExpression();
-        if (literal != null && parser.isFullyParsed()) {
+        Expression expr = parser.parse();
+        if (expr != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
-            return literal;
+            return expr;
         }
         return null;
     }

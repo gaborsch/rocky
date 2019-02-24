@@ -13,7 +13,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import rockstar.expression.Expression;
-import rockstar.expression.Ref;
 import rockstar.expression.VariableReference;
 import rockstar.statement.FunctionBlock;
 import rockstar.statement.Statement;
@@ -152,23 +151,8 @@ public class BlockContext {
      * @param value
      */
     public void setLocalVariable(VariableReference vref, Value value) {
-        Ref ref = vref.getRef();
-        // if there is no indexing
-        if (ref == null) {
-            vars.put(vref.getName(this), value);
-        } else {
-            // if indexed, evaluate the index expression then assign to the value found
-            Value v = vars.get(vref.getName(this));
-            Value refValue = ref.getExpression().evaluate(this);
-            if (v == null) {
-                v = Value.NULL;
-            }
-            Value newV = v.assign(ref.getType(), refValue, value);
-            if (v != newV) {
-                // e.g. null was treatedas empty array, and we assign an indexed value to it
-                vars.put(vref.getName(this), newV);
-            }
-        }
+        vars.put(vref.getName(this), value);
+
     }
 
     /**
@@ -193,12 +177,6 @@ public class BlockContext {
             if (f != null) {
                 return Value.BOOLEAN_TRUE;
             }
-        }
-
-        // dereference if there is a reference in it
-        if (v != null && vref.getRef() != null) {
-            Value refValue = vref.getRef().getExpression().evaluate(this);
-            v = v.dereference(refValue);
         }
 
         return v == null ? Value.MYSTERIOUS : v;

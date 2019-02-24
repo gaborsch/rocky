@@ -49,6 +49,7 @@ public abstract class CompoundExpression extends Expression {
     300: ^ (power)
     200: function call
     100: unary minus
+     50: for, at
      */
     public abstract int getPrecedence();
 
@@ -58,7 +59,7 @@ public abstract class CompoundExpression extends Expression {
 
     @Override
     public String toString() {
-        return String.format(getFormat(), parameters.toArray());
+        return format();
     }
 
     @Override

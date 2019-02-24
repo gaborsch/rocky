@@ -22,7 +22,8 @@ import rockstar.expression.MinusExpression;
 import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
 import rockstar.expression.PlusExpression;
-import rockstar.expression.Ref;
+import rockstar.expression.RefType;
+import rockstar.expression.ReferenceExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
@@ -202,26 +203,8 @@ public class ExpressionParser {
                 return varRef;
             }
         }
-        Ref ref = null;
-        if (name != null && !isFullyParsed()) {
-            String token = peekCurrent();
-            Ref.Type refType = "at".equals(token) ? Ref.Type.LIST
-                    : "for".equals(token) ? Ref.Type.ASSOC_ARRAY
-                    : null;
-            if (refType != null) {
-                next();
-                Expression indexExpr = parse();
-                if (indexExpr != null && isFullyParsed()) {
-                    ref = new Ref(refType, indexExpr);
-                }
-            }
-        }
-
         if (name != null) {
             VariableReference varRef = new VariableReference(name, isFunctionName, false);
-            if (ref != null) {
-                varRef.addRef(ref);
-            }
             return varRef;
         }
         return null;
@@ -314,6 +297,14 @@ public class ExpressionParser {
     public CompoundExpression getOperator(boolean isAfterOperator) {
         String token = this.peekCurrent();
         // logical operators
+        if ("at".equals(token)) {
+            next();
+            return new ReferenceExpression(RefType.LIST);
+        }
+        if ("for".equals(token)) {
+            next();
+            return new ReferenceExpression(RefType.ASSOC_ARRAY);
+        }
         if ("not".equals(token)) {
             next();
             return new NotExpression();

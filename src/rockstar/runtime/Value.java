@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
-import rockstar.expression.Ref;
+import rockstar.expression.RefType;
 
 /**
  *
@@ -44,8 +44,8 @@ public class Value {
         return b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     }
 
-    private static Value getValue(Ref.Type refType) {
-        return new Value(refType == Ref.Type.LIST ? ExpressionType.LIST_ARRAY : ExpressionType.ASSOC_ARRAY);
+    private static Value getValue(RefType refType) {
+        return new Value(refType == RefType.LIST ? ExpressionType.LIST_ARRAY : ExpressionType.ASSOC_ARRAY);
     }
 
     public static Value parse(String s) {
@@ -249,13 +249,13 @@ public class Value {
         }
         if ((isAssocArray() || isNull()) && (other.isAssocArray() || other.isNull())) {
             // merge assoc arrays
-            Value v = Value.getValue(Ref.Type.ASSOC_ARRAY);
+            Value v = Value.getValue(RefType.ASSOC_ARRAY);
             v.assocArrayValue.putAll(asAssocArray());
             v.assocArrayValue.putAll(other.asAssocArray());
         }
         if ((isListArray() || isNull()) && !other.isAssocArray()) {
             // append to list or concatenate
-            Value v = Value.getValue(Ref.Type.LIST);
+            Value v = Value.getValue(RefType.LIST);
             v.listArrayValue.addAll(asListArray());
             if (other.isListArray() || other.isNull()) {
                 // concatenate list
@@ -267,7 +267,7 @@ public class Value {
         }
         if (other.isListArray() && !isAssocArray()) {
             // prepend to list
-            Value v = Value.getValue(Ref.Type.LIST);
+            Value v = Value.getValue(RefType.LIST);
             v.listArrayValue.add(this);
             v.listArrayValue.addAll(other.listArrayValue);
             return v;
@@ -290,7 +290,7 @@ public class Value {
     public Value minus(Value other) {
         if (isAssocArray()) {
             // remove subset of assoc arrays
-            Value v = Value.getValue(Ref.Type.ASSOC_ARRAY);
+            Value v = Value.getValue(RefType.ASSOC_ARRAY);
             v.assocArrayValue.putAll(asAssocArray());
             if (other.isAssocArray()) {
                 // remove all matching keys (ignoring values)
@@ -311,7 +311,7 @@ public class Value {
 
         if (isListArray() && !other.isAssocArray()) {
             // remove element by index
-            Value v = Value.getValue(Ref.Type.LIST);
+            Value v = Value.getValue(RefType.LIST);
             v.listArrayValue.addAll(asListArray());
             int idx = other.getNumeric().asInt();
             v.listArrayValue.remove(idx);
@@ -507,10 +507,10 @@ public class Value {
         return hash;
     }
 
-    public Value dereference(Value refValue) {
-        if (isAssocArray()) {
+    public Value reference(RefType refType, Value refValue) {
+        if (refType == RefType.ASSOC_ARRAY && isAssocArray()) {
             return this.assocArrayValue.getOrDefault(refValue, Value.MYSTERIOUS);
-        } else if (isListArray()) {
+        } else if (refType == RefType.LIST && isListArray()) {
             int idx = refValue.getNumeric().asInt();
             if (listArrayValue != null && idx >= 0 && idx < listArrayValue.size()) {
                 return listArrayValue.get(idx);
@@ -521,11 +521,11 @@ public class Value {
         throw new RockstarRuntimeException("Dereferencing " + getType() + " type");
     }
 
-    public Value assign(Ref.Type refType, Value refValue, Value setValue) {
+    public Value assign(RefType refType, Value refValue, Value setValue) {
         // NULL or MYSTERIOUS are treated as empty array
         Value v = (getType() == ExpressionType.NULL || getType() == ExpressionType.MYSTERIOUS)
                 ? getValue(refType) : this;
-        if (refType == Ref.Type.LIST) {
+        if (refType == RefType.LIST) {
             int idx = refValue.getNumeric().asInt();
             if (idx >= 0) {
                 if (v.getType() == ExpressionType.LIST_ARRAY) {
@@ -534,15 +534,15 @@ public class Value {
                     } else {
                         v.listArrayValue.add(setValue);
                     }
-                    return this;
+                    return v;
                 } else {
                     throw new RockstarRuntimeException("Indexing " + getType() + " type");
                 }
             } else {
                 throw new RockstarRuntimeException("Negative array index: " + idx);
             }
-        } else if (refType == Ref.Type.ASSOC_ARRAY) {
-            if (getType() == ExpressionType.ASSOC_ARRAY) {
+        } else if (refType == RefType.ASSOC_ARRAY) {
+            if (v.getType() == ExpressionType.ASSOC_ARRAY) {
                 v.assocArrayValue.put(refValue, setValue);
                 return v;
             } else {
