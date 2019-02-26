@@ -15,6 +15,7 @@ import rockstar.parser.checker.GiveBackChecker;
 import rockstar.parser.checker.SayChecker;
 import rockstar.parser.checker.PoeticAssignmentChecker;
 import rockstar.parser.checker.PoeticStringAssignmentChecker;
+import rockstar.parser.checker.IterateChecker;
 import rockstar.parser.checker.WhileChecker;
 import rockstar.parser.checker.Checker;
 import rockstar.parser.checker.ExpressionStatementChecker;
@@ -41,6 +42,7 @@ public class StatementFactory {
         new BuildUpChecker(),
         new KnockDownChecker(),
         new FunctionDefChecker(),
+        new IterateChecker(),
         new WhileChecker(),
         new UntilChecker(),
         new IfChecker(),
