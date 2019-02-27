@@ -6,6 +6,7 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
+import rockstar.expression.DummyExpression;
 import rockstar.parser.ExpressionFactory;
 import rockstar.statement.Statement;
 import rockstar.statement.IterateStatement;
@@ -21,9 +22,9 @@ public class IterateChecker extends Checker {
         if (match("While", 1, "as", 2)
              || match("While", 1, "alike", 2)) {
             Expression arrayExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
-            if (arrayExpr != null) {
+            if (arrayExpr != null && !(arrayExpr instanceof DummyExpression)) {
                 Expression asExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
-                if (asExpr != null) {
+                if (asExpr != null && !(arrayExpr instanceof DummyExpression)) {
                     return new IterateStatement(arrayExpr, asExpr);
                 }
             }

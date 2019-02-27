@@ -234,7 +234,9 @@ public class ExpressionParser {
             CompoundExpression operator = getOperator(isAfterOperator);
             if (operator != null) {
                 // operator found
-                pushOperator(operator);
+                if (!pushOperator(operator)) {
+                    return null;
+                }
                 // after operators a value is required, except FunctionCall that consumers values, too
                 isAfterOperator = true;
             } else if (!isAfterOperator) {
@@ -253,11 +255,13 @@ public class ExpressionParser {
             }
         }
         // compact operators
-        pushOperator(new EndOfExpression());
+        if(!pushOperator(new EndOfExpression())) {
+            return null;
+        }
         return valueStack.isEmpty() ? null : valueStack.get(0);
     }
 
-    private void pushOperator(CompoundExpression operator) {
+    private boolean pushOperator(CompoundExpression operator) {
 
         // interpret 
         while (!operatorStack.isEmpty()) {
@@ -279,7 +283,7 @@ public class ExpressionParser {
             // process the operator
             int paramCount = op.getParameterCount();
             if (valueStack.size() < paramCount) {
-                paramCount = valueStack.size();
+                return false;
             }
             // add paramcount parameters to the operator, preserving declaraton order
             for (int i = 0; i < paramCount; i++) {
@@ -292,6 +296,7 @@ public class ExpressionParser {
         }
 
         operatorStack.push(operator);
+        return true;
     }
 
     public CompoundExpression getOperator(boolean isAfterOperator) {
@@ -373,7 +378,7 @@ public class ExpressionParser {
                     }
                 }
             }
-            if ("not".equals(peekCurrent())) {
+            if (containsAtLeast(2) && "not".equals(peekCurrent())) {
                 // "is not"
                 next();
                 return new ComparisonExpression(ComparisonType.NOT_EQUALS);
