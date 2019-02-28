@@ -193,7 +193,7 @@ public class ExpressionParser {
                 isFunctionName = true;
             }
             name = sb.toString();
-        }
+        } 
         // not a proper variable
         if (name == null && containsAtLeast(1)) {
             // Variable backreference: 'it'
@@ -202,6 +202,11 @@ public class ExpressionParser {
                 VariableReference varRef = new VariableReference(token0, false, true);
                 return varRef;
             }
+        }
+        if (name == null) {
+            // simple variables are single-word identifiers
+            name = token0;
+            next(); // first part processed
         }
         if (name != null) {
             VariableReference varRef = new VariableReference(name, isFunctionName, false);
