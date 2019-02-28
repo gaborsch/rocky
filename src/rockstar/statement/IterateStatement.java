@@ -105,7 +105,7 @@ public class IterateStatement extends Block {
                     // initialize local loop variables
                     currKey = entry.getKey();
                     ctx.setVariable(keyVar, currKey);
-                    if (keyVar != null) {
+                    if (valueVar != null) {
                         currValue = entry.getValue();
                         ctx.setVariable(valueVar, currValue);
                     }
