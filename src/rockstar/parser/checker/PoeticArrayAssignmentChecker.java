@@ -7,7 +7,6 @@ package rockstar.parser.checker;
 
 import java.util.List;
 import rockstar.expression.Expression;
-import rockstar.expression.ReferenceExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.runtime.Utils;
@@ -26,8 +25,14 @@ public class PoeticArrayAssignmentChecker extends Checker {
                 || match(1, "was", "containing", 2)
                 || match(1, "are", "containing", 2)
                 || match(1, "were", "containing", 2)
+                || match("Within", 1, "is", 2)
+                || match("Within", 1, "was", 2)
+                || match("Within", 1, "are", 2)
+                || match("Within", 1, "were", 2)
                 || match(1, "contain", 2)
-                || match(1, "contains", 2)) {
+                || match(1, "contains", 2)
+                || match(1, "hold", 2)
+                || match(1, "holds", 2)) {
             VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
             if (varRef != null) {
                 ArrayAssignmentStatement stmt = new ArrayAssignmentStatement(varRef);
