@@ -24,6 +24,7 @@ public class Value {
     public static Value NULL = new Value(ExpressionType.NULL);
     public static Value BOOLEAN_TRUE = new Value(true);
     public static Value BOOLEAN_FALSE = new Value(false);
+    public static Value EMPTY_ARRAY = new Value(ExpressionType.LIST_ARRAY);
 
     private final ExpressionType type;
     private String stringValue;
@@ -115,6 +116,11 @@ public class Value {
 
     public boolean isString() {
         return type == ExpressionType.STRING;
+    }
+
+    public boolean isEmptyArray() {
+        return (type == ExpressionType.LIST_ARRAY && (this.listArrayValue == null || this.listArrayValue.isEmpty()))
+                || (type == ExpressionType.ASSOC_ARRAY && (this.assocArrayValue == null || this.assocArrayValue.isEmpty()));
     }
 
     public boolean isListArray() {
@@ -247,25 +253,26 @@ public class Value {
         if (isNull() && other.isNull()) {
             return NULL;
         }
-        if ((isAssocArray() || isNull()) && (other.isAssocArray() || other.isNull())) {
+        if ((isAssocArray() || isEmptyArray()) && (other.isAssocArray() || other.isEmptyArray())) {
             // merge assoc arrays
             Value v = Value.getValue(RefType.ASSOC_ARRAY);
             v.assocArrayValue.putAll(asAssocArray());
             v.assocArrayValue.putAll(other.asAssocArray());
         }
-        if ((isListArray() || isNull()) && !other.isAssocArray()) {
+        if ((isListArray() || isEmptyArray()) && (!other.isAssocArray())) {
             // append to list or concatenate
             Value v = Value.getValue(RefType.LIST);
             v.listArrayValue.addAll(asListArray());
-            if (other.isListArray() || other.isNull()) {
+            if (other.isListArray() || other.isEmptyArray()) {
                 // concatenate list
                 v.listArrayValue.addAll(other.asListArray());
             } else {
+                // append to list
                 v.listArrayValue.add(other);
             }
             return v;
         }
-        if (other.isListArray() && !isAssocArray()) {
+        if (!isAssocArray() && other.isListArray()) {
             // prepend to list
             Value v = Value.getValue(RefType.LIST);
             v.listArrayValue.add(this);

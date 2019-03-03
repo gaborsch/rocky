@@ -9,7 +9,6 @@ import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.DummyExpression;
 import rockstar.expression.Expression;
-import rockstar.expression.ReferenceExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.RockNumber;
 

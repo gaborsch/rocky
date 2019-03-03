@@ -17,6 +17,7 @@ public class ConstantExpression extends SimpleExpression {
 
     public static ConstantExpression CONST_MYSTERIOUS = new ConstantExpression(Value.MYSTERIOUS);
     public static ConstantExpression CONST_NULL = new ConstantExpression(Value.NULL);
+    public static ConstantExpression CONST_EMPTY_ARRAY = new ConstantExpression(Value.EMPTY_ARRAY);
     public static ConstantExpression CONST_TRUE = new ConstantExpression(Value.BOOLEAN_TRUE);
     public static ConstantExpression CONST_FALSE = new ConstantExpression(Value.BOOLEAN_FALSE);
 
