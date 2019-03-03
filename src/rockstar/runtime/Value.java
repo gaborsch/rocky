@@ -320,7 +320,8 @@ public class Value {
             // remove element by index
             Value v = Value.getValue(RefType.LIST);
             v.listArrayValue.addAll(asListArray());
-            int idx = other.getNumeric().asInt();
+            // Lists are indexed from 1
+            int idx = other.getNumeric().asInt() - 1;
             v.listArrayValue.remove(idx);
             return v;
         }
@@ -518,7 +519,8 @@ public class Value {
         if (refType == RefType.ASSOC_ARRAY && isAssocArray()) {
             return this.assocArrayValue.getOrDefault(refValue, Value.MYSTERIOUS);
         } else if (refType == RefType.LIST && isListArray()) {
-            int idx = refValue.getNumeric().asInt();
+            // Lists are indexed from 1
+            int idx = refValue.getNumeric().asInt() - 1;
             if (listArrayValue != null && idx >= 0 && idx < listArrayValue.size()) {
                 return listArrayValue.get(idx);
             } else {
@@ -533,7 +535,8 @@ public class Value {
         Value v = (getType() == ExpressionType.NULL || getType() == ExpressionType.MYSTERIOUS)
                 ? getValue(refType) : this;
         if (refType == RefType.LIST) {
-            int idx = refValue.getNumeric().asInt();
+            // Lists are indexed from 1
+            int idx = refValue.getNumeric().asInt() - 1;
             if (idx >= 0) {
                 if (v.getType() == ExpressionType.LIST_ARRAY) {
                     if (idx < v.listArrayValue.size()) {
