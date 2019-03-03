@@ -28,9 +28,9 @@ public class Rockstar {
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
     public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99";
-    
+
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test", "debug"}));
-    
+
     public static void main(String[] args) {
 
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
@@ -48,10 +48,10 @@ public class Rockstar {
 //        args = new String[]{"-", "-x"};
 //        args = new String[]{"run", "programs/tests/correct/umlauts.rock"};
         List<String> argl = new LinkedList<>(Arrays.asList(args));
-        
+
         List<String> files = new LinkedList<>();
         Map<String, String> options = new HashMap<>();
-        
+
         String command = null;
         if (!argl.isEmpty()) {
             String a1 = argl.get(0);
@@ -59,7 +59,7 @@ public class Rockstar {
                 command = argl.remove(0);
             }
         }
-        
+
         while (!argl.isEmpty()) {
             String a = argl.remove(0);
             if (a.equals("-")) {
@@ -73,7 +73,7 @@ public class Rockstar {
                 files.add(a);
             }
         }
-        
+
         if (command == null) {
             // no explicit command defined
             if (options.containsKey("-h") || options.containsKey("--help")) {
@@ -84,9 +84,9 @@ public class Rockstar {
                 command = "help";
             }
         }
-        
+
         setGlobalOptions(options);
-        
+
         switch (command) {
             case "help":
                 doHelp(files.isEmpty() ? null : files.get(0), options);
@@ -112,7 +112,7 @@ public class Rockstar {
                 break;
         }
     }
-    
+
     private static void doHelp(String cmd, Map<String, String> options) {
         System.out.println(CLI_HEADER);
         System.out.println(Utils.repeat("-", CLI_HEADER.length()));
@@ -170,14 +170,13 @@ public class Rockstar {
             }
         }
         if (cmd == null || cmd.equals("test")) {
-            System.out.println(CLI_WRAPPER + " test [--options ...] <filename> ...");
-            System.out.println(CLI_WRAPPER + " test --testdir <directoryname>");
+            System.out.println(CLI_WRAPPER + " test [--options ...] <file-or-dirname> ...");
             System.out.println("    Execute unit tests. Special rules apply, check `" + CLI_WRAPPER + " help test` for details");
             if (cmd != null) {
-                System.out.println("    Directories with name starting with '.' or '_' are skipped.");
-                System.out.println("    Files under 'parse-error' directory (and subdirectories) must produce parse error");
+                System.out.println("    Directories with name starting with '.' or '_' are skipped, unless -a option is given.");
+                System.out.println("    Files under 'correct' or 'fixtures' directory must compile and run properly. This is the default.");
+                System.out.println("    Files under 'parse-error' or 'failures' directory (and subdirectories) must produce parse error");
                 System.out.println("    Files under 'runtime-error' directory (and subdirectories) must produce runtime error.");
-                System.out.println("    Files under 'correct' directory must compile and run properly. This is the default.");
                 System.out.println("    All correct tests must compile and run. Expected output is in *.rock.out files, input is taken from *.rock.in' files, if present.");
                 System.out.println();
                 System.out.println("Options:");
@@ -203,16 +202,16 @@ public class Rockstar {
             System.out.println("    Print more detailed help about the given command.");
         }
     }
-    
+
     private static void doRun(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
             doHelp("run", options);
             return;
         }
         boolean sameContext = options.containsKey("-s") || options.containsKey("--same-context");
-        
+
         LoggerListener logger = new LoggerListener(options);
-        
+
         BlockContext ctx = null;
         for (String filename : files) {
             try {
@@ -227,7 +226,7 @@ public class Rockstar {
             }
         }
     }
-    
+
     private static void doList(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
             doHelp("list", options);
@@ -243,39 +242,29 @@ public class Rockstar {
             }
         });
     }
-    
+
     private static void doTest(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
             doHelp("test", options);
             return;
         }
-        boolean isDirectory = options.containsKey("--testdir");
-        if (isDirectory) {
-            // 
-            files.forEach((dir) -> {
-                new RockstarTest(options).executeDir(dir);
-            });
-        } else {
-            // files
-            files.forEach((file) -> {
-                new RockstarTest(options).executeFile(file, null);
-            });
-            
-        }
+        files.forEach((path) -> {
+            new RockstarTest(options).execute(path);
+        });
     }
-    
+
     private static void doRepl(List<String> files, Map<String, String> options) {
         new RockstarRepl(options).repl(files);
     }
-    
-        
+
     private static void doDebug(List<String> files, Map<String, String> options) {
         new RockstarDebugger(options).debug(files);
 
     }
+
     private static void setGlobalOptions(Map<String, String> options) {
         boolean dec64 = options.containsKey("--dec64");
         RockNumber.setDec64(dec64);
     }
-    
+
 }

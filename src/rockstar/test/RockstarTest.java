@@ -34,12 +34,23 @@ public class RockstarTest {
         RUNTIME_ERROR
     }
 
+    public void execute(String path) {
+        File f = new File(path);
+        if(f.exists()) {
+            if (f.isDirectory()) {
+                executeDir(path);
+            } else {
+                executeFile(f, Expected.CORRECT);
+            }
+        }
+    }
+
 
     private int testCount = 0;
     private int passed = 0;
     private int failed = 0;
 
-    public void executeDir(String dirname) {
+    private void executeDir(String dirname) {
 
         allDirectories = options.containsKey("-a") || options.containsKey("--all-directories");
         isQuiet = options.containsKey("-q") || options.containsKey("--quiet");
@@ -106,10 +117,6 @@ public class RockstarTest {
             }
         }
 
-    }
-
-    public void executeFile(String file, Expected exp) {
-        executeFile(new File(file), exp == null ? Expected.CORRECT : exp);
     }
 
     private void executeFile(File file, Expected exp) {
