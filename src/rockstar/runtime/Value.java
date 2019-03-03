@@ -5,11 +5,11 @@
  */
 package rockstar.runtime;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
 import rockstar.expression.RefType;
@@ -18,7 +18,7 @@ import rockstar.expression.RefType;
  *
  * @author Gabor
  */
-public class Value {
+public class Value implements Comparable<Value> {
 
     public static Value MYSTERIOUS = new Value(ExpressionType.MYSTERIOUS);
     public static Value NULL = new Value(ExpressionType.NULL);
@@ -75,7 +75,7 @@ public class Value {
         if (type == ExpressionType.LIST_ARRAY) {
             listArrayValue = new LinkedList<>();
         } else if (type == ExpressionType.ASSOC_ARRAY) {
-            assocArrayValue = new HashMap<>();
+            assocArrayValue = new TreeMap<>();
         }
     }
 
@@ -224,7 +224,7 @@ public class Value {
         if (type == ExpressionType.ASSOC_ARRAY) {
             return this.assocArrayValue;
         }
-        return new HashMap<>();
+        return new TreeMap<>();
     }
 
     @Override
@@ -387,7 +387,8 @@ public class Value {
      * @param other
      * @return
      */
-    private int compareTo(Value other) {
+    @Override
+    public int compareTo(Value other) {
         if (getType() == other.getType()) {
             // Equal types: compare them without conversion
             switch (getType()) {
