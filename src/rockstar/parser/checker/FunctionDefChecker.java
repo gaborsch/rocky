@@ -41,7 +41,7 @@ public class FunctionDefChecker extends Checker {
                 for (int i = 1; i <= paramCount; i++) {
                     paramRef = ExpressionFactory.tryVariableReferenceFor(getResult()[i], line);
                     if (paramRef != null) {
-                        fb.addParameterName(paramRef.getFunctionName());
+                        fb.addParameterName(paramRef);
                     } else {
                         return null;
                     }

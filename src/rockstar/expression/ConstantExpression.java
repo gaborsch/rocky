@@ -17,6 +17,7 @@ public class ConstantExpression extends SimpleExpression {
 
     public static ConstantExpression CONST_MYSTERIOUS = new ConstantExpression(Value.MYSTERIOUS);
     public static ConstantExpression CONST_NULL = new ConstantExpression(Value.NULL);
+    public static ConstantExpression CONST_EMPTY_ARRAY = new ConstantExpression(Value.EMPTY_ARRAY);
     public static ConstantExpression CONST_TRUE = new ConstantExpression(Value.BOOLEAN_TRUE);
     public static ConstantExpression CONST_FALSE = new ConstantExpression(Value.BOOLEAN_FALSE);
 
@@ -34,7 +35,7 @@ public class ConstantExpression extends SimpleExpression {
         this.value = Value.getValue(RockNumber.getValue(n));
     }
 
-    private ConstantExpression(Value value) {
+    public ConstantExpression(Value value) {
         this.value = value;
     }
 
@@ -57,5 +58,19 @@ public class ConstantExpression extends SimpleExpression {
     public String format() {
         return this.value.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ConstantExpression) {
+            ConstantExpression o = (ConstantExpression) obj;
+            return value.equals(o.value);
+        }
+        return false;
+    }
+    
+    
 
 }

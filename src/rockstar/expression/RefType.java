@@ -9,12 +9,7 @@ package rockstar.expression;
  *
  * @author Gabor
  */
-public enum ExpressionType {
-    MYSTERIOUS,
-    NULL,
-    BOOLEAN,
-    NUMBER,
-    STRING,
-    LIST_ARRAY,
-    ASSOC_ARRAY
+public enum RefType {
+    LIST, ASSOC_ARRAY
+    
 }

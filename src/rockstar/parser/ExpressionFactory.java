@@ -67,6 +67,14 @@ public class ExpressionFactory {
         return null;
     }
 
+    /**
+     * Parses a poetic number literal
+     *
+     * @param list
+     * @param line
+     * @param orig
+     * @return
+     */
     public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line, String orig) {
         // if a literal word like "nothing", then use that
         ConstantExpression literal = tryLiteralFor(list, line);
@@ -98,4 +106,20 @@ public class ExpressionFactory {
         return new ConstantExpression(RockNumber.parse(sb.toString()));
     }
 
+    /**
+     * Parses a simple expression (literal or varable reference)
+     *
+     * @param list
+     * @param line
+     * @return
+     */
+    public static Expression tryExpressionFor(List<String> list, Line line) {
+        ExpressionParser parser = new ExpressionParser(list, line);
+        Expression expr = parser.parse();
+        if (expr != null && parser.isFullyParsed()) {
+            // has valid value and parsed through the list
+            return expr;
+        }
+        return null;
+    }
 }

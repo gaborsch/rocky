@@ -5,10 +5,10 @@
  */
 package rockstar.expression;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import rockstar.runtime.Utils;
 
 /**
  *
@@ -18,11 +18,6 @@ public abstract class CompoundExpression extends Expression {
 
     private final int paramCount;
     private final List<Expression> parameters;
-
-    private CompoundExpression(int paramCount) {
-        this.paramCount = paramCount;
-        parameters = new ArrayList<>(paramCount);
-    }
 
     public CompoundExpression(Expression... params) {
         this.paramCount = params.length;
@@ -54,6 +49,7 @@ public abstract class CompoundExpression extends Expression {
     300: ^ (power)
     200: function call
     100: unary minus
+     50: for, at
      */
     public abstract int getPrecedence();
 
@@ -63,7 +59,7 @@ public abstract class CompoundExpression extends Expression {
 
     @Override
     public String toString() {
-        return String.format(getFormat(), parameters.toArray());
+        return format();
     }
 
     @Override
@@ -73,4 +69,20 @@ public abstract class CompoundExpression extends Expression {
         return String.format(getFormat(), formattedParams.toArray());
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof CompoundExpression) {
+            CompoundExpression o = (CompoundExpression) obj;
+            if (!o.getClass().equals(this.getClass())) {
+                return false;
+            }
+            return paramCount == o.paramCount && Utils.isListEquals(parameters, o.parameters);
+        }
+        return false;
+    }
+
+    
 }

@@ -26,9 +26,8 @@ public class AssignmentStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        String name = this.variable.getName(ctx);
         Value value = expression.evaluate(ctx);
-        ctx.setVariable(name, value);
+        ctx.setVariable(this.variable, value);
     }
 
     @Override

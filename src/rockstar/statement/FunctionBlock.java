@@ -7,8 +7,8 @@ package rockstar.statement;
 
 import rockstar.runtime.RockstarReturnException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -20,22 +20,22 @@ import rockstar.runtime.Value;
 public class FunctionBlock extends Block {
 
     private final String name;
-    private final List<String> parameterNames = new ArrayList<>();
+    private final List<VariableReference> parameterRefs = new ArrayList<>();
 
     public FunctionBlock(String name) {
         this.name = name;
     }
 
-    public void addParameterName(String paramName) {
-        parameterNames.add(paramName);
+    public void addParameterName(VariableReference paramRef) {
+        parameterRefs.add(paramRef);
     }
 
     public String getName() {
         return name;
     }
 
-    public List<String> getParameterNames() {
-        return parameterNames;
+    public List<VariableReference> getParameterRefs() {
+        return parameterRefs;
     }
 
     /**
@@ -58,13 +58,13 @@ public class FunctionBlock extends Block {
      */
     public Value call(BlockContext ctx, List<Value> values) {
         BlockContext funcCtx = new BlockContext(ctx, name);
-        List<String> names = this.parameterNames;
-        if (names.size() != values.size()) {
-            throw new RockstarRuntimeException("Wrong number of arguments for function " + this.name + ": expected " + names.size() + ", got " + values.size());
+        List<VariableReference> refs = this.parameterRefs;
+        if (refs.size() != values.size()) {
+            throw new RockstarRuntimeException("Wrong number of arguments for function " + this.name + ": expected " + refs.size() + ", got " + values.size());
         }
 
         for (int i = 0; i < values.size(); i++) {
-            funcCtx.setLocalVariable(names.get(i), values.get(i));
+            funcCtx.setLocalVariable(refs.get(i), values.get(i));
         }
 
         try {
@@ -79,7 +79,7 @@ public class FunctionBlock extends Block {
 
     @Override
     protected String explain() {
-        String paramsList = parameterNames.toString();
+        String paramsList = parameterRefs.toString();
         return "function " + name + "(" + paramsList.substring(1, paramsList.length()-1 )+")";
     }
 

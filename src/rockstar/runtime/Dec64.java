@@ -321,4 +321,25 @@ public class Dec64 extends RockNumber {
         return "(" + mantissa + " E" + exponent + ")";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if(obj instanceof Dec64) {
+            Dec64 o = (Dec64) obj;
+            int commonE = Integer.min(normalE(this), normalE(o));
+            return transformM(this, commonE) == transformM(o, commonE);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + (int) (this.mantissa ^ (this.mantissa >>> 32));
+        hash = 29 * hash + this.exponent;
+        return hash;
+    }
+    
 }

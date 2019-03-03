@@ -6,7 +6,6 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -15,16 +14,22 @@ import rockstar.runtime.Value;
  */
 public class VariableReference extends SimpleExpression {
 
-    private String name;
+    private final String name;
     private boolean isFunctionName = false;
     private boolean isLastVariable = false;
 
+    public VariableReference(String name, boolean isFunctionName, boolean isLastVariable) {
+        this.name = name;
+        this.isFunctionName = isFunctionName;
+        this.isLastVariable = isLastVariable;
+    }
+
     public String getName(BlockContext ctx) {
-        String effectiveName = this.name;
+        VariableReference vref = this;
         if (isLastVariable) {
-            effectiveName = ctx.getLastVariableName();
+            vref = ctx.getLastVariableRef();
         }
-        return effectiveName;
+        return vref.name;
     }
 
     public String getFunctionName() {
@@ -35,12 +40,6 @@ public class VariableReference extends SimpleExpression {
         return isFunctionName;
     }
 
-    public VariableReference(String name, boolean isFunctionName, boolean isLastVariable) {
-        this.name = name;
-        this.isFunctionName = isFunctionName;
-        this.isLastVariable = isLastVariable;
-    }
-
     @Override
     public String toString() {
         return name;
@@ -49,21 +48,44 @@ public class VariableReference extends SimpleExpression {
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
-        String effectiveName = this.name;
+        VariableReference effectiveVRef = this;
         if (isLastVariable) {
-            effectiveName = ctx.getLastVariableName();
+            effectiveVRef = ctx.getLastVariableRef();
         }
-        Value value = ctx.getVariableValue(effectiveName);
+        Value value = ctx.getVariableValue(effectiveVRef);
+
         if (value == null) {
             value = Value.MYSTERIOUS;
-            ctx.setVariable(effectiveName, value);
+            ctx.setVariable(this, value);
         }
+
         return ctx.afterExpression(this, value);
+    }
+
+//    private static Value evaluate(VariableReference vref, BlockContext ctx) {
+//        Value value = ctx.getVariableValue(vref);
+//        return value;
+//    }
+
+    public boolean isLastVariable() {
+        return isLastVariable;
     }
 
     @Override
     public String format() {
         return isLastVariable ? "<it>" : name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof VariableReference) {
+            VariableReference o = (VariableReference) obj;
+            return name.equals(o.name);
+        }
+        return false;
     }
 
 }

@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import rockstar.expression.Expression;
+import rockstar.expression.VariableReference;
 import rockstar.statement.FunctionBlock;
 import rockstar.statement.Statement;
 
@@ -32,8 +33,8 @@ public class BlockContext {
     private final PrintStream output;
     private final PrintStream error;
     private final Map<String, String> env;
-    private final String name;
-    
+    private final String ctxName;
+
     private BlockContextListener listener = null;
 
     public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
@@ -48,16 +49,16 @@ public class BlockContext {
         this.output = output;
         this.error = error;
         this.env = env;
-        this.name = "RockStar";
+        this.ctxName = "RockStar";
     }
 
     /**
      * Context initialization
      *
      * @param parent
-     * @param name name of the context
+     * @param ctxName name of the context
      */
-    public BlockContext(BlockContext parent, String name) {
+    public BlockContext(BlockContext parent, String ctxName) {
         this.parent = parent;
         this.root = parent.root;
         this.level = parent.level + 1;
@@ -66,13 +67,13 @@ public class BlockContext {
         this.error = parent.error;
         this.env = parent.env;
         this.listener = parent.listener;
-        this.name = name + "#" + this.level;
+        this.ctxName = ctxName + "#" + this.level;
     }
 
     public void setListener(BlockContextListener listener) {
         this.listener = listener;
     }
-    
+
     public BufferedReader getInput() {
         return input;
     }
@@ -98,9 +99,9 @@ public class BlockContext {
     }
 
     public String getName() {
-        return name;
+        return ctxName;
     }
-    
+
     public BlockContext getParent() {
         return parent;
     }
@@ -108,78 +109,83 @@ public class BlockContext {
     public int getLevel() {
         return level;
     }
-    
-    // last assigned variable name in this context
-    private String lastVariableName = null;
 
-    public String getLastVariableName() {
-        return lastVariableName;
+    // last assigned variable name in this context
+    private VariableReference lastVariableRef = null;
+
+    public VariableReference getLastVariableRef() {
+        return lastVariableRef;
     }
-    
+
     /**
      * Set a variable value in the proper context
      *
-     * @param name
+     * @param vref
      * @param value
      */
-    public void setVariable(String name, Value value) {
+    public void setVariable(VariableReference vref, Value value) {
         // we can set either local or global variables
-        boolean hasGlobal = root.vars.containsKey(name);
-        if(this.vars.containsKey(name)) {
+        boolean hasGlobal = root.vars.containsKey(vref.getName(this));
+        if (this.vars.containsKey(vref.getName(this))) {
             // overwrite local variable
-            setLocalVariable(name, value);
+            setLocalVariable(vref, value);
         } else if (hasGlobal) {
             // overwrite global variable
-            root.setLocalVariable(name, value);
+            root.setLocalVariable(vref, value);
         } else {
             // initialize local variable
-            setLocalVariable(name, value);
+            setLocalVariable(vref, value);
         }
-        
+
         // last assigned variable name
-        this.lastVariableName = name;
+        if (!vref.isLastVariable()) {
+            this.lastVariableRef = vref;
+        }
     }
 
     /**
      * Set a variable in the local context, hiding global variables (e.g.
      * function parameters)
      *
-     * @param name
+     * @param vref
      * @param value
      */
-    public void setLocalVariable(String name, Value value) {
-        vars.put(name, value);
+    public void setLocalVariable(VariableReference vref, Value value) {
+        vars.put(vref.getName(this), value);
+
     }
 
     /**
      * Get a variable value, either from local or from global context
      *
-     * @param name
+     * @param vref
      * @return
      */
-    public Value getVariableValue(String name) {
+    public Value getVariableValue(VariableReference vref) {
         // find the context where the variable was defined 
         Value v = null;
+        String vname = vref.getName(this);
         BlockContext ctx = this;
-        while(v == null && ctx != null) {
-            v = ctx.vars.get(name);
+        while (v == null && ctx != null) {
+            v = ctx.vars.get(vname);
             ctx = ctx.parent;
         }
 
         if (v == null) {
             // is it a function reference?
-            FunctionBlock f = retrieveFunction(name);
+            FunctionBlock f = retrieveFunction(vname);
             if (f != null) {
                 return Value.BOOLEAN_TRUE;
             }
         }
+
         return v == null ? Value.MYSTERIOUS : v;
     }
 
     public FunctionBlock retrieveFunction(String name) {
         FunctionBlock f = null;
         BlockContext ctx = this;
-        while(f == null && ctx != null) {
+        while (f == null && ctx != null) {
             f = ctx.funcs.get(name);
             ctx = ctx.parent;
         }
@@ -189,7 +195,7 @@ public class BlockContext {
     public void defineFunction(String name, FunctionBlock function) {
         funcs.put(name, function);
     }
-    
+
     public void beforeStatement(Statement stmt) {
         if (listener != null) {
             listener.beforeStatement(this, stmt);

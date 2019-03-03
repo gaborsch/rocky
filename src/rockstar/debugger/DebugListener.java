@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import rockstar.expression.Expression;
+import rockstar.expression.VariableReference;
+import rockstar.parser.ExpressionParser;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.BlockContextListener;
@@ -52,7 +54,7 @@ public class DebugListener implements BlockContextListener {
         }
     }
 
-    private final List<String> watches = new LinkedList<>();
+    private final List<VariableReference> watches = new LinkedList<>();
 
     private void atStatement(BlockContext ctx, Statement stmt) {
         // expression debug is stopped at new statement
@@ -63,9 +65,9 @@ public class DebugListener implements BlockContextListener {
 
             System.out.format("Line %d: %s\n", l.getLnum(), l.getOrigLine());
             for (int i = 0; i < watches.size(); i++) {
-                String varName = watches.get(i);
-                Value value = ctx.getVariableValue(varName);
-                System.out.format("Watch #%d: %s = %s\n", i + 1, varName, value.toString());
+                VariableReference vref = watches.get(i);
+                Value value = ctx.getVariableValue(vref);
+                System.out.format("Watch #%d: %s = %s\n", i + 1, vref.toString(), value.toString());
             }
 
             boolean continueRun = false;
@@ -111,13 +113,15 @@ public class DebugListener implements BlockContextListener {
                     } else if (line.startsWith("s ")) {
                         // show variable
                         String varName = line.substring(2).trim();
-                        Value value = ctx.getVariableValue(varName);
+                        VariableReference vref = new VariableReference(varName, false, false);
+                        Value value = ctx.getVariableValue(vref);
                         System.out.format("%s = %s\n", varName, value.toString());
                     } else if (line.startsWith("w ")) {
                         // add watch
                         String varName = line.substring(2).trim();
-                        watches.add(varName);
-                        Value value = ctx.getVariableValue(varName);
+                        VariableReference vref = new VariableReference(varName, false, false);
+                        watches.add(vref);
+                        Value value = ctx.getVariableValue(vref);
                         System.out.format("Watch #%d: %s = %s\n", watches.size(), varName, value.toString());
                     } else if (line.startsWith("wr ")) {
                         // remove watch
@@ -125,12 +129,13 @@ public class DebugListener implements BlockContextListener {
                         if (varName.startsWith("#")) {
                             try {
                                 int idx = Integer.parseInt(varName.substring(1));
-                                varName = watches.get(idx - 1);
+                                varName = watches.get(idx - 1).getName(ctx);
                             } catch (NumberFormatException nfe) {
                                 // fall back to exact string match
                             }
                         }
-                        if (watches.remove(varName)) {
+                        VariableReference vref = new VariableReference(varName, false, false);
+                        if (watches.remove(vref)) {
                             System.out.format("Watch removed: %s\n", varName);
                         } else {
                             System.out.println("Unknown watch");
@@ -206,11 +211,11 @@ public class DebugListener implements BlockContextListener {
         // stop at the next statement of a specific context
         if (stepOvers.size() > 0 && stepOvers.peek() == ctx) {
             stepOvers.pop();
-            stop =  true;
+            stop = true;
         }
         // stop at a line number
         if (breakpoints.contains(stmt.getLine().getLnum())) {
-            stop =  true;
+            stop = true;
         }
         return stop;
     }
@@ -218,8 +223,5 @@ public class DebugListener implements BlockContextListener {
     private void logExpression(BlockContext ctx, Expression exp, Value v) {
         System.out.format("Evaluated: %s => %s\n", exp.format(), v.toString());
     }
-
-
-   
 
 }

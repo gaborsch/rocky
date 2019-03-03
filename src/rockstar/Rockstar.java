@@ -38,6 +38,9 @@ public class Rockstar {
 //        args = new String[]{"explain", "-s", "programs/tests/correct/nested_function_scopes.rock"};
 //        args = new String[]{"explain", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
 //        args = new String[]{"explain", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
+//        args = new String[]{"list", "-s", "programs/tests/correct/nested_function_scopes.rock"};
+//        args = new String[]{"list", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
+//        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests"};
 //        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};

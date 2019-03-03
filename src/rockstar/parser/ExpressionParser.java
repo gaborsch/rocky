@@ -22,6 +22,8 @@ import rockstar.expression.MinusExpression;
 import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
 import rockstar.expression.PlusExpression;
+import rockstar.expression.RefType;
+import rockstar.expression.ReferenceExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
@@ -49,6 +51,11 @@ public class ExpressionParser {
         idx = 0;
     }
 
+    /**
+     * checks if we have parsed all tokens
+     *
+     * @return
+     */
     boolean isFullyParsed() {
         return idx == list.size();
     }
@@ -86,13 +93,19 @@ public class ExpressionParser {
     private void restorePos() {
         idx = savedIdx;
     }
-
+    
     public static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
     public static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
+    public static final List<String> EMPTY_ARRAY_KEYWORDS = Arrays.asList(new String[]{"void", "sparse"});
     public static final List<String> BOOLEAN_TRUE_KEYWORDS = Arrays.asList(new String[]{"true", "right", "yes", "ok"});
     public static final List<String> BOOLEAN_FALSE_KEYWORDS = Arrays.asList(new String[]{"false", "wrong", "no", "lies"});
     public static final List<String> RESERVED_KEYWORDS = Arrays.asList(new String[]{"definitely", "maybe"});
 
+    /**
+     * Parses a String, numeric, bool, null or mysterious literal
+     *
+     * @return ConstantExpression on success, null otherwise
+     */
     ConstantExpression parseLiteral() {
         if (!isFullyParsed()) {
             String token = peekCurrent();
@@ -112,6 +125,10 @@ public class ExpressionParser {
             if (NULL_KEYWORDS.contains(token)) {
                 next();
                 return ConstantExpression.CONST_NULL;
+            }
+            if (EMPTY_ARRAY_KEYWORDS.contains(token)) {
+                next();
+                return ConstantExpression.CONST_EMPTY_ARRAY;
             }
             if (BOOLEAN_TRUE_KEYWORDS.contains(token)) {
                 next();
@@ -140,6 +157,11 @@ public class ExpressionParser {
         "it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver",
         "It", "He", "She", "Him", "Her", "They", "Them", "Ze", "Hir", "Zie", "Zir", "Xe", "Xem", "Ve", "Ver"});
 
+    /**
+     * parses a variable name or function name (including "it" backreference)
+     *
+     * @return VariableReference on success, null otherwise
+     */
     VariableReference parseVariableReference() {
         String name = null;
         boolean isFunctionName = false;
@@ -176,17 +198,21 @@ public class ExpressionParser {
                 isFunctionName = true;
             }
             name = sb.toString();
-        }
+        } 
         // not a proper variable
         if (name == null && containsAtLeast(1)) {
-            // Variable backreference
+            // Variable backreference: 'it'
             if (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(token0)) {
                 next();
                 VariableReference varRef = new VariableReference(token0, false, true);
                 return varRef;
             }
         }
-
+        if (name == null) {
+            // simple variables are single-word identifiers
+            name = token0;
+            next(); // first part processed
+        }
         if (name != null) {
             VariableReference varRef = new VariableReference(name, isFunctionName, false);
             return varRef;
@@ -194,6 +220,11 @@ public class ExpressionParser {
         return null;
     }
 
+    /**
+     * Parses a literal or a variable name
+     *
+     * @return SimpleExpression on success, null otherwise
+     */
     public SimpleExpression parseSimpleExpression() {
         SimpleExpression expr = parseLiteral();
         if (expr == null) {
@@ -213,7 +244,9 @@ public class ExpressionParser {
             CompoundExpression operator = getOperator(isAfterOperator);
             if (operator != null) {
                 // operator found
-                pushOperator(operator);
+                if (!pushOperator(operator)) {
+                    return null;
+                }
                 // after operators a value is required, except FunctionCall that consumers values, too
                 isAfterOperator = true;
             } else if (!isAfterOperator) {
@@ -232,11 +265,13 @@ public class ExpressionParser {
             }
         }
         // compact operators
-        pushOperator(new EndOfExpression());
+        if(!pushOperator(new EndOfExpression())) {
+            return null;
+        }
         return valueStack.isEmpty() ? null : valueStack.get(0);
     }
 
-    private void pushOperator(CompoundExpression operator) {
+    private boolean pushOperator(CompoundExpression operator) {
 
         // interpret 
         while (!operatorStack.isEmpty()) {
@@ -258,7 +293,7 @@ public class ExpressionParser {
             // process the operator
             int paramCount = op.getParameterCount();
             if (valueStack.size() < paramCount) {
-                paramCount = valueStack.size();
+                return false;
             }
             // add paramcount parameters to the operator, preserving declaraton order
             for (int i = 0; i < paramCount; i++) {
@@ -271,11 +306,20 @@ public class ExpressionParser {
         }
 
         operatorStack.push(operator);
+        return true;
     }
 
     public CompoundExpression getOperator(boolean isAfterOperator) {
         String token = this.peekCurrent();
         // logical operators
+        if ("at".equals(token)) {
+            next();
+            return new ReferenceExpression(RefType.LIST);
+        }
+        if ("for".equals(token)) {
+            next();
+            return new ReferenceExpression(RefType.ASSOC_ARRAY);
+        }
         if ("not".equals(token)) {
             next();
             return new NotExpression();
@@ -344,7 +388,7 @@ public class ExpressionParser {
                     }
                 }
             }
-            if ("not".equals(peekCurrent())) {
+            if (containsAtLeast(2) && "not".equals(peekCurrent())) {
                 // "is not"
                 next();
                 return new ComparisonExpression(ComparisonType.NOT_EQUALS);
