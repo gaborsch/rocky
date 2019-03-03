@@ -96,7 +96,7 @@ public class ExpressionParser {
     
     public static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
     public static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
-    public static final List<String> EMPTY_ARRAY_KEYWORDS = Arrays.asList(new String[]{"void", "sparse"});
+    public static final List<String> EMPTY_ARRAY_KEYWORDS = Arrays.asList(new String[]{"void", "hollow"});
     public static final List<String> BOOLEAN_TRUE_KEYWORDS = Arrays.asList(new String[]{"true", "right", "yes", "ok"});
     public static final List<String> BOOLEAN_FALSE_KEYWORDS = Arrays.asList(new String[]{"false", "wrong", "no", "lies"});
     public static final List<String> RESERVED_KEYWORDS = Arrays.asList(new String[]{"definitely", "maybe"});
