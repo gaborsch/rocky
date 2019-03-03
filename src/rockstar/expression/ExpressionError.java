@@ -17,13 +17,13 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public class DummyExpression extends Expression {
+public class ExpressionError extends Expression {
 
     private final List<String> tokens;
     private String errorMsg;
     private Line line;
 
-    public DummyExpression(List<String> tokens, Line line) {
+    public ExpressionError(List<String> tokens, Line line) {
         this.tokens = new ArrayList<>(tokens);
         this.line = line;
         setErrorIndex(0);
@@ -37,7 +37,7 @@ public class DummyExpression extends Expression {
         errorMsg = sb.toString();
     }
 
-    public DummyExpression(List<String> tokens, int errorIdx, String errorMsg) {
+    public ExpressionError(List<String> tokens, int errorIdx, String errorMsg) {
         this.tokens = new ArrayList<>(tokens);
         setErrorIndex(errorIdx);
 
@@ -80,8 +80,8 @@ public class DummyExpression extends Expression {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof DummyExpression) {
-            DummyExpression o = (DummyExpression) obj;
+        if (obj instanceof ExpressionError) {
+            ExpressionError o = (ExpressionError) obj;
             return Utils.isListEquals(tokens, o.tokens);
         }
         return false;

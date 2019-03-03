@@ -7,7 +7,7 @@ package rockstar.parser;
 
 import java.util.List;
 import rockstar.expression.ConstantExpression;
-import rockstar.expression.DummyExpression;
+import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.RockNumber;
@@ -30,7 +30,7 @@ public class ExpressionFactory {
         if (parsed != null) {
             return parsed;
         }
-        return new DummyExpression(tokens, line);
+        return new ExpressionError(tokens, line);
     }
 
     /**

@@ -13,7 +13,7 @@ import rockstar.expression.ComparisonExpression.ComparisonType;
 import rockstar.expression.CompoundExpression;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.DivideExpression;
-import rockstar.expression.DummyExpression;
+import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.LogicalExpression;
@@ -251,7 +251,7 @@ public class ExpressionParser {
                 isAfterOperator = true;
             } else if (!isAfterOperator) {
                 // two values cannot follow
-                return new DummyExpression(list, idx, "Operator required");
+                return new ExpressionError(list, idx, "Operator required");
             } else {
                 Expression value = parseSimpleExpression();
                 if (value != null) {
@@ -259,7 +259,7 @@ public class ExpressionParser {
                     valueStack.push(value);
                 } else {
                     // neither operator nor value found
-                    return new DummyExpression(list, idx, "Operator or value required");
+                    return new ExpressionError(list, idx, "Operator or value required");
                 }
                 isAfterOperator = false;
             }
@@ -448,7 +448,7 @@ public class ExpressionParser {
                 } else {
                     // ERROR: invalid parameter
                     // TODO some better method to sign expression parse error
-                    valueStack.push(new DummyExpression(list, idx, "Invalid function parameter"));
+                    valueStack.push(new ExpressionError(list, idx, "Invalid function parameter"));
                     return null;
                 }
                 // end of expression or no "and" found: end of parameters
