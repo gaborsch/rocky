@@ -7,6 +7,7 @@ Evils are containing "demonic"
 say Evils at 0 (demonic)
 say Evils at nowhere (demonic)
 
+(holds alias)
 Evils hold "the key to the hell"
 say Evils at 0 (the key to the hell)
 
@@ -16,6 +17,7 @@ say RGB Colors at 0 (red)
 say RGB Colors at 1 (green)
 say RGB Colors at 2 (blue)
 
+(assign to index 1)
 Put "gray" into RGB Colors at 1
 say RGB Colors at 1 (gray)
 
@@ -29,6 +31,7 @@ my keys are containing 234 for "house", 456 for "office"
 say my keys for "house" (234)
 say my keys for "office" (456)
 
+(assign for a key)
 Put 789 into my keys for "car"
 say my keys for "car" (789)
 
