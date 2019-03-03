@@ -26,6 +26,7 @@ import rockstar.runtime.Value;
  */
 public class IterateStatement extends Block {
 
+
     private final Expression arrayExpr;
     private final Expression asExpr;
 
@@ -72,8 +73,7 @@ public class IterateStatement extends Block {
             case LIST_ARRAY:
                 List<Value> list = arrayValue.asListArray();
                 Iterator<Value> listIter = list.iterator();
-                // Lists are indexed from 1
-                for (int i = 1; canContinue && listIter.hasNext(); i++) {
+                for(int i=0; canContinue && listIter.hasNext(); i++) {
                     // initialize local loop variables
                     if (keyVar != null) {
                         currKey = Value.getValue(RockNumber.getValue(i));
@@ -89,7 +89,7 @@ public class IterateStatement extends Block {
                     } catch (RockstarBreakException rbe) {
                         // break exits the loop, too
                         canContinue = false;
-                    }
+                    }                    
                 }
                 break;
             case ASSOC_ARRAY:
@@ -100,7 +100,7 @@ public class IterateStatement extends Block {
                 }
                 Map<Value, Value> map = arrayValue.asAssocArray();
                 Iterator<Map.Entry<Value, Value>> mapIter = map.entrySet().iterator();
-                for (int i = 0; canContinue && mapIter.hasNext(); i++) {
+                for(int i=0; canContinue && mapIter.hasNext(); i++) {
                     Map.Entry<Value, Value> entry = mapIter.next();
                     // initialize local loop variables
                     currKey = entry.getKey();
@@ -117,7 +117,7 @@ public class IterateStatement extends Block {
                     } catch (RockstarBreakException rbe) {
                         // break exits the loop, too
                         canContinue = false;
-                    }
+                    }                    
                 }
                 break;
             case NULL:

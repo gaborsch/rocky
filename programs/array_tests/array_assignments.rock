@@ -4,16 +4,17 @@ say my sack () (empty array contains nothing)
 
 (one-element list)
 Evils are containing "demonic"
-say Evils at 1 (demonic)
+say Evils at 0 (demonic)
+say Evils at nowhere (demonic)
 
 Evils hold "the key to the hell"
-say Evils at 1 (the key to the hell)
+say Evils at 0 (the key to the hell)
 
 (multi-element list)
 RGB Colors are containing "red", "green" and "blue"
-say RGB Colors at 1 (red)
-say RGB Colors at 2 (green)
-say RGB Colors at 3 (blue)
+say RGB Colors at 0 (red)
+say RGB Colors at 1 (green)
+say RGB Colors at 2 (blue)
 
 (single-element map)
 my keys are containing 123 for "house"
@@ -39,7 +40,6 @@ say my map for 100 (apple pie)
 (adding elements to an empty array)
 my heart is void
 Say my heart plus "love" plus "struck"
-Say "love" plus "struck" plus my heart
 
 (adding elements to an empty array -- commented out
 my soul is void
