@@ -6,7 +6,9 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
+import rockstar.expression.ReferenceExpression;
 import rockstar.expression.VariableReference;
+import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -18,20 +20,48 @@ public class AssignmentStatement extends Statement {
 
     private final VariableReference variable;
     private final Expression expression;
+    private final ReferenceExpression ref;
 
     public AssignmentStatement(VariableReference variable, Expression expression) {
-        this.variable = variable;
         this.expression = expression;
+        this.variable = variable;
+        this.ref = null;
+    }
+
+    public AssignmentStatement(ReferenceExpression ref, Expression expression) {
+        if (! (ref.getBaseExpression() instanceof VariableReference)) {
+            throw new ParseException("Assignment is not possible to a non-variable expression: " +ref.getBaseExpression());
+        }
+        this.expression = expression;
+        this.variable = null;
+        this.ref = ref;
     }
 
     @Override
     public void execute(BlockContext ctx) {
         Value value = expression.evaluate(ctx);
-        ctx.setVariable(this.variable, value);
+        if (this.variable != null) {
+            ctx.setVariable(this.variable, value);
+        } else {
+            // the array reference
+            VariableReference vref = (VariableReference) ref.getBaseExpression();
+            // the index expression
+            Expression indexExpr = ref.getIndexExpression();
+            // evaluate the index
+            Value indexValue = indexExpr.evaluate(ctx);
+            // fetch the base variable
+            Value baseValue = ctx.getVariableValue(vref);
+            // assign the value to the specified index
+            Value newBaseValue = baseValue.assign(ref.getRefType(), indexValue, value);
+            // save the new base variable object if changed
+            if (newBaseValue != baseValue) {
+                ctx.setVariable(vref, newBaseValue);
+            }
+        }
     }
 
     @Override
     protected String explain() {
-        return variable.format() + " := " + expression.format();
+        return (ref != null ? ref : variable).format() + " := " + expression.format();
     }
 }

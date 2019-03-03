@@ -16,6 +16,10 @@ say RGB Colors at 0 (red)
 say RGB Colors at 1 (green)
 say RGB Colors at 2 (blue)
 
+Put "gray" into RGB Colors at 1
+say RGB Colors at 1 (gray)
+
+
 (single-element map)
 my keys are containing 123 for "house"
 say my keys for "house" (123)
@@ -24,6 +28,9 @@ say my keys for "house" (123)
 my keys are containing 234 for "house", 456 for "office"
 say my keys for "house" (234)
 say my keys for "office" (456)
+
+Put 789 into my keys for "car"
+say my keys for "car" (789)
 
 
 T was a lovestruck ladykiller
