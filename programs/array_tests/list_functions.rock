@@ -1,0 +1,27 @@
+(initial list)
+My cities contain "London", "New York", "Beijing", "Rio de Janeiro"
+Say my cities
+
+(size)
+Say count of my cities
+
+(sort
+Say sorted my cities
+Say my cities sorted)
+
+(slicing
+Say my cities from 2
+Say my cities till 2
+Say my cities from 2 till 2)
+
+(peek)
+Say last of my cities
+
+(stack ops)
+Push "Budapest" into my cities
+Say my cities
+
+Pull my favorite from my cities
+Say my favorite
+Say my cities
+

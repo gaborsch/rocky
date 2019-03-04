@@ -72,7 +72,7 @@ public class ExpressionError extends Expression {
 
     @Override
     public String format() {
-        return "!!!DummyExpression!!!";
+        return "!!!ExpressionError!!!";
     }
 
     @Override
