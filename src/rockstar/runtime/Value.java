@@ -530,9 +530,8 @@ public class Value implements Comparable<Value> {
     }
 
     public Value assign(RefType refType, Value refValue, Value setValue) {
-        // NULL or MYSTERIOUS are treated as empty array
-        Value v = (getType() == ExpressionType.NULL || getType() == ExpressionType.MYSTERIOUS)
-                ? getValue(refType) : this;
+        // Empty array handling
+        Value v = (isEmptyArray() || isNull()) ? getValue(refType) : this;
         if (refType == RefType.LIST) {
             int idx = refValue.getNumeric().asInt();
             if (idx >= 0) {
