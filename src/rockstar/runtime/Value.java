@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,18 @@ public class Value implements Comparable<Value> {
 
     public static Value getValue(boolean b) {
         return b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+    }
+
+    public static Value getValue(Collection<Value> coll) {
+        Value v = getValue(RefType.LIST);
+        v.listArrayValue.addAll(coll);
+        return v;
+    }
+
+    public static Value getValue(Map<Value, Value> m) {
+        Value v = getValue(RefType.ASSOC_ARRAY);
+        v.assocArrayValue.putAll(m);
+        return v;
     }
 
     private static Value getValue(RefType refType) {

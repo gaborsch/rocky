@@ -8,6 +8,7 @@ package rockstar.parser;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import rockstar.expression.BuiltinFunction;
 import rockstar.expression.ComparisonExpression;
 import rockstar.expression.ComparisonExpression.ComparisonType;
 import rockstar.expression.CompoundExpression;
@@ -93,7 +94,7 @@ public class ExpressionParser {
     private void restorePos() {
         idx = savedIdx;
     }
-    
+
     public static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
     public static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
     public static final List<String> EMPTY_ARRAY_KEYWORDS = Arrays.asList(new String[]{"void", "hollow"});
@@ -198,7 +199,7 @@ public class ExpressionParser {
                 isFunctionName = true;
             }
             name = sb.toString();
-        } 
+        }
         // not a proper variable
         if (name == null && containsAtLeast(1)) {
             // Variable backreference: 'it'
@@ -265,7 +266,7 @@ public class ExpressionParser {
             }
         }
         // compact operators
-        if(!pushOperator(new EndOfExpression())) {
+        if (!pushOperator(new EndOfExpression())) {
             return null;
         }
         return valueStack.isEmpty() ? null : valueStack.get(0);
@@ -310,7 +311,18 @@ public class ExpressionParser {
     }
 
     public CompoundExpression getOperator(boolean isAfterOperator) {
+
+        CompoundExpression builtinFunction = getBuiltinFunction();
+        if (builtinFunction != null) {
+            return builtinFunction;
+        }
+
         String token = this.peekCurrent();
+
+        if (isAfterOperator && "+".equals(token)) {
+            // unary plus
+            next();
+        }
         // logical operators
         if ("at".equals(token)) {
             next();
@@ -461,6 +473,41 @@ public class ExpressionParser {
         }
         return null;
 
+    }
+
+    private CompoundExpression getBuiltinFunction() {
+        BuiltinFunction.Type type = null;
+        String token = this.peekCurrent();
+        // sorted
+        if ("sorted".equals(token)) {
+                type = BuiltinFunction.Type.SORT;
+                next();
+        }
+        // count of, length of, height of
+        // last of
+        else if (containsAtLeast(2) && "of".equals(this.peekNext())) {
+            if ("count".equals(token) || "length".equals(token) || "height".equals(token)) {
+                type = BuiltinFunction.Type.SIZEOF;
+                next(2);
+            } else if ("last".equals(token)) {
+                type = BuiltinFunction.Type.PEEK;
+                next(2);
+            }
+        }
+        // all keys of
+        // all values of
+        else if (containsAtLeast(3) && "all".equals(token) && "of".equals(this.peekNext(2))) {
+            String token2 = peekNext();
+            if ("keys".equals(token2) ) {
+                type = BuiltinFunction.Type.KEYS;
+                next(3);
+            } else if ("values".equals(token2)) {
+                type = BuiltinFunction.Type.VALUES;
+                next(3);
+            }
+        }
+
+        return type == null ? null : new BuiltinFunction(type);
     }
 
     private static class EndOfExpression extends CompoundExpression {

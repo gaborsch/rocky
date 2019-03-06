@@ -49,6 +49,7 @@ public abstract class CompoundExpression extends Expression {
     300: ^ (power)
     200: function call
     100: unary minus
+     75: built-in functions
      50: for, at
      */
     public abstract int getPrecedence();

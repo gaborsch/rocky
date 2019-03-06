@@ -5,14 +5,14 @@ Say my cities
 (size)
 Say count of my cities
 
-(sort
+(sort)
 Say sorted my cities
-Say my cities sorted)
+Say my cities sorted
 
-(slicing
+(slicing)
 Say my cities from 2
 Say my cities till 2
-Say my cities from 2 till 2)
+Say my cities from 2 till 2
 
 (peek)
 Say last of my cities
