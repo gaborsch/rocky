@@ -26,6 +26,7 @@ import rockstar.expression.PlusExpression;
 import rockstar.expression.RefType;
 import rockstar.expression.ReferenceExpression;
 import rockstar.expression.SimpleExpression;
+import rockstar.expression.SliceExpression;
 import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
@@ -435,6 +436,15 @@ public class ExpressionParser {
         if ("over".equals(token) || "/".equals(token)) {
             next();
             return new DivideExpression();
+        } 
+        if ("from".equals(token)) {
+            next();
+            return new SliceExpression(SliceExpression.Type.SLICE_FROM);
+        }
+
+        if ("till".equals(token)) {
+            next();
+            return new SliceExpression(SliceExpression.Type.SLICE_TO);
         }
 
         // function call

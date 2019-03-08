@@ -246,13 +246,13 @@ public class Value implements Comparable<Value> {
             case NUMBER:
                 return numericValue.toString();
             case STRING:
-                return "\"" + stringValue + "\"";
+                return /*"\"" +*/ stringValue /*+ "\""*/;
             case BOOLEAN:
                 return Boolean.toString(boolValue);
             case LIST_ARRAY:
-                return listArrayValue.toString();
+                return "["+listArrayValue.toString()+"]";
             case ASSOC_ARRAY:
-                return assocArrayValue.toString();
+                return "{"+assocArrayValue.toString()+"}";
         }
         return this.type.toString();
     }

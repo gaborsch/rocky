@@ -44,6 +44,23 @@ public class SliceExpression extends CompoundExpression {
     }
 
     @Override
+    public void setupFinished() {
+        if (this.type == Type.SLICE_TO && this.getParameters().size() == 2) {
+            if(this.getParameters().get(0) instanceof SliceExpression) {
+                SliceExpression fromExpr = (SliceExpression) this.getParameters().remove(0);
+                if (fromExpr.type == Type.SLICE_FROM) {
+                    addParameterReverse(fromExpr.getParameters().get(1));
+                    addParameterReverse(fromExpr.getParameters().get(0));
+                    this.type = Type.SLICE_BOTH;
+                } else {
+                    addParameterReverse(fromExpr);
+                }
+            } 
+        }
+    }
+
+
+    @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
         Expression baseExpr = this.getParameters().get(0);
