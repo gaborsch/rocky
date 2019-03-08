@@ -193,7 +193,7 @@ public class Value implements Comparable<Value> {
                 assocArrayValue.forEach((k, v) -> {
                     sb.append(sb.length() == 0 ? "" : ",")
                             .append(k)
-                            .append(":")
+                            .append(" for ")
                             .append(v);
                 });
                 return sb.toString();

@@ -17,11 +17,12 @@ Say my cities from 2 till 2
 (peek)
 Say last of my cities
 
-(stack ops)
+(stack operations)
 Push "Budapest" into my cities
 Say my cities
 
 Pull my favorite from my cities
+Say it
 Say my favorite
 Say my cities
 
