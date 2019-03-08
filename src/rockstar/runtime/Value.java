@@ -144,7 +144,7 @@ public class Value implements Comparable<Value> {
         return type == ExpressionType.ASSOC_ARRAY;
     }
 
-    RockNumber getNumeric() {
+    public RockNumber getNumeric() {
         switch (getType()) {
             case NUMBER:
                 return numericValue;
