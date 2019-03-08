@@ -87,19 +87,31 @@ public class ExpressionFactory {
         StringBuilder sb = new StringBuilder();
 
         int pos = 0;
+        boolean inComment = false;
         while (pos <= orig.length()) {
             char c = (pos < orig.length()) ? orig.charAt(pos) : ' ';
-            if (Character.isLetter(c)) {
-                digit++;
-            } else if (c == '.' || c == ' ') {
-                if (digit > 0) {
-                    sb.append((char) ('0' + (digit % 10)));
+            if (!inComment) {
+                if (Character.isLetter(c)) {
+                    digit++;
+                } else if (c == '.' || c == ' ' || c == '(') {
+                    if (digit > 0) {
+                        sb.append((char) ('0' + (digit % 10)));
+                    }
+                    if (c == '.') {
+                        sb.append(c);
+                    }
+                    digit = 0;
+                    if (c == '(') {
+                        inComment = true;
+                    }
                 }
-                if (c == '.') {
-                    sb.append(c);
+            } else {
+                // in comment
+                if (c == ')') {
+                    inComment = false;
                 }
-                digit = 0;
             }
+
             pos++;
         }
         // parse the concatenated string
