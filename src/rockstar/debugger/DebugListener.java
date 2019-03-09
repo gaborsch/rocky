@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.Stack;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionParser;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.BlockContextListener;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
+import rockstar.statement.Program;
 import rockstar.statement.Statement;
 
 /**
@@ -27,11 +27,16 @@ import rockstar.statement.Statement;
 public class DebugListener implements BlockContextListener {
 
     private final Map<String, String> options;
+    private Program program;
 
     private boolean evalMode = false;
 
     DebugListener(Map<String, String> options) {
         this.options = options;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
     }
 
     @Override
@@ -143,10 +148,16 @@ public class DebugListener implements BlockContextListener {
                     } else if (line.startsWith("br")) {
                         // remove breakpoint
                         String lineStr = line.substring(2).trim();
-                        Integer lineNum = null;
+                        Integer lineNum;
                         if (lineStr.equals("")) {
                             // default: current line
                             lineNum = l.getLnum();
+                        } else {
+                            try {
+                                lineNum = Integer.parseInt(lineStr);
+                            } catch (NumberFormatException ex) {
+                                lineNum = null;
+                            }
                         }
                         if (breakpoints.remove(lineNum)) {
                             System.out.format("Breakpoint removed from line %d\n", lineNum);
@@ -179,6 +190,15 @@ public class DebugListener implements BlockContextListener {
                         } else {
                             System.out.println("Wrong line number");
                         }
+                    } else if (line.startsWith("list")) {
+                        // list the program
+                        String optionStr = line.substring(4).trim();
+                        boolean explain = "-x".equals(optionStr);
+                        boolean explainOnly = "-X".equals(optionStr);
+                        System.out.println(this.program.listProgram(1 + (explain ? 2 : 0) + (explainOnly ? 1 : 0)));
+                    } else if (line.equals(".")) {
+                        // print the current line again
+                        System.out.format("Line %d: %s\n", l.getLnum(), l.getOrigLine());
                     } else if (line.startsWith("?")) {
                         // show help
                         String helpCmd = line.substring(1).trim();

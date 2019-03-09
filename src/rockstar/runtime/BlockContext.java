@@ -67,7 +67,7 @@ public class BlockContext {
         this.error = parent.error;
         this.env = parent.env;
         this.listener = parent.listener;
-        this.ctxName = ctxName + "#" + this.level;
+        this.ctxName = ctxName + "-" + this.level;
     }
 
     public void setListener(BlockContextListener listener) {

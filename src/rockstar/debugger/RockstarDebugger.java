@@ -43,6 +43,7 @@ public class RockstarDebugger {
         files.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename).parse();
+                listener.setProgram(prg);
                 System.out.println("Debugging " + filename);       
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
@@ -70,6 +71,9 @@ public class RockstarDebugger {
         System.out.println("    s [<variable>]  Show variable (no expressions are possible). Default: show all variables");
         System.out.println("    w <variable>    Watch variable (no expressions). Watches evaluated before every statement.");
         System.out.println("    wr <variable>   Remove watch. '#1' refers to the first watch");
+        System.out.println("    .               Prints the current line again (no step)");
+        System.out.println("    list            Lists the current program");
+        System.out.println("    exit            Exits the debugger");
     }
 
 }

@@ -55,7 +55,9 @@ public class WhileStatement extends Block {
             // other exceptions like ReturnException are falling thru
 
             loopCount++;
-
+            
+            // breakpoint before the next evaluation
+            ctx.beforeStatement(this);
             v = condition.evaluate(ctx);
             lastCondition = canContinue && (v.asBoolean().getBool() ^ negateCondition);
         }
