@@ -45,7 +45,7 @@ public class ExpressionError extends Expression {
         int idx = 0;
         for (String token : tokens) {
             if (idx == errorIdx) {
-                sb.append(">>>").append(token).append("<<");
+                sb.append(">>>").append(token).append("<<<");
             } else {
                 sb.append(token);
             }

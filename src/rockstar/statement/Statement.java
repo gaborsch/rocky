@@ -51,13 +51,22 @@ public abstract class Statement {
      */
     public abstract void execute(BlockContext ctx);
 
-    protected final String list(int indent, boolean explained) {
+    /**
+     * 
+     * @param indent
+     * @param explained 1: original only, 2: explained only, 3: both
+     * @return 
+     */
+    protected final String list(int indent, int explained) {
         StringBuilder sb = new StringBuilder();
-        sb.append(line == null ? "" : String.format("%3d", line.getLnum())).append(" ");
-        sb.append(Utils.repeat("  ", indent));
-        sb.append(line == null ? "" : line.getOrigLine().trim()).append("\n");
-        if(explained) {
-            sb.append(Utils.repeat("  ", indent + 2));
+        if ((explained & 1) == 1) {
+            sb.append(line == null ? "" : String.format("%3d", line.getLnum())).append(" ");
+            sb.append(Utils.repeat("  ", indent));
+            sb.append(line == null ? "" : line.getOrigLine().trim()).append("\n");
+        }
+        if ((explained & 2) == 2) {
+            sb.append(line == null ? "" : String.format("%3d", line.getLnum())).append(" ");
+            sb.append(Utils.repeat("  ", indent));
             sb.append(explain()).append("\n");
         }
         if (this instanceof Block) {

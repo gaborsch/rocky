@@ -26,7 +26,7 @@ public class Program extends Block {
         return "PROGRAM " + name;
     }
 
-    public String listProgram(boolean explained) {
+    public String listProgram(int explained) {
         return list(0, explained);
     }
     

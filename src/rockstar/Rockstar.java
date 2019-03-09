@@ -154,6 +154,8 @@ public class Rockstar {
                 System.out.println("Options:");
                 System.out.println("    -x --explain");
                 System.out.println("        Explain all statements and expressions parsed from input.");
+                System.out.println("    -X --explain-only");
+                System.out.println("        Only explained statements and expressions are listed.");
             }
         }
         if (cmd == null || cmd.equals("repl")) {
@@ -232,11 +234,13 @@ public class Rockstar {
             doHelp("list", options);
             return;
         }
-        boolean explained = options.containsKey("-x") || options.containsKey("--explain");
+        boolean explainOnly = options.containsKey("-X") || options.containsKey("--explain-only");
+        boolean explain = options.containsKey("-x") || options.containsKey("--explain");
+        int explainKey = 1 + (explain ? 2 : 0) + (explainOnly ? 1 : 0);
         files.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename).parse();
-                System.out.println(prg.listProgram(explained));
+                System.out.println(prg.listProgram(explainKey));
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
             }

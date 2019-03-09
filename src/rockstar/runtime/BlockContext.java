@@ -161,7 +161,7 @@ public class BlockContext {
      * @param vref
      * @return
      */
-    public Value getVariableValue(VariableReference vref) {
+        public Value getVariableValue(VariableReference vref) {
         // find the context where the variable was defined 
         Value v = null;
         String vname = vref.getName(this);
