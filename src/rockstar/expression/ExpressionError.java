@@ -56,7 +56,11 @@ public class ExpressionError extends Expression {
     }
 
     final void setErrorIndex(int errorIdx) {
-        tokens.set(errorIdx, ">>>" + tokens.get(errorIdx) + "<<<");
+        if (errorIdx < tokens.size()) {
+            tokens.set(errorIdx, ">>>" + tokens.get(errorIdx) + "<<<");
+        } else {
+            tokens.add(">>><<<");
+        }
     }
 
     @Override
