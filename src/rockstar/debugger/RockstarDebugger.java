@@ -65,6 +65,7 @@ public class RockstarDebugger {
         System.out.println("    7               Step Return (stop at line breakpoints)");
         System.out.println("    8               Step Run (stop at line breakpoints)");
         System.out.println("    1 or x          Step Into Expression (print every step of the expression evaluation)");
+        System.out.println("    X               Turns the Step Into mode sticky (X again will turn it off)");
         System.out.println("    b [linenum]     Add line breakpoint, default: current line");
         System.out.println("    br [linenum]    Remove line breakpoint, default: current line");
         System.out.println("    bl              List breakpoints");

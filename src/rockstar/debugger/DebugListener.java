@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import rockstar.expression.Expression;
+import rockstar.expression.FunctionCall;
 import rockstar.expression.VariableReference;
 import rockstar.parser.Line;
 import rockstar.runtime.BlockContext;
@@ -49,6 +50,9 @@ public class DebugListener implements BlockContextListener {
     @Override
     public void beforeExpression(BlockContext ctx, Expression exp) {
         if (stepIntoExpr && !evalMode) {
+            if (exp instanceof FunctionCall) {
+                logBeforeExpression(ctx, exp);
+            }
         }
     }
 
@@ -63,7 +67,7 @@ public class DebugListener implements BlockContextListener {
 
     private void atStatement(BlockContext ctx, Statement stmt) {
         // expression debug is stopped at new statement
-        stepIntoExpr = false;
+        stepIntoExpr = stepIntoExprSticky;
 
         if (stopAtStetement(ctx, stmt)) {
             Line l = stmt.getLine();
@@ -81,11 +85,21 @@ public class DebugListener implements BlockContextListener {
                 try {
                     String line = ctx.getInput().readLine();
 
-                    if (line.equals("1") || line.equals("x")) {
+                    if (line.equals("1") || line.equals("x") || line.equals("X")) {
                         // step into expression
-                        stepIntoExpr = true;
-                        stepInto = true;
-                        continueRun = true;
+                        if (line.equals("X")) {
+                            stepIntoExprSticky = !stepIntoExprSticky;
+                            if (stepIntoExprSticky) {
+                                stepIntoExpr = true;
+                                stepInto = true;
+                                continueRun = true;
+                            }
+                            System.out.println("Expression debug mode " + (stepIntoExprSticky ? "on" : "off"));
+                        } else {
+                            stepIntoExpr = true;
+                            stepInto = true;
+                            continueRun = true;
+                        }
                     } else if (line.equals("5") || line.equals("")) {
                         // step into
                         stepInto = true;
@@ -217,7 +231,8 @@ public class DebugListener implements BlockContextListener {
     }
 
     private boolean stepInto = true;
-    private boolean stepIntoExpr = true;
+    private boolean stepIntoExpr = false;
+    private boolean stepIntoExprSticky = false;
     private final Stack<BlockContext> stepOvers = new Stack<>();
     private final List<Integer> breakpoints = new LinkedList<>();
 
@@ -241,7 +256,11 @@ public class DebugListener implements BlockContextListener {
     }
 
     private void logExpression(BlockContext ctx, Expression exp, Value v) {
-        System.out.format("Evaluated: %s => %s\n", exp.format(), v.toString());
+        System.out.format("Evaluated in %s: %s => %s\n", ctx.getName(), exp.format(), v.toString());
+    }
+
+    private void logBeforeExpression(BlockContext ctx, Expression exp) {
+        System.out.format("Stepping into: %s\n", exp.format());
     }
 
 }

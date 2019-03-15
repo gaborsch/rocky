@@ -65,6 +65,7 @@ public class FunctionBlock extends Block {
 
         for (int i = 0; i < values.size(); i++) {
             funcCtx.setLocalVariable(refs.get(i), values.get(i));
+            funcCtx.afterExpression(refs.get(i), values.get(i));
         }
 
         try {
