@@ -36,7 +36,7 @@ public class Parser {
         this(new FileInputStream(new File(filename)), filename);
     }
 
-    public Parser(InputStream is, String filename) throws FileNotFoundException {
+    public Parser(InputStream is, String filename) {
         try {
             this.filename = filename;
             rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)));

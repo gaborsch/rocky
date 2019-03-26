@@ -25,8 +25,8 @@ public class ExpressionFactory {
      * @param line the Line
      * @return
      */
-    public static Expression getExpressionFor(List<String> tokens, Line line) {
-        Expression parsed = new ExpressionParser(tokens, line).parse();
+    public static Expression getExpressionFor(List<String> tokens, Line line, Expression ... defaultExprs) {
+        Expression parsed = new ExpressionParser(tokens, line).parse(defaultExprs);
         if (parsed != null) {
             return parsed;
         }

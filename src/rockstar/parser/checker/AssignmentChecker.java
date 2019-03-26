@@ -20,9 +20,9 @@ public class AssignmentChecker extends Checker {
 
     @Override
     public Statement check() {
-        if (match("Put", 1, "into", 2) || match("Let", 2, "be", 1) || match(2, "thinks", 1)) {
-            Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
+        if (match("Let", 2, "be", 1) || match("Put", 1, "into", 2) || match(2, "thinks", 1)) {
             Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
+            Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, varExpr);
             if (varExpr != null && valueExpr != null) {
                 if (varExpr instanceof VariableReference) {
                     return new AssignmentStatement((VariableReference) varExpr, valueExpr);

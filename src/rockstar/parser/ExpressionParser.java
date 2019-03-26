@@ -238,9 +238,14 @@ public class ExpressionParser {
     Stack<CompoundExpression> operatorStack;
     Stack<Expression> valueStack;
 
-    public Expression parse() {
+    public Expression parse(Expression... defaultExprs) {
         operatorStack = new Stack<>();
         valueStack = new Stack<>();
+        if (defaultExprs != null) {
+            for (Expression defaultExpr : defaultExprs) {
+                valueStack.push(defaultExpr);
+            }
+        }
         boolean isAfterOperator = true;
         while (!isFullyParsed()) {
             CompoundExpression operator = getOperator(isAfterOperator);
@@ -270,7 +275,7 @@ public class ExpressionParser {
         if (!pushOperator(new EndOfExpression())) {
             return null;
         }
-        return valueStack.isEmpty() ? null : valueStack.get(0);
+        return valueStack.isEmpty() ? null : valueStack.peek();
     }
 
     private boolean pushOperator(CompoundExpression operator) {
@@ -436,7 +441,7 @@ public class ExpressionParser {
         if ("over".equals(token) || "/".equals(token)) {
             next();
             return new DivideExpression();
-        } 
+        }
         if ("from".equals(token)) {
             next();
             return new SliceExpression(SliceExpression.Type.SLICE_FROM);
@@ -490,10 +495,9 @@ public class ExpressionParser {
         String token = this.peekCurrent();
         // sorted
         if ("sorted".equals(token)) {
-                type = BuiltinFunction.Type.SORT;
-                next();
-        }
-        // count of, length of, height of
+            type = BuiltinFunction.Type.SORT;
+            next();
+        } // count of, length of, height of
         // last of
         else if (containsAtLeast(2) && "of".equals(this.peekNext())) {
             if ("count".equals(token) || "length".equals(token) || "height".equals(token)) {
@@ -503,12 +507,11 @@ public class ExpressionParser {
                 type = BuiltinFunction.Type.PEEK;
                 next(2);
             }
-        }
-        // all keys of
+        } // all keys of
         // all values of
         else if (containsAtLeast(3) && "all".equals(token) && "of".equals(this.peekNext(2))) {
             String token2 = peekNext();
-            if ("keys".equals(token2) ) {
+            if ("keys".equals(token2)) {
                 type = BuiltinFunction.Type.KEYS;
                 next(3);
             } else if ("values".equals(token2)) {
