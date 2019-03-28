@@ -1,6 +1,6 @@
 # Rocky - Rockstar Java interpreter
 
-This is my 100% Rockstar compatible RockStar Interpreter in Java, have fun and play with it. 
+This is my 100% [Rockstar](https://codewithrockstar.com/) compatible RockStar Interpreter in Java, have fun and play with it. 
 I like to receive feedbacks, should you have any issues, requests, wishes or troubles, open a ticket for it and I'll help you to resolve. Contributors are also welcome!
 
 Features include:
