@@ -44,7 +44,7 @@ public class SliceExpression extends CompoundExpression {
     }
 
     @Override
-    public void setupFinished() {
+    public CompoundExpression setupFinished() {
         if (this.type == Type.SLICE_TO && this.getParameters().size() == 2) {
             if(this.getParameters().get(0) instanceof SliceExpression) {
                 SliceExpression fromExpr = (SliceExpression) this.getParameters().remove(0);
@@ -57,6 +57,7 @@ public class SliceExpression extends CompoundExpression {
                 }
             } 
         }
+        return this;
     }
 
 

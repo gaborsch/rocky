@@ -27,6 +27,10 @@ public class LogicalExpression extends CompoundExpression {
         this.type = type;
     }
 
+    public LogicalType getType() {
+        return type;
+    }
+
     @Override
     public String getFormat() {
         return "(%s " + type + " %s)";

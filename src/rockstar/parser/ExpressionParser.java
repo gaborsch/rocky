@@ -17,6 +17,7 @@ import rockstar.expression.DivideExpression;
 import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
+import rockstar.expression.ListExpression;
 import rockstar.expression.LogicalExpression;
 import rockstar.expression.LogicalExpression.LogicalType;
 import rockstar.expression.MinusExpression;
@@ -285,8 +286,8 @@ public class ExpressionParser {
             int topPrec = operatorStack.peek().getPrecedence();
             int newPrec = operator.getPrecedence();
 
-            if (topPrec == 600 && newPrec == 600) {
-                // Logical NOT (right-associative)
+            if ((topPrec == 600 && newPrec == 600) || (topPrec == 80 && newPrec == 80)) {
+                // Logical NOT  || ListOperator (right-associative)
                 break;
             }
             if (topPrec > newPrec) {
@@ -306,10 +307,14 @@ public class ExpressionParser {
             for (int i = 0; i < paramCount; i++) {
                 op.addParameterReverse(valueStack.pop());
             }
-            // all parameters set: time to check the types
-            op.setupFinished();
-            // the result of the operator is a value now
-            valueStack.push(op);
+            // all parameters set: time to finish the setup (this may restructure the expression)
+            op = op.setupFinished();
+            if (op != null) {
+                // the result of the operator is a value now
+                valueStack.push(op);
+            } else {
+                valueStack.push(new ExpressionError(list, idx, "Invalid list expression"));
+            }
         }
 
         operatorStack.push(operator);
@@ -451,6 +456,11 @@ public class ExpressionParser {
             next();
             return new SliceExpression(SliceExpression.Type.SLICE_TO);
         }
+        
+        if (",".equals(token)) {
+            next();
+            return new ListExpression();
+        }
 
         // function call
         if ("taking".equals(token)) {
@@ -478,8 +488,8 @@ public class ExpressionParser {
                     valueStack.push(new ExpressionError(list, idx, "Invalid function parameter"));
                     return null;
                 }
-                // end of expression or no "and" found: end of parameters
-                if (isFullyParsed() || !("and".equals(peekCurrent()))) {
+                // end of expression or no param delimiter found: end of parameters
+                if (isFullyParsed() || !("and".equals(peekCurrent()) || ",".equals(peekCurrent()))) {
                     break;
                 }
                 next();

@@ -1,8 +1,61 @@
-my heart is "\t"
-My heart is "\n"
-My Heart is 3
+FuncA takes X
+Give back X
 
-say my heart
-say My Heart
+Say FuncA taking 1
 
-Say "hello"
+FuncB takes X, Y
+Give back X
+
+Say FuncB taking 1, 2
+
+FuncC takes X, and Y
+Give back X
+
+Say FuncC taking 1, and 2
+
+FuncD takes X'n'Y
+Give back X
+
+Say FuncD taking 1'n'2
+
+FuncE takes X&Y
+Give back X
+
+Say FuncE taking 1&2
+
+FuncF takes X and Y
+Give back X
+
+Say FuncF taking 1 and 2
+Say FuncF taking true and false or false
+
+FuncG takes X, Y, Z
+Give back X
+
+Say FuncG taking 1, 2, 3
+
+FuncH takes X, Y and Z
+Give back X
+
+Say FuncH taking 1, 2 and 3
+
+FuncI takes X and Y, Z
+Give back X
+
+Say FuncI taking 1 and 2, 3
+
+FuncJ takes X, Y and Z
+Give back X
+
+Say FuncJ taking 1, 2 and 3
+
+FuncK takes X, Y and Z, O
+Give back X
+
+Say FuncK taking 1, 2 and 3, 4
+
+FuncL takes X and Y, Z and O, P and Q
+Give back X
+
+Say FuncL taking 1 and 2, 3 and 4, 5 and 6
+

@@ -32,7 +32,8 @@ public abstract class CompoundExpression extends Expression {
         parameters.add(0, parameter);
     }
 
-    public void setupFinished() {
+    public CompoundExpression setupFinished() {
+        return this;
     }
 
     public List<Expression> getParameters() {
@@ -49,6 +50,7 @@ public abstract class CompoundExpression extends Expression {
     300: ^ (power)
     200: function call
     100: unary minus
+     80: , (list operator)
      75: built-in functions
      50: for, at
      */

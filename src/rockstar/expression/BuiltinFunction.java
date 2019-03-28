@@ -44,10 +44,6 @@ public class BuiltinFunction extends CompoundExpression {
     private final Type type;
 
     @Override
-    public void setupFinished() {
-    }
-
-    @Override
     public int getPrecedence() {
         return 75;
     }

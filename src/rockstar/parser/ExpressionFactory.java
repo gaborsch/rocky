@@ -5,10 +5,13 @@
  */
 package rockstar.parser;
 
+import java.util.LinkedList;
 import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
+import rockstar.expression.ListExpression;
+import rockstar.expression.LogicalExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.RockNumber;
 
@@ -25,7 +28,7 @@ public class ExpressionFactory {
      * @param line the Line
      * @return
      */
-    public static Expression getExpressionFor(List<String> tokens, Line line, Expression ... defaultExprs) {
+    public static Expression getExpressionFor(List<String> tokens, Line line, Expression... defaultExprs) {
         Expression parsed = new ExpressionParser(tokens, line).parse(defaultExprs);
         if (parsed != null) {
             return parsed;
@@ -48,6 +51,32 @@ public class ExpressionFactory {
             return varRef;
         }
         return null;
+    }
+
+    /**
+     * Try a variable reference, returns null if failed
+     *
+     * @param list
+     * @param line
+     * @return
+     */
+    public static List<VariableReference> tryVariableReferenceListFor(List<String> list, Line line) {
+        List<VariableReference> refList = new LinkedList<>();
+        ExpressionParser parser = new ExpressionParser(list, line);
+        while (!parser.isFullyParsed()) {
+            if (!refList.isEmpty()) {
+
+            }
+            VariableReference varRef = parser.parseVariableReference();
+            if (varRef != null) {
+                refList.add(varRef);
+            } else {
+                return null;
+            }
+
+        }
+
+        return refList;
     }
 
     /**
@@ -131,6 +160,53 @@ public class ExpressionFactory {
         if (expr != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
             return expr;
+        }
+        return null;
+    }
+
+    /**
+     * Parses a list expression of variable references (optionally with values)
+     *
+     * @param list
+     * @param line
+     * @param valuesAllowed are values allowed?
+     * @return
+     */
+    public static ListExpression tryListExpressionFor(List<String> list, Line line, boolean valuesAllowed) {
+        ExpressionParser parser = new ExpressionParser(list, line);
+        Expression expr = parser.parse();
+        if (expr != null && parser.isFullyParsed()) {
+            ListExpression listexpr = new ListExpression();
+            List<Expression> stack = new LinkedList<>();
+            stack.add(expr);
+            while (!stack.isEmpty()) {
+                expr = stack.remove(0);
+                if (expr instanceof VariableReference) {
+                    // variable references are allowed
+                    VariableReference vref = (VariableReference) expr;
+                    listexpr.addParameter(vref);
+                } else if (valuesAllowed && expr instanceof ConstantExpression) {
+                    // values are allowed if the parameter allows
+                    ConstantExpression valueExpr = (ConstantExpression) expr;
+                    listexpr.addParameter(valueExpr);
+                } else if (expr instanceof ListExpression) {
+                    // list expressions are expanded
+                    ListExpression listExpression = (ListExpression) expr;
+                    stack.addAll(listExpression.getParameters());
+                } else if (expr instanceof LogicalExpression) {
+                    // 'and' expressions are expanded, too
+                    LogicalExpression logicalExpression = (LogicalExpression) expr;
+                    if (logicalExpression.getType() != LogicalExpression.LogicalType.AND) {
+                        return null;
+                    }
+                    stack.addAll(logicalExpression.getParameters());
+                } else {
+                    // all others are no allowed
+                    return null;
+                }
+            }
+
+            return listexpr;
         }
         return null;
     }

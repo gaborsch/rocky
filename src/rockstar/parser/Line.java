@@ -56,10 +56,8 @@ public class Line {
     private void tokenizeV2() {
 
         // trim trailing extra chars
-        line = line.replaceAll("[,;:]+$", "");
+        line = line.replaceAll("[ ,;:]+$", "");
 
-        // "'n'", ",", "&" is generally replaced by " and "
-        // line = line.replace(", and ", " and ").replace(",", " and ").replace("&", " and ").replace("'n'", " and ");
         int len = line.length();
         int pos = 0;
         String nextToken = null;
@@ -143,12 +141,13 @@ public class Line {
                                 }
                             } else if (right.startsWith(", and")) {
                                 // double and: skip the first
-                                limit++;
+                                nextToken = ",";
                                 endOfToken = true;
+                                limit += 5;
                             } else if (c == '&' || c == ',') {
                                 // "&" and "," becomes " and "
                                 endOfToken = true;
-                                nextToken = "and";
+                                nextToken = ",";
                                 limit++;
                             } else {
                                 // skip character, end token if word separator
@@ -172,6 +171,7 @@ public class Line {
         }
     }
 
+    /*
     private void tokenizeV1() {
 
         // trim trailing extra chars
@@ -236,7 +236,8 @@ public class Line {
             }
         }
     }
-
+     */
+ /*
     private void tokenizeOrig() {
 
         // trim trailing extra chars
@@ -295,7 +296,7 @@ public class Line {
         t = t.replace("'", "");
         return t;
     }
-
+     */
     public String getOrigLineAfter(String token) {
         int pos = origLine.indexOf(token);
         pos += token.length();
@@ -312,7 +313,5 @@ public class Line {
     public String toString() {
         return this.origLine;
     }
-    
-    
 
 }

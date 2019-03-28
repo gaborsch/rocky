@@ -26,7 +26,7 @@ public class KnockDownChecker extends Checker {
                 if ("down".equals(s)) {
                     count++;
                     isAndPossible = true;
-                } else if (isAndPossible && s.equals("and")) {
+                } else if (isAndPossible && s.equals(",")) {
                     isAndPossible = false;
                 } else {
                     return null;
