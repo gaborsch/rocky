@@ -13,18 +13,17 @@ import rockstar.statement.FunctionBlock;
 public class FunctionCall extends CompoundExpression {
 
     private String name;
-    
+
     @Override
     public int getPrecedence() {
-        return 200;
+        return 100;
     }
-     
+
     @Override
     public int getParameterCount() {
-        // FunctionCall takes the name
-        return 1;
-    }   
-    
+        // FunctionCall takes the name and the parameter list
+        return 2;
+    }
 
     @Override
     public String getFormat() {
@@ -47,15 +46,36 @@ public class FunctionCall extends CompoundExpression {
     @Override
     public CompoundExpression setupFinished() {
         Expression nameExpr = getParameters().remove(0);
-        name = ((VariableReference)nameExpr).getFunctionName();
+        name = ((VariableReference) nameExpr).getFunctionName();
+
+        Expression paramsExpr = getParameters().remove(0);
+        ListExpression paramsListExpr = ListExpression.asListExpression(paramsExpr);
+        if (paramsListExpr == null) {
+            return null;
+        }
+        for (Expression paramExpr : paramsListExpr.getParameters()) {
+            if (paramExpr instanceof ConstantExpression) {
+                addParameter(paramExpr);
+            } else if (paramExpr instanceof VariableReference) {
+                VariableReference varRef = (VariableReference) paramExpr;
+                if (!varRef.isFunctionName()) {
+                    addParameter(paramExpr);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
         return this;
+
     }
 
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
         FunctionBlock funcBlock = ctx.retrieveFunction(name);
-        
+
         List<Expression> params = getParameters();
         List<Value> values = new ArrayList<>(params.size());
         params.forEach((expr) -> {
@@ -65,8 +85,6 @@ public class FunctionCall extends CompoundExpression {
         Value retValue = funcBlock.call(ctx, values);
         // return the return value
         return ctx.afterExpression(this, retValue == null ? Value.NULL : retValue);
- }
-    
-    
+    }
 
 }

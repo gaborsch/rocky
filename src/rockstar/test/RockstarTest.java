@@ -84,7 +84,7 @@ public class RockstarTest {
                     if (isFirstFileInDir) {
                         if (exp != null) {
                             if (isVerbose) {
-                                System.out.println(exp + " tests in " + dirname);
+                                System.out.println(exp + " tests in " + dirname.replace("\\", "/"));
                             }
                         }
                         isFirstFileInDir = false;
@@ -138,7 +138,7 @@ public class RockstarTest {
             if (exc == null) {
                 if (!isQuiet) {
                     if (!isVerbose) {
-                        System.out.println(exp + " test for " + file.getPath());
+                        System.out.println(exp + " test for " + file.getPath().replace("\\", "/"));
                     }
                     System.out.printf("!  [FAIL] %-40s %s\n", file.getName(), message);
                     if (isVeryVerbose) {
@@ -148,7 +148,7 @@ public class RockstarTest {
             } else {
                 if (!isQuiet) {
                     if (!isVerbose) {
-                        System.out.println(exp + " test for " + file.getPath());
+                        System.out.println(exp + " test for " + file.getPath().replace("\\", "/"));
                     }
                     System.out.printf("!! [EXCP] %-40s %s %s\n", file.getName(), excName, message);
                     if (isVeryVerbose) {

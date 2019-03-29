@@ -108,7 +108,10 @@ public class ListExpression extends CompoundExpression {
         if (expr instanceof ListExpression) {
             return (ListExpression) expr;
         }
-        if (expr instanceof VariableReference || expr instanceof ConstantExpression) {
+        if (expr instanceof ConstantExpression) {
+            return new ListExpression(expr);
+        }
+        if (expr instanceof VariableReference && !((VariableReference) expr).isFunctionName()) {
             return new ListExpression(expr);
         }
         if (expr instanceof LogicalExpression) {
@@ -117,7 +120,6 @@ public class ListExpression extends CompoundExpression {
                 ListExpression newExpr = expandTo(lexpr, new ListExpression());
                 return newExpr;
             }
-
         }
         return null;
     }

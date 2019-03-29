@@ -285,6 +285,11 @@ public class ExpressionParser {
         while (!operatorStack.isEmpty()) {
             int topPrec = operatorStack.peek().getPrecedence();
             int newPrec = operator.getPrecedence();
+            if (operatorStack.peek() instanceof FunctionCall 
+                    && operator instanceof LogicalExpression
+                    && ((LogicalExpression)operator).getType() == LogicalType.AND) {
+                break;
+            }
 
             if ((topPrec == 600 && newPrec == 600) || (topPrec == 80 && newPrec == 80)) {
                 // Logical NOT  || ListOperator (right-associative)
@@ -294,6 +299,7 @@ public class ExpressionParser {
                 // other (left-associative)
                 break;
             }
+
 
             // take the operator from the top of the operator stack
             CompoundExpression op = operatorStack.pop();
@@ -465,36 +471,7 @@ public class ExpressionParser {
         // function call
         if ("taking".equals(token)) {
             next();
-            FunctionCall functionCall = new FunctionCall();
-            SimpleExpression funcParam;
-            savePos();
-
-            while (!isFullyParsed()) {
-                funcParam = parseSimpleExpression();
-                if (funcParam != null) {
-                    // if a function call is found in the parameters, we need to rewind
-                    // Example: say TrueFunc taking nothing and TrueFunc taking nothing
-                    if (funcParam instanceof VariableReference
-                            && ((VariableReference) funcParam).isFunctionName()) {
-                        restorePos();
-                        break;
-                    }
-                    // otherwise save the parameter and the position
-                    functionCall.addParameter(funcParam);
-                    savePos();
-                } else {
-                    // ERROR: invalid parameter
-                    // TODO some better method to sign expression parse error
-                    valueStack.push(new ExpressionError(list, idx, "Invalid function parameter"));
-                    return null;
-                }
-                // end of expression or no param delimiter found: end of parameters
-                if (isFullyParsed() || !("and".equals(peekCurrent()) || ",".equals(peekCurrent()))) {
-                    break;
-                }
-                next();
-            }
-            return functionCall;
+            return new FunctionCall();
         }
         return null;
 

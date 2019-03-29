@@ -19,7 +19,7 @@ To install and run, you only need the `./rocky.jar` file, and one of the wrapper
 
 ### Usage
 ```
-$ ./rockstar
+$ ./rockstar help
 Rockstar Java by gaborsch, Version 0.99
 ---------------------------------------
 Usage:
@@ -34,8 +34,7 @@ rockstar - [<filename> ...]
 rockstar repl [<filename> ...]
     Start an interactive session (Read-Evaluate-Print Loop). Enter commands and execute them immediately.
     The specified programs are pre-run (e.g. defining functions, etc). Special commands are available.
-rockstar test [--options ...] <filename> ...
-rockstar test --testdir <directoryname>
+rockstar test [--options ...] <file-or-dirname> ...
     Execute unit tests. Special rules apply, check `rockstar help test` for details
 rockstar [-h|--help]
 rockstar help
@@ -51,23 +50,26 @@ Each command has a more detailed help with options, so try `rockstar help run`, 
 *100%* of the tests have passed! With some buggy test cases fixed locally ( https://github.com/RockstarLang/rockstar/issues/202 and https://github.com/RockstarLang/rockstar/issues/203 ), everything works!
 
 ```
-$ ./rockstar test --testdir programs/tests/ -v
-PARSE_ERROR tests in programs\tests\failures
+$ ./rockstar test programs/tests/ -v
+PARSE_ERROR tests in programs/tests/failures
    [ OK ] invalid_comments.rock
-CORRECT tests in programs\tests\fixtures\comments
+CORRECT tests in programs/tests/fixtures/assignment
+   [ OK ] compound_assignments.rock
+   [ OK ] lets.rock
+CORRECT tests in programs/tests/fixtures/comments
    [ OK ] complex_comments.rock
    [ OK ] simpleComments.rock
    [ OK ] simple_comment.rock
-CORRECT tests in programs\tests\fixtures\conditionals
+CORRECT tests in programs/tests/fixtures/conditionals
    [ OK ] empty_if.rock
    [ OK ] simpleConditionals.rock
    [ OK ] truthinessTest.rock
-CORRECT tests in programs\tests\fixtures\constants
+CORRECT tests in programs/tests/fixtures/constants
    [ OK ] constants.rock
-CORRECT tests in programs\tests\fixtures\control-flow
+CORRECT tests in programs/tests/fixtures/control-flow
    [ OK ] nested_loops.rock
    [ OK ] simpleLoops.rock
-CORRECT tests in programs\tests\fixtures\equality
+CORRECT tests in programs/tests/fixtures/equality
    [ OK ] booleans.rock
    [ OK ] equalityComparison.rock
    [ OK ] mysterious.rock
@@ -76,52 +78,54 @@ CORRECT tests in programs\tests\fixtures\equality
    [ OK ] null.rock
    [ OK ] numbers.rock
    [ OK ] strings.rock
-CORRECT tests in programs\tests\fixtures\examples
+CORRECT tests in programs/tests/fixtures/examples
    [ OK ] 99_beers.rock
    [ OK ] factorial.rock
    [ OK ] fibonacci.rock
    [ OK ] fizzbuzz-idiomatic.rock
    [ OK ] fizzbuzz-minimalist.rock
-CORRECT tests in programs\tests\fixtures\functions
+CORRECT tests in programs/tests/fixtures/functions
    [ OK ] functionCalls.rock
    [ OK ] nested_functions.rock
    [ OK ] nested_function_scopes.rock
    [ OK ] recursion.rock
    [ OK ] simpleFunctions.rock
-CORRECT tests in programs\tests\fixtures\io
+CORRECT tests in programs/tests/fixtures/io
    [ OK ] hello_number.rock
    [ OK ] hello_world.rock
    [ OK ] inputTest.rock
    [ OK ] inputTest2.rock
-CORRECT tests in programs\tests\fixtures\literals
+CORRECT tests in programs/tests/fixtures/literals
    [ OK ] literalAliases.rock
    [ OK ] literalstrings.rock
    [ OK ] poeticLiterals.rock
    [ OK ] poeticNumbers.rock
-CORRECT tests in programs\tests\fixtures\math
+CORRECT tests in programs/tests/fixtures/math
    [ OK ] operators.rock
    [ OK ] operator_aliases.rock
    [ OK ] operator_precedence.rock
-CORRECT tests in programs\tests\fixtures\operators
+CORRECT tests in programs/tests/fixtures/operators
    [ OK ] addOperator.rock
    [ OK ] andTest.rock
    [ OK ] booleans.rock
    [ OK ] divisionOperator.rock
    [ OK ] incrementAndDecrement.rock
+   [ OK ] list_expressions_arithmetic.rock
    [ OK ] multiplicationOperator.rock
    [ OK ] notTest.rock
    [ OK ] orderingComparison.rock
    [ OK ] orNorTest.rock
    [ OK ] subtractOperator.rock
-CORRECT tests in programs\tests\fixtures\variables
+CORRECT tests in programs/tests/fixtures/variables
    [ OK ] common_variables.rock
    [ OK ] globalVariables.rock
    [ OK ] poeticStrings.rock
    [ OK ] pronouns.rock
    [ OK ] proper_variables.rock
    [ OK ] simple_pronouns.rock
+   [ OK ] simple_variables.rock
    [ OK ] umlauts.rock
-CORRECT tests in programs\tests\fixtures\whitespace
+CORRECT tests in programs/tests/fixtures/whitespace
    [ OK ] apostrophesIgnored.rock
    [ OK ] leading_blank_lines.rock
    [ OK ] leading_empty_lines.rock
@@ -133,10 +137,11 @@ CORRECT tests in programs\tests\fixtures\whitespace
 ============================================================
 Test results for programs/tests/:
 ============================================================
-All tests:    63
+All tests:    67
 Failed tests: 0
-Passed tests: 63
+Passed tests: 67
 Pass ratio:   100.00%
 ============================================================
+
 ```
 
