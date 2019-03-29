@@ -34,11 +34,18 @@ public class PlusExpression extends CompoundExpression {
         ctx.beforeExpression(this);
         Expression expr1 = this.getParameters().get(0);
         Expression expr2 = this.getParameters().get(1);
-        Value v1 = expr1.evaluate(ctx);
-        Value v2 = expr2.evaluate(ctx);
-        
-        return ctx.afterExpression(this, v1.plus(v2));
-
+        Value v = expr1.evaluate(ctx);
+        if (expr2 instanceof ListExpression) {
+            ListExpression list = (ListExpression) expr2;
+            for (Expression e : list.getParameters()) {
+                Value v2 = e.evaluate(ctx);
+                 v = ctx.afterExpression(this, v.plus(v2));
+            }
+        } else {
+            Value v2 = expr2.evaluate(ctx);
+            v = ctx.afterExpression(this, v.plus(v2));
+        }    
+        return v;
     }
 
 }

@@ -42,14 +42,14 @@ public class ListExpression extends CompoundExpression {
 
     @Override
     public Value evaluate(BlockContext ctx) {
-        throw new RockstarRuntimeException("Cannot avaluate a list of expressions");
+        throw new RockstarRuntimeException("Cannot evaluate a list of expressions");
     }
 
     @Override
     public String format() {
         StringBuilder sb = new StringBuilder();
         getParameters().forEach(expr -> sb.append(sb.length() == 0 ? "" : ", ").append(expr.format()));
-        return sb.toString();
+        return "("+sb.toString()+")";
     }
 
     @Override
