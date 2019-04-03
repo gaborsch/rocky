@@ -13,6 +13,7 @@ import rockstar.repl.RockstarRepl;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.LoggerListener;
 import rockstar.runtime.RockNumber;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Utils;
 import rockstar.test.RockstarTest;
 
@@ -225,6 +226,8 @@ public class Rockstar {
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
+            } catch (RuntimeException re) {
+                System.err.println("Error: " + re.getMessage());
             }
         }
     }
@@ -243,6 +246,8 @@ public class Rockstar {
                 System.out.println(prg.listProgram(explainKey));
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
+            } catch (RuntimeException re) {
+                System.err.println("Error: " + re.getMessage());
             }
         });
     }
