@@ -11,4 +11,8 @@ Put Big Divisor over 2 into Big Divisor
     (blank line ending While block)
 Give back Number
 
-say 
+say "Enter Dividend:"
+Listen to X
+say "Enter Divisor:"
+Listen to Y
+say "The modulus is " with Modulus taking X and Y
