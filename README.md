@@ -20,6 +20,54 @@ To install and run, you only need the `./rocky.jar` file, and one of the wrapper
 There are some Rockstar program in the `programs` folder and its subfolders, you may want to check them, too. They're mostly for test purposes, though.
 
 ### Usage
+
+To run a program, it's simple:
+```
+$ ./rockstar programs/modulus.rock 
+Enter Dividend:
+100
+Enter Divisor:
+7
+The modulus is 2
+```
+To list (and parse) a program, try `list` (note, that it is the parsed version, with line numbers and indentations, to help understanding)
+```
+$ ./rockstar list programs/modulus.rock 
+ 
+  1   Modulus takes Number and Divisor
+  2     Put Divisor into Big Divisor
+  3     While Big Divisor is less than Number
+  4       Put Big Divisor times 2 into Big Divisor
+  6     While Big Divisor is as high as Divisor
+  7       If Number is as high as Big Divisor
+  8         Put Number minus Big Divisor into Number
+ 10       Put Big Divisor over 2 into Big Divisor
+ 12     Give back Number
+ 14   say "Enter Dividend:"
+ 15   Listen to X
+ 16   say "Enter Divisor:"
+ 17   Listen to Y
+ 18   say "The modulus is " with Modulus taking X and Y
+```
+
+To run the REPL (interactive) mode, run with `-` option:
+
+```
+$ ./rockstar -
+Rockstar Java by gaborsch, Version 0.99
+---------------------------------------
+Type 'exit' to quit, 'show' to get more info.
+My name is Gabor
+What's your name? 
+Say my name
+5
+show var
+Variables:
+what = 44
+my name = 5
+exit
+```
+There are other options as well, like debug mode or help for each command:
 ```
 $ ./rockstar help
 Rockstar Java by gaborsch, Version 0.99
