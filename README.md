@@ -29,44 +29,48 @@ Enter Divisor:
 7
 The modulus is 2
 ```
-To list (and parse) a program, try `list` (note, that it is the parsed version, with line numbers and indentations, to help understanding)
+To list (and parse) a program, try `list` (note, that it is the parsed version, with indentations, to help better understanding. Whitespaces do not count in Rockstar)
 ```
-$ ./rockstar list programs/modulus.rock 
- 
-  1   Modulus takes Number and Divisor
-  2     Put Divisor into Big Divisor
-  3     While Big Divisor is less than Number
-  4       Put Big Divisor times 2 into Big Divisor
-  6     While Big Divisor is as high as Divisor
-  7       If Number is as high as Big Divisor
-  8         Put Number minus Big Divisor into Number
- 10       Put Big Divisor over 2 into Big Divisor
- 12     Give back Number
- 14   say "Enter Dividend:"
- 15   Listen to X
- 16   say "Enter Divisor:"
- 17   Listen to Y
- 18   say "The modulus is " with Modulus taking X and Y
+$ ./rockstar list programs/modulus.rock
+
+  Modulus takes Number and Divisor
+    Put Divisor into Big Divisor
+    While Big Divisor is less than Number
+      Put Big Divisor times 2 into Big Divisor
+
+    While Big Divisor is as high as Divisor
+      If Number is as high as Big Divisor
+        Put Number minus Big Divisor into Number
+
+      Put Big Divisor over 2 into Big Divisor
+
+    Give back Number
+
+  say "Enter Dividend:"
+  Listen to X
+  say "Enter Divisor:"
+  Listen to Y
+  say "The modulus is " with Modulus taking X and Y
 ```
 
-To run the REPL (interactive) mode, run with `-` option:
+Time to get acquainted with Rockstar? Try the REPL (interactive) mode, start Rockstar with `-` option:
 
 ```
 $ ./rockstar -
 Rockstar Java by gaborsch, Version 0.99
 ---------------------------------------
 Type 'exit' to quit, 'show' to get more info.
-My name is Gabor
-What's your name? 
-Say my name
+> My name is Gabor
+> What's your name?
+> Say my name
 5
-show var
+> show var
 Variables:
 what = 44
 my name = 5
-exit
+> exit
 ```
-There are other options as well, like debug mode or help for each command:
+There are other possibilities as well, like debug mode (detailed description coming soon) or help for each command:
 ```
 $ ./rockstar help
 Rockstar Java by gaborsch, Version 0.99
