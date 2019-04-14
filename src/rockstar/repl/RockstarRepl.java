@@ -59,6 +59,7 @@ public class RockstarRepl {
         blocks.push(new Program("-"));
         try {
             while (true) {
+                ctx.getOutput().print("> ");
                 String line = ctx.getInput().readLine();
 
                 if (line.equals("exit")) {
