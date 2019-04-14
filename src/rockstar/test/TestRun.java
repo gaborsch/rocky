@@ -93,7 +93,7 @@ public class TestRun {
             } catch (FileNotFoundException ex) {
                 result.setException(ex);
             }
-            result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram(1));
+            result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram(true, true, false));
 
             String output = null;
             try {

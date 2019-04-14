@@ -13,7 +13,6 @@ import rockstar.repl.RockstarRepl;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.LoggerListener;
 import rockstar.runtime.RockNumber;
-import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Utils;
 import rockstar.test.RockstarTest;
 
@@ -157,6 +156,8 @@ public class Rockstar {
                 System.out.println("        Explain all statements and expressions parsed from input.");
                 System.out.println("    -X --explain-only");
                 System.out.println("        Only explained statements and expressions are listed.");
+                System.out.println("    -l --line-number");
+                System.out.println("        Print line numbers.");
             }
         }
         if (cmd == null || cmd.equals("repl")) {
@@ -237,13 +238,15 @@ public class Rockstar {
             doHelp("list", options);
             return;
         }
+        
         boolean explainOnly = options.containsKey("-X") || options.containsKey("--explain-only");
         boolean explain = options.containsKey("-x") || options.containsKey("--explain");
-        int explainKey = 1 + (explain ? 2 : 0) + (explainOnly ? 1 : 0);
+        boolean lineNums = options.containsKey("-l") || options.containsKey("--line-number");
+
         files.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename).parse();
-                System.out.println(prg.listProgram(explainKey));
+                System.out.println(prg.listProgram(lineNums, !explainOnly, explain || explainOnly));
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
             } catch (RuntimeException re) {

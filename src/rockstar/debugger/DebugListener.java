@@ -209,7 +209,7 @@ public class DebugListener implements BlockContextListener {
                         String optionStr = line.substring(4).trim();
                         boolean explain = "-x".equals(optionStr);
                         boolean explainOnly = "-X".equals(optionStr);
-                        System.out.println(this.program.listProgram(1 + (explain ? 2 : 0) + (explainOnly ? 1 : 0)));
+                        System.out.println(this.program.listProgram(true, !explainOnly, explain || explainOnly));
                     } else if (line.equals(".")) {
                         // print the current line again
                         System.out.format("Line %d: %s\n", l.getLnum(), l.getOrigLine());
