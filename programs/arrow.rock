@@ -1,0 +1,14 @@
+F takes N,S
+If N is 0
+Give back N
+
+Say S+"\"
+Let T be S+" "
+Let M be N-1
+F taking M,T
+Say S+"/"
+
+Say "X="
+Listen to X
+F taking X,""
+

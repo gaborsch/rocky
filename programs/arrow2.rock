@@ -1,0 +1,12 @@
+F takes N,S
+If N is 0
+Give back ""
+
+Let M be N - 1
+Let T be S + " "
+Let T be S +"\\\n" + F taking M,T
+Give back T + S + "/\n"
+
+Listen to X
+Say F taking X,""
+
