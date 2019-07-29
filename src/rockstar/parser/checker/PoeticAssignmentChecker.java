@@ -35,7 +35,23 @@ public class PoeticAssignmentChecker extends Checker {
                     // poetic literals
                     String matched = getMatchedStringObject(1); // the matched string: "is", "was", ...
                     String orig = line.getOrigLine();
-                    int p = orig.indexOf(matched);
+                    int p1 = orig.indexOf(" " + matched + " ");
+					int p2 = orig.indexOf("'s "); // maybe "'s" was expanded to " is "
+					// find out which one was the first, "is" or "'s"
+					int p = (p2<0) ? p1 : ( (p1<0) ? p2 : ((p1<p2) ? p1 : p2));
+					if (p >= 0) {
+						if (p == p1) {
+							p = p + matched.length() + 1;
+						} else if (p == p2) {
+							p = p + 3; // "'s ".length()
+						}
+					} else {
+						// was expecting either the matching word, or "'s", neither found
+						throw new ParseException("Unparsed poetic number assignment", line);
+                    }
+					
+					/*
+					int p = orig.indexOf(" " + matched + " ");
                     if (p >= 0) {
                         p = p + matched.length() + 1;
                     } else {
@@ -48,6 +64,7 @@ public class PoeticAssignmentChecker extends Checker {
                             throw new ParseException("Unparsed poetic number assignment", line);
                         }
                     }
+					*/
                     String origEnd = orig.substring(p);
                     ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line, origEnd);
                     if (constValue != null) {
