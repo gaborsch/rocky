@@ -15,6 +15,7 @@ public enum ExpressionType {
     BOOLEAN,
     NUMBER,
     STRING,
+    OBJECT,
     LIST_ARRAY,
     ASSOC_ARRAY
 }

@@ -153,9 +153,7 @@ public class Line {
                                 // skip character, end token if word separator
                                 if (c != '+' && c != '-' && c != '/' && c != '*') {
                                     limit++;
-                                } else {
-                                    limit=limit;
-                                }
+                                } 
                                 pos = limit;
                                 endOfToken = true;
                             }

@@ -31,6 +31,7 @@ public class Value implements Comparable<Value> {
     private String stringValue;
     private RockNumber numericValue;
     private Boolean boolValue;
+    private RockObject objectValue;
     private List<Value> listArrayValue;
     private Map<Value, Value> assocArrayValue;
 
@@ -56,6 +57,10 @@ public class Value implements Comparable<Value> {
         Value v = getValue(RefType.ASSOC_ARRAY);
         v.assocArrayValue.putAll(m);
         return v;
+    }
+
+    public static Value getValue(RockObject instance) {
+        return new Value(instance);
     }
 
     private static Value getValue(RefType refType) {
@@ -107,6 +112,11 @@ public class Value implements Comparable<Value> {
         this.type = ExpressionType.BOOLEAN;
     }
 
+    private Value(RockObject objectValue) {
+        this.objectValue = objectValue;
+        this.type = ExpressionType.OBJECT;
+    }
+
     public ExpressionType getType() {
         return type;
     }
@@ -156,6 +166,8 @@ public class Value implements Comparable<Value> {
                 }
             case BOOLEAN:
                 return boolValue ? RockNumber.ONE : RockNumber.ZERO;
+            case OBJECT:
+                return RockNumber.ZERO;
             case MYSTERIOUS:
                 return RockNumber.ZERO;
             case NULL:
@@ -176,6 +188,8 @@ public class Value implements Comparable<Value> {
                 return numericValue.toString();
             case BOOLEAN:
                 return boolValue.toString();
+            case OBJECT:
+                return "class " + objectValue.getName();
             case MYSTERIOUS:
                 return "mysterious";
             case NULL:
@@ -210,6 +224,8 @@ public class Value implements Comparable<Value> {
                 return numericValue.compareTo(RockNumber.ZERO) != 0;
             case STRING:
                 return this.stringValue.length() > 0;
+            case OBJECT:
+                return true;
             case MYSTERIOUS:
                 return false;
             case NULL:
@@ -250,9 +266,9 @@ public class Value implements Comparable<Value> {
             case BOOLEAN:
                 return Boolean.toString(boolValue);
             case LIST_ARRAY:
-                return "["+listArrayValue.toString()+"]";
+                return "[" + listArrayValue.toString() + "]";
             case ASSOC_ARRAY:
-                return "{"+assocArrayValue.toString()+"}";
+                return "{" + assocArrayValue.toString() + "}";
         }
         return this.type.toString();
     }
@@ -411,6 +427,8 @@ public class Value implements Comparable<Value> {
                     return numericValue.compareTo(other.numericValue);
                 case BOOLEAN:
                     return (Objects.equals(boolValue, other.boolValue)) ? 0 : 1;
+                case OBJECT:
+                    return objectValue.getName().compareTo(other.objectValue.getName());
                 case ASSOC_ARRAY:
                     return Integer.compare(this.asAssocArray().size(), other.asAssocArray().size());
                 case LIST_ARRAY:

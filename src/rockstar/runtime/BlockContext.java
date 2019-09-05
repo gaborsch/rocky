@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
+import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 import rockstar.statement.Statement;
 
@@ -28,6 +29,7 @@ public class BlockContext {
     private int level = 0;
     private final Map<String, Value> vars = new HashMap<>();
     private final Map<String, FunctionBlock> funcs = new HashMap<>();
+    private final Map<String, ClassBlock> classes = new HashMap<>();
 
     private final BufferedReader input;
     private final PrintStream output;
@@ -96,6 +98,10 @@ public class BlockContext {
 
     public Map<String, FunctionBlock> getFunctions() {
         return funcs;
+    }
+
+    public Map<String, ClassBlock> getClasses() {
+        return classes;
     }
 
     public String getName() {
@@ -182,6 +188,10 @@ public class BlockContext {
         return v == null ? Value.MYSTERIOUS : v;
     }
 
+    public void defineFunction(String name, FunctionBlock function) {
+        funcs.put(name, function);
+    }
+
     public FunctionBlock retrieveFunction(String name) {
         FunctionBlock f = null;
         BlockContext ctx = this;
@@ -192,8 +202,18 @@ public class BlockContext {
         return f;
     }
 
-    public void defineFunction(String name, FunctionBlock function) {
-        funcs.put(name, function);
+    public void defineClass(String name, ClassBlock classBlock) {
+        this.classes.put(classBlock.getName(), classBlock);
+    }
+    
+    public ClassBlock retrieveClass(String name) {
+        ClassBlock c = null;
+        BlockContext ctx = this;
+        while (c == null && ctx != null) {
+            c = ctx.classes.get(name);
+            ctx = ctx.parent;
+        }
+        return c;
     }
 
     public void beforeStatement(Statement stmt) {
@@ -214,5 +234,6 @@ public class BlockContext {
         }
         return v;
     }
+
 
 }
