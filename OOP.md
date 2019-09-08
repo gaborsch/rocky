@@ -2,8 +2,8 @@ TODO:
 
 Parent constructor
 
-
------ Chain/Array (plain OOP)
+Chain/Array (plain OOP)
+```
 A Chain Link looks like nothing               (class declaration, inherits nothing)
   the morning is nowhere                      (field declaration)
   the evening is gone                         (field declaration)
@@ -125,9 +125,10 @@ shout peek on the rainbow taking 2 (Green - index starts at 0)
 say remove on the rainbow taking nothing (Violet)
 say remove on the rainbow taking nothing (Blue)
 say size on the rainbow taking nothing (3)
+``
 
-
------ Sequence
+Sequence
+```
 Sequence looks like nothing
 Let the counter be 0                          	(field declaration)
 next takes nothing                            	(parameterless method declaration)
@@ -139,10 +140,11 @@ ID wants to be Sequence
 say next on ID                    (output: "1")
 say next on ID                    (output: "2")
 say 2 of next on ID               (output: "6")
+```
 
 
-
------ Object Pool
+Object Pool
+```
 Pool looks like nothing
   the spring is nowhere	(instance used to create new instances, e.g. static instance)
   Pool takes the beginning	(constructor)
@@ -174,8 +176,10 @@ Pool Object looks like nothing
     let my pool be empty
 (eom)
 (eoc)
+```
 
------ Object Pool with factory
+Object Pool with factory
+```
 Pool looks like nothing
   the spring is nowhere	(instance used to create new instances, e.g. static instance)
   Pool takes the beginning	(constructor)
@@ -226,9 +230,10 @@ Client Pool is like Pool
     Pool in parent taking factory
 (eom)
 (eoc)
+```
 
-
------ Pool with factory (2)
+Pool with factory (2)
+```
 Pool looks like nothing
   Pool takes nothing    	(constructor)
 let the hope be the conception from myself    	(initialize the pool with one instance)
@@ -271,7 +276,7 @@ let Tommy be a new from Clients
 let Jane be a new from Clients
 
 a return to Clients taking Tommy
-
+```
 ----
 So, Object Oriented Programming. 
 
