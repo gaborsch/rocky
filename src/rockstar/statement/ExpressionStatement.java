@@ -28,6 +28,7 @@ public class ExpressionStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
+        //discard value
     }
     
     @Override

@@ -6,7 +6,6 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockObject;
@@ -19,17 +18,13 @@ import rockstar.runtime.Value;
 public class ClassBlock extends Block {
 
     private final String name;
-    private final ClassBlock parentClass;
+    private final String parentName;
+    private ClassBlock parentClass;
     private FunctionBlock constructor;
-    private final List<FunctionBlock> methods = new ArrayList<>();
 
-    public ClassBlock(String name, ClassBlock parentClass) {
+    public ClassBlock(String name, String parentName) {
         this.name = name;
-        this.parentClass = parentClass;
-        if (parentClass != null) {
-            // all methods are inherited
-            methods.addAll(parentClass.getMethods());
-        }
+        this.parentName = parentName;
     }
 
     public String getName() {
@@ -44,20 +39,6 @@ public class ClassBlock extends Block {
         return constructor;
     }
 
-    public void addMethod(FunctionBlock method) {
-        if (method.getName().equals(name)) {
-            // constructor
-            this.constructor = method;
-        } else {
-            // normal method
-            methods.add(method);
-        }
-    }
-
-    public List<FunctionBlock> getMethods() {
-        return methods;
-    }
-
     /**
      * Define a class
      *
@@ -65,7 +46,11 @@ public class ClassBlock extends Block {
      */
     @Override
     public void execute(BlockContext ctx) {
-        // define function
+        // bind parent class body
+        if (parentName != null) {
+            parentClass = ctx.retrieveClass(parentName);
+        }
+        // define current class in the context
         ctx.defineClass(name, this);
     }
 
@@ -77,17 +62,28 @@ public class ClassBlock extends Block {
      * @return
      */
     public Value instantiate(BlockContext ctx, List<Value> ctorParams) {
-        RockObject instance = new RockObject(this);
+        BlockContext rootCtx = ctx.getRoot();
+        RockObject instance = new RockObject(rootCtx, this);
+        initialize(instance);
         if (constructor != null) {
             constructor.call(instance, ctorParams);
         }
         Value v = Value.getValue(instance);
         return v;
     }
+    
+    protected void initialize(RockObject instance) {
+        if (parentClass != null) {
+            // initilize parent class
+            parentClass.initialize(instance);
+        }
+        // define local variables and functions
+        super.execute(instance);
+    }
 
     @Override
     protected String explain() {
-        return "class " + name + (parentClass == null ? "" : " extends " + parentClass.getName());
+        return "class " + name + (parentName == null ? "" : " extends " + parentName);
     }
 
 }

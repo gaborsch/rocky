@@ -13,10 +13,22 @@ import rockstar.statement.ClassBlock;
  */
 public class RockObject extends BlockContext {
 
-    public RockObject(ClassBlock block) {
-        super(null, block.getName());
-        block.getMethods().forEach((method) -> {
-            this.defineFunction(method.getName(), method);
-        });
+    private static int objIdSeq = 1;
+
+    private final ClassBlock classBlock;
+    private final int objId;
+
+    public RockObject(BlockContext rootCtx, ClassBlock classBlock) {
+        // object instances can access the root context
+        super(rootCtx, classBlock.getName());
+        this.classBlock = classBlock;
+        this.objId = objIdSeq++;
     }
+
+    @Override
+    public String toString() {
+        return classBlock.getName() + "#" + objId;
+    }
+    
+    
 }

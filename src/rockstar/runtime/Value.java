@@ -269,6 +269,8 @@ public class Value implements Comparable<Value> {
                 return "[" + listArrayValue.toString() + "]";
             case ASSOC_ARRAY:
                 return "{" + assocArrayValue.toString() + "}";
+            case OBJECT:
+                return "Object(" + objectValue + ")";
         }
         return this.type.toString();
     }

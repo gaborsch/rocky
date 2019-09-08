@@ -5,7 +5,6 @@
  */
 package rockstar.parser.checker;
 
-import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
@@ -22,17 +21,7 @@ public class FunctionDefChecker extends Checker {
     @Override
     public Statement check() {
         int paramCount = -1;
-        if (/*match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7, "and", 8, "and", 9)
-                || match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7, "and", 8)
-                || match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6, "and", 7)
-                || match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5, "and", 6)
-                || match(0, "takes", 1, "and", 2, "and", 3, "and", 4, "and", 5)
-                || match(0, "takes", 1, "and", 2, "and", 3, "and", 4)
-                || match(0, "takes", 1, "and", 2, "and", 3)
-                || match(0, "takes", 1, "and", 2)
-                ||*/match(0, "takes", 1)
-                || match(0, "takes", "nothing")) {
-//            paramCount = 10 - getMatchCounter();
+        if (match(0, "takes", 1) || match(0, "takes", "nothing")) {
             paramCount = 2 - getMatchCounter();
         }
 

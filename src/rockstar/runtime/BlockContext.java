@@ -111,7 +111,11 @@ public class BlockContext {
     public BlockContext getParent() {
         return parent;
     }
-
+    
+    public BlockContext getRoot() {
+        return root;
+    }
+    
     public int getLevel() {
         return level;
     }
