@@ -125,7 +125,7 @@ shout peek on the rainbow taking 2 (Green - index starts at 0)
 say remove on the rainbow taking nothing (Violet)
 say remove on the rainbow taking nothing (Blue)
 say size on the rainbow taking nothing (3)
-``
+```
 
 Sequence
 ```
