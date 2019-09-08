@@ -5,7 +5,9 @@
  */
 package rockstar.runtime;
 
+import java.util.List;
 import rockstar.statement.ClassBlock;
+import rockstar.statement.FunctionBlock;
 
 /**
  *
@@ -16,6 +18,7 @@ public class RockObject extends BlockContext {
     private static int objIdSeq = 1;
 
     private final ClassBlock classBlock;
+    private FunctionBlock constructor;
     private final int objId;
 
     public RockObject(BlockContext rootCtx, ClassBlock classBlock) {
@@ -26,9 +29,27 @@ public class RockObject extends BlockContext {
     }
 
     @Override
+    public String getName() {
+        return classBlock.getName() + "#" + objId + "-" + getLevel();
+    }
+    
+    @Override
     public String toString() {
         return classBlock.getName() + "#" + objId;
     }
-    
-    
+
+    @Override
+    public void defineFunction(String name, FunctionBlock function) {
+        if (name.equals(classBlock.getName())) {
+            // constructor
+            constructor = function;
+        } else {
+            super.defineFunction(name, function);
+        }
+    }
+
+    public FunctionBlock getConstructor() {
+        return constructor;
+    }
+
 }

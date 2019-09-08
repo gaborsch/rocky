@@ -5,7 +5,6 @@
  */
 package rockstar.statement;
 
-import java.util.ArrayList;
 import java.util.List;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockObject;
@@ -20,7 +19,6 @@ public class ClassBlock extends Block {
     private final String name;
     private final String parentName;
     private ClassBlock parentClass;
-    private FunctionBlock constructor;
 
     public ClassBlock(String name, String parentName) {
         this.name = name;
@@ -35,11 +33,7 @@ public class ClassBlock extends Block {
         return parentClass;
     }
 
-    public FunctionBlock getConstructor() {
-        return constructor;
-    }
-
-    /**
+   /**
      * Define a class
      *
      * @param ctx
@@ -65,6 +59,7 @@ public class ClassBlock extends Block {
         BlockContext rootCtx = ctx.getRoot();
         RockObject instance = new RockObject(rootCtx, this);
         initialize(instance);
+        FunctionBlock constructor = instance.getConstructor();
         if (constructor != null) {
             constructor.call(instance, ctorParams);
         }

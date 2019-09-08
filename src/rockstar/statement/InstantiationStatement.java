@@ -6,7 +6,9 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
@@ -20,22 +22,26 @@ public class InstantiationStatement extends Statement {
 
     private final VariableReference variable;
     private final String className;
-    private final List<VariableReference> ctorParameterRefs = new ArrayList<>();
+    private final List<Expression> ctorParameterExprs = new ArrayList<>();
 
     public InstantiationStatement(VariableReference variable, String className) {
         this.variable = variable;
         this.className = className;
     }
 
-    public void addParameterName(VariableReference paramRef) {
-        ctorParameterRefs.add(paramRef);
+    public void addParameter(Expression expr) {
+        ctorParameterExprs.add(expr);
     }
 
     @Override
     public void execute(BlockContext ctx) {
         ClassBlock block = ctx.retrieveClass(className);
         if (block != null) {
-            Value instance = block.instantiate(ctx, null);
+            List paramValues = new LinkedList();
+            ctorParameterExprs.forEach((expr) -> {
+                paramValues.add(expr.evaluate(ctx));
+            });
+            Value instance = block.instantiate(ctx, paramValues);
             ctx.setVariable(this.variable, instance);
         } else {
             throw new RockstarRuntimeException("Undefined class: " + className);
@@ -44,7 +50,7 @@ public class InstantiationStatement extends Statement {
 
     @Override
     protected String explain() {
-        String paramsList = ctorParameterRefs.toString();
+        String paramsList = ctorParameterExprs.toString();
         return variable.format() + " := new " + className + "(" + paramsList.substring(1, paramsList.length() - 1) + ")";
     }
 

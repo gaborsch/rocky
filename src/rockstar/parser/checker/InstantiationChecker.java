@@ -34,20 +34,14 @@ public class InstantiationChecker extends Checker {
                     String className = classRef.getFunctionName();
                     InstantiationStatement stmt = new InstantiationStatement(variableRef, className);
 
-                    if (getMatchCounter() == 3) {
+                    if (getResult()[2] != null) {
                         // has constructor parameters
                         Expression expr = ExpressionFactory.tryExpressionFor(getResult()[2], line);
                         // treats null expression
                         ListExpression listExpr = ListExpression.asListExpression(expr);
                         if (listExpr != null) {
                             for (Expression expression : listExpr.getParameters()) {
-                                if (expression instanceof VariableReference) {
-                                    // it is a variable reference
-                                    VariableReference paramRef = (VariableReference) expression;
-                                    stmt.addParameterName(paramRef);
-                                } else {
-                                    return null;
-                                }
+                                    stmt.addParameter(expression);
                             }
 //                        }
                         }
