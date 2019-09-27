@@ -366,6 +366,24 @@ Garbage collection, destructors:
 There is no garbage collection and there are no destructors. However, an object pool can be implemented
 
 
+---
+Possible future extensions:
+
+Abstract methods:
+A method with an empty body is considered abstract. A non-abstract method must have at least a `Give back nothing` statement.
+When an abstract method is called, an error is thrown.
+
+Abstract classes:
+A class that have abstract methods are considered abstract classes. It is possible to instantiate an abstract class, provided that no abstract methods are called.
+
+Interfaces:
+Interfaces are classes that have abstract methods only - an absolutely abstract class.
+
+Implementation, multiple inheritance:
+It is possible to inherit methods from multiple classes. The classes/interfaces are processed backwards - the start with last on the list, that is overriden by the next to last, finally the first in the list. This ensures that the first in the list becomes the most important.
+
+Runtime instance check:
+The `<instance> is a kind of <classname>` operation can be used to check if the instance implements a certain class or interface. Inherited classes and interfaces all count!
 
 
 
