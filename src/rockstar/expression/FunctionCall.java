@@ -15,6 +15,16 @@ public class FunctionCall extends CompoundExpression {
     private VariableReference object = null;
     private String name;
 
+    public FunctionCall() {
+        super();
+    }
+
+    FunctionCall(VariableReference object, String name) {
+        super();
+        this.object = object;
+        this.name = name;
+    }
+
     @Override
     public int getPrecedence() {
         return 100;

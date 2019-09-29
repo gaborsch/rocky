@@ -38,9 +38,16 @@ public class ObjectQualifierExpression extends CompoundExpression {
         return String.format("%s.%s", getObjectRef(), getQualifierRef());
     }
 
+    private FunctionCall wrappedFunctionCall = null;
+    
     @Override
     public Value evaluate(BlockContext ctx) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // evaluate as a parameterless method call
+        if (wrappedFunctionCall == null) {
+            String name = getQualifierRef().getFunctionName();
+            wrappedFunctionCall = new FunctionCall(getObjectRef(), name);
+        }
+        return wrappedFunctionCall.evaluate(ctx);
     }
     
 }

@@ -29,15 +29,15 @@ public class FunctionDefChecker extends Checker {
                 FunctionBlock fb = new FunctionBlock(nameRef.getFunctionName());
                 // parse the expression, for an expression list
                 Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line);
-//                // treats null expression
-//                if (expr instanceof ConstantExpression) {
-//                    ConstantExpression constExpr = (ConstantExpression) expr;
-//                    if (! constExpr.getValue().getType().equals(ExpressionType.NULL)) {
-//                        // only NULL values are allowed
-//                        return null;
-//                    }
-//                    // for NULLs, the parameter list remains empty
-//                } else {
+                // treats null expression
+                if (expr instanceof ConstantExpression) {
+                    ConstantExpression constExpr = (ConstantExpression) expr;
+                    if (! constExpr.getValue().getType().equals(ExpressionType.NULL)) {
+                        // only NULL values are allowed
+                        return null;
+                    }
+                    // for NULLs, the parameter list remains empty
+                } else {
                     ListExpression listExpr = ListExpression.asListExpression(expr);
                     if (listExpr != null) {
                         for (Expression expression : listExpr.getParameters()) {
@@ -52,7 +52,7 @@ public class FunctionDefChecker extends Checker {
                     } else {
                         return null;
                     }
-//                }
+                }
                 return fb;
             }
         }
