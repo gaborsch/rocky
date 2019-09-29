@@ -141,6 +141,10 @@ public class Value implements Comparable<Value> {
         return type == ExpressionType.STRING;
     }
 
+    public boolean isObject() {
+        return type == ExpressionType.OBJECT;
+    }
+
     public boolean isEmptyArray() {
         return (type == ExpressionType.LIST_ARRAY && (this.listArrayValue == null || this.listArrayValue.isEmpty()))
                 || (type == ExpressionType.ASSOC_ARRAY && (this.assocArrayValue == null || this.assocArrayValue.isEmpty()));
@@ -236,6 +240,13 @@ public class Value implements Comparable<Value> {
                 return assocArrayValue.size() > 0;
         }
         throw new RockstarRuntimeException("unknown bool value");
+    }
+    
+    public RockObject getObject() {
+        if (getType() == ExpressionType.OBJECT) {
+            return objectValue;
+        }
+        throw new RockstarRuntimeException("unknown object value");
     }
 
     public Value asBoolean() {

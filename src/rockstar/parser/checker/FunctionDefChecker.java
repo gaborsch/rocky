@@ -5,7 +5,9 @@
  */
 package rockstar.parser.checker;
 
+import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
+import rockstar.expression.ExpressionType;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
@@ -20,20 +22,22 @@ public class FunctionDefChecker extends Checker {
 
     @Override
     public Statement check() {
-        int paramCount = -1;
-        if (match(0, "takes", 1) || match(0, "takes", "nothing")) {
-            paramCount = 2 - getMatchCounter();
-        }
-
-        if (paramCount >= 0) {
+        if (match(0, "takes", 1)) {
             // function name is the same as a variable name
             VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line);
             if (nameRef != null) {
                 FunctionBlock fb = new FunctionBlock(nameRef.getFunctionName());
-                if (paramCount > 0) {
-                    // parse the expression, for an expression list
-                    Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line);
-                    // treats null expression
+                // parse the expression, for an expression list
+                Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line);
+//                // treats null expression
+//                if (expr instanceof ConstantExpression) {
+//                    ConstantExpression constExpr = (ConstantExpression) expr;
+//                    if (! constExpr.getValue().getType().equals(ExpressionType.NULL)) {
+//                        // only NULL values are allowed
+//                        return null;
+//                    }
+//                    // for NULLs, the parameter list remains empty
+//                } else {
                     ListExpression listExpr = ListExpression.asListExpression(expr);
                     if (listExpr != null) {
                         for (Expression expression : listExpr.getParameters()) {
@@ -45,11 +49,10 @@ public class FunctionDefChecker extends Checker {
                                 return null;
                             }
                         }
-//                        }
                     } else {
                         return null;
                     }
-                }
+//                }
                 return fb;
             }
         }

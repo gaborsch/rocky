@@ -111,11 +111,11 @@ public class BlockContext {
     public BlockContext getParent() {
         return parent;
     }
-    
+
     public BlockContext getRoot() {
         return root;
     }
-    
+
     public int getLevel() {
         return level;
     }
@@ -133,7 +133,7 @@ public class BlockContext {
      * @param vref
      * @param value
      */
-    public void setVariable(VariableReference vref, Value value) {
+    public void setVariable1(VariableReference vref, Value value) {
         // we can set either local or global variables
         boolean hasGlobal = root.vars.containsKey(vref.getName(this));
         if (this.vars.containsKey(vref.getName(this))) {
@@ -154,6 +154,50 @@ public class BlockContext {
     }
 
     /**
+     * Set a variable value in the proper context
+     *
+     * @param vref
+     * @param value
+     */
+    public void setVariable(VariableReference vref, Value value) {
+        doSetVariable(vref, value);
+        // last assigned variable name
+        if (!vref.isLastVariable()) {
+            this.lastVariableRef = vref;
+        }
+    }
+
+    /**
+     * Set a variable value in the proper context
+     *
+     * @param vref
+     * @param value
+     */
+    private void doSetVariable(VariableReference vref, Value value) {
+
+        BlockContext objCtx = this;
+        // find the nearest object context, if exists
+        while (objCtx != null && !(objCtx instanceof RockObject)) {
+            objCtx = objCtx.parent;
+        }
+
+        // we can set either local or global variables
+        if (this.vars.containsKey(vref.getName(this))) {
+            // overwrite local variable
+            setLocalVariable(vref, value);
+        } else if (objCtx != null && objCtx.vars.containsKey(vref.getName(this))) {
+            // overwrite object member variable
+            objCtx.setLocalVariable(vref, value);
+        } else if (root.vars.containsKey(vref.getName(this))) {
+            // overwrite global variable
+            root.setLocalVariable(vref, value);
+        }
+
+        // initialize local variable
+        setLocalVariable(vref, value);
+    }
+
+    /**
      * Set a variable in the local context, hiding global variables (e.g.
      * function parameters)
      *
@@ -171,7 +215,7 @@ public class BlockContext {
      * @param vref
      * @return
      */
-        public Value getVariableValue(VariableReference vref) {
+    public Value getVariableValue(VariableReference vref) {
         // find the context where the variable was defined 
         Value v = null;
         String vname = vref.getName(this);
@@ -209,7 +253,7 @@ public class BlockContext {
     public void defineClass(String name, ClassBlock classBlock) {
         this.classes.put(classBlock.getName(), classBlock);
     }
-    
+
     public ClassBlock retrieveClass(String name) {
         ClassBlock c = null;
         BlockContext ctx = this;
@@ -238,6 +282,5 @@ public class BlockContext {
         }
         return v;
     }
-
 
 }

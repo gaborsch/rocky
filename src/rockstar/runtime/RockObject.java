@@ -5,7 +5,6 @@
  */
 package rockstar.runtime;
 
-import java.util.List;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 

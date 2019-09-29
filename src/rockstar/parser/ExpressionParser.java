@@ -23,6 +23,7 @@ import rockstar.expression.LogicalExpression.LogicalType;
 import rockstar.expression.MinusExpression;
 import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
+import rockstar.expression.ObjectQualifierExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.RefType;
 import rockstar.expression.ReferenceExpression;
@@ -239,13 +240,11 @@ public class ExpressionParser {
     Stack<CompoundExpression> operatorStack;
     Stack<Expression> valueStack;
 
-    public Expression parse(Expression... defaultExprs) {
+    public Expression parse(Expression defaultExpr) {
         operatorStack = new Stack<>();
         valueStack = new Stack<>();
-        if (defaultExprs != null) {
-            for (Expression defaultExpr : defaultExprs) {
-                valueStack.push(defaultExpr);
-            }
+        if (defaultExpr != null) {
+            valueStack.push(defaultExpr);
         }
         boolean isAfterOperator = true;
         while (!isFullyParsed()) {
@@ -285,9 +284,9 @@ public class ExpressionParser {
         while (!operatorStack.isEmpty()) {
             int topPrec = operatorStack.peek().getPrecedence();
             int newPrec = operator.getPrecedence();
-            if (operatorStack.peek() instanceof FunctionCall 
+            if (operatorStack.peek() instanceof FunctionCall
                     && operator instanceof LogicalExpression
-                    && ((LogicalExpression)operator).getType() == LogicalType.AND) {
+                    && ((LogicalExpression) operator).getType() == LogicalType.AND) {
                 break;
             }
 
@@ -299,7 +298,6 @@ public class ExpressionParser {
                 // other (left-associative)
                 break;
             }
-
 
             // take the operator from the top of the operator stack
             CompoundExpression op = operatorStack.pop();
@@ -340,7 +338,13 @@ public class ExpressionParser {
             // unary plus
             next();
         }
-        // logical operators
+        // qualifiers
+        if ("on".equals(token) || "by".equals(token) || "in".equals(token) || "at".equals(token)
+                || "to".equals(token) || "for".equals(token) || "from".equals(token)) {
+            next();
+            return new ObjectQualifierExpression();
+        }
+/*
         if ("at".equals(token)) {
             next();
             return new ReferenceExpression(RefType.LIST);
@@ -349,6 +353,8 @@ public class ExpressionParser {
             next();
             return new ReferenceExpression(RefType.ASSOC_ARRAY);
         }
+*/
+        // logical operators
         if ("not".equals(token)) {
             next();
             return new NotExpression();
@@ -462,7 +468,7 @@ public class ExpressionParser {
             next();
             return new SliceExpression(SliceExpression.Type.SLICE_TO);
         }
-        
+
         if (",".equals(token)) {
             next();
             return new ListExpression();

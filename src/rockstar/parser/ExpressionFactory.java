@@ -23,11 +23,22 @@ public class ExpressionFactory {
      *
      * @param tokens the tokens to parse
      * @param line the Line
-     * @param defaultExprs
      * @return
      */
-    public static Expression getExpressionFor(List<String> tokens, Line line, Expression... defaultExprs) {
-        Expression parsed = new ExpressionParser(tokens, line).parse(defaultExprs);
+    public static Expression getExpressionFor(List<String> tokens, Line line) {
+        return getExpressionFor(tokens, line, null);
+    }
+
+    /**
+     * Parse an expression, throw exception if failed
+     *
+     * @param tokens the tokens to parse
+     * @param line the Line
+     * @param defaultExpr
+     * @return
+     */
+    public static Expression getExpressionFor(List<String> tokens, Line line, Expression defaultExpr) {
+        Expression parsed = new ExpressionParser(tokens, line).parse(defaultExpr);
         if (parsed != null) {
             return parsed;
         }
@@ -43,7 +54,7 @@ public class ExpressionFactory {
      */
     public static Expression tryExpressionFor(List<String> list, Line line) {
         ExpressionParser parser = new ExpressionParser(list, line);
-        Expression expr = parser.parse();
+        Expression expr = parser.parse(null);
         if (expr != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
             return expr;

@@ -35,13 +35,17 @@ public class InstantiationStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
+        // get the class
         ClassBlock block = ctx.retrieveClass(className);
         if (block != null) {
+            // evaluate constructor expressions
             List paramValues = new LinkedList();
             ctorParameterExprs.forEach((expr) -> {
                 paramValues.add(expr.evaluate(ctx));
             });
+            // instantiate the class
             Value instance = block.instantiate(ctx, paramValues);
+            // assign the instance to the variable
             ctx.setVariable(this.variable, instance);
         } else {
             throw new RockstarRuntimeException("Undefined class: " + className);

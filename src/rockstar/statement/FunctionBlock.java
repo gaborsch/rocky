@@ -72,9 +72,10 @@ public class FunctionBlock extends Block {
             // execute the function body
             super.execute(funcCtx);
         } catch (RockstarReturnException retExp) {
+             // return value is set by the return statement
             return retExp.getReturnValue();
         }
-        // return value is set by
+        // no explicite return value was set
         return Value.MYSTERIOUS;
     }
 
