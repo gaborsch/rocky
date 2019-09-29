@@ -344,7 +344,7 @@ All fields of a class are protected (not visible from outside, but a subclass me
 
 Override:
 A field declared in a subclass does not override the superclass field, instead, it uses that field from the superclass (overwrite its value).
-A subclass method can override the superclass method, even change the signature.
+A subclass method can override the superclass method, even change the signature. Only the method name is taken.
 
 Overload:
 A subclass method declaration will overload (and hide) a superclass method declaration, if the same name is defined. The superclass method is still accessible from the subclass using the `<method> on parent` special object reference.
@@ -362,8 +362,8 @@ There are no abstract methods and abstract classes or interfaces.
 Anonymous classes:
 There are no anonymous classes.
 
-Garbage collection, destructors:
-There is no garbage collection and there are no destructors. However, an object pool can be implemented
+Garbage collection, destructors, finalizers:
+There is no garbage collection and there are no destructors. However, an object pool can be implemented.
 
 
 ---
@@ -373,14 +373,12 @@ Abstract methods:
 A method with an empty body is considered abstract. A non-abstract method must have at least a `Give back nothing` statement.
 When an abstract method is called, an error is thrown.
 
-Abstract classes:
-A class that have abstract methods are considered abstract classes. It is possible to instantiate an abstract class, provided that no abstract methods are called.
-
-Interfaces:
-Interfaces are classes that have abstract methods only - an absolutely abstract class.
+Abstract classes, interfaces:
+A class that have abstract methods are considered abstract classes. It is not possible to instantiate an abstract class, we must check the class abstractness after class definition.
+Interfaces are classes that have abstract methods only - an absolutely abstract class. Interfaces have no special meanings
 
 Implementation, multiple inheritance:
-It is possible to inherit methods from multiple classes. The classes/interfaces are processed backwards - the start with last on the list, that is overriden by the next to last, finally the first in the list. This ensures that the first in the list becomes the most important.
+It is possible to inherit methods from multiple classes or interfaces, by having a list expression for class or interface names. The first one is the strongest, it overrides all methods of the rest of the classes, the last ones should be the interfaces (if any).
 
 Runtime instance check:
 The `<instance> is a kind of <classname>` operation can be used to check if the instance implements a certain class or interface. Inherited classes and interfaces all count!
