@@ -56,11 +56,11 @@ public class StatementFactory {
         new PoeticArrayAssignmentChecker(),
         new PoeticAssignmentChecker(),
         new PoeticStringAssignmentChecker(),
-        new ExpressionStatementChecker(),
         new PushChecker(),
         new PullChecker(),
         new ClassBlockChecker(),
         new InstantiationChecker(),
+        new ExpressionStatementChecker(),
         new NoOpChecker()
     };
 

@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import rockstar.expression.VariableReference;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 
@@ -50,5 +51,5 @@ public class RockObject extends BlockContext {
     public FunctionBlock getConstructor() {
         return constructor;
     }
-
+    
 }

@@ -40,6 +40,28 @@ public class VariableReference extends SimpleExpression {
         return isFunctionName;
     }
 
+    public boolean isSelfReference() {
+        return "self".equals(name)
+                || "myself".equals(name)
+                || "yourself".equals(name)
+                || "himeself".equals(name)
+                || "herself".equals(name)
+                || "itself".equals(name)
+                || "ourselves".equals(name)
+                || "yourselves".equals(name)
+                || "themselves".equals(name);
+
+    }
+
+    public boolean isParentReference() {
+        return "parent".equals(name)
+                || "father".equals(name)
+                || "mother".equals(name)
+                || "papa".equals(name)
+                || "mama".equals(name);
+
+    }
+
     @Override
     public String toString() {
         return name;
@@ -66,7 +88,6 @@ public class VariableReference extends SimpleExpression {
 //        Value value = ctx.getVariableValue(vref);
 //        return value;
 //    }
-
     public boolean isLastVariable() {
         return isLastVariable;
     }

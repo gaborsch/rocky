@@ -99,16 +99,29 @@ public class FunctionCall extends CompoundExpression {
         FunctionBlock funcBlock = null;
         BlockContext callContext = ctx;
         if (object != null) {
-            // method call
-            ctx.beforeExpression(object);
-            Value objValue = ctx.afterExpression(object, ctx.getVariableValue(object));
-            if (objValue.isObject()) {
-                // get the object itself
-                callContext = objValue.getObject();
-                // get the method from the object
+            // method call on an object
+            VariableReference obj = object;
+            if (obj.isSelfReference()) {
+                // self object reference?
                 funcBlock = callContext.retrieveFunction(name);
+                throw new RuntimeException("self reference");
+
+            } else if (obj.isParentReference()) {
+                // parent object reference?
+                throw new RuntimeException("parent reference");
+
             } else {
-                throw new RuntimeException("Invalid method call "+name+" on a "+objValue.getType().name()+" type variable " + object);
+                // ordinary object reference
+                ctx.beforeExpression(object);
+                Value objValue = ctx.afterExpression(object, ctx.getVariableValue(object));
+                if (objValue.isObject()) {
+                    // get the object itself
+                    callContext = objValue.getObject();
+                    // get the method from the object
+                    funcBlock = callContext.retrieveFunction(name);
+                } else {
+                    throw new RuntimeException("Invalid method call " + name + " on a " + objValue.getType().name() + " type variable " + object);
+                }
             }
         } else {
             // pure function
