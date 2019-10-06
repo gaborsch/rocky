@@ -1,0 +1,18 @@
+a customer looks like nobody
+ id is nothing
+ name is nobody
+ address is nowhere
+ a customer takes your id, your name, and your address
+  let id be your id
+  let name be your name
+  let address be your address
+ (eom)
+ the card takes a dummy
+  give back id with ", ", name, ", ", address
+ (eom)
+(eoc)
+Tom wants to be a customer taking 1, "Thomas", and "Sunset Boulevard"
+say id on Tom (mysterious)
+say name on Tom (mysterious)
+say address on Tom (mysterious)
+say the card on Tom taking nothing (1, Thomas, Sunset Boulevard)

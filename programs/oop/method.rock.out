@@ -1,0 +1,19 @@
+Simple method calls
+1
+2
+3
+Override method calls
+Hello, Pasadena!
+Hello, Pasadena!
+Hello, Pasadena!
+Hello, Pasadena!
+Hello, LA!
+Hello, LA!
+Hello, Tokyo!
+Hello, Tokyo!
+Inherited method calls
+Hotel Pasadena
+Hotel LA
+Hotel Tokyo
+Non-inherited method calls
+Sayonara!

@@ -1,0 +1,46 @@
+a cat looks like nothing
+  the food is nowhere
+  a cat takes the milk
+    let the food be the milk
+  (eom - constructor)
+  the food takes something
+    give back the food
+  (eom)
+  the  takes something
+    give back the food
+  (eom)
+  Make Noise takes something
+    say the noise
+  (eom)
+(eoc)
+
+a tiger looks like a cat
+  a tiger takes the prey
+     let the food be the prey
+  (eom - constructor)
+  the prey takes something
+    give back the food
+  (eom)
+  the noise is nothing
+  Set Noise takes a roar
+    let the noise be a roar
+  (eom)
+(eoc)
+
+say "Field access"
+Kitty wants to be a cat taking "milk"
+say the food by Kitty taking nothing (has access to own field)
+
+Tom wants to be a tiger taking "Jerry"
+say the food by Tom taking nothing (inherited method has access to local variable)
+say the prey by Tom taking nothing (method has access to parent class fields)
+
+say "Abstract field access"
+
+Set Noise for Kitty taking "Purr"
+Make Noise near Kitty taking nothing (mysterious)
+
+Set Noise for Tom taking "Roarrrr!"
+Make Noise near Tom taking nothing (Roarrrr! - parent method has access to child-defined fields)
+
+

@@ -1,0 +1,9 @@
+your sword looks like nothing
+(end of empty class)
+Los Angeles looks like nowhere
+(end of empty class)
+dreams look like nothing
+(end of empty class)
+San Francisco looks like Los Angeles
+(end of empty class, extending another)
+say San Francisco (mysterious - classes are not variables)
