@@ -340,7 +340,7 @@ public class ExpressionParser {
         }
         // qualifiers
         if ("on".equals(token) || "by".equals(token) || "in".equals(token) || "at".equals(token)
-                || "to".equals(token) || "for".equals(token) || "from".equals(token)) {
+                || "to".equals(token) || "for".equals(token) || "from".equals(token) || "near".equals(token)) {
             next();
             return new ObjectQualifierExpression();
         }
