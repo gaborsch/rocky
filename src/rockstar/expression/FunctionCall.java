@@ -3,6 +3,7 @@ package rockstar.expression;
 import java.util.ArrayList;
 import java.util.List;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 import rockstar.statement.FunctionBlock;
 
@@ -138,7 +139,10 @@ public class FunctionCall extends CompoundExpression {
             // call the functon
             retValue = funcBlock.call(callContext, values);
         } else {
-            retValue = Value.MYSTERIOUS;
+            if (object == null) {
+                throw new RockstarRuntimeException("Undefined function: "+name);
+            }
+            throw new RockstarRuntimeException("Undefined method: " + name + " on class " + object.getFunctionName());
         }
         // return the return value
         return ctx.afterExpression(this, retValue == null ? Value.NULL : retValue);
