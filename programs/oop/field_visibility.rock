@@ -6,9 +6,6 @@ a cat looks like nothing
   the food takes something
     give back the food
   (eom)
-  the  takes something
-    give back the food
-  (eom)
   Make Noise takes something
     say the noise
   (eom)
@@ -37,10 +34,9 @@ say the prey by Tom taking nothing (method has access to parent class fields)
 
 say "Abstract field access"
 
-Set Noise for Kitty taking "Purr"
-Make Noise near Kitty taking nothing (mysterious)
+Make Noise by Kitty taking nothing (mysterious)
 
 Set Noise for Tom taking "Roarrrr!"
-Make Noise near Tom taking nothing (Roarrrr! - parent method has access to child-defined fields)
+Make Noise near Tom taking nothing (mysterious - parent method has NO access to child-defined fields)
 
 

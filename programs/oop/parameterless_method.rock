@@ -1,14 +1,14 @@
 Sequence looks like nothing
   Let the counter be 0 
-  Sequence takes nothing (parameterless constructor)
+  Sequence takes nothing (parameter-less constructor)
 (eom)
-  next takes nothing     (parameterless method)
+  next takes nothing     (parameter-less method)
     Build the counter up  
     give back the counter 
 (eom)
 (eoc)
-I want to be Sequence             (parameterless instantiation)
-say next on it                    (parameterless method call, output: "1")
+I want to be Sequence             (parameter-less instantiation)
+say next on it                    (parameter-less method call, output: "1")
 say next on it                    (output: "2")
 say 2 of next on it               (output: "6")
 say next on it with next on it    (output: "9")

@@ -1,9 +1,9 @@
 Say "Simple method calls"
 the devil looks like nothing
-cursing takes the curse
-build the curse up
-give back the curse
-(eom)
+  cursing takes the curse
+    build the curse up
+    give back the curse
+  (eom)
 (eoc)
 Bill wants to be the devil
 say cursing on Bill taking 0 (1)
@@ -12,25 +12,25 @@ say cursing on Bill taking 2 (3)
 
 Say "Override method calls"
 Pasadena looks like nothing
- visit takes a day
-  say "Hello, Pasadena!"
- (eom)
- stay takes time
-  give back time
- (eom)
+  visit takes a day
+    say "Hello, Pasadena!"
+  (eom)
+  stay takes time
+    give back time
+  (eom)
 (eoc)
 Los Angeles looks like Pasadena
- visit takes a week
-  say "Hello, LA!"
- (eom)
+  visit takes a week
+    say "Hello, LA!"
+  (eom)
 (eoc)
 Tokyo looks like Los Angeles
- visit takes a week
-  say "Hello, Tokyo!"
- (eom)
- leave takes ages
-  say "Sayonara!"
- (eom)
+  visit takes a week
+    say "Hello, Tokyo!"
+  (eom)
+  leave takes ages
+    say "Sayonara!"
+  (eom)
 (eoc)
 
 (on, by, in, at, to, for, from, near)
@@ -51,13 +51,10 @@ visit from a metropolis taking helicopter (Hello, Tokyo!)
 a megalopolis wants to be Tokyo
 visit near a megalopolis taking a plane (Hello, Tokyo!)
 
+Say "Non-inherited method calls"
+leave from a metropolis taking nothing
+
 Say "Inherited method calls"
 say stay at a town taking "Hotel Pasadena"
 say stay at a city taking "Hotel LA"
 say stay at a metropolis taking "Hotel Tokyo"
-
-
-Say "Non-inherited method calls"
-leave from a town taking nothing
-leave from a city taking nothing
-leave from a metropolis taking nothing
