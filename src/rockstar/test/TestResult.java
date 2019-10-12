@@ -38,8 +38,8 @@ public class TestResult {
 
     public String getMessage() {
         return message != null ? message
-                : ("<" +  (isExecuted ? "" : "not ") + "executed"
-                + (exception == null ? "" : " with "+exception.getClass().getSimpleName()) + ">");
+                : ("<" + (isExecuted ? "" : "not ") + "executed"
+                + (exception == null ? "" : " with " + exception.getClass().getSimpleName()) + ">");
     }
 
     public Throwable getException() {
@@ -61,8 +61,16 @@ public class TestResult {
      * @return
      */
     public boolean isPassed() {
-        // if and only if the test result is the same as expected
-        return isExecuted == (expected == RockstarTest.Expected.CORRECT);
+        switch (expected) {
+            case CORRECT:
+                return isExecuted && (message == null) && (exception == null);
+            case PARSE_ERROR:
+                return !isExecuted && (message != null) && (exception == null);
+            case RUNTIME_ERROR:
+                return !isExecuted && (exception != null);
+            default:
+                throw new RuntimeException("Unkonwn expected:" + expected);
+        }
     }
 
     public String getDebugInfo() {
@@ -72,5 +80,5 @@ public class TestResult {
     public void setDebugInfo(String debugInfo) {
         this.debugInfo = debugInfo;
     }
-    
+
 }
