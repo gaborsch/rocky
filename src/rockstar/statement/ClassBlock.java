@@ -33,7 +33,7 @@ public class ClassBlock extends Block {
         return parentClass;
     }
 
-   /**
+    /**
      * Define a class
      *
      * @param ctx
@@ -49,19 +49,14 @@ public class ClassBlock extends Block {
     }
 
     /**
-     * instantiate a class
-     *
-     * @param ctx Context for execution
-     * @param ctorParams constructor parameters
-     * @return
+     * Instantiate a class
+     * @param ctx
+     * @param ctorParams
+     * @return 
      */
     public Value instantiate(BlockContext ctx, List<Value> ctorParams) {
-        // Objects are created in the root context
-        BlockContext rootCtx = ctx.getRoot();
-        // Create the instance
-        RockObject instance = new RockObject(rootCtx, this);
-        // iniitialize the instance
-        initialize(instance);
+        RockObject instance = create(ctx);
+
         // call the constructor
         FunctionBlock constructor = instance.getConstructor();
         if (constructor != null) {
@@ -71,15 +66,62 @@ public class ClassBlock extends Block {
         Value v = Value.getValue(instance);
         return v;
     }
-    
-    protected void initialize(RockObject instance) {
-        if (parentClass != null) {
-            // initilize parent class
-            parentClass.initialize(instance);
+
+    /**
+     * Create and initialize an instance
+     * @param ctx
+     * @return 
+     */
+    private RockObject create(BlockContext ctx) {
+        RockObject instance;
+        if (this.parentClass == null) {
+            // base object
+            instance = new RockObject(ctx, this);
+        } else {
+            // inherited object is created first
+            RockObject parentInstance = this.parentClass.create(ctx);
+            // then create the next layer
+            instance = new RockObject(parentInstance, this);
         }
-        // define local variables and functions
+        
+        // initialize the variables
         super.execute(instance);
+        
+        return instance;
     }
+
+//    /**
+//     * instantiate a class
+//     *
+//     * @param ctx Context for execution
+//     * @param ctorParams constructor parameters
+//     * @return
+//     */
+//    public Value instantiate(BlockContext ctx, List<Value> ctorParams) {
+//        // Objects are created in the root context
+//        BlockContext rootCtx = ctx.getRoot();
+//        // Create the instance
+//        RockObject instance = new RockObject(rootCtx, this);
+//        // iniitialize the instance
+//        initialize(instance);
+//        // call the constructor
+//        FunctionBlock constructor = instance.getConstructor();
+//        if (constructor != null) {
+//            constructor.call(instance, ctorParams);
+//        }
+//        // TODO parent constructor?
+//        Value v = Value.getValue(instance);
+//        return v;
+//    }
+
+//    protected void initialize(RockObject instance) {
+//        if (parentClass != null) {
+//            // initilize parent class
+//            parentClass.initialize(instance);
+//        }
+//        // define local variables and functions
+//        super.execute(instance);
+//    }
 
     @Override
     protected String explain() {

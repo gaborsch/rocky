@@ -3,6 +3,7 @@ package rockstar.expression;
 import java.util.ArrayList;
 import java.util.List;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockObject;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 import rockstar.statement.FunctionBlock;
@@ -101,13 +102,12 @@ public class FunctionCall extends CompoundExpression {
         BlockContext callContext = ctx;
         if (object != null) {
             // method call on an object
-            VariableReference obj = object;
-            if (obj.isSelfReference()) {
+            if (object.isSelfReference()) {
                 // self object reference?
-                funcBlock = callContext.retrieveFunction(name);
+                funcBlock = callContext.retrieveLocalFunction(name);
                 throw new RuntimeException("self reference");
 
-            } else if (obj.isParentReference()) {
+            } else if (object.isParentReference()) {
                 // parent object reference?
                 throw new RuntimeException("parent reference");
 
@@ -117,16 +117,22 @@ public class FunctionCall extends CompoundExpression {
                 Value objValue = ctx.afterExpression(object, ctx.getVariableValue(object));
                 if (objValue.isObject()) {
                     // get the object itself
-                    callContext = objValue.getObject();
+                    RockObject objContext = objValue.getObject();
+                    // find the context that contains the function
+                    callContext = objContext.getContextForFunction(name);
                     // get the method from the object
-                    funcBlock = callContext.retrieveFunction(name);
+                    funcBlock = callContext.retrieveLocalFunction(name);
                 } else {
                     throw new RuntimeException("Invalid method call " + name + " on a " + objValue.getType().name() + " type variable " + object);
                 }
             }
         } else {
             // pure function
-            funcBlock = ctx.retrieveFunction(name);
+            BlockContext funcCtx = ctx.getContextForFunction(name);
+            if (funcCtx == null) {
+                throw new RockstarRuntimeException("Undefined function: "+name);
+            }
+            funcBlock = funcCtx.retrieveLocalFunction(name);
         }
 
         Value retValue;

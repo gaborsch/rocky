@@ -6,6 +6,7 @@
 package rockstar.parser;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,7 +16,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rockstar.runtime.Utils;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
@@ -31,12 +35,23 @@ public class Parser {
 
     private String filename;
     private MultilineReader rdr;
+    
+    public static Program parseProgram(String programText) {
+        InputStream is;
+        try {
+            is = new ByteArrayInputStream(programText.getBytes("UTF-8"));
+            return new Parser(is, "").parse();
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 
     public Parser(String filename) throws FileNotFoundException {
         this(new FileInputStream(new File(filename)), filename);
     }
 
-    public Parser(InputStream is, String filename) {
+    private Parser(InputStream is, String filename) {
         try {
             this.filename = filename;
             rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)));

@@ -6,8 +6,8 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
@@ -39,10 +39,9 @@ public class InstantiationStatement extends Statement {
         ClassBlock block = ctx.retrieveClass(className);
         if (block != null) {
             // evaluate constructor expressions
-            List paramValues = new LinkedList();
-            ctorParameterExprs.forEach((expr) -> {
-                paramValues.add(expr.evaluate(ctx));
-            });
+            List<Value> paramValues = ctorParameterExprs.stream()
+                    .map(expr -> expr.evaluate(ctx))
+                    .collect(Collectors.toList());
             // instantiate the class
             Value instance = block.instantiate(ctx, paramValues);
             // assign the instance to the variable

@@ -5,7 +5,6 @@
  */
 package rockstar.runtime;
 
-import rockstar.expression.VariableReference;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 
@@ -20,12 +19,34 @@ public class RockObject extends BlockContext {
     private final ClassBlock classBlock;
     private FunctionBlock constructor;
     private final int objId;
+    
+    // the previous (inherited) level of an object
+    private final RockObject subContext;
 
+    /**
+     * Constructor for base object
+     * @param rootCtx
+     * @param classBlock 
+     */
     public RockObject(BlockContext rootCtx, ClassBlock classBlock) {
         // object instances can access the root context
         super(rootCtx, classBlock.getName());
         this.classBlock = classBlock;
         this.objId = objIdSeq++;
+        this.subContext = null;
+    }
+
+    /**
+     * Constructor for extended objects
+     * @param subCtx
+     * @param classBlock 
+     */
+    public RockObject(RockObject subCtx, ClassBlock classBlock) {
+        // object instances can access the root context
+        super(subCtx.getRoot(), classBlock.getName());
+        this.classBlock = classBlock;
+        this.objId = subCtx.objId;
+        this.subContext = subCtx;
     }
 
     @Override
@@ -51,5 +72,19 @@ public class RockObject extends BlockContext {
     public FunctionBlock getConstructor() {
         return constructor;
     }
+
+    /**
+     * Defines the visit order: first the subcontexts, then the parent contexts
+     * @return 
+     */
+    @Override
+    public BlockContext getParent() {
+        if (subContext != null) {
+            return subContext;
+        }
+        return super.getParent();
+    }
+    
+    
     
 }

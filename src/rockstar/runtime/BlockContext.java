@@ -178,7 +178,7 @@ public class BlockContext {
         BlockContext objCtx = this;
         // find the nearest object context, if exists
         while (objCtx != null && !(objCtx instanceof RockObject)) {
-            objCtx = objCtx.parent;
+            objCtx = objCtx.getParent();
         }
 
         // we can set either local or global variables
@@ -222,13 +222,13 @@ public class BlockContext {
         BlockContext ctx = this;
         while (v == null && ctx != null) {
             v = ctx.vars.get(vname);
-            ctx = ctx.parent;
+            ctx = ctx.getParent();
         }
 
         if (v == null) {
             // is it a function reference?
-            FunctionBlock f = retrieveFunction(vname);
-            if (f != null) {
+            BlockContext funcCtx = getContextForFunction(vname);
+            if (funcCtx != null) {
                 return Value.BOOLEAN_TRUE;
             }
         }
@@ -240,14 +240,16 @@ public class BlockContext {
         funcs.put(name, function);
     }
 
-    public FunctionBlock retrieveFunction(String name) {
-        FunctionBlock f = null;
+    public FunctionBlock retrieveLocalFunction(String name) {
+        return funcs.get(name);
+    }
+
+    public BlockContext getContextForFunction(String name) {
         BlockContext ctx = this;
-        while (f == null && ctx != null) {
-            f = ctx.funcs.get(name);
-            ctx = ctx.parent;
+        while(ctx != null && !ctx.funcs.containsKey(name)) {
+            ctx = ctx.getParent();
         }
-        return f;
+        return ctx;
     }
 
     public void defineClass(String name, ClassBlock classBlock) {
@@ -259,7 +261,7 @@ public class BlockContext {
         BlockContext ctx = this;
         while (c == null && ctx != null) {
             c = ctx.classes.get(name);
-            ctx = ctx.parent;
+            ctx = ctx.getParent();
         }
         return c;
     }
