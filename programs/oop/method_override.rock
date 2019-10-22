@@ -1,0 +1,15 @@
+Pasadena looks like nothing
+  visit takes a day
+    stay taking a day
+  (eom)
+  stay takes time
+  (eom)
+(eoc)
+Los Angeles looks like Pasadena
+  stay takes a week
+    say "Hello, LA!"
+  (eom)
+(eoc)
+
+a city wants to be Los Angeles
+visit at a city taking "car"

@@ -136,11 +136,12 @@ public class FunctionCall extends CompoundExpression {
             }
             // we found the function, now we need to find the overrides, if it is on an object
             if (funcCtx instanceof RockObject) {
-                // search the functions from the top of the object levels
-                funcCtx = ((RockObject) funcCtx).getTopObject();
+                // search the function from the top of the object levels
+                funcCtx = ((RockObject) funcCtx).getTopObject().getContextForFunction(name);
+            } else {
+                // find the containing context by name
+                funcCtx = ctx.getContextForFunction(name);
             }
-            // find the containing context by name
-            funcCtx = ctx.getContextForFunction(name);
             // retrieve the function code
             funcBlock = funcCtx.retrieveLocalFunction(name);
         }

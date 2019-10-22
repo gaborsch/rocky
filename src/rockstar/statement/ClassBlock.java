@@ -90,38 +90,6 @@ public class ClassBlock extends Block {
         return instance;
     }
 
-//    /**
-//     * instantiate a class
-//     *
-//     * @param ctx Context for execution
-//     * @param ctorParams constructor parameters
-//     * @return
-//     */
-//    public Value instantiate(BlockContext ctx, List<Value> ctorParams) {
-//        // Objects are created in the root context
-//        BlockContext rootCtx = ctx.getRoot();
-//        // Create the instance
-//        RockObject instance = new RockObject(rootCtx, this);
-//        // iniitialize the instance
-//        initialize(instance);
-//        // call the constructor
-//        FunctionBlock constructor = instance.getConstructor();
-//        if (constructor != null) {
-//            constructor.call(instance, ctorParams);
-//        }
-//        // TODO parent constructor?
-//        Value v = Value.getValue(instance);
-//        return v;
-//    }
-
-//    protected void initialize(RockObject instance) {
-//        if (parentClass != null) {
-//            // initilize parent class
-//            parentClass.initialize(instance);
-//        }
-//        // define local variables and functions
-//        super.execute(instance);
-//    }
 
     @Override
     protected String explain() {
