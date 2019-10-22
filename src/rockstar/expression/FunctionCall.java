@@ -100,6 +100,7 @@ public class FunctionCall extends CompoundExpression {
         ctx.beforeExpression(this);
         FunctionBlock funcBlock = null;
         BlockContext callContext = ctx;
+
         if (object != null) {
             // method call on an object
             if (object.isSelfReference()) {
@@ -127,11 +128,20 @@ public class FunctionCall extends CompoundExpression {
                 }
             }
         } else {
-            // pure function
+            // pure call or object context?
             BlockContext funcCtx = ctx.getContextForFunction(name);
             if (funcCtx == null) {
+                // function not found, or function exists only in subcontexts
                 throw new RockstarRuntimeException("Undefined function: "+name);
             }
+            // we found the function, now we need to find the overrides, if it is on an object
+            if (funcCtx instanceof RockObject) {
+                // search the functions from the top of the object levels
+                funcCtx = ((RockObject) funcCtx).getTopObject();
+            }
+            // find the containing context by name
+            funcCtx = ctx.getContextForFunction(name);
+            // retrieve the function code
             funcBlock = funcCtx.retrieveLocalFunction(name);
         }
 
@@ -139,9 +149,7 @@ public class FunctionCall extends CompoundExpression {
         if (funcBlock != null) {
             List<Expression> params = getParameters();
             List<Value> values = new ArrayList<>(params.size());
-            params.forEach((expr) -> {
-                values.add(expr.evaluate(ctx));
-            });
+            params.forEach((expr) -> values.add(expr.evaluate(ctx)));
             // call the functon
             retValue = funcBlock.call(callContext, values);
         } else {

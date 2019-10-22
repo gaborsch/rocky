@@ -21,7 +21,10 @@ public class RockObject extends BlockContext {
     private final int objId;
     
     // the previous (inherited) level of an object
-    private final RockObject subContext;
+    private final RockObject superObject;
+
+    // The next (extended) level of an object
+    private RockObject subObject;
 
     /**
      * Constructor for base object
@@ -33,20 +36,23 @@ public class RockObject extends BlockContext {
         super(rootCtx, classBlock.getName());
         this.classBlock = classBlock;
         this.objId = objIdSeq++;
-        this.subContext = null;
+        this.superObject = null;
+        this.subObject = null;
     }
 
     /**
      * Constructor for extended objects
-     * @param subCtx
+     * @param superObject
      * @param classBlock 
      */
-    public RockObject(RockObject subCtx, ClassBlock classBlock) {
+    public RockObject(RockObject superObject, ClassBlock classBlock) {
         // object instances can access the root context
-        super(subCtx.getRoot(), classBlock.getName());
+        super(superObject.getRoot(), classBlock.getName());
         this.classBlock = classBlock;
-        this.objId = subCtx.objId;
-        this.subContext = subCtx;
+        this.objId = superObject.objId;
+        this.superObject = superObject;
+        this.subObject = null;
+        superObject.subObject = this;
     }
 
     @Override
@@ -79,12 +85,18 @@ public class RockObject extends BlockContext {
      */
     @Override
     public BlockContext getParent() {
-        if (subContext != null) {
-            return subContext;
+        if (superObject != null) {
+            return superObject;
         }
         return super.getParent();
     }
-    
-    
-    
+
+    public RockObject getTopObject() {
+        RockObject obj = this;
+        while(obj.subObject != null) {
+            obj = obj.subObject;
+        }
+        return obj;
+    }
+
 }
