@@ -177,7 +177,23 @@ public class BlockContext {
 
         BlockContext objCtx = this;
         // find the nearest object context, if exists
-        while (objCtx != null && !(objCtx instanceof RockObject)) {
+        RockObject enclosingObject = null;
+        while (objCtx != null) {
+            if (objCtx instanceof RockObject) {
+                final RockObject rockObjCtx = (RockObject) objCtx;
+                if (enclosingObject == null) {
+                    // find the enclosing RockObject
+                    enclosingObject = rockObjCtx;
+                } else if (enclosingObject.getObjId() != rockObjCtx.getObjId()) {
+                    // if the current object is different than the first, we quit (parent fields cannot be set)
+                    objCtx = null;
+                    break;
+                }
+                if (objCtx.vars.containsKey(vref.getName(this))) {
+                    // if we found the defined field, use this context
+                    break;
+                }
+            }
             objCtx = objCtx.getParent();
         }
 
@@ -185,7 +201,7 @@ public class BlockContext {
         if (this.vars.containsKey(vref.getName(this))) {
             // overwrite local variable
             setLocalVariable(vref, value);
-        } else if (objCtx != null && objCtx.vars.containsKey(vref.getName(this))) {
+        } else if (objCtx != null) {
             // overwrite object member variable
             objCtx.setLocalVariable(vref, value);
         } else if (root.vars.containsKey(vref.getName(this))) {
@@ -246,7 +262,7 @@ public class BlockContext {
 
     public BlockContext getContextForFunction(String name) {
         BlockContext ctx = this;
-        while(ctx != null && !ctx.funcs.containsKey(name)) {
+        while (ctx != null && !ctx.funcs.containsKey(name)) {
             ctx = ctx.getParent();
         }
         return ctx;
