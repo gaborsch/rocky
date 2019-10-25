@@ -1,0 +1,36 @@
+Pasadena looks like nothing
+ leave takes a moment
+  give back 1
+ (eom)
+(eoc)
+Los Angeles looks like Pasadena
+ leave takes a moment
+  let a day be leave on parent taking a moment
+  give back a day plus 1
+ (eom)
+(eoc)
+Tokyo looks like Los Angeles
+ leave takes a moment
+  let a day be leave on parent taking a moment
+  give back a day plus 1
+ (eom)
+(eoc)
+
+a town wants to be Pasadena
+a city wants to be Los Angeles
+a metropolis wants to be Tokyo
+
+Say "Instance check"
+say a town is a kind of Pasadena
+say a town is like Los Angeles
+say a town is a kind of Tokyo
+
+say a city is like Pasadena
+say a city is a kind of Los Angeles
+say a city is a kind of Tokyo
+
+say a metropolis is a kind of Pasadena
+say a metropolis is a kind of Los Angeles
+say a metropolis is like Tokyo
+
+

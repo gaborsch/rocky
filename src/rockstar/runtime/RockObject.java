@@ -106,5 +106,16 @@ public class RockObject extends BlockContext {
         }
         return obj;
     }
+    
+    public boolean checkInstanceof(String className) {
+        RockObject obj = this;
+        while (obj != null) {
+            if (obj.classBlock.getName().equals(className)) {
+                return true;
+            }
+            obj = obj.superObject;
+        }
+        return false;
+    }
 
 }

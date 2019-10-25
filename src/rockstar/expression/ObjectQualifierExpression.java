@@ -5,7 +5,6 @@
  */
 package rockstar.expression;
 
-import com.sun.javafx.fxml.expression.VariableExpression;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 

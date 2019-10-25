@@ -53,6 +53,7 @@ public abstract class CompoundExpression extends Expression {
      80: , (list operator)
      75: built-in functions
      50: on:, by, in, at, to, for, from, near
+     40: is like
      */
     public abstract int getPrecedence();
 

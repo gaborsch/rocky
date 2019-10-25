@@ -17,6 +17,7 @@ import rockstar.expression.DivideExpression;
 import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
+import rockstar.expression.InstanceCheckExpression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.LogicalExpression;
 import rockstar.expression.LogicalExpression.LogicalType;
@@ -25,8 +26,6 @@ import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
 import rockstar.expression.ObjectQualifierExpression;
 import rockstar.expression.PlusExpression;
-import rockstar.expression.RefType;
-import rockstar.expression.ReferenceExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.SliceExpression;
 import rockstar.expression.UnaryMinusExpression;
@@ -401,7 +400,7 @@ public class ExpressionParser {
             if (containsAtLeast(4)) {
                 if ("as".equals(peekCurrent()) && "as".equals(peekNext(2))) {
                     // "is as ... as"
-                    String comparator = this.peekNext(1);
+                    String comparator = this.peekNext();
                     ComparisonType type = null;
                     switch (comparator) {
                         case "high":
@@ -427,6 +426,16 @@ public class ExpressionParser {
                 // "is not"
                 next();
                 return new ComparisonExpression(ComparisonType.NOT_EQUALS);
+            }
+            if (containsAtLeast(2) && "like".equals(peekCurrent())) {
+                // "is like"
+                next();
+                return new InstanceCheckExpression();
+            }
+            if (containsAtLeast(4) && "a".equals(peekCurrent()) && "kind".equals(peekNext()) && "of".equals(peekNext(2))) {
+                // "is a kind of"
+                next(3);
+                return new InstanceCheckExpression();
             }
             // simple "is" 
             return new ComparisonExpression(ComparisonType.EQUALS);
