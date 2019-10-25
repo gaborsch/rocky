@@ -2,6 +2,9 @@ Pasadena looks like nothing
  leave takes a moment
   give back 1
  (eom)
+ stay takes a week
+  give back 7
+ (eom)
 (eoc)
 Los Angeles looks like Pasadena
  leave takes a moment
@@ -14,14 +17,24 @@ Tokyo looks like Los Angeles
   let a day be leave on parent taking a moment
   give back a day plus 1
  (eom)
+ stay takes forever
+  let a day be stay on parent taking forever
+  give back a day plus 1
+ (eom)
 (eoc)
 
-Say "Parent reference"
 a town wants to be Pasadena
 a city wants to be Los Angeles
 a metropolis wants to be Tokyo
+
+Say "Parent reference"
 say leave at a town taking nothing
 say leave at a city taking nothing
 say leave at a metropolis taking nothing
+
+Say "Parent reference with grandparent implementation"
+say stay at a town taking nothing
+say stay at a city taking nothing
+say stay at a metropolis taking nothing
 
 
