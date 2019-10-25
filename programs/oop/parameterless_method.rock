@@ -1,6 +1,7 @@
 Sequence looks like nothing
   Let the counter be 0 
   Sequence takes nothing (parameter-less constructor)
+    Let the counter be 0 
 (eom)
   next takes nothing     (parameter-less method)
     Build the counter up  

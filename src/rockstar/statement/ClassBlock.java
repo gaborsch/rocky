@@ -5,9 +5,11 @@
  */
 package rockstar.statement;
 
+import java.util.LinkedList;
 import java.util.List;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockObject;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -19,6 +21,7 @@ public class ClassBlock extends Block {
     private final String name;
     private final String parentName;
     private ClassBlock parentClass;
+    private List<String> abstractMethodNames = new LinkedList<>();
 
     public ClassBlock(String name, String parentName) {
         this.name = name;
@@ -31,6 +34,10 @@ public class ClassBlock extends Block {
 
     public ClassBlock getParentClass() {
         return parentClass;
+    }
+
+    public List<String> getAbstractMethodNames() {
+        return abstractMethodNames;
     }
 
     /**
@@ -46,6 +53,25 @@ public class ClassBlock extends Block {
         }
         // define current class in the context
         ctx.defineClass(name, this);
+        // collect abstract methods, based on superclass abstract methods
+        abstractMethodNames = new LinkedList<>();
+        if (parentClass != null) {
+            abstractMethodNames.addAll(parentClass.abstractMethodNames);
+        }
+        getStatements().forEach(statement -> {
+            if (statement instanceof FunctionBlock) {
+                FunctionBlock function = (FunctionBlock)statement;
+                if (function.isAbstract()) {
+                    abstractMethodNames.add(function.getName());
+                } else {
+                    abstractMethodNames.remove(function.getName());
+                }
+            }
+        });
+    }
+    
+    public boolean isAbstract() {
+        return ! abstractMethodNames.isEmpty();
     }
 
     /**
@@ -55,6 +81,10 @@ public class ClassBlock extends Block {
      * @return 
      */
     public Value instantiate(BlockContext ctx, List<Value> ctorParams) {
+        if (isAbstract()) {
+            throw new RockstarRuntimeException("Cannot instantiate abstract class " + name);
+        }
+        
         RockObject instance = create(ctx);
 
         // call the constructor
@@ -62,7 +92,6 @@ public class ClassBlock extends Block {
         if (constructor != null) {
             constructor.call(instance, ctorParams);
         }
-        // TODO parent constructor?
         Value v = Value.getValue(instance);
         return v;
     }

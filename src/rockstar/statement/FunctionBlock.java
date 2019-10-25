@@ -37,6 +37,10 @@ public class FunctionBlock extends Block {
     public List<VariableReference> getParameterRefs() {
         return parameterRefs;
     }
+    
+    public boolean isAbstract() {
+        return getStatements().isEmpty();
+    }
 
     /**
      * Define a function

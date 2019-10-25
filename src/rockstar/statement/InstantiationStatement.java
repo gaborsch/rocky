@@ -36,14 +36,14 @@ public class InstantiationStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         // get the class
-        ClassBlock block = ctx.retrieveClass(className);
-        if (block != null) {
+        ClassBlock classBlock = ctx.retrieveClass(className);
+        if (classBlock != null) {
             // evaluate constructor expressions
             List<Value> paramValues = ctorParameterExprs.stream()
                     .map(expr -> expr.evaluate(ctx))
                     .collect(Collectors.toList());
             // instantiate the class
-            Value instance = block.instantiate(ctx, paramValues);
+            Value instance = classBlock.instantiate(ctx, paramValues);
             // assign the instance to the variable
             ctx.setVariable(this.variable, instance);
         } else {
