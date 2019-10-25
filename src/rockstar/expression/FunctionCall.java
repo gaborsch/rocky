@@ -95,7 +95,7 @@ public class FunctionCall extends CompoundExpression {
 
     }
 
-    public boolean isSelfReference(String ref) {
+    private boolean isSelfReference(String ref) {
         return "self".equals(ref)
                 || "myself".equals(ref)
                 || "yourself".equals(ref)
@@ -108,7 +108,7 @@ public class FunctionCall extends CompoundExpression {
 
     }
 
-    public boolean isParentReference(String ref) {
+    private boolean isParentReference(String ref) {
         return "parent".equals(ref)
                 || "father".equals(ref)
                 || "mother".equals(ref)
@@ -117,7 +117,6 @@ public class FunctionCall extends CompoundExpression {
 
     }
 
-    
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
@@ -141,7 +140,6 @@ public class FunctionCall extends CompoundExpression {
                 if (callerCtx == null) {
                     throw new RuntimeException("parent reference in a non-object context");
                 }
-                // 
                 RockObject callerObj = (RockObject) callerCtx;
                 // get the parent object, if exists
                 RockObject parentObj = callerObj.getSuperObject();
@@ -171,8 +169,28 @@ public class FunctionCall extends CompoundExpression {
                     throw new RuntimeException("Invalid method call " + name + " on a " + objValue.getType().name() + " type variable " + object);
                 }
             }
+        } else if (isParentReference(name)) {
+            // unqualified "parent" function: must be a parent constructor reference
+            BlockContext callerCtx = ctx;
+            while (callerCtx != null && !(callerCtx instanceof RockObject)) {
+                callerCtx = callerCtx.getParent();
+            }
+            if (callerCtx == null) {
+                throw new RuntimeException("parent constructor call in a non-object context");
+            }
+            RockObject callerObj = (RockObject) callerCtx;
+            // TODO check if it is called in a constructor
+
+            // get the parent object, if exists
+            RockObject parentObj = callerObj.getSuperObject();
+            if (parentObj != null) {
+                // context is the parent object
+                callContext = parentObj;
+                // get the constructor from the parent context
+                funcBlock = parentObj.getConstructor();
+            }
         } else {
-            // pure call or object context?
+            // pure function call or unqualified call in an object context?
             BlockContext funcCtx = ctx.getContextForFunction(name);
             if (funcCtx == null) {
                 // function not found, or function exists only in subcontexts
