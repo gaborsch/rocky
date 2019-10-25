@@ -98,6 +98,22 @@ rockstar help <command>
 
 Each command has a more detailed help with options, so try `rockstar help run`, `rockstar help debug`, `rockstar help repl`, etc.
 
+### Docker Support
+
+To avoid installing java on your local machine  you can create a docker image using the following command:
+```
+docker build -t rockstar .
+``` 
+Once created you can use the container to run rocky.
+
+Sample commands:
+
+```
+docker run --rm rockstar help run
+docker run --rm -v ${pwd}:/local --interactive --tty rockstar /local/programs/modulus.rock
+docker run --rm -v ${pwd}:/local rockstar /local/programs/gameoflife.rock
+```
+
 ### Test results
 
 *100%* of the tests have passed! With some buggy test cases fixed locally ( https://github.com/RockstarLang/rockstar/issues/202 and https://github.com/RockstarLang/rockstar/issues/203 ), everything works!
