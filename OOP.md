@@ -28,82 +28,95 @@ With classes we can write "system functions" library (collection of classes in a
 I summarized the main characterisics of the OOP feature below. How it works, what will be the user experience, what's implemented and what's not. I tried to cover the most relevant OOP questions as well.
 
 Object type:
+
 A variable (and a value) can be an `object` type. An object can have methods, fields, and possibly a constructor. There are no operations defined for an object type value other than the method calls. Object fields cannot be accessed using dereferencing. `
 
 Class declaration: 
+
 `<class> looks like <superclass>`
 Alias: `look like`. The class is terminated by an empty line (just like other blocks). A class name should follow the rules of a variable names (simple, common or proper name currently), however it is recommended to use proper names (i.e. starting with capital letters) Superclass name can be `nothing` meaning that there is no superclass.
 
 Inheritance:
+
 A class can inherit methods and fields from one class only (or from `nothing` or other aliases for `null` - meaning that there is no superclass). There are neither multiple superclasses nor traits.
 
 Field declaration in a class:
+
 Any field declared in the scope of the class will be treated as a local field. 
 
 Method declaration in a class:
+
 Any function declared in the scope of the class will be treated as a method on the class. All methods are public.
 
 Constructor declaration: 
+
 `<classname> takes <constructor parameter list>`
 The function named exactly as the class name will be used as constructor. The parameter list can be `nothing` or othes aliases of `null`, if there are no parameters.
 
 Special object references:
+
 The object name `parent` refers to the superclass. Aliases: `father`, `mother`, `papa`, `mama`. Can be used within a subclass body. 
 The method name `parent` refers to the parent object constructor.
 
 Instantiation:
+
 `<variable> wants to be <class> [taking <constructor parameter list>]` (also `want to be`, `wanna be`, `will be`, `would be`). An instantiation always comes with an assignment. The `taking` part is optional.
 At instantiation, all fields are initialized and all methods are declared, in order of declaration. Finally the constructor is called with the provided parameter list (or with empty list, if missing).
 
 Method call:
+
 `<method> on <object-value> [taking <parameter-list>]`. Aliases for `on`: `by`, `in`, `at`, `to`, `for`, `from` or `near`. There are no multiple method calls (like `method2 on method1 on Object`), so in this case the `<object-value>` should be interpreted as a variable reference.
 The precedence of the method call is the highest, higher than the currently highest operator (function call).
 In an object context, the instance methods and inherited methods can be called without qualifying the object (implicit `this` reference).
 Also, in an object context, `parent` (and its aliases) refer to the parent constructor.
 
 Visibility:
+
 All declared methods are public, there are no private or protected methods.
 All fields of a class are protected (not visible from outside, but a subclass method can read and write them). 
 
 Override:
+
 A subclass method declaration will override (and hide) a superclass method declaration, if the same name is defined. The superclass method is still accessible from the subclass using the `<method> on parent` special object reference.
 A field declared in a subclass does not override the superclass field, instead, it uses that field from the superclass (overwrite its value).
 
 Overload:
+
 Just like with the functions, it is not possible to overload a method, because only the method name is checked.
 
 Static fields, static methods:
+
 There are no static fields of methods in Rockstar. However, after defining a class, it is possible to create an instance as a global variable. By convention, the name of the global variable should be equal to the class name. This instance can be used as "static instance".
 If a method in an ordinary instance wants to access the static methods, can use the `on <classname>` clause.
 
 Runtime instance check:
+
 The `<instance> is a kind of <classname>` operation can be used to check if the instance implements a certain class or interface. Alias: `<instance> is like <classname>`. Inherited classes and interfaces all count!
+
+Abstract methods:
+
+A method with an empty body is considered abstract. A non-abstract method must have at least a `Give back nothing` statement.
 
 Abstraction, interfaces:
 There are no abstract methods and abstract classes or interfaces. 
 
+Abstract classes, interfaces:
+A class that have abstract methods is considered and abstract class. It is not possible to instantiate an abstract class.
+Interfaces are classes that have abstract methods only - an absolutely abstract class. Interfaces have no special meanings, though.
+
 Anonymous classes:
+
 There are no anonymous classes.
 
 Garbage collection, destructors, finalizers:
-There is no garbage collection and there are no destructors. However, an object pool can be implemented.
 
+There is no garbage collection and there are no destructors. However, an object pool can be implemented.
 
 ---
 Possible future extensions:
 
-Abstract methods:
-A method with an empty body is considered abstract. A non-abstract method must have at least a `Give back nothing` statement.
-When an abstract method is called, an error is thrown.
-
-Abstract classes, interfaces:
-A class that have abstract methods are considered abstract classes. It is not possible to instantiate an abstract class, we must check the class abstractness after class definition.
-Interfaces are classes that have abstract methods only - an absolutely abstract class. Interfaces have no special meanings
-
-Implementation, multiple inheritance:
+Interface implementation, multiple inheritance:
 It is possible to inherit methods from multiple classes or interfaces, by having a list expression for class or interface names. The first one is the strongest, it overrides all methods of the rest of the classes, the last ones should be the interfaces (if any).
-
-
 
 
 
