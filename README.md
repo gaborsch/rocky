@@ -9,6 +9,7 @@ Features include:
 * List command (parse a file without running it)
 * Detailed help with options explanation
 * IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
+* Rockstar [Object Oriented Programming](OOP.md)! Yes, you can write OOP code in Rockstar!
 
 It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix.
 
@@ -17,6 +18,17 @@ It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrapper
 To install and run, you only need the `./rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`, depending on your OS). Everything else is for development.
 
 There are some Rockstar program in the `programs` folder and its subfolders, you may want to check them, too. They're mostly for test purposes, though.
+
+#### Docker Support
+
+If you don't have Java on your local machine, you can create a docker image using the following command:
+```
+docker build -t rockstar .
+``` 
+Once created, you can use the container to run rocky. Here are some sample commands:
+* Get help: `docker run --rm rockstar help`
+* Run a program: `docker run --rm -v ${pwd}:/local rockstar /local/programs/gameoflife.rock`
+* Run a program (with input): `docker run --rm -v ${pwd}:/local --interactive --tty rockstar /local/programs/modulus.rock`
 
 ### Usage
 
@@ -98,28 +110,14 @@ rockstar help <command>
 
 Each command has a more detailed help with options, so try `rockstar help run`, `rockstar help debug`, `rockstar help repl`, etc.
 
-### Docker Support
-
-To avoid installing java on your local machine  you can create a docker image using the following command:
-```
-docker build -t rockstar .
-``` 
-Once created you can use the container to run rocky.
-
-Sample commands:
-
-```
-docker run --rm rockstar help run
-docker run --rm -v ${pwd}:/local --interactive --tty rockstar /local/programs/modulus.rock
-docker run --rm -v ${pwd}:/local rockstar /local/programs/gameoflife.rock
-```
-
 ### Test results
 
 *100%* of the tests have passed! With some buggy test cases fixed locally ( https://github.com/RockstarLang/rockstar/issues/202 and https://github.com/RockstarLang/rockstar/issues/203 ), everything works!
 
+Also, I included OOP tests that do not pass on other Rockstar implementations that don't have OOP feature.
+
 ```
-$ ./rockstar test programs/tests/ -v
+$ ./rockstar test -v programs/tests/
 PARSE_ERROR tests in programs/tests/failures
    [ OK ] invalid_comments.rock
 CORRECT tests in programs/tests/fixtures/assignment
@@ -173,6 +171,19 @@ CORRECT tests in programs/tests/fixtures/math
    [ OK ] operators.rock
    [ OK ] operator_aliases.rock
    [ OK ] operator_precedence.rock
+CORRECT tests in programs/tests/fixtures/oop
+   [ OK ] abstract_method.rock
+   [ OK ] class_declaration.rock
+   [ OK ] constructor.rock
+   [ OK ] field_declaration.rock
+   [ OK ] field_visibility.rock
+   [ OK ] instance_check.rock
+   [ OK ] instantiation.rock
+   [ OK ] method.rock
+   [ OK ] method_override.rock
+   [ OK ] parameterless_method.rock
+   [ OK ] parent_constructor.rock
+   [ OK ] parent_ref.rock
 CORRECT tests in programs/tests/fixtures/operators
    [ OK ] addOperator.rock
    [ OK ] andTest.rock
@@ -202,13 +213,18 @@ CORRECT tests in programs/tests/fixtures/whitespace
    [ OK ] no_newline_at_eof.rock
    [ OK ] trailing_blank_lines.rock
    [ OK ] trailing_empty_lines.rock
+RUNTIME_ERROR tests in programs/tests/runtime-errors
+   [ OK ] abstract_instantiation.rock
+   [ OK ] field_access_outside.rock
+   [ OK ] undefined_method.rock
+   [ OK ] undefined_method_from_object.rock
 
 ============================================================
 Test results for programs/tests/:
 ============================================================
-All tests:    67
+All tests:    83
 Failed tests: 0
-Passed tests: 67
+Passed tests: 83
 Pass ratio:   100.00%
 ============================================================
 
