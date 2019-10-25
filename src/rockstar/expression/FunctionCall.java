@@ -65,9 +65,9 @@ public class FunctionCall extends CompoundExpression {
         if (expr instanceof ObjectQualifierExpression) {
             ObjectQualifierExpression oqe = (ObjectQualifierExpression) expr;
             object = oqe.getObjectRef();
-            name = oqe.getQualifierRef().getFunctionName();
+            name = oqe.getQualifierRef().getName();
         } else if (expr instanceof VariableReference) {
-            name = ((VariableReference) expr).getFunctionName();
+            name = ((VariableReference) expr).getName();
         } else {
             throw new RuntimeException("Invalid function name: " + expr);
         }
@@ -95,6 +95,29 @@ public class FunctionCall extends CompoundExpression {
 
     }
 
+    public boolean isSelfReference(String ref) {
+        return "self".equals(ref)
+                || "myself".equals(ref)
+                || "yourself".equals(ref)
+                || "himeself".equals(ref)
+                || "herself".equals(ref)
+                || "itself".equals(ref)
+                || "ourselves".equals(ref)
+                || "yourselves".equals(ref)
+                || "themselves".equals(ref);
+
+    }
+
+    public boolean isParentReference(String ref) {
+        return "parent".equals(ref)
+                || "father".equals(ref)
+                || "mother".equals(ref)
+                || "papa".equals(ref)
+                || "mama".equals(ref);
+
+    }
+
+    
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
@@ -103,17 +126,38 @@ public class FunctionCall extends CompoundExpression {
 
         if (object != null) {
             // method call on an object
-            if (object.isSelfReference()) {
+            if (isSelfReference(object.getName())) {
                 // self object reference?
                 funcBlock = callContext.retrieveLocalFunction(name);
                 throw new RuntimeException("self reference");
 
-            } else if (object.isParentReference()) {
-                // parent object reference?
-                throw new RuntimeException("parent reference");
-
+            } else if (isParentReference(object.getName())) {
+                // parent object reference
+                // find the caller object context
+                BlockContext callerCtx = ctx;
+                while (callerCtx != null && !(callerCtx instanceof RockObject)) {
+                    callerCtx = callerCtx.getParent();
+                }
+                if (callerCtx == null) {
+                    throw new RuntimeException("parent reference in a non-object context");
+                }
+                // 
+                RockObject callerObj = (RockObject) callerCtx;
+                // get the parent object, if exists
+                RockObject parentObj = callerObj.getSuperObject();
+                if (parentObj != null) {
+                    // find the context that contains the function starting the parent
+                    callContext = parentObj.getContextForFunction(name);
+                    // the call context must be the same object as the caller object
+                    if ((callContext != null)
+                            && (callContext instanceof RockObject)
+                            && (((RockObject) callContext).getObjId() == callerObj.getObjId())) {
+                        // get the method from that context
+                        funcBlock = callContext.retrieveLocalFunction(name);
+                    }
+                }
             } else {
-                // ordinary object reference
+                // object reference
                 ctx.beforeExpression(object);
                 Value objValue = ctx.afterExpression(object, ctx.getVariableValue(object));
                 if (objValue.isObject()) {
@@ -132,7 +176,7 @@ public class FunctionCall extends CompoundExpression {
             BlockContext funcCtx = ctx.getContextForFunction(name);
             if (funcCtx == null) {
                 // function not found, or function exists only in subcontexts
-                throw new RockstarRuntimeException("Undefined function: "+name);
+                throw new RockstarRuntimeException("Undefined function: " + name);
             }
             // we found the function, now we need to find the overrides, if it is on an object
             if (funcCtx instanceof RockObject) {
@@ -155,9 +199,9 @@ public class FunctionCall extends CompoundExpression {
             retValue = funcBlock.call(callContext, values);
         } else {
             if (object == null) {
-                throw new RockstarRuntimeException("Undefined function: "+name);
+                throw new RockstarRuntimeException("Undefined function: " + name);
             }
-            throw new RockstarRuntimeException("Undefined method: " + name + " on class " + object.getFunctionName());
+            throw new RockstarRuntimeException("Undefined method: " + name + " on class " + object.getName());
         }
         // return the return value
         return ctx.afterExpression(this, retValue == null ? Value.NULL : retValue);

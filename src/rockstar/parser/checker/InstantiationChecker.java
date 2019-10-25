@@ -31,7 +31,7 @@ public class InstantiationChecker extends Checker {
             if (variableRef != null) {
                 VariableReference classRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
                 if (classRef != null) {
-                    String className = classRef.getFunctionName();
+                    String className = classRef.getName();
                     InstantiationStatement stmt = new InstantiationStatement(variableRef, className);
 
                     if (getResult()[2] != null) {

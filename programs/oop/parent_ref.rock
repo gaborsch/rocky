@@ -24,20 +24,4 @@ say leave at a town taking nothing
 say leave at a city taking nothing
 say leave at a metropolis taking nothing
 
-a cat looks like nothing
-  food is nowhere
-  a cat takes milk
-    let the food be milk
-  (eom - constructor)
-(eoc)
-a tiger looks like a cat
-  a tiger takes prey
-    parent taking prey
-  (eom - constructor)
-(eoc)
-
-Say "Parent constructor"
-Kitty wants to be a cat taking "milk"
-Tom wants to be a tiger taking "Jerry"
-
 

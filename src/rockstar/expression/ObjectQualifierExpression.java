@@ -44,7 +44,7 @@ public class ObjectQualifierExpression extends CompoundExpression {
     public Value evaluate(BlockContext ctx) {
         // evaluate as a parameterless method call
         if (wrappedFunctionCall == null) {
-            String name = getQualifierRef().getFunctionName();
+            String name = getQualifierRef().getName();
             wrappedFunctionCall = new FunctionCall(getObjectRef(), name);
         }
         return wrappedFunctionCall.evaluate(ctx);

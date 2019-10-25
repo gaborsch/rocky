@@ -23,7 +23,7 @@ public class ClassBlockChecker extends Checker {
         if (match(1, "look", "like", 2) || match(1, "looks", "like", 2)) {
             VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
             if (nameRef != null) {
-                String name = nameRef.getFunctionName();
+                String name = nameRef.getName();
                 // checking for "nothing" and aliases
                 ConstantExpression literal = ExpressionFactory.tryLiteralFor(getResult()[2], line);
                 if (literal != null) {
@@ -35,7 +35,7 @@ public class ClassBlockChecker extends Checker {
                     // checking for class name
                     VariableReference parentRef = ExpressionFactory.tryVariableReferenceFor(getResult()[2], line);
                     if (parentRef != null && !parentRef.isLastVariable()) {
-                        return new ClassBlock(name, parentRef.getFunctionName());
+                        return new ClassBlock(name, parentRef.getName());
                     }
                 }
             }

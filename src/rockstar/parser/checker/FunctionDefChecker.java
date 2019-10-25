@@ -26,7 +26,7 @@ public class FunctionDefChecker extends Checker {
             // function name is the same as a variable name
             VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line);
             if (nameRef != null) {
-                FunctionBlock fb = new FunctionBlock(nameRef.getFunctionName());
+                FunctionBlock fb = new FunctionBlock(nameRef.getName());
                 // parse the expression, for an expression list
                 Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line);
                 // treats null expression

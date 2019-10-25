@@ -59,6 +59,14 @@ public class RockObject extends BlockContext {
     public String getName() {
         return classBlock.getName() + "#" + objId + "-" + getLevel();
     }
+
+    public int getObjId() {
+        return objId;
+    }
+
+    public RockObject getSuperObject() {
+        return superObject;
+    }
     
     @Override
     public String toString() {
