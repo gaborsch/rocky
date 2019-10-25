@@ -27,7 +27,7 @@ public class Rockstar {
 
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
-    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99";
+    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99 (with OOP)";
 
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test", "debug"}));
 
