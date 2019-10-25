@@ -69,7 +69,7 @@ public class FunctionCall extends CompoundExpression {
         } else if (expr instanceof VariableReference) {
             name = ((VariableReference) expr).getName();
         } else {
-            throw new RuntimeException("Invalid function name: " + expr);
+            throw new RockstarRuntimeException("Invalid function name: " + expr);
         }
 
         Expression paramsExpr = getParameters().remove(0);
@@ -128,7 +128,7 @@ public class FunctionCall extends CompoundExpression {
             if (isSelfReference(object.getName())) {
                 // self object reference?
                 funcBlock = callContext.retrieveLocalFunction(name);
-                throw new RuntimeException("self reference");
+                throw new RockstarRuntimeException("self reference");
 
             } else if (isParentReference(object.getName())) {
                 // parent object reference
@@ -138,7 +138,7 @@ public class FunctionCall extends CompoundExpression {
                     callerCtx = callerCtx.getParent();
                 }
                 if (callerCtx == null) {
-                    throw new RuntimeException("parent reference in a non-object context");
+                    throw new RockstarRuntimeException("parent reference in a non-object context");
                 }
                 RockObject callerObj = (RockObject) callerCtx;
                 // get the parent object, if exists
@@ -166,7 +166,7 @@ public class FunctionCall extends CompoundExpression {
                     // get the method from the object
                     funcBlock = callContext.retrieveLocalFunction(name);
                 } else {
-                    throw new RuntimeException("Invalid method call " + name + " on a " + objValue.getType().name() + " type variable " + object);
+                    throw new RockstarRuntimeException("Invalid method call " + name + " on a " + objValue.getType().name() + " type variable " + object);
                 }
             }
         } else if (isParentReference(name)) {
@@ -176,7 +176,7 @@ public class FunctionCall extends CompoundExpression {
                 callerCtx = callerCtx.getParent();
             }
             if (callerCtx == null) {
-                throw new RuntimeException("parent constructor call in a non-object context");
+                throw new RockstarRuntimeException("parent constructor call in a non-object context");
             }
             RockObject callerObj = (RockObject) callerCtx;
             // TODO check if it is called in a constructor
