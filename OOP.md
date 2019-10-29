@@ -30,7 +30,7 @@ I summarized the main characterisics of the OOP feature below. How it works, wha
 
 ### Object type:
 
-A variable (and a value) can be an `object` type. An object can have methods, fields, and possibly a constructor. There are no operations defined for an object type value other than the method call. Object fields cannot be accessed using dereferencing. `
+A variable (and a value) can be an `object` type. An object can have methods, fields, and possibly a constructor. There are no operations defined for an object type value other than the method call. Object fields cannot be accessed using dereferencing.
 
 ### Class declaration: 
 
