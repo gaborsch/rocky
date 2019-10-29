@@ -1,6 +1,6 @@
 # Object Oriented Programming. 
 
-It sounds a big scary thing for Rockstar, but the basic building blocks are already in there. Since we recently clarified and implemented the nested functions feature, we can define named blocks within named blocks, with local scope variables. The OOP concept described here is not too different from that, yet we can fare quite long with these features. It's not a full-fledge OOP (abstraction and polymorphism is not covered), but encapsulation and inheritance _is_ covered. Later we could refine the structure, if we really need them, it wouldn't take too much, but I prefer adding new concepts slowly.
+It sounds a big scary thing for Rockstar, but the basic building blocks are already in there. Because we recently clarified and implemented the _nested functions_ feature, we can define named blocks within named blocks, with local scope variables. The OOP concept described here is not too different from that, and we can fare quite long with these features. The OOP described below is not a full-fledged OOP, but encapsulation, inheritance, abstraction and polymorphism is covered (the latter two is partially). 
 
 Let me show you a small example (this uses the "parameterless method" syntax I proposed earlier):
 
@@ -30,7 +30,7 @@ I summarized the main characterisics of the OOP feature below. How it works, wha
 
 ### Object type:
 
-A variable (and a value) can be an `object` type. An object can have methods, fields, and possibly a constructor. There are no operations defined for an object type value other than the method calls. Object fields cannot be accessed using dereferencing. `
+A variable (and a value) can be an `object` type. An object can have methods, fields, and possibly a constructor. There are no operations defined for an object type value other than the method call. Object fields cannot be accessed using dereferencing. `
 
 ### Class declaration: 
 
@@ -43,33 +43,33 @@ A class can inherit methods and fields from one class only (or from `nothing` or
 
 ### Field declaration in a class:
 
-Any field declared in the scope of the class will be treated as a local field. 
+Any variable declared in the scope of the class will be treated as a local field. All fields should be declared.
 
 ### Method declaration in a class:
 
-Any function declared in the scope of the class will be treated as a method on the class. All methods are public.
+Any function declared in the scope of the class will be treated as a method on the class.
 
 ### Constructor declaration: 
 
 `<classname> takes <constructor parameter list>`
-The function named exactly as the class name will be used as constructor. The parameter list can be `nothing` or othes aliases of `null`, if there are no parameters.
+The function named exactly as the class name will be used as constructor. The parameter list can be `nothing` or othes aliases of `null`, if there are no parameters. There can be only one constructor for each class.
 
-### Special object references:
+### Special references:
 
-The object name `parent` refers to the superclass. Aliases: `father`, `mother`, `papa`, `mama`. Can be used within a subclass body. 
+The object name `parent` in a method call refers to the method accessible from the superclass (that can be declared in the parent class, grandparent class, or even higher). Aliases to `parent`: `father`, `mother`, `papa`, `mama`. 
 The method name `parent` refers to the parent object constructor.
 
 ### Instantiation:
 
-`<variable> wants to be <class> [taking <constructor parameter list>]` (also `want to be`, `wanna be`, `will be`, `would be`). An instantiation always comes with an assignment. The `taking` part is optional.
-At instantiation, all fields are initialized and all methods are declared, in order of declaration. Finally the constructor is called with the provided parameter list (or with empty list, if missing).
+`<variable> wants to be <class> [taking <constructor parameter list>]` (also `want to be`, `wanna be`, `will be`, `would be`). The instantiation always comes with an assignment. The `taking` part (with constructor parameters) is optional.
+When instantiating, all fields are initialized and all methods are declared, in order of declaration (superclass first, then the subclass). Finally the constructor is called with the provided parameter list (or with empty list, if missing).
 
 ### Method call:
 
-`<method> on <object-value> [taking <parameter-list>]`. Aliases for `on`: `by`, `in`, `at`, `to`, `for`, `from` or `near`. There are no multiple method calls (like `method2 on method1 on Object`), so in this case the `<object-value>` should be interpreted as a variable reference.
+`<method> on <object-value> [taking <parameter-list>]`. Aliases for `on`: `by`, `in`, `at`, `to`, `from`, `for` or `near`. There are no multiple method calls (like `method2 on method1 on Object`).
 The precedence of the method call is the highest, higher than the currently highest operator (function call).
-In an object context, the instance methods and inherited methods can be called without qualifying the object (implicit `this` reference).
-Also, in an object context, `parent` (and its aliases) refer to the parent constructor.
+
+In an object context, the instance methods and inherited methods can be called without qualifying the object (implicit `this` reference). Also, in an object context, `parent` (and its aliases) refer to the parent constructor.
 
 ### Visibility:
 
@@ -79,7 +79,7 @@ All fields of a class are protected (not visible from outside, but a subclass me
 ### Override:
 
 A subclass method declaration will override (and hide) a superclass method declaration, if the same name is defined. The superclass method is still accessible from the subclass using the `<method> on parent` special object reference.
-A field declared in a subclass does not override the superclass field, instead, it uses that field from the superclass (overwrite its value).
+A field declared in a subclass does not override the superclass field, instead, it uses that field from the superclass (only overwrites its value).
 
 ### Overload:
 
@@ -88,18 +88,18 @@ Just like with the functions, it is not possible to overload a method, because o
 ### Static fields, static methods:
 
 There are no static fields of methods in Rockstar. However, after defining a class, it is possible to create an instance as a global variable. By convention, the name of the global variable should be equal to the class name. This instance can be used as "static instance".
-If a method in an ordinary instance wants to access the static methods, can use the `on <classname>` clause.
-
-### Runtime instance check:
-
-The `<instance> is a kind of <classname>` operation can be used to check if the instance implements a certain class or interface. Alias: `<instance> is like <classname>`. Inherited classes and interfaces all count!
+If a method in an ordinary instance wants to access the static methods, it can use the `on <classname>` clause - but the static field values are not shared among instances.
 
 ### Abstract methods:
 A method with an empty body is considered abstract. A non-abstract method must have at least a `Give back nothing` statement.
 
 ### Abstract classes, interfaces:
-A class that have abstract methods is considered and abstract class. It is not possible to instantiate an abstract class.
+A class that has abstract methods is considered and abstract class. It is not possible to instantiate an abstract class.
 Interfaces are classes that have abstract methods only - an absolutely abstract class. Interfaces have no special meanings, though.
+
+### Runtime instance check:
+
+The `<instance> is a kind of <classname>` operation can be used to check if the instance implements a certain class or interface. Alias: `<instance> is like <classname>`. Inherited classes and interfaces all count!
 
 ### Anonymous classes:
 
