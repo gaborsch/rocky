@@ -1,0 +1,30 @@
+Element looks like nothing
+  Let previous be nowhere
+  Let symbol be nothing
+  Element takes a value
+    let symbol be a value
+  (eom)
+  setPrevious takes prevElement
+    let previous be prevElement
+  (eom)
+  extending takes a value
+    nextElement wants to be Element taking a value
+    setPrevious on nextElement taking self
+    give back nextElement
+  (eom)
+  listing takes nothing
+    if previous is nothing
+      give back symbol
+    else
+      give back symbol plus ", " plus listing on previous
+    (end if)
+  (eom)
+(eoc)
+
+Hydrogen will be Element taking "H"
+say listing on Hydrogen
+let Helium be extending on Hydrogen taking "He"
+say listing on Helium
+let Lithium be extending on Helium taking "Li"
+say listing on Lithium
+

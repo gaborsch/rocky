@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.statement.ClassBlock;
@@ -133,32 +134,6 @@ public class BlockContext {
      * @param vref
      * @param value
      */
-    public void setVariable1(VariableReference vref, Value value) {
-        // we can set either local or global variables
-        boolean hasGlobal = root.vars.containsKey(vref.getName(this));
-        if (this.vars.containsKey(vref.getName(this))) {
-            // overwrite local variable
-            setLocalVariable(vref, value);
-        } else if (hasGlobal) {
-            // overwrite global variable
-            root.setLocalVariable(vref, value);
-        } else {
-            // initialize local variable
-            setLocalVariable(vref, value);
-        }
-
-        // last assigned variable name
-        if (!vref.isLastVariable()) {
-            this.lastVariableRef = vref;
-        }
-    }
-
-    /**
-     * Set a variable value in the proper context
-     *
-     * @param vref
-     * @param value
-     */
     public void setVariable(VariableReference vref, Value value) {
         doSetVariable(vref, value);
         // last assigned variable name
@@ -175,6 +150,33 @@ public class BlockContext {
      */
     private void doSetVariable(VariableReference vref, Value value) {
 
+        final String variableName = vref.getName(this);
+        BlockContext objCtx = getObjectContext(
+                ctx -> ctx.vars.containsKey(vref.getName(this))
+        );
+
+        // we can set either local or global variables
+        if (this.vars.containsKey(variableName)) {
+            // overwrite local variable
+            setLocalVariable(vref, value);
+        } else if (objCtx != null) {
+            // overwrite object member variable
+            objCtx.setLocalVariable(vref, value);
+        } else if (root.vars.containsKey(variableName)) {
+            // overwrite global variable
+            root.setLocalVariable(vref, value);
+        } else {
+            // initialize local variable
+            setLocalVariable(vref, value);
+        }
+    }
+
+    public RockObject getObjectContext() {
+        // return the first object context
+        return getObjectContext(ctx -> true);
+    }
+
+    private RockObject getObjectContext(Predicate<BlockContext> condition) {
         BlockContext objCtx = this;
         // find the nearest object context, if exists
         RockObject enclosingObject = null;
@@ -189,28 +191,14 @@ public class BlockContext {
                     objCtx = null;
                     break;
                 }
-                if (objCtx.vars.containsKey(vref.getName(this))) {
-                    // if we found the defined field, use this context
-                    break;
+                if (condition.test(objCtx)) {
+                    // if we found, use this context
+                    return (RockObject) objCtx;
                 }
             }
             objCtx = objCtx.getParent();
         }
-
-        // we can set either local or global variables
-        if (this.vars.containsKey(vref.getName(this))) {
-            // overwrite local variable
-            setLocalVariable(vref, value);
-        } else if (objCtx != null) {
-            // overwrite object member variable
-            objCtx.setLocalVariable(vref, value);
-        } else if (root.vars.containsKey(vref.getName(this))) {
-            // overwrite global variable
-            root.setLocalVariable(vref, value);
-        }
-
-        // initialize local variable
-        setLocalVariable(vref, value);
+        return null;
     }
 
     /**
@@ -241,15 +229,7 @@ public class BlockContext {
             ctx = ctx.getParent();
         }
 
-        if (v == null) {
-            // is it a function reference?
-            BlockContext funcCtx = getContextForFunction(vname);
-            if (funcCtx != null) {
-                return Value.BOOLEAN_TRUE;
-            }
-        }
-
-        return v == null ? Value.MYSTERIOUS : v;
+        return v;
     }
 
     public void defineFunction(String name, FunctionBlock function) {

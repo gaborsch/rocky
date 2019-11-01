@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import rockstar.expression.VariableReference;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 
@@ -55,11 +56,6 @@ public class RockObject extends BlockContext {
         superObject.subObject = this;
     }
 
-    @Override
-    public String getName() {
-        return classBlock.getName() + "#" + objId + "-" + getLevel();
-    }
-
     public int getObjId() {
         return objId;
     }
@@ -67,10 +63,10 @@ public class RockObject extends BlockContext {
     public RockObject getSuperObject() {
         return superObject;
     }
-    
+
     @Override
-    public String toString() {
-        return classBlock.getName() + "#" + objId;
+    public String getName() {
+        return classBlock.getName() + "#" + objId + "-" + getLevel();
     }
 
     @Override
@@ -83,10 +79,6 @@ public class RockObject extends BlockContext {
         }
     }
 
-    public FunctionBlock getConstructor() {
-        return constructor;
-    }
-
     /**
      * Defines the visit order: first the subcontexts, then the parent contexts
      * @return 
@@ -97,6 +89,10 @@ public class RockObject extends BlockContext {
             return superObject;
         }
         return super.getParent();
+    }
+
+    public FunctionBlock getConstructor() {
+        return constructor;
     }
 
     public RockObject getTopObject() {
@@ -116,6 +112,11 @@ public class RockObject extends BlockContext {
             obj = obj.superObject;
         }
         return false;
+    }
+    
+    @Override
+    public String toString() {
+        return classBlock.getName() + "#" + objId;
     }
 
 }
