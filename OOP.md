@@ -10,7 +10,7 @@ Let the counter be 0                          (field declaration works like any 
 current takes nothing                         (method declaration works like any function declaration)
 give back the counter                         (read access to field)
                                               (end of method "next")
-next takes nothing                            (method declaration )
+next takes nothing                            (another method declaration)
 Build the counter up                          (write access to field)
 give back the counter                         (read access to field)
                                               (end of method "next")
@@ -19,7 +19,6 @@ ID wants to be Sequence                       (instantiation)
 say next on ID                                (call the parameterless method on instance ID, output: "1")
 say next on ID                                (output: "2")
 say 2 times next on ID                        (output: "6")
-say the counter on ID                         (attempt to access a field, but forbidden, output: "mysterious")
 say current on ID                             (output: "3")
 ```
 
@@ -118,116 +117,133 @@ It is possible to inherit methods from multiple classes or interfaces, by having
 # Example code
 --- 
 
-Chain/Array (plain OOP)
+Chain/Array
 ```
-A Chain Link looks like nothing               (class declaration, inherits nothing)
-  the morning is nowhere                      (field declaration)
-  the evening is gone                         (field declaration)
-  the load is nothing                         (field declaration)
-  A Chain Link takes the burden               (function name equals to the class name is a constructor, one parameter here)
-    put the burden into the load              (write to field)
-                                              (end of constructor)
-  sunray takes the burden                     (method declaration)
-    put the burden into the load              (write to field)
-    give back the burden                      (access to field)
+Chain Link looks like nothing                 (class declaration, inherits nothing)
+  the morning is nowhere                      (reference to previous)
+  the evening is gone                         (reference to next)
+  the load is nothing                         (the payload)
+  Chain Link takes the burden                 (constructor with the payload)
+    put the burden into the load              
                                               (end of method)
-  the sunrise takes the sun                   (method declaration)
-    let the morning be the sun                (write to field)
-    if the sun is not gone
+  the ray takes the burden                    ("set")
+    put the burden into the load              
+    give back the burden                      
+                                              (eom)
+  the sunrise takes the sun                   (attach to previous)
+    let the morning be the sun                
+    if the sun is not gone                    (call "attach to next" on the previous)
       the sunset on the sun taking self       (method call, "self" access)
+
     give back the sun
-                                              (end of method)
-  the sunset takes the sun                    (method declaration)
-    let the evening be the sun                (write to field)
+                                              (eom)
+  the sunset takes the sun                    (attach to next)
+    let the evening be the sun                 
     give back the sun
+                                              (eom)
+  the eclipse takes nothing                   (clearNext)
+    let tonight be the evening
+    let the evening be nowhere                
+    give back tonight
                                               (end of method)
-  the eclipse takes nothing                   (method declaration)
-    the sunset on the evening taking nowhere  (method call, access to field)
-    give back the evening
-                                              (end of method)
-  tomorrow takes nothing                      (method declaration)
-    give back the morning                     (access to field)
-                                              (end of method)
-  the look takes nothing                      (method declaration)
-    give back the load                        (access to field)
-                                              (end of method)
-                                              (end of class A Chain Link)
-A Chain looks like nothing                                        (class declaration, inherits nothing, no constructor)
-  the brave is nowhere                                            (field declaration)
-  the coward is gone                                              (field declaration)
-  the army is invincible                                          (field declaration)
-  add takes the sword                                             (method declaration)
-    the warrior wants to be the A Chain Link taking the sword     (call constructor with one parameter)
-    if the coward is not gone                                     (access to field)
-      the sunrise on the coward taking the warrior                (call method on instance with one parameter)
+  tomorrow takes nothing                      (getNext)
+    give back the morning                     
+                                              (eom)
+  the look takes nothing                      (getPrevoius)
+    give back the load                        
+                                              (eom)
+                                              (end of class Chain Link)
+
+Chain looks like nothing                                          (class declaration, inherits nothing, no constructor)
+  the brave is nowhere                                            
+  the coward is gone                                              
+  the army is invincible                                          
+  add takes the sword                                             (add to the list)
+    the warrior wants to be Chain Link taking the sword           (initialize a container with the vale)
+    if the coward is not gone                                     
+      the sunrise on the coward taking the warrior                (append to the tail element)
                                                                   (end if)
-    let the coward be the warrior                                 (write to field)
-    if the brave is nowhere                                       (access to field)
-      let the brave be the warrior                                (write to field)
+    let the coward be the warrior                                 (this is the tail)
+    if the brave is nowhere                                       
+      let the brave be the warrior                                (set the list head, if not set)
                                                                   (end if)
-    build the army up                                             (write to field)
-    give back the burden                                          (access to field)
-                                                                  (end of method)
-  remove takes nothing                                            (method declaration)
-    if the coward is gone                                         (access to field)
+    build the army up                                             (increase size)
+    give back the burden                                          
+                                                                  (eom)
+  remove takes nothing                                            (remove the last, give back its value)
+    if the coward is gone                                         (if the list is empty)
       give back nothing
                                                                   (end if)
-    let the burden be the look on the coward                      (call method on instance)
-    let the coward be the eclipse on the coward                   (call method on instance)
-    knock the army down                                           (write to field)
+    let the burden be the look on the coward                      (get the value from the last)
+    let the coward be the eclipse on the coward                   (remove the last)
+    knock the army down                                           (decrease size)
     give back the burden
-                                                                  (end of method)
-  size takes nothing                                              (method declaration)
-    give back the army                                            (access to field)
-                                                                  (end of method)
-  first takes nothing                                             (method declaration)
-    give back the look on the brave                               (access to field)
-                                                                  (end of method)
-  last takes nothing                                              (method declaration)
-    give back the look on the coward                              (access to field)
-                                                                  (end of method)
-  peek takes the enemy                                            (method declaration)
-    if nothing is as weak as the enemy and the enemy is weaker than the army
-      let the warrior be the brave                                (object assignment)
+                                                                  (eom)
+  size takes nothing                                              (size)
+    give back the army                                            
+                                                                  (eom)
+  first takes nothing                                             (first value)
+    give back the look on the brave                               
+                                                                  (eom)
+  last takes nothing                                              (last value)
+    give back the look on the coward                              
+                                                                  ((eom))
+  peek takes the enemy                                            (get a value at given index)
+    if nothing is as weak as the enemy and the enemy is weaker than the army    (check index bounds)
+      let the warrior be the brave                                (iterate through the containers)
       while the enemy is stronger than nothing
-        let the warrior be the tomorrow on the warrior            (call method on instance)
-knock the enemy down
+        let the warrior be tomorrow on the warrior                (next container)
+        knock the enemy down
                                                                   (end while)
-      give back the look on the warrior                           (call method on instance)
+      give back the look on the warrior                           (return the value)
                                                                   (end if)
-    give back nothing
-                                                                  (end of method)
+    give back mysterious
+                                                                  (eom)
                                                                   (end of class Chain)
 Array looks like Chain
-  set takes the enemy, the sword
-    if nothing is as weak as the enemy 
-      let New Wave be the enemy + 1
- if New Wave is stronger than the army                       (access to super class field)
-         let the warrior be expand taking New Wave
-      otherwise
+  set takes the enemy, the sword                                  (set: index, value)
+    if nothing is as weak as the enemy                            (if the index is non-negative)
+      let the ghost be the enemy
+      build the ghost up
+      if the ghost is stronger than the army                      (we need to expand)
+        while the ghost is stronger than the army                 (expand until we have the limit)
+           add taking mysterious                                  (initialize the skipped indexes)
+                                                                  (end while)
+        let the warrior be the coward
+      otherwise                                                   (we need to find the proper element)
         let the warrior be the brave
         while the enemy is stronger than nothing
-          let the warrior be the tomorrow on the warrior          (call method on instance)
- knock the enemy down
+          let the warrior be tomorrow on the warrior              (next)
+          knock the enemy down
                                                                   (end while)
                                                                   (end if)
- sunray on the warrior taking the sword                      (call method on instance)
- give back the sword
+      the ray on the warrior taking the sword                     (set the value for the current)
+      give back the sword
     otherwise
       give back nothing
                                                                   (end if)
-                                                                  (end of method)
-  get takes the enemy                                             (method declaration)
+                                                                  (eom)
+  get takes the enemy                                             (get function)
     give back peek taking the enemy
-                                                                  (end of method)
-                                                                  (end of class Chain)
+                                                                  (eom)
+  description takes nothing                                       (formatted output)
+    let the show be "["
+    let the warrior be the brave
+    while the warrior is not gone
+      let the show be with the look on the warrior
+      if the warrior is not the coward
+        let the show be with ", "
+      (end if)
+      let the warrior be tomorrow on the warrior
+    (end while)
+    give back the show with "]"
+                                                                  (eom)
+                                                                  (end of class Array)
+```
 
-
-
-
-the rainbow would be A Chain                (instantiation)
-the flowers want to be A Chain              (instantiation, also "wants to be")
-the rope wanna be A Chain                   (instantiation)
+Some demo for the Chain / Array
+```
+the rainbow would be Chain                (instantiation)
 
 add on the rainbow taking "Red"            (method calls)
 add on the rainbow taking "Orange"
@@ -235,163 +251,25 @@ add on the rainbow taking "Green"
 add on the rainbow taking "Blue"
 add on the rainbow taking "Violet"
 
-
-shout last on the rainbow taking nothing (Violet)
+shout last on the rainbow (Violet)
 shout peek on the rainbow taking 2 (Green - index starts at 0)
-say remove on the rainbow taking nothing (Violet)
-say remove on the rainbow taking nothing (Blue)
-say size on the rainbow taking nothing (3)
-```
+shout peek on the rainbow taking 5 (mysterious - no such index)
+say remove on the rainbow (Violet) (remove all elements, one by one)
+say remove on the rainbow (Blue)
+say size on the rainbow (3)        (3 elements left)
+say remove on the rainbow (Green)
+say remove on the rainbow (Orange)
+say remove on the rainbow (Red)
+say size on the rainbow (0)        (all elements removed)
 
-Sequence
-```
-Sequence looks like nothing
-Let the counter be 0                          	(field declaration)
-next takes nothing                            	(parameterless method declaration)
-Build the counter up                          	(write access to field)
-give back the counter                         (read access to field)
-(end of method next)
-(end of class Sequence)
-ID wants to be Sequence
-say next on ID                    (output: "1")
-say next on ID                    (output: "2")
-say 2 of next on ID               (output: "6")
-```
-
-
-Object Pool
-```
-Pool looks like nothing
-  the spring is nowhere	(instance used to create new instances, e.g. static instance)
-  Pool takes the beginning	(constructor)
-    let the spring be the beginning
-let the hope be the conception at the beginning	(initialize the pool with one instance)
-death on the hope!	(created instance put to the pool)
-
-  the faith wants to be A Chain
-  fetch takes nothing
-    let remove from the faith be the hope
-    if the hope is nothing
- give back conception in the spring
-
-give back the hope
-(eom)
-  recycle takes the delusion
-    death on the delusion
-give back the delusion
-(eom)
-(eoc)
-Pool Object looks like nothing
-  my pool is nothing
-  conception takes the water
-    put the water into my pool 
-    give back instantiate	(method should be defined in subclasses - "abstract method")
-(eom)
-  death takes nothing
-    remove from my pool
-    let my pool be empty
-(eom)
-(eoc)
-```
-
-Object Pool with factory
-```
-Pool looks like nothing
-  the spring is nowhere	(instance used to create new instances, e.g. static instance)
-  Pool takes the beginning	(constructor)
-    let the spring be the beginning
-let the hope be the conception at the beginning	(initialize the pool with one instance)
-death on the hope!	(created instance put to the pool)
-
-  the faith wants to be A Chain
-  fetch takes nothing
-    let remove from the faith be the hope
-    if the hope is nothing
- give back conception in the spring
-
-give back the hope
-(eom)
-  recycle takes the delusion
-    death on the delusion
-give back the delusion
-(eom)
-(eoc)
-Factory looks like nothing
-  my pool is nothing
-  conception takes the water
-    put the water into my pool 
-    give back instantiate	(method should be defined in subclasses - "abstract method")
-(eom)
-  death takes nothing
-    remove from my pool
-    let my pool be empty
-(eom)
-(eoc)
-
-Client looks like nothing
-name is nobody
-location is nowhere
-username is nothing
-password is nothing
-(eoc)
-Client Factory is like Factory
-  instantiate takes nothing
-     Tom wants to be Client
-     give back Tom
-(eom)
-(eoc)
-Client Pool is like Pool
-  Client Pool takes nothing
-    factory wants to be Client Factory
-    Pool in parent taking factory
-(eom)
-(eoc)
-```
-
-Pool with factory (2)
-```
-Pool looks like nothing
-  Pool takes nothing    	(constructor)
-let the hope be the conception from myself    	(initialize the pool with one instance)
-a return taking the hope	(created instance put to the pool)
-(eom)	
-  the faith wants to be A Chain
-  a new takes nothing
-    let remove from the faith be the hope
-    if the hope is nothing
- let the hope be conception from myself	
-
-give back the hope
-(eom)
-  a return takes the water
-    add to the faith taking the water
-give back the water
-(eom)
-  instantiate takes nothing                             (method should be defined in subclasses - "abstract method")
-give back nothing
-(eom)
-(eoc)
-
-
-Client looks like nothing	(methods not expressed here)
-name is nobody
-location is nowhere
-username is nothing
-password is nothing
-(eoc)
-
-Client Pool is like Pool
-  instantiate takes nothing
-     Tom wants to be Client
-     give back Tom
-(eom)
-(eoc)
-Clients will be Client Pool
-
-let Tommy be a new from Clients
-let Jane be a new from Clients
-
-a return to Clients taking Tommy
+x will be Array
+set on x taking 3,"d"
+say description on x
+set on x taking 0,"a"
+say description on x
+set on x taking 6,"g"
+set on x taking 3, mysterious
+say description on x
 ```
 
 
