@@ -58,6 +58,8 @@ The function named exactly as the class name will be used as constructor. The pa
 The object name `parent` in a method call refers to the method accessible from the superclass (that can be declared in the parent class, grandparent class, or even higher). Aliases to `parent`: `father`, `mother`, `papa`, `mama`. 
 The method name `parent` refers to the parent object constructor.
 
+The variable name `self` refers to the innermost object context (also known as "this"). Aliases: `myself`, `yourself`, `himself`, `herself`, `itself`, `ourselves`, `yourselves`, `themselves`.
+
 ### Instantiation:
 
 `<variable> wants to be <class> [taking <constructor parameter list>]` (also `want to be`, `wanna be`, `will be`, `would be`). The instantiation always comes with an assignment. The `taking` part (with constructor parameters) is optional.
