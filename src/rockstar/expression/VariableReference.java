@@ -82,7 +82,7 @@ public class VariableReference extends SimpleExpression {
         return "self".equals(ref)
                 || "myself".equals(ref)
                 || "yourself".equals(ref)
-                || "himeself".equals(ref)
+                || "himself".equals(ref)
                 || "herself".equals(ref)
                 || "itself".equals(ref)
                 || "ourselves".equals(ref)

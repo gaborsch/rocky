@@ -136,6 +136,9 @@ public class FunctionCall extends CompoundExpression {
                 // object reference
                 ctx.beforeExpression(object);
                 Value objValue = ctx.afterExpression(object, ctx.getVariableValue(object));
+                if (objValue == null) {
+                    throw new RockstarRuntimeException("Object not found: " +  object);
+                }
                 if (objValue.isObject()) {
                     // get the object itself
                     RockObject objContext = objValue.getObject();

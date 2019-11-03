@@ -70,7 +70,7 @@ public class BlockContext {
         this.error = parent.error;
         this.env = parent.env;
         this.listener = parent.listener;
-        this.ctxName = ctxName + "-" + this.level;
+        this.ctxName = ctxName;
     }
 
     public void setListener(BlockContextListener listener) {
@@ -106,7 +106,14 @@ public class BlockContext {
     }
 
     public String getName() {
-        return ctxName;
+        if (this.parent == null) {
+            return ctxName;
+        }
+        RockObject obj = getObjectContext();
+        if (obj != null) {
+            return ctxName + "@" + obj.getName();
+        }
+        return ctxName + " L" + this.level;
     }
 
     public BlockContext getParent() {

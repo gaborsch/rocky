@@ -285,6 +285,24 @@ public class Value implements Comparable<Value> {
         }
         return this.type.toString();
     }
+    
+    public String describe() {
+        switch (this.type) {
+            case NUMBER:
+                return numericValue.toString();
+            case STRING:
+                return /*"\"" +*/ stringValue /*+ "\""*/;
+            case BOOLEAN:
+                return Boolean.toString(boolValue);
+            case LIST_ARRAY:
+                return "[" + listArrayValue.toString() + "]";
+            case ASSOC_ARRAY:
+                return "{" + assocArrayValue.toString() + "}";
+            case OBJECT:
+                return "Object(" + objectValue + ")\n" + objectValue.describe();
+        }
+        return this.type.toString();
+    }
 
     public Value negate() {
         // bool negation
