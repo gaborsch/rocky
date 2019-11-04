@@ -34,7 +34,7 @@ A variable (and a value) can be an `object` type. An object can have methods, fi
 ### Class declaration: 
 
 `<class> looks like <superclass>`
-Alias: `look like`. The class is terminated by an empty line (just like other blocks). A class name should follow the rules of a variable names (simple, common or proper name currently), however it is recommended to use proper names (i.e. starting with capital letters) Superclass name can be `nothing` meaning that there is no superclass.
+Alias: `look like`. The class is terminated by an empty line (just like other blocks). A class name should follow the rules of a variable names (simple, common or proper name currently), however it is recommended to use proper names (i.e. starting with capital letters) Superclass name can be `nothing` (or any other aliases for `null`) meaning that there is no superclass.
 
 ### Inheritance:
 
@@ -96,11 +96,16 @@ A method with an empty body is considered abstract. A non-abstract method must h
 
 ### Abstract classes, interfaces:
 A class that has abstract methods is considered and abstract class. It is not possible to instantiate an abstract class.
-Interfaces are classes that have abstract methods only - an absolutely abstract class. Interfaces have no special meanings, though.
+
+There are no interfaces in Rockstar, however we can define classes that have abstract methods only - an absolutely abstract class. These have no special meanings, as long as there is no multiple inheritance.
 
 ### Runtime instance check:
 
-The `<instance> is a kind of <classname>` operation can be used to check if the instance implements a certain class or interface. Alias: `<instance> is like <classname>`. Inherited classes and interfaces all count!
+The `<instance> is a kind of <classname>` operation can be used to check if the instance implements a certain class. Alias: `<instance> is like <classname>`. Inherited classes also count.
+
+### Inner classes:
+
+All created classes are of global scope. It is possible to create a class within a method or a class body, but these will be accessible outside of their defining scope as well. (This may change in the future.)
 
 ### Anonymous classes:
 
@@ -113,8 +118,10 @@ There is no garbage collection and there are no destructors. However, an object 
 ## Possible future extensions:
 
 ### Interface implementation, multiple inheritance:
-It is possible to inherit methods from multiple classes or interfaces, by having a list expression for class or interface names. The first one is the strongest, it overrides all methods of the rest of the classes, the last ones should be the interfaces (if any).
+It is possible to inherit methods from multiple classes or interfaces, by having a list expression for class or interface names. The first one is the strongest, it overrides all methods of the rest of the classes, the last ones should be the interfaces (if any). We could make a rule that the first one must be a class (or `nothing`), the others must be interfaces, to make it undertandable and implementable.
 
+### Inner classes
+Proper visibility for the inner classes would make them more useful.
 
 # Example code
 --- 
