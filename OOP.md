@@ -16,13 +16,13 @@ give back the counter                         (read access to field)
                                               (end of method "next")
                                               (end of class "Sequence")
 ID wants to be Sequence                       (instantiation)
-say next on ID                                (call the parameterless method on instance ID, output: "1")
-say next on ID                                (output: "2")
-say 2 times next on ID                        (output: "6")
-say current on ID                             (output: "3")
+say next from ID                              (call the parameterless method on instance ID, output: "1")
+say next from ID                              (output: "2")
+say 2 times next from ID                      (output: "6")
+say current from ID                           (output: "3")
 ```
 
-With classes we can write "system functions" library (collection of classes in a `system.rock` file or similar), that could be supplied with each interpreter/transpiler. These functions could be the core of the system, any Rockstar developer could easily contribute. I've already written an indexed linked list implementation that can be used as an alternative for native array implementation. I think that if we implement the OOP feature, we don't need to extend the language any more (the only exception could be the string handling, that can be implemented also with arrays, but would be much more effective natively).
+Later, with the class feature we can write "system functions" library (collection of classes in a `system.rock` file or similar), that could be supplied with each interpreter/transpiler. These functions could be the core of the system, and Rockstar developers could easily contribute. I've already written an indexed linked list implementation that can be used as an alternative for native array implementation. I think that if we implement the OOP feature, we don't need to extend the language any more (the only exceptions would be the string handling and type conversions like `cast`).
 
 ## Features
 I summarized the main characterisics of the OOP feature below. How it works, what will be the user experience, what's implemented and what's not. I tried to cover the most relevant OOP questions as well.
@@ -254,30 +254,30 @@ Some demo for the Chain / Array
 ```
 the rainbow would be Chain                (instantiation)
 
-add on the rainbow taking "Red"            (method calls)
-add on the rainbow taking "Orange"
-add on the rainbow taking "Green"
-add on the rainbow taking "Blue"
-add on the rainbow taking "Violet"
+add to the rainbow taking "Red"            (method calls)
+add to the rainbow taking "Orange"
+add to the rainbow taking "Green"
+add to the rainbow taking "Blue"
+add to the rainbow taking "Violet"
 
 shout last on the rainbow (Violet)
-shout peek on the rainbow taking 2 (Green - index starts at 0)
-shout peek on the rainbow taking 5 (mysterious - no such index)
-say remove on the rainbow (Violet) (remove all elements, one by one)
-say remove on the rainbow (Blue)
-say size on the rainbow (3)        (3 elements left)
-say remove on the rainbow (Green)
-say remove on the rainbow (Orange)
-say remove on the rainbow (Red)
-say size on the rainbow (0)        (all elements removed)
+shout peek to the rainbow taking 2 (Green - index starts at 0)
+shout peek to the rainbow taking 5 (mysterious - no such index)
+say remove from the rainbow (Violet) (remove all elements, one by one)
+say remove from the rainbow (Blue)
+say size for the rainbow (3)        (3 elements left)
+say remove from the rainbow (Green)
+say remove from the rainbow (Orange)
+say remove from the rainbow (Red)
+say size for the rainbow (0)        (all elements removed)
 
 x will be Array
-set on x taking 3,"d"
+set to x taking 3,"d"
 say description on x
-set on x taking 0,"a"
+set to x taking 0,"a"
 say description on x
-set on x taking 6,"g"
-set on x taking 3, mysterious
+set to x taking 6,"g"
+set to x taking 3, mysterious
 say description on x
 ```
 
