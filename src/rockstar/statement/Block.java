@@ -7,8 +7,10 @@ package rockstar.statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
 
 /**
  *
@@ -55,7 +57,13 @@ public abstract class Block extends Statement {
     public void execute(BlockContext ctx) {
         statements.forEach((statement) -> {
             ctx.beforeStatement(statement);
-            statement.execute(ctx);
+            try {
+                statement.execute(ctx);
+            } catch (RockstarRuntimeException rre) {
+                Line l = statement.getLine();
+                rre.addStacktraceLine(l, ctx);
+                throw rre;
+            }
         });
     }
 

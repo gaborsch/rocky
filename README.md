@@ -9,7 +9,7 @@ Features include:
 * List command (parse a file without running it)
 * Detailed help with options explanation
 * IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
-* Rockstar [Object Oriented Programming](OOP.md)! Yes, you can write OOP code in Rockstar!
+* **NEW!!!** Rockstar [Object Oriented Programming](OOP.md)! Yes, you can write OOP code in Rockstar!
 
 It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix.
 

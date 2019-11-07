@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import java.util.Map;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 
@@ -19,7 +20,7 @@ public class RockObject extends BlockContext {
     private final ClassBlock classBlock;
     private FunctionBlock constructor;
     private final int objId;
-    
+
     // the previous (inherited) level of an object
     private final RockObject superObject;
 
@@ -28,8 +29,9 @@ public class RockObject extends BlockContext {
 
     /**
      * Constructor for base object
+     *
      * @param rootCtx
-     * @param classBlock 
+     * @param classBlock
      */
     public RockObject(BlockContext rootCtx, ClassBlock classBlock) {
         // object instances can access the root context
@@ -42,8 +44,9 @@ public class RockObject extends BlockContext {
 
     /**
      * Constructor for extended objects
+     *
      * @param superObject
-     * @param classBlock 
+     * @param classBlock
      */
     public RockObject(RockObject superObject, ClassBlock classBlock) {
         // object instances can access the root context
@@ -55,11 +58,6 @@ public class RockObject extends BlockContext {
         superObject.subObject = this;
     }
 
-    @Override
-    public String getName() {
-        return classBlock.getName() + "#" + objId + "-" + getLevel();
-    }
-
     public int getObjId() {
         return objId;
     }
@@ -67,10 +65,11 @@ public class RockObject extends BlockContext {
     public RockObject getSuperObject() {
         return superObject;
     }
-    
+
     @Override
-    public String toString() {
-        return classBlock.getName() + "#" + objId;
+    public String getName() {
+        int l = getLevel();
+        return classBlock.getName() + "#" + objId + " L" + l;
     }
 
     @Override
@@ -83,13 +82,10 @@ public class RockObject extends BlockContext {
         }
     }
 
-    public FunctionBlock getConstructor() {
-        return constructor;
-    }
-
     /**
      * Defines the visit order: first the subcontexts, then the parent contexts
-     * @return 
+     *
+     * @return
      */
     @Override
     public BlockContext getParent() {
@@ -99,14 +95,18 @@ public class RockObject extends BlockContext {
         return super.getParent();
     }
 
+    public FunctionBlock getConstructor() {
+        return constructor;
+    }
+
     public RockObject getTopObject() {
         RockObject obj = this;
-        while(obj.subObject != null) {
+        while (obj.subObject != null) {
             obj = obj.subObject;
         }
         return obj;
     }
-    
+
     public boolean checkInstanceof(String className) {
         RockObject obj = this;
         while (obj != null) {
@@ -116,6 +116,27 @@ public class RockObject extends BlockContext {
             obj = obj.superObject;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return classBlock.getName() + "#" + objId;
+    }
+
+    public String describe() {
+        StringBuilder sb = new StringBuilder();
+        if (superObject != null) {
+            sb.append(superObject.describe());
+        }
+        for (Map.Entry<String, Value> entry : this.getVariables().entrySet()) {
+            sb.append("  ")
+                    .append(entry.getKey())
+                    .append(" => ")
+                    .append(entry.getValue())
+                    .append("\n");
+        }
+
+        return sb.toString();
     }
 
 }

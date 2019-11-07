@@ -125,7 +125,7 @@ public class DebugListener implements BlockContextListener {
                             String ctxName = currCtx.getName();
                             currCtx.getVariables().forEach(
                                     (name, value) -> {
-                                        System.out.format("  @%s: %s = %s\n", ctxName, name, value.toString());
+                                        System.out.format("  %s: %s = %s\n", ctxName, name, value.toString());
                                     });
                             currCtx = currCtx.getParent();
                         }
@@ -134,7 +134,7 @@ public class DebugListener implements BlockContextListener {
                         String varName = line.substring(2).trim();
                         VariableReference vref = new VariableReference(varName, false, false);
                         Value value = ctx.getVariableValue(vref);
-                        System.out.format("%s = %s\n", varName, value.toString());
+                        System.out.format("%s = %s\n", varName, value.describe());
                     } else if (line.startsWith("w ")) {
                         // add watch
                         String varName = line.substring(2).trim();

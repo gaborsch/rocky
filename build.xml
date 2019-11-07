@@ -70,11 +70,11 @@
     nbproject/build-impl.xml file. 
 
     -->
-
+<!--
     <target name="-pre-init">
         <property name="platforms.JDK_1.8.home" value="/coder/lib/java/jdk/"/>
     </target> 
-
+-->
     
     <target name="-post-jar">
         <copy file="dist/rocky.jar" tofile="rocky.jar"/>

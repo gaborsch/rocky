@@ -6,6 +6,7 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockObject;
 import rockstar.runtime.Value;
 
 /**
@@ -48,11 +49,26 @@ public class VariableReference extends SimpleExpression {
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
+        
+        if (isSelfReference()) {
+            RockObject obj = ctx.getObjectContext();
+            return ctx.afterExpression(this, Value.getValue(obj));
+        }
+        
         VariableReference effectiveVRef = this;
         if (isLastVariable) {
             effectiveVRef = ctx.getLastVariableRef();
         }
+        
         Value value = ctx.getVariableValue(effectiveVRef);
+
+        if (value == null) {
+            // is it a function reference?
+            BlockContext funcCtx = ctx.getContextForFunction(name);
+            if (funcCtx != null) {
+                value = Value.BOOLEAN_TRUE;
+            }
+        }
 
         if (value == null) {
             value = Value.MYSTERIOUS;
@@ -62,10 +78,32 @@ public class VariableReference extends SimpleExpression {
         return ctx.afterExpression(this, value);
     }
 
-//    private static Value evaluate(VariableReference vref, BlockContext ctx) {
-//        Value value = ctx.getVariableValue(vref);
-//        return value;
-//    }
+    public static boolean isSelfReference(String ref) {
+        return "self".equals(ref)
+                || "myself".equals(ref)
+                || "yourself".equals(ref)
+                || "himself".equals(ref)
+                || "herself".equals(ref)
+                || "itself".equals(ref)
+                || "ourselves".equals(ref)
+                || "yourselves".equals(ref)
+                || "themselves".equals(ref);
+
+    }
+
+    private boolean isSelfReference() {
+        return isSelfReference(this.name);
+    }
+
+    public static boolean isParentReference(String ref) {
+        return "parent".equals(ref)
+                || "father".equals(ref)
+                || "mother".equals(ref)
+                || "papa".equals(ref)
+                || "mama".equals(ref);
+
+    }
+
     public boolean isLastVariable() {
         return isLastVariable;
     }

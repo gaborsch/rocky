@@ -285,6 +285,24 @@ public class Value implements Comparable<Value> {
         }
         return this.type.toString();
     }
+    
+    public String describe() {
+        switch (this.type) {
+            case NUMBER:
+                return numericValue.toString();
+            case STRING:
+                return /*"\"" +*/ stringValue /*+ "\""*/;
+            case BOOLEAN:
+                return Boolean.toString(boolValue);
+            case LIST_ARRAY:
+                return "[" + listArrayValue.toString() + "]";
+            case ASSOC_ARRAY:
+                return "{" + assocArrayValue.toString() + "}";
+            case OBJECT:
+                return "Object(" + objectValue + ")\n" + objectValue.describe();
+        }
+        return this.type.toString();
+    }
 
     public Value negate() {
         // bool negation
@@ -441,21 +459,27 @@ public class Value implements Comparable<Value> {
                 case BOOLEAN:
                     return (Objects.equals(boolValue, other.boolValue)) ? 0 : 1;
                 case OBJECT:
-                    return objectValue.getName().compareTo(other.objectValue.getName());
+                    return Integer.compare(objectValue.getObjId(), other.objectValue.getObjId());
                 case ASSOC_ARRAY:
                     return Integer.compare(this.asAssocArray().size(), other.asAssocArray().size());
                 case LIST_ARRAY:
                     return Integer.compare(this.asListArray().size(), other.asListArray().size());
                 default:
-                    // null, mysterious
+                    // null, mysterious are equal to themselves
                     return 0;
             }
         }
 
-        // Mysterious == Mysterious only
+        // mysterious is not equal to anything else
         if (isMysterious() || other.isMysterious()) {
             return 1;
         }
+        
+        // object is not equal to anything else
+        if (isObject() || other.isObject()) {
+            return 1;
+        }
+                
         // String with conversions
         if (isString()) {
             switch (other.getType()) {
