@@ -123,6 +123,9 @@ It is possible to inherit methods from multiple classes or interfaces, by having
 ### Inner classes
 Proper visibility for the inner classes would make them more useful.
 
+### Protected methods
+Not all methods are useful for the user of the class, and it would also increase the readibility if only the public methods would be callable from outside. There's no need for private, package private, friend or whatever other visibility rules.
+
 # Example code
 --- 
 
