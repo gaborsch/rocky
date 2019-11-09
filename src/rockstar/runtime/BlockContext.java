@@ -23,14 +23,22 @@ public class BlockContext {
     private final BlockContext parent;
     private final BlockContext root;
     private int level = 0;
-    private final Map<String, Value> vars = new HashMap<>();
-    private final Map<String, FunctionBlock> funcs = new HashMap<>();
-    private final Map<String, ClassBlock> classes = new HashMap<>();
+    
+    protected final Map<String, Value> vars = new HashMap<>();
+    protected final Map<String, FunctionBlock> funcs = new HashMap<>();
+    protected final Map<QualifiedClassName, ClassBlock> classes = new HashMap<>();
+    protected final Map<String, QualifiedClassName> imports = new HashMap<>();
     
     private final Environment env;
 
+    private PackagePath packagePath = null;
+    
     private final String ctxName;
 
+    /**
+     * Root context initialization
+     * @param env 
+     */
     public BlockContext(Environment env) {
         this.parent = null;
         this.root = this;
@@ -40,7 +48,7 @@ public class BlockContext {
     }
 
     /**
-     * Context initialization
+     * Context initialization for functions
      *
      * @param parent
      * @param ctxName name of the context
@@ -53,10 +61,26 @@ public class BlockContext {
         this.ctxName = ctxName;
     }
 
+    /**
+     * Context initialization for sub-objects
+     *
+     * @param parentObj
+     * @param ctxName name of the context
+     */
+    protected BlockContext(RockObject parentObj, String ctxName) {
+        BlockContext parentCtx = parentObj;
+        this.parent = parentCtx;
+        this.root = parentCtx.root;
+        // sub-objects do not increase level!
+        this.level = parentCtx.level;
+        this.env = parentCtx.env;
+        this.ctxName = ctxName;
+    }
+
     public Environment getEnv() {
         return env;
     }
-
+    
     public Map<String, Value> getVariables() {
         return vars;
     }
@@ -65,7 +89,7 @@ public class BlockContext {
         return funcs;
     }
 
-    public Map<String, ClassBlock> getClasses() {
+    public Map<QualifiedClassName, ClassBlock> getClasses() {
         return classes;
     }
 
@@ -80,6 +104,14 @@ public class BlockContext {
         return ctxName + " L" + this.level;
     }
 
+    public PackagePath getPackagePath() {
+        return (packagePath == null) ? PackagePath.DEFAULT : packagePath;
+    }
+
+    public void setPackagePath(PackagePath packagePath) {
+        this.packagePath = packagePath;
+    }
+    
     public BlockContext getParent() {
         return parent;
     }
@@ -159,8 +191,7 @@ public class BlockContext {
                     enclosingObject = rockObjCtx;
                 } else if (enclosingObject.getObjId() != rockObjCtx.getObjId()) {
                     // if the current object is different than the first, we quit (parent fields cannot be set)
-                    objCtx = null;
-                    break;
+                    return null;
                 }
                 if (condition.test(objCtx)) {
                     // if we found, use this context
@@ -218,16 +249,37 @@ public class BlockContext {
         }
         return ctx;
     }
-
-    public void defineClass(String name, ClassBlock classBlock) {
-        this.classes.put(classBlock.getName(), classBlock);
+    
+    public void defineImport(String alias, QualifiedClassName qcn) {
+        imports.put(alias, qcn);
     }
 
-    public ClassBlock retrieveClass(String name) {
+    public void defineClass(QualifiedClassName qcn, ClassBlock classBlock) {
+        this.classes.put(qcn, classBlock);
+    }
+
+    public QualifiedClassName findClass(String name) {
+        // if we have an import, use that
+        QualifiedClassName aliasQcn = imports.get(name);
+        if (retrieveClass(aliasQcn) != null) {
+            return aliasQcn;
+        }
+        // otherwise use the context package
+        QualifiedClassName defaultQcn = new QualifiedClassName(getPackagePath(), name);
+        if (retrieveClass(defaultQcn) != null) {
+            return defaultQcn;
+        }
+        return null;
+    }
+
+    public ClassBlock retrieveClass(QualifiedClassName qcn) {
+        if (qcn == null) {
+            return null;
+        }
         ClassBlock c = null;
         BlockContext ctx = this;
         while (c == null && ctx != null) {
-            c = ctx.classes.get(name);
+            c = ctx.classes.get(qcn);
             ctx = ctx.getParent();
         }
         return c;

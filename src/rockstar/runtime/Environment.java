@@ -49,10 +49,6 @@ public class Environment {
         return error;
     }
 
-//    public Map<String, String> getEnv() {
-//        return env;
-//    }
-
     public String getParameter(String key) {
         return env.get(key);
     }

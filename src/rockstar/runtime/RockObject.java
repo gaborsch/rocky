@@ -50,7 +50,7 @@ public class RockObject extends BlockContext {
      */
     public RockObject(RockObject superObject, ClassBlock classBlock) {
         // object instances can access the root context
-        super(superObject.getRoot(), classBlock.getName());
+        super(superObject, classBlock.getName());
         this.classBlock = classBlock;
         this.objId = superObject.objId;
         this.superObject = superObject;
@@ -127,7 +127,7 @@ public class RockObject extends BlockContext {
         if (superObject != null) {
             sb.append(superObject.describe());
         }
-        for (Map.Entry<String, Value> entry : this.getVariables().entrySet()) {
+        for (Map.Entry<String, Value> entry : vars.entrySet()) {
             sb.append("  ")
                     .append(entry.getKey())
                     .append(" => ")

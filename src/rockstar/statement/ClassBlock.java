@@ -8,6 +8,7 @@ package rockstar.statement;
 import java.util.LinkedList;
 import java.util.List;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.QualifiedClassName;
 import rockstar.runtime.RockObject;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -17,9 +18,12 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public class ClassBlock extends Block {
-
     private final String name;
     private final String parentName;
+    
+    private QualifiedClassName qualifiedName;
+    private QualifiedClassName qualifiedParentName;
+    
     private ClassBlock parentClass;
     private List<String> abstractMethodNames = new LinkedList<>();
 
@@ -27,7 +31,7 @@ public class ClassBlock extends Block {
         this.name = name;
         this.parentName = parentName;
     }
-
+    
     public String getName() {
         return name;
     }
@@ -49,10 +53,15 @@ public class ClassBlock extends Block {
     public void execute(BlockContext ctx) {
         // bind parent class body
         if (parentName != null) {
-            parentClass = ctx.retrieveClass(parentName);
+            qualifiedParentName = ctx.findClass(parentName);
+            if (qualifiedParentName == null) {
+                throw new RockstarRuntimeException("Can't find parent class "+parentName);
+            }
+            parentClass = ctx.retrieveClass(qualifiedParentName);
         }
+        qualifiedName = new QualifiedClassName(ctx.getPackagePath(), name);
         // define current class in the context
-        ctx.defineClass(name, this);
+        ctx.defineClass(qualifiedName, this);
         // collect abstract methods, based on superclass abstract methods
         abstractMethodNames = new LinkedList<>();
         if (parentClass != null) {
@@ -82,7 +91,7 @@ public class ClassBlock extends Block {
      */
     public Value instantiate(BlockContext ctx, List<Value> ctorParams) {
         if (isAbstract()) {
-            throw new RockstarRuntimeException("Cannot instantiate abstract class " + name);
+            throw new RockstarRuntimeException("Cannot instantiate abstract class " + qualifiedName);
         }
         
         RockObject instance = create(ctx);

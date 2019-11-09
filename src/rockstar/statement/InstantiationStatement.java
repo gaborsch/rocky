@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.QualifiedClassName;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
@@ -36,7 +37,8 @@ public class InstantiationStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         // get the class
-        ClassBlock classBlock = ctx.retrieveClass(className);
+        QualifiedClassName qcn = ctx.findClass(className);
+        ClassBlock classBlock = ctx.retrieveClass(qcn);
         if (classBlock != null) {
             // evaluate constructor expressions
             List<Value> paramValues = ctorParameterExprs.stream()

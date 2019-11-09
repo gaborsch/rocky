@@ -8,6 +8,7 @@ package rockstar.parser.checker;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
+import rockstar.runtime.QualifiedClassName;
 import rockstar.runtime.Value;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.Statement;

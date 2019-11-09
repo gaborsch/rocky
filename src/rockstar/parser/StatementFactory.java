@@ -25,6 +25,7 @@ import rockstar.parser.checker.KnockDownChecker;
 import rockstar.parser.checker.ElseChecker;
 import rockstar.parser.checker.FunctionDefChecker;
 import rockstar.parser.checker.InstantiationChecker;
+import rockstar.parser.checker.PkgDefChecker;
 import rockstar.parser.checker.PoeticArrayAssignmentChecker;
 import rockstar.parser.checker.TakeItToTheTopChecker;
 import rockstar.parser.checker.PushChecker;
@@ -61,6 +62,7 @@ public class StatementFactory {
         new ClassBlockChecker(),
         new InstantiationChecker(),
         new ExpressionStatementChecker(),
+        new PkgDefChecker(),
         new NoOpChecker()
     };
 
