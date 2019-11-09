@@ -17,6 +17,7 @@ import rockstar.parser.Parser;
 import rockstar.parser.StatementFactory;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Environment;
+import rockstar.runtime.ProgramContext;
 import rockstar.runtime.Utils;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
@@ -39,7 +40,7 @@ public class RockstarRepl {
 
     public void repl(List<String> files) {
         Environment env = new Environment(System.in, System.out, System.err, options);
-        BlockContext ctx = new BlockContext(env);
+        ProgramContext ctx = new ProgramContext(env);
 
         // pre-run any programs defined as parameter
         files.forEach((filename) -> {

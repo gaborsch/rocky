@@ -31,15 +31,13 @@ public class BlockContext {
     
     private final Environment env;
 
-    private PackagePath packagePath = null;
-    
     private final String ctxName;
 
     /**
      * Root context initialization
      * @param env 
      */
-    public BlockContext(Environment env) {
+    protected BlockContext(Environment env) {
         this.parent = null;
         this.root = this;
         this.env = env;
@@ -97,21 +95,22 @@ public class BlockContext {
         if (this.parent == null) {
             return ctxName;
         }
-        RockObject obj = getObjectContext();
-        if (obj != null) {
-            return ctxName + "@" + obj.getName() + " L" + this.level;
+        RockObject thisObj = getThisObjectContext();
+        if (thisObj != null) {
+            return ctxName + "@" + thisObj.getName() + " L" + this.level;
         }
         return ctxName + " L" + this.level;
     }
 
+    /**
+     * The package path is set on files
+     * @return 
+     */
     public PackagePath getPackagePath() {
-        return (packagePath == null) ? PackagePath.DEFAULT : packagePath;
+        FileContext fc = (FileContext) getContextFor(ctx -> ctx instanceof FileContext);
+        return fc.getPackagePath();
     }
 
-    public void setPackagePath(PackagePath packagePath) {
-        this.packagePath = packagePath;
-    }
-    
     public BlockContext getParent() {
         return parent;
     }
@@ -128,7 +127,8 @@ public class BlockContext {
     private VariableReference lastVariableRef = null;
 
     public VariableReference getLastVariableRef() {
-        return lastVariableRef;
+        BlockContext lastvarCtx = getContextFor(ctx -> lastVariableRef != null);
+        return lastvarCtx.lastVariableRef;
     }
 
     /**
@@ -152,12 +152,19 @@ public class BlockContext {
      * @param value
      */
     private void doSetVariable(VariableReference vref, Value value) {
+        // determine if we are in object context
+        RockObject thisObj = getThisObjectContext();
+        int thisId = thisObj != null ? thisObj.getObjId() : 0;
 
-        final String variableName = vref.getName(this);
-        BlockContext objCtx = getObjectContext(
-                ctx -> ctx.vars.containsKey(vref.getName(this))
+        // find the defining RockObject within "this", if present
+        BlockContext objCtx = getContextFor(
+                ctx -> (ctx instanceof RockObject) 
+                        && (((RockObject)ctx).getObjId() == thisId)
+                        && (ctx.vars.containsKey(vref.getName(this)))
         );
 
+        String variableName = vref.getName(this);
+        
         // we can set either local or global variables
         if (this.vars.containsKey(variableName)) {
             // overwrite local variable
@@ -174,36 +181,29 @@ public class BlockContext {
         }
     }
 
-    public RockObject getObjectContext() {
-        // return the first object context
-        return getObjectContext(ctx -> true);
-    }
-
-    private RockObject getObjectContext(Predicate<BlockContext> condition) {
-        BlockContext objCtx = this;
-        // find the nearest object context, if exists
-        RockObject enclosingObject = null;
-        while (objCtx != null) {
-            if (objCtx instanceof RockObject) {
-                final RockObject rockObjCtx = (RockObject) objCtx;
-                if (enclosingObject == null) {
-                    // find the enclosing RockObject
-                    enclosingObject = rockObjCtx;
-                } else if (enclosingObject.getObjId() != rockObjCtx.getObjId()) {
-                    // if the current object is different than the first, we quit (parent fields cannot be set)
-                    return null;
-                }
-                if (condition.test(objCtx)) {
-                    // if we found, use this context
-                    return (RockObject) objCtx;
-                }
-            }
-            objCtx = objCtx.getParent();
-        }
-        return null;
+    /**
+     * return the first object context ("this")
+     * @return 
+     */
+    public RockObject getThisObjectContext() {
+        return (RockObject) getContextFor(ctx -> ctx instanceof RockObject);
     }
 
     /**
+     * Find a context in the hierarchy for the given condition
+     * @param condition
+     * @return 
+     */
+    protected BlockContext getContextFor(Predicate<BlockContext> condition) {
+        BlockContext ctx = this;
+        while (ctx != null && ! condition.test(ctx)) {
+            ctx = ctx.getParent();
+        }
+        return ctx;
+    }
+
+        
+        /**
      * Set a variable in the local context, hiding global variables (e.g.
      * function parameters)
      *
@@ -271,7 +271,7 @@ public class BlockContext {
         }
         return null;
     }
-
+    
     public ClassBlock retrieveClass(QualifiedClassName qcn) {
         if (qcn == null) {
             return null;

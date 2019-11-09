@@ -5,9 +5,10 @@
  */
 package rockstar.statement;
 
-import java.util.LinkedList;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.FileContext;
 import rockstar.runtime.PackagePath;
+import rockstar.runtime.RockstarRuntimeException;
 
 /**
  *
@@ -15,7 +16,7 @@ import rockstar.runtime.PackagePath;
  */
 public class PkgDefStatement extends Statement {
     
-    private PackagePath path;
+    private final PackagePath path;
 
     public PkgDefStatement(PackagePath path) {
         this.path = path;
@@ -24,7 +25,12 @@ public class PkgDefStatement extends Statement {
     
     @Override
     public void execute(BlockContext ctx) {
-        ctx.getEnv().getOutput().println(path);
+        if (ctx instanceof FileContext) {
+            FileContext fc = (FileContext) ctx;
+            fc.setPackagePath(path);
+        } else {
+            throw new RockstarRuntimeException("Package can be set on file level only: "+path);
+        }
     }
 
     @Override

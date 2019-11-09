@@ -51,7 +51,7 @@ public class VariableReference extends SimpleExpression {
         ctx.beforeExpression(this);
         
         if (isSelfReference()) {
-            RockObject obj = ctx.getObjectContext();
+            RockObject obj = ctx.getThisObjectContext();
             return ctx.afterExpression(this, Value.getValue(obj));
         }
         

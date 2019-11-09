@@ -14,6 +14,7 @@ import rockstar.repl.RockstarRepl;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Environment;
 import rockstar.runtime.LoggerListener;
+import rockstar.runtime.ProgramContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.test.RockstarTest;
@@ -218,13 +219,14 @@ public class Rockstar {
 
         LoggerListener logger = new LoggerListener(options);
 
+        Environment env = new Environment(System.in, System.out, System.err, options);
+        ProgramContext prgCtx = new ProgramContext(env);
         BlockContext ctx = null;
         for (String filename : files) {
             try {
                 Program prg = new Parser(filename).parse();
                 if (ctx == null || !sameContext) {
-                    Environment env = new Environment(System.in, System.out, System.err, options);
-                    ctx = new BlockContext(env);
+                    ctx = new BlockContext(prgCtx, filename);
                     env.setListener(logger);
                 }
                 prg.execute(ctx);
