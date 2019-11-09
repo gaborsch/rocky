@@ -30,7 +30,7 @@ public class InputStatement extends Statement {
     public void execute(BlockContext ctx) {
         String inputLine;
         try {
-            inputLine = ctx.getInput().readLine();
+            inputLine = ctx.getEnv().getInput().readLine();
         } catch (IOException ex) {
             inputLine = "";
         }

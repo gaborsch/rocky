@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import rockstar.debugger.DebugListener;
 import rockstar.debugger.RockstarDebugger;
 import rockstar.parser.Parser;
 import rockstar.repl.RockstarRepl;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Environment;
 import rockstar.runtime.LoggerListener;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
@@ -221,8 +223,9 @@ public class Rockstar {
             try {
                 Program prg = new Parser(filename).parse();
                 if (ctx == null || !sameContext) {
-                    ctx = new BlockContext(System.in, System.out, System.err, options);
-                    ctx.setListener(logger);
+                    Environment env = new Environment(System.in, System.out, System.err, options);
+                    ctx = new BlockContext(env);
+                    env.setListener(logger);
                 }
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
@@ -238,7 +241,7 @@ public class Rockstar {
             doHelp("list", options);
             return;
         }
-        
+
         boolean explainOnly = options.containsKey("-X") || options.containsKey("--explain-only");
         boolean explain = options.containsKey("-x") || options.containsKey("--explain");
         boolean lineNums = options.containsKey("-l") || options.containsKey("--line-number");

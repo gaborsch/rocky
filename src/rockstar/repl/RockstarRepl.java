@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.function.BiConsumer;
 import rockstar.Rockstar;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementFactory;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Environment;
 import rockstar.runtime.Utils;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
@@ -38,7 +38,8 @@ public class RockstarRepl {
     }
 
     public void repl(List<String> files) {
-        BlockContext ctx = new BlockContext(System.in, System.out, System.err, options);
+        Environment env = new Environment(System.in, System.out, System.err, options);
+        BlockContext ctx = new BlockContext(env);
 
         // pre-run any programs defined as parameter
         files.forEach((filename) -> {
@@ -59,8 +60,8 @@ public class RockstarRepl {
         blocks.push(new Program("-"));
         try {
             while (true) {
-                ctx.getOutput().print("> ");
-                String line = ctx.getInput().readLine();
+                ctx.getEnv().getOutput().print("> ");
+                String line = ctx.getEnv().getInput().readLine();
 
                 if (line.equals("exit")) {
                     break;

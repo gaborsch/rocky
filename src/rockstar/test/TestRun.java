@@ -25,6 +25,7 @@ import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Environment;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
 
@@ -86,7 +87,8 @@ public class TestRun {
             ByteArrayOutputStream errs = new ByteArrayOutputStream();
             PrintStream err = new PrintStream(errs, true, Utils.UTF8);
 
-            BlockContext ctx = new BlockContext(in, out, err, options);
+            Environment env = new Environment(in, out, err, options);
+            BlockContext ctx = new BlockContext(env);
             try {
                 prg = new Parser(filename).parse();
                 prg.execute(ctx);

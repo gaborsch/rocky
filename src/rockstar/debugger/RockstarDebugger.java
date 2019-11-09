@@ -12,6 +12,7 @@ import rockstar.Rockstar;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Environment;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
@@ -29,10 +30,12 @@ public class RockstarDebugger {
     }
 
     public void debug(List<String> files) {
-        BlockContext ctx = new BlockContext(System.in, System.out, System.err, options);
+        Environment env = new Environment(System.in, System.out, System.err, options);
 
         DebugListener listener = new DebugListener(options);
-        ctx.setListener(listener);
+        env.setListener(listener);
+        
+        BlockContext ctx = new BlockContext(env);
 
         System.out.println(Rockstar.CLI_HEADER);
         System.out.println(Utils.repeat("-", Rockstar.CLI_HEADER.length()));

@@ -5,11 +5,6 @@
  */
 package rockstar.runtime;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -31,27 +26,16 @@ public class BlockContext {
     private final Map<String, Value> vars = new HashMap<>();
     private final Map<String, FunctionBlock> funcs = new HashMap<>();
     private final Map<String, ClassBlock> classes = new HashMap<>();
+    
+    private final Environment env;
 
-    private final BufferedReader input;
-    private final PrintStream output;
-    private final PrintStream error;
-    private final Map<String, String> env;
     private final String ctxName;
 
-    private BlockContextListener listener = null;
-
-    public BlockContext(InputStream inputstream, PrintStream output, PrintStream error, Map<String, String> env) {
+    public BlockContext(Environment env) {
         this.parent = null;
         this.root = this;
-        InputStreamReader rdr = null;
-        try {
-            rdr = new InputStreamReader(inputstream, Utils.UTF8);
-        } catch (UnsupportedEncodingException ex) {
-        }
-        this.input = (rdr == null) ? null : new BufferedReader(rdr);
-        this.output = output;
-        this.error = error;
         this.env = env;
+        
         this.ctxName = "RockStar";
     }
 
@@ -65,32 +49,12 @@ public class BlockContext {
         this.parent = parent;
         this.root = parent.root;
         this.level = parent.level + 1;
-        this.input = parent.input;
-        this.output = parent.output;
-        this.error = parent.error;
         this.env = parent.env;
-        this.listener = parent.listener;
         this.ctxName = ctxName;
     }
 
-    public void setListener(BlockContextListener listener) {
-        this.listener = listener;
-    }
-
-    public BufferedReader getInput() {
-        return input;
-    }
-
-    public PrintStream getOutput() {
-        return output;
-    }
-
-    public PrintStream getError() {
-        return error;
-    }
-
-    public String getEnv(String key) {
-        return env.get(key);
+    public Environment getEnv() {
+        return env;
     }
 
     public Map<String, Value> getVariables() {
@@ -270,20 +234,20 @@ public class BlockContext {
     }
 
     public void beforeStatement(Statement stmt) {
-        if (listener != null) {
-            listener.beforeStatement(this, stmt);
+        if (env.getListener() != null) {
+            env.getListener().beforeStatement(this, stmt);
         }
     }
 
     public void beforeExpression(Expression exp) {
-        if (listener != null) {
-            listener.beforeExpression(this, exp);
+        if (env.getListener() != null) {
+            env.getListener().beforeExpression(this, exp);
         }
     }
 
     public Value afterExpression(Expression exp, Value v) {
-        if (listener != null) {
-            listener.afterExpression(this, exp, v);
+        if (env.getListener() != null) {
+            env.getListener().afterExpression(this, exp, v);
         }
         return v;
     }

@@ -83,7 +83,7 @@ public class DebugListener implements BlockContextListener {
             while (!continueRun) {
                 System.out.print(ctx.getName() + "> ");
                 try {
-                    String line = ctx.getInput().readLine();
+                    String line = ctx.getEnv().getInput().readLine();
 
                     if (line.equals("1") || line.equals("x") || line.equals("X")) {
                         // step into expression
