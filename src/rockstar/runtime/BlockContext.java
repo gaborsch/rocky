@@ -111,7 +111,7 @@ public class BlockContext {
         }
         RockObject obj = getObjectContext();
         if (obj != null) {
-            return ctxName + "@" + obj.getName();
+            return ctxName + "@" + obj.getName() + " L" + this.level;
         }
         return ctxName + " L" + this.level;
     }
