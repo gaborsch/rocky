@@ -60,21 +60,33 @@ public class ProgramContext extends BlockContext {
     }
 
     private void loadClass(QualifiedClassName qcn) {
-        String envPath = getEnv().getParameter("-libpath");
-        String libRoot = envPath == null ? "rockstar-lib" : envPath;
-        loadClass(libRoot, qcn);
+        // first load from system lib
+        try {
+            // the system lib can be overriden
+            String envPath = getEnv().getParameter("-libpath");
+            String libRoot = envPath == null ? "rockstar-lib" : envPath;
+
+            loadClass(libRoot, qcn);
+        } catch (FileNotFoundException e1) {
+
+            // if not found, try to load from current folder
+            try {
+                loadClass(".", qcn);
+            } catch (FileNotFoundException e2) {
+                throw new RockstarRuntimeException("File " + qcn.getFormattedFilename() + " not found");
+            }
+        }
+
     }
 
-    private void loadClass(String libRoot, QualifiedClassName qcn) {
-        final String filePath = libRoot + "/" + qcn.getFormattedFilename() + ".rock";
+    private void loadClass(String libRoot, QualifiedClassName qcn) throws FileNotFoundException {
+        final String filePath = libRoot + "/" + qcn.getFormattedFilename();
         try {
             Program prg = new Parser(filePath).parse();
             FileContext fileCtx = new FileContext(this, qcn.getName());
             prg.execute(fileCtx);
-        } catch (FileNotFoundException ex) {
-            throw new RockstarRuntimeException("Error loading file " + filePath+", File not found");
         } catch (ParseException pex) {
-            throw new RockstarRuntimeException("Error loading file " + filePath+", Parse error: "+pex.getMessage());
+            throw new RockstarRuntimeException("Error loading file " + filePath + ", Parse error: " + pex.getMessage());
         }
     }
 }

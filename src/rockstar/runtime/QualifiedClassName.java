@@ -30,7 +30,7 @@ public class QualifiedClassName {
     }
     
     public String getFormattedFilename() {
-        return path + "/" + PackagePath.formatPathPartName(name);
+        return path + "/" + PackagePath.formatPathPartName(name) + ".rock";
     }
 
     @Override
