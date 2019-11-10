@@ -31,6 +31,30 @@ I summarized the main characterisics of the OOP feature below. How it works, wha
 
 A variable (and a value) can be an `object` type. An object can have methods, fields, and possibly a constructor. There are no operations defined for an object type value other than the method call. Object fields cannot be accessed using dereferencing.
 
+### Package:
+
+Each file may have its package declaration. The syntax is simple:
+```
+Album: core, and utils
+```
+
+In general it is `Album: <list-of-identifiers>`. The `list-of-identifiers` is a list expression that contains Rockstar identifiers, that defines the package. Alternatively, an identifier may be a string constant, e.g. `Album: "core", "utils"` (also: `Album: "core/utils"`).
+
+The folder names are the names (or strings), lowercased, all non-alpha characters replaced with underscore (`_`). Similar rules apply to class nanes later.
+
+### Importing, class loading:
+
+To import a class, we can use the following syntaxes:
+```
+from <package-name> play <class-names>
+off <package-name> play <class-names>
+play <class-names>
+
+from Core, and Utils play an array, a comparator
+```
+
+It imports the classes identified by `<class-names>` from the defined package. There is a folder called `rockstar-libs` that is the root of the system-defined classes, otherwise the local working directory is used to locate a class. When the class is imported first time, its file is located, and the body is run. The defined classes, functions and variables will be accessible globally. For example, it is possible to create a `Maths` class that defines a `Maths` globally available object instance that can be accessed for math functions - a static instance.
+
 ### Class declaration: 
 
 `<class> looks like <superclass>`
@@ -82,10 +106,6 @@ All fields of a class are protected (not visible from outside, but a subclass me
 A subclass method declaration will override (and hide) a superclass method declaration, if the same name is defined. The superclass method is still accessible from the subclass using the `<method> on parent` special object reference.
 A field declared in a subclass does not override the superclass field, instead, it uses that field from the superclass (only overwrites its value).
 
-### Overload:
-
-Just like with the functions, it is not possible to overload a method, because only the method name is checked.
-
 ### Static fields, static methods:
 
 There are no static fields of methods in Rockstar. However, after defining a class, it is possible to create an instance as a global variable. By convention, the name of the global variable should be equal to the class name. This instance can be used as "static instance".
@@ -127,135 +147,18 @@ Proper visibility for the inner classes would make them more useful.
 Not all methods are useful for the user of the class, and it would also increase the readibility if only the public methods would be callable from outside. There's no need for private, package private, friend or whatever other visibility rules.
 
 # Example code
---- 
 
-Chain/Array
-```
-Chain Link looks like nothing                 (class declaration, inherits nothing)
-  the morning is nowhere                      (reference to previous)
-  the evening is gone                         (reference to next)
-  the load is nothing                         (the payload)
-  Chain Link takes the burden                 (constructor with the payload)
-    put the burden into the load              
-                                              (end of method)
-  the ray takes the burden                    ("set")
-    put the burden into the load              
-    give back the burden                      
-                                              (eom)
-  the sunrise takes the sun                   (attach to previous)
-    let the morning be the sun                
-    if the sun is not gone                    (call "attach to next" on the previous)
-      the sunset on the sun taking self       (method call, "self" access)
+https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/an_array.rock
+https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chain.rock
+https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chain_link.rock
 
-    give back the sun
-                                              (eom)
-  the sunset takes the sun                    (attach to next)
-    let the evening be the sun                 
-    give back the sun
-                                              (eom)
-  the eclipse takes nothing                   (clearNext)
-    let tonight be the evening
-    let the evening be nowhere                
-    give back tonight
-                                              (end of method)
-  tomorrow takes nothing                      (getNext)
-    give back the morning                     
-                                              (eom)
-  the look takes nothing                      (getPrevoius)
-    give back the load                        
-                                              (eom)
-                                              (end of class Chain Link)
 
-Chain looks like nothing                                          (class declaration, inherits nothing, no constructor)
-  the brave is nowhere                                            
-  the coward is gone                                              
-  the army is invincible                                          
-  add takes the sword                                             (add to the list)
-    the warrior wants to be Chain Link taking the sword           (initialize a container with the vale)
-    if the coward is not gone                                     
-      the sunrise on the coward taking the warrior                (append to the tail element)
-                                                                  (end if)
-    let the coward be the warrior                                 (this is the tail)
-    if the brave is nowhere                                       
-      let the brave be the warrior                                (set the list head, if not set)
-                                                                  (end if)
-    build the army up                                             (increase size)
-    give back the burden                                          
-                                                                  (eom)
-  remove takes nothing                                            (remove the last, give back its value)
-    if the coward is gone                                         (if the list is empty)
-      give back nothing
-                                                                  (end if)
-    let the burden be the look on the coward                      (get the value from the last)
-    let the coward be the eclipse on the coward                   (remove the last)
-    knock the army down                                           (decrease size)
-    give back the burden
-                                                                  (eom)
-  size takes nothing                                              (size)
-    give back the army                                            
-                                                                  (eom)
-  first takes nothing                                             (first value)
-    give back the look on the brave                               
-                                                                  (eom)
-  last takes nothing                                              (last value)
-    give back the look on the coward                              
-                                                                  ((eom))
-  peek takes the enemy                                            (get a value at given index)
-    if nothing is as weak as the enemy and the enemy is weaker than the army    (check index bounds)
-      let the warrior be the brave                                (iterate through the containers)
-      while the enemy is stronger than nothing
-        let the warrior be tomorrow on the warrior                (next container)
-        knock the enemy down
-                                                                  (end while)
-      give back the look on the warrior                           (return the value)
-                                                                  (end if)
-    give back mysterious
-                                                                  (eom)
-                                                                  (end of class Chain)
-Array looks like Chain
-  set takes the enemy, the sword                                  (set: index, value)
-    if nothing is as weak as the enemy                            (if the index is non-negative)
-      let the ghost be the enemy
-      build the ghost up
-      if the ghost is stronger than the army                      (we need to expand)
-        while the ghost is stronger than the army                 (expand until we have the limit)
-           add taking mysterious                                  (initialize the skipped indexes)
-                                                                  (end while)
-        let the warrior be the coward
-      otherwise                                                   (we need to find the proper element)
-        let the warrior be the brave
-        while the enemy is stronger than nothing
-          let the warrior be tomorrow on the warrior              (next)
-          knock the enemy down
-                                                                  (end while)
-                                                                  (end if)
-      the ray on the warrior taking the sword                     (set the value for the current)
-      give back the sword
-    otherwise
-      give back nothing
-                                                                  (end if)
-                                                                  (eom)
-  get takes the enemy                                             (get function)
-    give back peek taking the enemy
-                                                                  (eom)
-  description takes nothing                                       (formatted output)
-    let the show be "["
-    let the warrior be the brave
-    while the warrior is not gone
-      let the show be with the look on the warrior
-      if the warrior is not the coward
-        let the show be with ", "
-      (end if)
-      let the warrior be tomorrow on the warrior
-    (end while)
-    give back the show with "]"
-                                                                  (eom)
-                                                                  (end of class Array)
-```
 
 Some demo for the Chain / Array
 ```
-the rainbow would be Chain                (instantiation)
+from core, utils play an array, a chain
+
+the rainbow would be a chain              (instantiation)
 
 add to the rainbow taking "Red"            (method calls)
 add to the rainbow taking "Orange"
@@ -274,7 +177,7 @@ say remove from the rainbow (Orange)
 say remove from the rainbow (Red)
 say size for the rainbow (0)        (all elements removed)
 
-x will be Array
+x will be an array
 set to x taking 3,"d"
 say description on x
 set to x taking 0,"a"
