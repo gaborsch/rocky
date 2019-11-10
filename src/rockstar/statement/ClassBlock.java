@@ -57,11 +57,11 @@ public class ClassBlock extends Block {
             if (qualifiedParentName == null) {
                 throw new RockstarRuntimeException("Can't find parent class "+parentName);
             }
-            parentClass = ctx.retrieveClass(qualifiedParentName);
+            parentClass = ctx.getRootCtx().retrieveClass(qualifiedParentName);
         }
         qualifiedName = new QualifiedClassName(ctx.getPackagePath(), name);
         // define current class in the context
-        ctx.defineClass(qualifiedName, this);
+        ctx.getRootCtx().defineClass(qualifiedName, this);
         // collect abstract methods, based on superclass abstract methods
         abstractMethodNames = new LinkedList<>();
         if (parentClass != null) {

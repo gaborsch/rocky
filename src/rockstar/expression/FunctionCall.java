@@ -111,14 +111,9 @@ public class FunctionCall extends CompoundExpression {
             } else if (VariableReference.isParentReference(object.getName())) {
                 // parent object reference
                 // find the caller object context
-                BlockContext callerCtx = ctx;
-                while (callerCtx != null && !(callerCtx instanceof RockObject)) {
-                    callerCtx = callerCtx.getParent();
-                }
-                if (callerCtx == null) {
-                    throw new RockstarRuntimeException("parent reference in a non-object context");
-                }
-                RockObject callerObj = (RockObject) callerCtx;
+                RockObject callerObj = ctx.getThisObjectCtx()
+                        .orElseThrow(() -> new RockstarRuntimeException("parent reference in a non-object context"));
+
                 // get the parent object, if exists
                 RockObject parentObj = callerObj.getSuperObject();
                 if (parentObj != null) {
@@ -131,13 +126,15 @@ public class FunctionCall extends CompoundExpression {
                         // get the method from that context
                         funcBlock = callContext.retrieveLocalFunction(name);
                     }
+                } else {
+                    throw new RockstarRuntimeException("parent reference in non-inherited class");
                 }
             } else {
                 // object reference
                 ctx.beforeExpression(object);
                 Value objValue = ctx.afterExpression(object, ctx.getVariableValue(object));
                 if (objValue == null) {
-                    throw new RockstarRuntimeException("Object not found: " +  object);
+                    throw new RockstarRuntimeException("Object not found: " + object);
                 }
                 if (objValue.isObject()) {
                     // get the object itself
@@ -155,23 +152,22 @@ public class FunctionCall extends CompoundExpression {
             }
         } else if (VariableReference.isParentReference(name)) {
             // unqualified "parent" function: must be a parent constructor reference
-            BlockContext callerCtx = ctx;
-            while (callerCtx != null && !(callerCtx instanceof RockObject)) {
-                callerCtx = callerCtx.getParent();
-            }
-            if (callerCtx == null) {
-                throw new RockstarRuntimeException("parent constructor call in a non-object context");
-            }
-            RockObject callerObj = (RockObject) callerCtx;
-            // TODO check if it is called in a constructor
+
+            // find the caller object context
+            RockObject callerObj = ctx.getThisObjectCtx()
+                    .orElseThrow(() -> new RockstarRuntimeException("parent constructor call in a non-object context"));
 
             // get the parent object, if exists
             RockObject parentObj = callerObj.getSuperObject();
+            // TODO check if it is called in a constructor
+
             if (parentObj != null) {
                 // context is the parent object
                 callContext = parentObj;
                 // get the constructor from the parent context
                 funcBlock = parentObj.getConstructor();
+            } else {
+                throw new RockstarRuntimeException("parent constructor reference in non-inherited class");
             }
         } else {
             // pure function call or unqualified call in an object context?

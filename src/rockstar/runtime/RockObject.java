@@ -43,14 +43,14 @@ public class RockObject extends BlockContext {
     }
 
     /**
-     * Constructor for extended objects
+     * Constructor for sub-objects
      *
      * @param superObject
      * @param classBlock
      */
     public RockObject(RockObject superObject, ClassBlock classBlock) {
-        // object instances can access the root context
-        super(superObject, classBlock.getName());
+        // sub-objects do not increase level!
+        super(superObject, classBlock.getName(), false);
         this.classBlock = classBlock;
         this.objId = superObject.objId;
         this.superObject = superObject;

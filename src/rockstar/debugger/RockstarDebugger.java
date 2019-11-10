@@ -11,9 +11,8 @@ import java.util.Map;
 import rockstar.Rockstar;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
-import rockstar.runtime.BlockContext;
 import rockstar.runtime.Environment;
-import rockstar.runtime.ProgramContext;
+import rockstar.runtime.FileContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
@@ -36,7 +35,7 @@ public class RockstarDebugger {
         DebugListener listener = new DebugListener(options);
         env.setListener(listener);
         
-        ProgramContext ctx = new ProgramContext(env);
+        FileContext ctx = new FileContext(env);
 
         System.out.println(Rockstar.CLI_HEADER);
         System.out.println(Utils.repeat("-", Rockstar.CLI_HEADER.length()));

@@ -7,10 +7,10 @@ package rockstar.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
-import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 import rockstar.statement.Statement;
 
@@ -21,28 +21,33 @@ import rockstar.statement.Statement;
 public class BlockContext {
 
     private final BlockContext parent;
-    private final BlockContext root;
-    private int level = 0;
-    
+
+    private final ProgramContext rootCtx;
+    private final FileContext fileCtx;
+    private final RockObject thisObjectCtx;
+
+    private final int level;
+
     protected final Map<String, Value> vars = new HashMap<>();
     protected final Map<String, FunctionBlock> funcs = new HashMap<>();
-    protected final Map<QualifiedClassName, ClassBlock> classes = new HashMap<>();
-    protected final Map<String, QualifiedClassName> imports = new HashMap<>();
-    
+
     private final Environment env;
 
     private final String ctxName;
 
     /**
      * Root context initialization
-     * @param env 
+     *
+     * @param env
      */
     protected BlockContext(Environment env) {
-        this.parent = null;
-        this.root = this;
         this.env = env;
-        
+        this.parent = null;
+        this.rootCtx = (ProgramContext) this;
+        this.thisObjectCtx = null;
+        this.level = 0;
         this.ctxName = "RockStar";
+        this.fileCtx = null;
     }
 
     /**
@@ -52,33 +57,31 @@ public class BlockContext {
      * @param ctxName name of the context
      */
     public BlockContext(BlockContext parent, String ctxName) {
-        this.parent = parent;
-        this.root = parent.root;
-        this.level = parent.level + 1;
-        this.env = parent.env;
-        this.ctxName = ctxName;
+        // Normally we increase the level
+        this(parent, ctxName, true);
     }
 
     /**
-     * Context initialization for sub-objects
+     * Context initialization for functions
      *
-     * @param parentObj
+     * @param parent
      * @param ctxName name of the context
+     * @param increaseLevel
      */
-    protected BlockContext(RockObject parentObj, String ctxName) {
-        BlockContext parentCtx = parentObj;
-        this.parent = parentCtx;
-        this.root = parentCtx.root;
-        // sub-objects do not increase level!
-        this.level = parentCtx.level;
-        this.env = parentCtx.env;
+    public BlockContext(BlockContext parent, String ctxName, boolean increaseLevel) {
+        this.env = parent.env;
+        this.parent = parent;
+        this.rootCtx = parent.rootCtx;
+        this.fileCtx = (this instanceof FileContext) ? (FileContext) this : parent.fileCtx;
+        this.thisObjectCtx = (this instanceof RockObject) ? (RockObject) this : parent.thisObjectCtx;
+        this.level = parent.level + (increaseLevel ? 1 : 0);
         this.ctxName = ctxName;
     }
 
     public Environment getEnv() {
         return env;
     }
-    
+
     public Map<String, Value> getVariables() {
         return vars;
     }
@@ -87,36 +90,39 @@ public class BlockContext {
         return funcs;
     }
 
-    public Map<QualifiedClassName, ClassBlock> getClasses() {
-        return classes;
-    }
-
     public String getName() {
         if (this.parent == null) {
             return ctxName;
         }
-        RockObject thisObj = getThisObjectContext();
-        if (thisObj != null) {
-            return ctxName + "@" + thisObj.getName() + " L" + this.level;
+        if (this.thisObjectCtx != null) {
+            return ctxName + "@" + thisObjectCtx.getName() + " L" + this.level;
         }
         return ctxName + " L" + this.level;
     }
 
     /**
      * The package path is set on files
-     * @return 
+     *
+     * @return
      */
     public PackagePath getPackagePath() {
-        FileContext fc = (FileContext) getContextFor(ctx -> ctx instanceof FileContext);
-        return fc.getPackagePath();
+        return fileCtx.getPackagePath();
     }
 
     public BlockContext getParent() {
         return parent;
     }
 
-    public BlockContext getRoot() {
-        return root;
+    public ProgramContext getRootCtx() {
+        return rootCtx;
+    }
+
+    public FileContext getFileCtx() {
+        return fileCtx;
+    }
+
+    public Optional<RockObject> getThisObjectCtx() {
+        return Optional.ofNullable(thisObjectCtx);
     }
 
     public int getLevel() {
@@ -127,7 +133,7 @@ public class BlockContext {
     private VariableReference lastVariableRef = null;
 
     public VariableReference getLastVariableRef() {
-        BlockContext lastvarCtx = getContextFor(ctx -> lastVariableRef != null);
+        BlockContext lastvarCtx = getContextFor(this, ctx -> lastVariableRef != null);
         return lastvarCtx.lastVariableRef;
     }
 
@@ -138,9 +144,13 @@ public class BlockContext {
      * @param value
      */
     public void setVariable(VariableReference vref, Value value) {
-        doSetVariable(vref, value);
-        // last assigned variable name
-        if (!vref.isLastVariable()) {
+        // Find out the effective variable reference
+        VariableReference effectiveVref = vref.getEffectiveVref(this);
+
+        doSetVariable(effectiveVref, value);
+        
+        // last assigned variable name, if wasn't "it" reference
+        if (vref == effectiveVref) {
             this.lastVariableRef = vref;
         }
     }
@@ -153,18 +163,19 @@ public class BlockContext {
      */
     private void doSetVariable(VariableReference vref, Value value) {
         // determine if we are in object context
-        RockObject thisObj = getThisObjectContext();
-        int thisId = thisObj != null ? thisObj.getObjId() : 0;
+        // find the defining RockObject within thisObjectCtx, if present
+        BlockContext objCtx = null;
+        if (this.thisObjectCtx != null) {
+            int thisId = thisObjectCtx.getObjId();
+            objCtx = getContextFor(thisObjectCtx,
+                    ctx -> (ctx instanceof RockObject)
+                    && (((RockObject) ctx).getObjId() == thisId)
+                    && (ctx.vars.containsKey(vref.getName()))
+            );
+        }
 
-        // find the defining RockObject within "this", if present
-        BlockContext objCtx = getContextFor(
-                ctx -> (ctx instanceof RockObject) 
-                        && (((RockObject)ctx).getObjId() == thisId)
-                        && (ctx.vars.containsKey(vref.getName(this)))
-        );
+        String variableName = vref.getName();
 
-        String variableName = vref.getName(this);
-        
         // we can set either local or global variables
         if (this.vars.containsKey(variableName)) {
             // overwrite local variable
@@ -172,9 +183,9 @@ public class BlockContext {
         } else if (objCtx != null) {
             // overwrite object member variable
             objCtx.setLocalVariable(vref, value);
-        } else if (root.vars.containsKey(variableName)) {
+        } else if (rootCtx.vars.containsKey(variableName)) {
             // overwrite global variable
-            root.setLocalVariable(vref, value);
+            rootCtx.setLocalVariable(vref, value);
         } else {
             // initialize local variable
             setLocalVariable(vref, value);
@@ -182,28 +193,21 @@ public class BlockContext {
     }
 
     /**
-     * return the first object context ("this")
-     * @return 
-     */
-    public RockObject getThisObjectContext() {
-        return (RockObject) getContextFor(ctx -> ctx instanceof RockObject);
-    }
-
-    /**
      * Find a context in the hierarchy for the given condition
+     *
+     * @param startCtx
      * @param condition
-     * @return 
+     * @return
      */
-    protected BlockContext getContextFor(Predicate<BlockContext> condition) {
-        BlockContext ctx = this;
-        while (ctx != null && ! condition.test(ctx)) {
+    protected BlockContext getContextFor(BlockContext startCtx, Predicate<BlockContext> condition) {
+        BlockContext ctx = startCtx;
+        while (ctx != null && !condition.test(ctx)) {
             ctx = ctx.getParent();
         }
         return ctx;
     }
 
-        
-        /**
+    /**
      * Set a variable in the local context, hiding global variables (e.g.
      * function parameters)
      *
@@ -211,8 +215,7 @@ public class BlockContext {
      * @param value
      */
     public void setLocalVariable(VariableReference vref, Value value) {
-        vars.put(vref.getName(this), value);
-
+        vars.put(vref.getName(), value);
     }
 
     /**
@@ -224,7 +227,7 @@ public class BlockContext {
     public Value getVariableValue(VariableReference vref) {
         // find the context where the variable was defined 
         Value v = null;
-        String vname = vref.getName(this);
+        String vname = vref.getEffectiveVref(this).getName();
         BlockContext ctx = this;
         while (v == null && ctx != null) {
             v = ctx.vars.get(vname);
@@ -243,46 +246,18 @@ public class BlockContext {
     }
 
     public BlockContext getContextForFunction(String name) {
-        BlockContext ctx = this;
-        while (ctx != null && !ctx.funcs.containsKey(name)) {
-            ctx = ctx.getParent();
-        }
-        return ctx;
-    }
-    
-    public void defineImport(String alias, QualifiedClassName qcn) {
-        imports.put(alias, qcn);
-    }
-
-    public void defineClass(QualifiedClassName qcn, ClassBlock classBlock) {
-        this.classes.put(qcn, classBlock);
+        return getContextFor(this, ctx -> ctx.funcs.containsKey(name));
     }
 
     public QualifiedClassName findClass(String name) {
         // if we have an import, use that
-        QualifiedClassName aliasQcn = imports.get(name);
-        if (retrieveClass(aliasQcn) != null) {
+        QualifiedClassName aliasQcn = fileCtx.getQualifiedClassNameByAlias(name);
+        if (aliasQcn != null) {
             return aliasQcn;
         }
         // otherwise use the context package
         QualifiedClassName defaultQcn = new QualifiedClassName(getPackagePath(), name);
-        if (retrieveClass(defaultQcn) != null) {
-            return defaultQcn;
-        }
-        return null;
-    }
-    
-    public ClassBlock retrieveClass(QualifiedClassName qcn) {
-        if (qcn == null) {
-            return null;
-        }
-        ClassBlock c = null;
-        BlockContext ctx = this;
-        while (c == null && ctx != null) {
-            c = ctx.classes.get(qcn);
-            ctx = ctx.getParent();
-        }
-        return c;
+        return defaultQcn;
     }
 
     public void beforeStatement(Statement stmt) {

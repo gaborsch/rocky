@@ -7,14 +7,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import rockstar.debugger.DebugListener;
 import rockstar.debugger.RockstarDebugger;
 import rockstar.parser.Parser;
 import rockstar.repl.RockstarRepl;
-import rockstar.runtime.BlockContext;
 import rockstar.runtime.Environment;
+import rockstar.runtime.FileContext;
 import rockstar.runtime.LoggerListener;
-import rockstar.runtime.ProgramContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.test.RockstarTest;
@@ -220,14 +218,15 @@ public class Rockstar {
         LoggerListener logger = new LoggerListener(options);
 
         Environment env = new Environment(System.in, System.out, System.err, options);
-        ProgramContext prgCtx = new ProgramContext(env);
-        BlockContext ctx = null;
+        env.setListener(logger);
+
+        FileContext prgCtx = new FileContext(env);
+        FileContext ctx = null;
         for (String filename : files) {
             try {
                 Program prg = new Parser(filename).parse();
                 if (ctx == null || !sameContext) {
-                    ctx = new BlockContext(prgCtx, filename);
-                    env.setListener(logger);
+                    ctx = new FileContext(prgCtx, filename);
                 }
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {

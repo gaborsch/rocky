@@ -38,7 +38,7 @@ public class InstantiationStatement extends Statement {
     public void execute(BlockContext ctx) {
         // get the class
         QualifiedClassName qcn = ctx.findClass(className);
-        ClassBlock classBlock = ctx.retrieveClass(qcn);
+        ClassBlock classBlock = ctx.getRootCtx().retrieveClass(qcn);
         if (classBlock != null) {
             // evaluate constructor expressions
             List<Value> paramValues = ctorParameterExprs.stream()

@@ -7,6 +7,7 @@ package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockObject;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -25,12 +26,8 @@ public class VariableReference extends SimpleExpression {
         this.isLastVariable = isLastVariable;
     }
 
-    public String getName(BlockContext ctx) {
-        VariableReference vref = this;
-        if (isLastVariable) {
-            vref = ctx.getLastVariableRef();
-        }
-        return vref.name;
+    public VariableReference getEffectiveVref(BlockContext ctx) {
+        return isLastVariable ? ctx.getLastVariableRef() : this;
     }
 
     public String getName() {
@@ -49,17 +46,18 @@ public class VariableReference extends SimpleExpression {
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
-        
+
         if (isSelfReference()) {
-            RockObject obj = ctx.getThisObjectContext();
+            RockObject obj = ctx.getThisObjectCtx()
+                    .orElseThrow(() -> new RockstarRuntimeException("Self reference in a non-class context"));
             return ctx.afterExpression(this, Value.getValue(obj));
         }
-        
+
         VariableReference effectiveVRef = this;
         if (isLastVariable) {
             effectiveVRef = ctx.getLastVariableRef();
         }
-        
+
         Value value = ctx.getVariableValue(effectiveVRef);
 
         if (value == null) {
@@ -104,7 +102,7 @@ public class VariableReference extends SimpleExpression {
 
     }
 
-    public boolean isLastVariable() {
+    public boolean isLastVariableRef() {
         return isLastVariable;
     }
 

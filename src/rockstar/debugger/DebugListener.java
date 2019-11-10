@@ -148,7 +148,7 @@ public class DebugListener implements BlockContextListener {
                         if (varName.startsWith("#")) {
                             try {
                                 int idx = Integer.parseInt(varName.substring(1));
-                                varName = watches.get(idx - 1).getName(ctx);
+                                varName = watches.get(idx - 1).getName();
                             } catch (NumberFormatException nfe) {
                                 // fall back to exact string match
                             }
