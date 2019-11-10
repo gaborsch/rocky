@@ -18,11 +18,6 @@ public class ParseException extends RuntimeException {
         this.line = line;
     }
 
-    public ParseException(String message) {
-        super(message);
-        this.line = null;
-    }
-
     public Line getLine() {
         return line;
     }

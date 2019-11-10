@@ -30,7 +30,7 @@ public class AssignmentStatement extends Statement {
 
     public AssignmentStatement(ReferenceExpression ref, Expression expression) {
         if (! (ref.getBaseExpression() instanceof VariableReference)) {
-            throw new ParseException("Assignment is not possible to a non-variable expression: " +ref.getBaseExpression());
+            throw new ParseException("Assignment is not possible to a non-variable expression: " +ref.getBaseExpression(), getLine());
         }
         this.expression = expression;
         this.variable = null;

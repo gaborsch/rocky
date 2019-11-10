@@ -14,6 +14,8 @@ import java.util.Objects;
  * @author Gabor
  */
 public class Line {
+    
+    public static Line STARTER_LINE = new Line("", "-", 0);
 
     private String line;
     private final String origLine;

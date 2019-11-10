@@ -11,6 +11,7 @@ import java.util.Optional;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
+import rockstar.expression.LogicalExpression;
 import rockstar.expression.VariableReference;
 
 /**
@@ -20,12 +21,13 @@ import rockstar.expression.VariableReference;
 public class PackagePath {
 
     public static final PackagePath DEFAULT = new PackagePath(new LinkedList<>());
-    
+
     private final List<String> path;
 
     /**
      * Package path is created through the factory method only
-     * @param path 
+     *
+     * @param path
      */
     private PackagePath(List<String> path) {
         this.path = path;
@@ -40,19 +42,29 @@ public class PackagePath {
     }
 
     private static List<String> processPathExpr(Expression expr, List<String> path) {
+        if (path == null) {
+            return null;
+        }
         if (expr instanceof ListExpression) {
             // list expressions are porcessed one by one
             ListExpression le = (ListExpression) expr;
             for (Expression part : le.getParameters()) {
                 path = processPathExpr(part, path);
-                if (path == null) {
-                    return null;
+            }
+        } else if (expr instanceof LogicalExpression) {
+            // logical "and" also processed as a list
+            LogicalExpression le = (LogicalExpression) expr;
+            if (le.getType() == LogicalExpression.LogicalType.AND) {
+                for (Expression part : le.getParameters()) {
+                    path = processPathExpr(part, path);
                 }
+            } else {
+                return null;
             }
         } else if (expr instanceof VariableReference) {
             // Variable names are taken characterwise
             VariableReference vr = (VariableReference) expr;
-            String name = formatVariableName(vr.getName());
+            String name = formatPathPartName(vr.getName());
             path.add(name);
             return path;
         } else if (expr instanceof ConstantExpression) {
@@ -63,11 +75,13 @@ public class PackagePath {
                 String[] parts = value.split("/");
                 for (String part : parts) {
                     // all parts are added one by one, empty parts skipped
-                    String partFormatted = formatVariableName(part);
+                    String partFormatted = formatPathPartName(part);
                     if (!partFormatted.isEmpty()) {
                         path.add(partFormatted);
                     }
                 }
+            } else {
+                return null;
             }
 
         } else {
@@ -77,7 +91,7 @@ public class PackagePath {
         return path;
     }
 
-    private static String formatVariableName(String name) {
+    public static String formatPathPartName(String name) {
         return name.replaceAll("[^a-zA-Z]+", "_");
     }
 

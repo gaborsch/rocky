@@ -28,6 +28,10 @@ public class QualifiedClassName {
     public PackagePath getPath() {
         return path;
     }
+    
+    public String getFormattedFilename() {
+        return path + "/" + PackagePath.formatPathPartName(name);
+    }
 
     @Override
     public int hashCode() {

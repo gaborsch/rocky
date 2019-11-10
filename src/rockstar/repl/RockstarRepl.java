@@ -61,18 +61,18 @@ public class RockstarRepl {
         try {
             while (true) {
                 ctx.getEnv().getOutput().print("> ");
-                String line = ctx.getEnv().getInput().readLine();
+                String l = ctx.getEnv().getInput().readLine();
 
-                if (line.equals("exit")) {
+                if (l.equals("exit")) {
                     break;
                 }
-                if (line.startsWith("show")) {
-                    if (line.startsWith("show var")) {
+                if (l.startsWith("show")) {
+                    if (l.startsWith("show var")) {
                         System.out.println("Variables:");
                         ctx.getVariables().forEach((name, value) -> {
                             System.out.println(name + " = " + value);
                         });
-                    } else if (line.startsWith("show func")) {
+                    } else if (l.startsWith("show func")) {
                         System.out.println("Functions:");
                         ctx.getFunctions().forEach((String name, FunctionBlock func) -> {
                             System.out.println(name + " taking " + func.getParameterRefs());
@@ -84,11 +84,12 @@ public class RockstarRepl {
                     }
                 } else {
                     try {
+                        final Line line = new Line(l, "<input>", 1);
                         // parse the statement
-                        Statement stmt = StatementFactory.getStatementFor(new Line(line, "<input>", 1));
+                        Statement stmt = StatementFactory.getStatementFor(line);
 
                         if (stmt == null) {
-                            throw new ParseException("Unknown statement");
+                            throw new ParseException("Unknown statement", line);
                         }
 
                         // explain if needed
@@ -112,7 +113,7 @@ public class RockstarRepl {
                             if (!blocks.isEmpty()) {
                                 blocks.peek().addStatement(stmt);
                             } else {
-                                throw new ParseException("Statement out of block");
+                                throw new ParseException("Statement out of block", line);
                             }
 
                             // open a new block if it's a block statement

@@ -13,10 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,11 +61,13 @@ public class Parser {
         Program prg = new Program(filename);
 
         String line;
+        Line l = Line.STARTER_LINE;
         Stack<Block> blocks = new Stack();
         blocks.push(prg);
         try {
             while ((line = rdr.readLine()) != null) {
-                Statement stmt = StatementFactory.getStatementFor(new Line(line, filename, rdr.getLnum()));
+                l = new Line(line, filename, rdr.getLnum());
+                Statement stmt = StatementFactory.getStatementFor(l);
                 if (stmt instanceof BlockEnd) {
                     // simple block closing: no need to add it anywhere
                     if (blocks.size() > 1) {
@@ -86,7 +85,7 @@ public class Parser {
                     if (!blocks.isEmpty()) {
                         blocks.peek().addStatement(stmt);
                     } else {
-                        parseError("Statement out of block");
+                        parseError("Statement out of block", l);
                     }
 
                     // open a new block if it's a block statement
@@ -99,15 +98,15 @@ public class Parser {
                 }
             }
         } catch (IOException ex) {
-            parseError(ex.getClass().getSimpleName() + ": " + ex.getMessage());
+            parseError(ex.getClass().getSimpleName() + ": " + ex.getMessage(), l);
         }
 
         return prg;
     }
 
-    private void parseError(String msg) {
+    private void parseError(String msg, Line l) {
         // System.err.println("parse error: " + msg);
-        throw new ParseException(msg);
+        throw new ParseException(msg, l);
     }
 
     public static class MultilineReader {

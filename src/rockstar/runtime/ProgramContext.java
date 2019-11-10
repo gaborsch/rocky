@@ -5,9 +5,17 @@
  */
 package rockstar.runtime;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import rockstar.parser.ParseException;
+import rockstar.parser.Parser;
 import rockstar.statement.ClassBlock;
+import rockstar.statement.Program;
 
 /**
  *
@@ -33,10 +41,36 @@ public class ProgramContext extends BlockContext {
         if (qcn == null) {
             return null;
         }
-        // try to find if it has been loaded already
-        ClassBlock c = classes.get(qcn);
-        return c;
+        return classes.get(qcn);
     }
 
-    
+    /**
+     * Load a class, if necessary
+     *
+     * @param qcn
+     */
+    public void importClass(QualifiedClassName qcn) {
+        if (!classes.containsKey(qcn)) {
+            loadClass(qcn);
+        }
+    }
+
+    private void loadClass(QualifiedClassName qcn) {
+        String envPath = getEnv().getParameter("-libpath");
+        String libRoot = envPath == null ? "rockstar-lib" : envPath;
+        loadClass(libRoot, qcn);
+    }
+
+    private void loadClass(String libRoot, QualifiedClassName qcn) {
+        final String filePath = libRoot + "/" + qcn.getFormattedFilename() + ".rock";
+        try {
+            Program prg = new Parser(filePath).parse();
+            FileContext fileCtx = new FileContext(this, qcn.getName());
+            prg.execute(fileCtx);
+        } catch (FileNotFoundException ex) {
+            throw new RockstarRuntimeException("Error loading file " + filePath+", File not found");
+        } catch (ParseException pex) {
+            throw new RockstarRuntimeException("Error loading file " + filePath+", Parse error: "+pex.getMessage());
+        }
+    }
 }

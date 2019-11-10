@@ -67,8 +67,11 @@ public class Rockstar {
                 // "-" is a special parameter
                 command = "repl";
             } else if (a.startsWith("-")) {
-                // -o or --option
-                options.put(a, a);
+                // -o or --option, also -o=value
+                int eqIdx = a.indexOf('=');
+                String key = (eqIdx >= 0) ? a.substring(0, eqIdx): a;
+                String value = (eqIdx >= 0) ? a.substring(eqIdx+1): a;
+                options.put(key, value);
             } else {
                 // normal parh name
                 files.add(a);
@@ -123,9 +126,8 @@ public class Rockstar {
             System.out.println(CLI_WRAPPER + " run [--options ...] <filename> ...");
             System.out.println("    Execute a program. Input is taken from standard input, output is printed to standard output.");
             if (cmd != null) {
+                System.out.println("    All files use the same context.");
                 System.out.println("Options:");
-                System.out.println("    -s, --same-context");
-                System.out.println("        Use the same context for each consecutive program. (Default: create new context)");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    --runlog");
@@ -213,21 +215,17 @@ public class Rockstar {
             doHelp("run", options);
             return;
         }
-        boolean sameContext = options.containsKey("-s") || options.containsKey("--same-context");
-
         LoggerListener logger = new LoggerListener(options);
 
         Environment env = new Environment(System.in, System.out, System.err, options);
         env.setListener(logger);
 
         FileContext prgCtx = new FileContext(env);
-        FileContext ctx = null;
+        FileContext ctx;
         for (String filename : files) {
             try {
                 Program prg = new Parser(filename).parse();
-                if (ctx == null || !sameContext) {
-                    ctx = new FileContext(prgCtx, filename);
-                }
+                ctx = new FileContext(prgCtx, filename);
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);

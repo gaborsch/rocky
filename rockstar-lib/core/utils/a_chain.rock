@@ -1,0 +1,50 @@
+Album: Core, and Utils
+
+Play A Chain Link
+
+A Chain looks like nothing                                        (class declaration, inherits nothing, no constructor)
+  the brave is nowhere                                            
+  the coward is gone                                              
+  the army is invincible                                          
+  add takes the sword                                             (add to the list)
+    the warrior wants to be A Chain Link taking the sword         (initialize a container with the vale)
+    if the coward is not gone                                     
+      the sunrise on the coward taking the warrior                (append to the tail element)
+                                                                  (end if)
+    let the coward be the warrior                                 (this is the tail)
+    if the brave is nowhere                                       
+      let the brave be the warrior                                (set the list head, if not set)
+                                                                  (end if)
+    build the army up                                             (increase size)
+    give back the burden                                          
+                                                                  (eom)
+  remove takes nothing                                            (remove the last, give back its value)
+    if the coward is gone                                         (if the list is empty)
+      give back nothing
+                                                                  (end if)
+    let the burden be the look on the coward                      (get the value from the last)
+    let the coward be the eclipse on the coward                   (remove the last)
+    knock the army down                                           (decrease size)
+    give back the burden
+                                                                  (eom)
+  size takes nothing                                              (size)
+    give back the army                                            
+                                                                  (eom)
+  first takes nothing                                             (first value)
+    give back the look on the brave                               
+                                                                  (eom)
+  last takes nothing                                              (last value)
+    give back the look on the coward                              
+                                                                  ((eom))
+  peek takes the enemy                                            (get a value at given index)
+    if nothing is as weak as the enemy and the enemy is weaker than the army    (check index bounds)
+      let the warrior be the brave                                (iterate through the containers)
+      while the enemy is stronger than nothing
+        let the warrior be tomorrow on the warrior                (next container)
+        knock the enemy down
+                                                                  (end while)
+      give back the look on the warrior                           (return the value)
+                                                                  (end if)
+    give back mysterious
+                                                                  (eom)
+                                                                  (end of class Chain)

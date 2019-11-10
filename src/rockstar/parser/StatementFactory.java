@@ -24,6 +24,7 @@ import rockstar.parser.checker.ClassBlockChecker;
 import rockstar.parser.checker.KnockDownChecker;
 import rockstar.parser.checker.ElseChecker;
 import rockstar.parser.checker.FunctionDefChecker;
+import rockstar.parser.checker.ImportChecker;
 import rockstar.parser.checker.InstantiationChecker;
 import rockstar.parser.checker.PkgDefChecker;
 import rockstar.parser.checker.PoeticArrayAssignmentChecker;
@@ -39,6 +40,8 @@ import rockstar.statement.Statement;
 public class StatementFactory {
 
     private static final Checker CHECKERS[] = new Checker[]{
+        new PkgDefChecker(),
+        new ImportChecker(),
         new TakeItToTheTopChecker(),
         new BreakItDownChecker(),
         new ListenChecker(),
@@ -62,7 +65,6 @@ public class StatementFactory {
         new ClassBlockChecker(),
         new InstantiationChecker(),
         new ExpressionStatementChecker(),
-        new PkgDefChecker(),
         new NoOpChecker()
     };
 

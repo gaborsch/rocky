@@ -1,0 +1,43 @@
+Album: Core, and Utils
+Play A Chain
+
+An Array looks like A Chain
+  set takes the enemy, the sword                                  (set: index, value)
+    if nothing is as weak as the enemy                            (if the index is non-negative)
+      let the ghost be the enemy
+      build the ghost up
+      if the ghost is stronger than the army                      (we need to expand)
+        while the ghost is stronger than the army                 (expand until we have the limit)
+           add taking mysterious                                  (initialize the skipped indexes)
+                                                                  (end while)
+        let the warrior be the coward
+      otherwise                                                   (we need to find the proper element)
+        let the warrior be the brave
+        while the enemy is stronger than nothing
+          let the warrior be tomorrow on the warrior              (next)
+          knock the enemy down
+                                                                  (end while)
+                                                                  (end if)
+      the ray on the warrior taking the sword                     (set the value for the current)
+      give back the sword
+    otherwise
+      give back nothing
+                                                                  (end if)
+                                                                  (eom)
+  get takes the enemy                                             (get)
+    give back peek taking the enemy
+                                                                  (eom)
+  description takes nothing
+    let the show be "["
+    let the warrior be the brave
+    while the warrior is not gone
+      let the show be with the look on the warrior
+      if the warrior is not the coward
+        let the show be with ", "
+      (end if)
+      let the warrior be tomorrow on the warrior
+    (end while)
+    give back the show with "]"
+                                                                  (eom)
+                                                                  (end of class An Array)
+
