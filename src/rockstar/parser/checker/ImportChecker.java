@@ -29,7 +29,7 @@ public class ImportChecker extends Checker {
                 || match("play", 2)) {
 
             // determine package path, if present
-            PackagePath path = PackagePath.DEFAULT;
+            PackagePath path = null;
             if (getResult()[1] != null) {
                 Expression pkgExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
                 Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(pkgExpr);

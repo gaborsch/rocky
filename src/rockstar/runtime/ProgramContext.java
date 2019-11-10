@@ -5,13 +5,11 @@
  */
 package rockstar.runtime;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.URI;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.statement.ClassBlock;
@@ -24,6 +22,7 @@ import rockstar.statement.Program;
 public class ProgramContext extends BlockContext {
 
     protected final Map<QualifiedClassName, ClassBlock> classes = new HashMap<>();
+    private final Set<QualifiedClassName> beingLoaded = new HashSet<>();
 
     protected ProgramContext(Environment env) {
         super(env);
@@ -51,7 +50,12 @@ public class ProgramContext extends BlockContext {
      */
     public void importClass(QualifiedClassName qcn) {
         if (!classes.containsKey(qcn)) {
-            loadClass(qcn);
+            // to avoid circular references, already referred classes are not loaded again
+            if (!beingLoaded.contains(qcn)) {
+                beingLoaded.add(qcn);
+                loadClass(qcn);
+                beingLoaded.remove(qcn);
+            }
         }
     }
 

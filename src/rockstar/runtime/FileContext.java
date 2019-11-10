@@ -56,4 +56,11 @@ public class FileContext extends BlockContext {
         getRootCtx().defineFunction(name, function);
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+    
+    
+
 }

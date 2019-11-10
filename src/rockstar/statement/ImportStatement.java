@@ -19,34 +19,51 @@ import rockstar.runtime.QualifiedClassName;
  */
 public class ImportStatement extends Statement {
 
-    private PackagePath path;
+    private final PackagePath path;
     private final List<String> names;
 
     public ImportStatement(PackagePath path, List<String> names) {
         this.path = path;
         this.names = new LinkedList<>(names);
     }
-    
+
     @Override
     public void execute(BlockContext ctx) {
         FileContext fileCtx = ctx.getFileCtx();
         ProgramContext root = ctx.getRootCtx();
+        // the path is either given, or comes from the file, or the defeult package
+        PackagePath p = this.path;
+        p = (p == null) ? fileCtx.getPackagePath() : p;
+        p = (p == null) ? PackagePath.DEFAULT : p;
+
         for (String name : names) {
-            QualifiedClassName qcn = new QualifiedClassName(path, name);
+            QualifiedClassName qcn = new QualifiedClassName(p, name);
             fileCtx.defineImport(name, qcn);
             root.importClass(qcn);
         }
-        
+
     }
 
     @Override
     protected String explain() {
         StringBuilder sb = new StringBuilder();
-        sb.append("from ")
-                .append(path)
-                .append(" import ");
+        if (path != null) {
+            sb.append("from ")
+                    .append(path)
+                    .append(" ");
+        }
+        sb.append(" import ");
+        boolean isFirst = true;
+        for (String name : names) {
+            if (!isFirst) {
+                sb.append(", ");
+                isFirst = false;
+            }
+            sb.append(name);
+        }
+
 // TODO classes        
         return sb.toString();
     }
-    
+
 }

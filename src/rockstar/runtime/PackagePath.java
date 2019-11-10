@@ -7,6 +7,7 @@ package rockstar.runtime;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
@@ -107,5 +108,32 @@ public class PackagePath {
         }
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.path);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PackagePath other = (PackagePath) obj;
+        if (!Objects.equals(this.path, other.path)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 
 }
