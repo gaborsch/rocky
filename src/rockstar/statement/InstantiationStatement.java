@@ -45,7 +45,7 @@ public class InstantiationStatement extends Statement {
                     .map(expr -> expr.evaluate(ctx))
                     .collect(Collectors.toList());
             // instantiate the class
-            Value instance = classBlock.instantiate(ctx, paramValues);
+            Value instance = classBlock.instantiate(paramValues);
             // assign the instance to the variable
             ctx.setVariable(this.variable, instance);
         } else {

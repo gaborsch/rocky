@@ -7,11 +7,8 @@ package rockstar.statement;
 
 import java.util.LinkedList;
 import java.util.List;
-import rockstar.runtime.BlockContext;
-import rockstar.runtime.QualifiedClassName;
-import rockstar.runtime.RockObject;
-import rockstar.runtime.RockstarRuntimeException;
-import rockstar.runtime.Value;
+
+import rockstar.runtime.*;
 
 /**
  *
@@ -23,7 +20,9 @@ public class ClassBlock extends Block {
     
     private QualifiedClassName qualifiedName;
     private QualifiedClassName qualifiedParentName;
-    
+
+    private FileContext definingContext;
+
     private ClassBlock parentClass;
     private List<String> abstractMethodNames = new LinkedList<>();
 
@@ -59,7 +58,8 @@ public class ClassBlock extends Block {
             }
             parentClass = ctx.getRootCtx().retrieveClass(qualifiedParentName);
         }
-        qualifiedName = new QualifiedClassName(ctx.getPackagePath(), name);
+        this.qualifiedName = new QualifiedClassName(ctx.getPackagePath(), name);
+        this.definingContext = ctx.getFileCtx();
         // define current class in the context
         ctx.getRootCtx().defineClass(qualifiedName, this);
         // collect abstract methods, based on superclass abstract methods
@@ -85,16 +85,15 @@ public class ClassBlock extends Block {
 
     /**
      * Instantiate a class
-     * @param ctx
      * @param ctorParams
      * @return 
      */
-    public Value instantiate(BlockContext ctx, List<Value> ctorParams) {
+    public Value instantiate(List<Value> ctorParams) {
         if (isAbstract()) {
             throw new RockstarRuntimeException("Cannot instantiate abstract class " + qualifiedName);
         }
         
-        RockObject instance = create(ctx);
+        RockObject instance = create(definingContext);
 
         // call the constructor
         FunctionBlock constructor = instance.getConstructor();
