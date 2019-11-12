@@ -9,7 +9,7 @@ Sequence looks like nothing                   (class declaration, inherits nothi
 Let the counter be 0                          (field declaration works like any local variable declaration)
 current takes nothing                         (method declaration works like any function declaration)
 give back the counter                         (read access to field)
-                                              (end of method "next")
+                                              (end of method "current")
 next takes nothing                            (another method declaration)
 Build the counter up                          (write access to field)
 give back the counter                         (read access to field)
