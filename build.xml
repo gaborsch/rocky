@@ -72,7 +72,7 @@
     -->
 <!--
     <target name="-pre-init">
-        <property name="platforms.JDK_1.8.home" value="/coder/lib/java/jdk/"/>
+        <property name="platforms.JDK_1.8.home" value="/usr/lib/jvm/java-8-openjdk-arm64/"/>
     </target> 
 -->
     
