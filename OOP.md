@@ -1,8 +1,8 @@
 # Object Oriented Programming. 
 
-It sounds a big scary thing for Rockstar, but the basic building blocks are already in there. Because we recently clarified and implemented the _nested functions_ feature, we can define named blocks within named blocks, with local scope variables. The OOP concept described here is not too different from that, and we can fare quite long with these features. The OOP described below is not a full-fledged OOP, but encapsulation, inheritance, abstraction and polymorphism is covered (the latter two is partially). 
+It sounds a big scary thing for Rockstar, but the basic building blocks are already in there. Because we recently clarified and implemented the _nested functions_ feature, we can define named blocks within named blocks, with local scope variables. The OOP concept described here is not too different from that, and we can fare quite long with these features. The OOP described below is not a full-fledged OOP, but encapsulation, inheritance, abstraction and polymorphism are covered (the latter two are partially). 
 
-Let me show you a small example (this uses the "parameterless method" syntax I proposed earlier):
+Let me show you a small example (this uses the "parameterless method" syntax I proposed earlier, but only as an object method call):
 
 ```
 Sequence looks like nothing                   (class declaration, inherits nothing)
@@ -22,42 +22,41 @@ say 2 times next from ID                      (output: "6")
 say current from ID                           (output: "3")
 ```
 
-Later, with the class feature we can write "system functions" library (collection of classes in a `system.rock` file or similar), that could be supplied with each interpreter/transpiler. These functions could be the core of the system, and Rockstar developers could easily contribute. I've already written an indexed linked list implementation that can be used as an alternative for native array implementation. I think that if we implement the OOP feature, we don't need to extend the language any more (the only exceptions would be the string handling and type conversions like `cast`).
+With the class feature we can write "system functions" library, that could be supplied with each interpreter/transpiler. These functions can be the core of the system, and Rockstar developers could easily contribute. I've already written an indexed linked list implementation that can be used as an alternative for native array implementation. I think that if we implement the OOP feature, we don't need to extend the language any more (the only exceptions would be the string handling and type conversions like `cast`).
 
 ## Features
-I summarized the main characterisics of the OOP feature below. How it works, what will be the user experience, what's implemented and what's not. I tried to cover the most relevant OOP questions as well.
+I summarized the main characterisics of the OOP feature below. How it works, what will be the user experience, what's covered and what's not. I tried to highlight the most relevant OOP questions as well.
 
 ### Object type:
 
-A variable (and a value) can be an `object` type. An object can have methods, fields, and possibly a constructor. There are no operations defined for an object type value other than the method call. Object fields cannot be accessed using dereferencing.
+A variable (and a value) can be of an `object` type. An object can have methods, fields, and possibly a constructor. The `object` type has the following operations:
+* method call
+* equality check
+* dynamic type testing
+
+There are no other operations defined. Specifically, object fields cannot be accessed using dereferencing.
 
 ### Package:
 
-Each file may have its package declaration. The syntax is simple:
-```
-Album: core, and utils
-```
+Each file may have its package declaration. The syntax is simple: `Album: core, and utils`. Actually the colon is optinal, as Rockstar skips it. In general the syntax is `Album: <list-of-identifiers>`. The `list-of-identifiers` is a list expression that contains Rockstar identifiers, that defines the package. Alternatively, an identifier may be a string constant, e.g. `Album: "core", "utils"` (also slash/separated, like `Album: "core/utils"`). Also, for convenience, an `and` expression is allowed, like `Album: core and utils` (note, that the comma is missing.)
 
-In general it is `Album: <list-of-identifiers>`. The `list-of-identifiers` is a list expression that contains Rockstar identifiers, that defines the package. Alternatively, an identifier may be a string constant, e.g. `Album: "core", "utils"` (also: `Album: "core/utils"`).
-
-The folder names are the names (or strings), lowercased, all non-alpha characters replaced with underscore (`_`). Similar rules apply to class nanes later.
+The folder names are the identifier names (or string parts), lowercased, all non-alpha characters replaced with underscore (`_`). Similar rules apply to class names (see below).
 
 ### Importing, class loading:
 
-To import a class, we can use the following syntaxes:
-```
-from <package-name> play <class-names>
-off <package-name> play <class-names>
-play <class-names>
+To import a class, we can use the following syntax: `[[From/off] <package-name>] play <class-names>`. The `from/off` part is optional, and it denotes that the imported classes should be in the same package as the importing class.
 
+```
 from Core, and Utils play an array, a comparator
+off Core play Maths
+play a chain
 ```
 
-It imports the classes identified by `<class-names>` from the defined package. There is a folder called `rockstar-libs` that is the root of the system-defined classes, otherwise the local working directory is used to locate a class. When the class is imported first time, its file is located, and the body is run. The defined classes, functions and variables will be accessible globally. For example, it is possible to create a `Maths` class that defines a `Maths` globally available object instance that can be accessed for math functions - a static instance.
+It imports the classes identified by `<class-names>` from the defined package. There is a folder called `rockstar-libs` that is the root of the system-defined classes, otherwise the local working directory is used to locate a class. When the class is imported first time, its file is located, and the body is run. The defined classes, functions and variables will be accessible globally. For example, it is possible to create a `Maths` class that defines a `Maths` globally available object instance that can be accessed for maths functions - a static instance.
 
 ### Class declaration: 
 
-`<class> looks like <superclass>`
+`<class-name> looks like <superclass>`
 Alias: `look like`. The class is terminated by an empty line (just like other blocks). A class name should follow the rules of a variable names (simple, common or proper name currently), however it is recommended to use proper names (i.e. starting with capital letters) Superclass name can be `nothing` (or any other aliases for `null`) meaning that there is no superclass.
 
 ### Inheritance:
