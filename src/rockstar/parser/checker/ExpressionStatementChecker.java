@@ -7,6 +7,7 @@ package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
+import rockstar.expression.ObjectQualifierExpression;
 import rockstar.parser.ExpressionFactory;
 import rockstar.statement.ExpressionStatement;
 import rockstar.statement.Statement;
@@ -22,7 +23,7 @@ public class ExpressionStatementChecker extends Checker {
         if (match(1)) {
             try {
                 Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line);
-                if (expression != null && expression instanceof FunctionCall) {
+                if (((expression != null) && (expression instanceof FunctionCall)) || (expression instanceof ObjectQualifierExpression)) {
                     return new ExpressionStatement(expression);
                 }
             } catch (Exception e) {

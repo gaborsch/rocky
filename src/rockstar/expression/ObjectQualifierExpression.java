@@ -8,6 +8,8 @@ package rockstar.expression;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
+import java.util.List;
+
 /**
  *
  * @author Gabor
@@ -34,7 +36,10 @@ public class ObjectQualifierExpression extends CompoundExpression {
 
     @Override
     public String getFormat() {
-        return String.format("%s.%s", getObjectRef(), getQualifierRef());
+        List<Expression> params = this.getParameters();
+        Object oref = (params.size() >= 1) ? getObjectRef() : "<object>";
+        Object qref = (params.size() >= 1) ? getQualifierRef() : "<method>";
+        return String.format("%s.%s", oref, qref);
     }
 
     private FunctionCall wrappedFunctionCall = null;
