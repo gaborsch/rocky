@@ -1,10 +1,10 @@
 Album: Core, and Utils
 
-A Chain Link looks like nothing               (class declaration, inherits nothing)
+A ChainLink looks like nothing               (class declaration, inherits nothing)
   the morning is nowhere                      (reference to previous)
   the evening is gone                         (reference to next)
   the load is nothing                         (the payload)
-  A Chain Link takes the burden               (constructor with the payload)
+  A ChainLink takes the burden               (constructor with the payload)
     put the burden into the load              
                                               (end of method)
   the ray takes the burden                    ("set")
@@ -33,4 +33,4 @@ A Chain Link looks like nothing               (class declaration, inherits nothi
   the look takes nothing                      (getPrevoius)
     give back the load                        
                                               (eom)
-                                              (end of class A Chain Link)
+                                              (end of class A ChainLink)

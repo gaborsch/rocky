@@ -5,7 +5,10 @@
  */
 package rockstar.runtime;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -63,12 +66,15 @@ public class ProgramContext extends BlockContext {
         // first load from system lib
         try {
             // the system lib can be overriden
-            String envPath = getEnv().getParameter("-libpath");
-            String libRoot = envPath == null ? "rockstar-lib" : envPath;
-
-            loadClass(libRoot, qcn);
+            String libPath = getEnv().getParameter("-libpath");
+            if (libPath == null || libPath.isEmpty()) {
+                // if the libpath is not present, use system classes
+                loadClass(this.getClass().getClassLoader(), qcn);
+            } else {
+                // otherwise use the given path
+                loadClass(libPath, qcn);
+            }
         } catch (FileNotFoundException e1) {
-
             // if not found, try to load from current folder
             try {
                 loadClass(".", qcn);
@@ -81,12 +87,22 @@ public class ProgramContext extends BlockContext {
 
     private void loadClass(String libRoot, QualifiedClassName qcn) throws FileNotFoundException {
         final String filePath = libRoot + "/" + qcn.getFormattedFilename();
+        loadClass(new FileInputStream(new File(filePath)), qcn.getName());
+    }
+
+    private void loadClass(ClassLoader cl, QualifiedClassName qcn) throws FileNotFoundException {
+        final String filePath = "rockstar-lib/" + qcn.getFormattedFilename();
+        InputStream is = cl.getResourceAsStream(filePath);
+        loadClass(is, qcn.getName());
+    }
+
+    private void loadClass(InputStream is, String filename) throws FileNotFoundException {
         try {
-            Program prg = new Parser(filePath).parse();
-            FileContext fileCtx = new FileContext(this, qcn.getName());
+            Program prg = new Parser(is, filename).parse();
+            FileContext fileCtx = new FileContext(this, filename);
             prg.execute(fileCtx);
         } catch (ParseException pex) {
-            throw new RockstarRuntimeException("Error loading file " + filePath + ", Parse error: " + pex.getMessage());
+            throw new RockstarRuntimeException("Error loading file " + filename + ", Parse error: " + pex.getMessage());
         }
     }
 }

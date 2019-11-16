@@ -70,11 +70,16 @@
     nbproject/build-impl.xml file. 
 
     -->
-<!--
-    <target name="-pre-init">
-        <property name="platforms.JDK_1.8.home" value="/usr/lib/jvm/java-8-openjdk-arm64/"/>
-    </target> 
--->
+    <!--
+        <target name="-pre-init">
+            <property name="platforms.JDK_1.8.home" value="/usr/lib/jvm/java-8-openjdk-arm64/"/>
+        </target> 
+    -->
+    <target name="-pre-jar">
+        <copy todir="${build.classes.dir}/rockstar-lib">
+            <fileset dir="rockstar-lib"/>
+        </copy>
+    </target>
     
     <target name="-post-jar">
         <copy file="dist/rocky.jar" tofile="rocky.jar"/>

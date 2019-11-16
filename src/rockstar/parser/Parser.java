@@ -48,7 +48,7 @@ public class Parser {
         this(new FileInputStream(new File(filename)), filename);
     }
 
-    private Parser(InputStream is, String filename) {
+    public Parser(InputStream is, String filename) {
         try {
             this.filename = filename;
             rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)));
