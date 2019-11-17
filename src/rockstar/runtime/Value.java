@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
 import rockstar.expression.RefType;
+import rockstar.statement.FunctionBlock;
 
 /**
  *
@@ -192,8 +193,23 @@ public class Value implements Comparable<Value> {
                 return numericValue.toString();
             case BOOLEAN:
                 return boolValue.toString();
-            case OBJECT:
-                return "class " + objectValue.getName();
+            case OBJECT: {
+                // if we have "describe" method
+                BlockContext descContext = objectValue.getContextForFunction(METHOD_NAME_DESCRIPTION);
+                // the call context must be the same object as the caller object
+                if ((descContext != null)
+                        && (descContext instanceof RockObject)
+                        && (((RockObject) descContext).getObjId() == objectValue.getObjId())) {
+                    // get the method from that context
+                    FunctionBlock funcBlock = descContext.retrieveLocalFunction(METHOD_NAME_DESCRIPTION);
+                    // call the method
+                    Value desc = funcBlock.call(objectValue, new LinkedList<>());
+                    // fetch the string value (hopefully it is already a string)
+                    return desc.getString();
+                } else {
+                    return "object " + objectValue.getName();
+                }
+            }
             case MYSTERIOUS:
                 return "mysterious";
             case NULL:
@@ -219,6 +235,7 @@ public class Value implements Comparable<Value> {
         }
         throw new RockstarRuntimeException("unknown string value");
     }
+    private static final String METHOD_NAME_DESCRIPTION = "description";
 
     public boolean getBool() {
         switch (getType()) {
@@ -241,7 +258,7 @@ public class Value implements Comparable<Value> {
         }
         throw new RockstarRuntimeException("unknown bool value");
     }
-    
+
     public RockObject getObject() {
         if (getType() == ExpressionType.OBJECT) {
             return objectValue;
@@ -285,7 +302,7 @@ public class Value implements Comparable<Value> {
         }
         return this.type.toString();
     }
-    
+
     public String describe() {
         switch (this.type) {
             case NUMBER:
@@ -474,12 +491,12 @@ public class Value implements Comparable<Value> {
         if (isMysterious() || other.isMysterious()) {
             return 1;
         }
-        
+
         // object is not equal to anything else
         if (isObject() || other.isObject()) {
             return 1;
         }
-                
+
         // String with conversions
         if (isString()) {
             switch (other.getType()) {

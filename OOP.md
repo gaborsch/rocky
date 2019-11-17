@@ -5,7 +5,7 @@ It sounds a big scary thing for Rockstar, but the basic building blocks are alre
 Let me show you a small example (this uses the "parameterless method" syntax I proposed earlier, but only as an object method call):
 
 ```
-Sequence looks like nothing                   (class declaration, inherits nothing)
+a sequence looks like nothing                 (class declaration, inherits nothing)
 Let the counter be 0                          (field declaration works like any local variable declaration)
 current takes nothing                         (method declaration works like any function declaration)
 give back the counter                         (read access to field)
@@ -14,15 +14,18 @@ next takes nothing                            (another method declaration)
 Build the counter up                          (write access to field)
 give back the counter                         (read access to field)
                                               (end of method "next")
-                                              (end of class "Sequence")
-ID wants to be Sequence                       (instantiation)
+                                              (end of class "a sequence")
+ID will be a sequence                         (instantiation)
 say next from ID                              (call the parameterless method on instance ID, output: "1")
 say next from ID                              (output: "2")
 say 2 times next from ID                      (output: "6")
 say current from ID                           (output: "3")
 ```
 
-With the class feature we can write "system functions" library, that could be supplied with each interpreter/transpiler. These functions can be the core of the system, and Rockstar developers could easily contribute. I've already written an indexed linked list implementation that can be used as an alternative for native array implementation. I think that if we implement the OOP feature, we don't need to extend the language any more (the only exceptions would be the string handling and type conversions like `cast`).
+With the class feature we can write a built-in library, that could be supplied with each interpreter/transpiler. 
+These functions can be the core of the system, and Rockstar developers could easily contribute. 
+I've already written a few classes under the `rockstar-lib` folder, including an indexed linked list implementation that can be used as an alternative for native array implementation. 
+After implementing the OOP feature we don't need to extend the language any more (the only exceptions would be the string handling and type conversions like `cast`).
 
 ## Features
 I summarized the main characterisics of the OOP feature below. How it works, what will be the user experience, what's covered and what's not. I tried to highlight the most relevant OOP questions as well.
@@ -82,6 +85,8 @@ The object name `parent` in a method call refers to the method accessible from t
 The method name `parent` refers to the parent object constructor.
 
 The variable name `self` refers to the innermost object context (also known as "this"). Aliases: `myself`, `yourself`, `himself`, `herself`, `itself`, `ourselves`, `yourselves`, `themselves`.
+
+The method name `describe` should return the string representation of an object (if implemented), just like `toString()` in many languages.
 
 ### Instantiation:
 
