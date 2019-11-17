@@ -93,6 +93,9 @@ public class ProgramContext extends BlockContext {
     private void loadClass(ClassLoader cl, QualifiedClassName qcn) throws FileNotFoundException {
         final String filePath = "rockstar-lib/" + qcn.getFormattedFilename();
         InputStream is = cl.getResourceAsStream(filePath);
+        if (is == null) {
+            throw new FileNotFoundException();
+        }
         loadClass(is, qcn.getName());
     }
 
