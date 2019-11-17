@@ -1,13 +1,12 @@
 Album: Core, and Utils
-
-Play A ChainLink
+Play a chainlink
 
 A Chain looks like nothing                                        (class declaration, inherits nothing, no constructor)
-  the brave is nowhere                                            
-  the coward is gone                                              
-  the army is invincible                                          
+  the brave is nowhere                                            (head: first chainlink)
+  the coward is gone                                              (tail: last chainlink)
+  the army is invincible                                          (size)
   add takes the sword                                             (add to the list)
-    the warrior wants to be A ChainLink taking the sword         (initialize a container with the vale)
+    the warrior wants to be a chainlink taking the sword          (initialize a container with the vale)
     if the coward is not gone                                     
       the sunrise on the coward taking the warrior                (append to the tail element)
                                                                   (end if)
@@ -16,16 +15,18 @@ A Chain looks like nothing                                        (class declara
       let the brave be the warrior                                (set the list head, if not set)
                                                                   (end if)
     build the army up                                             (increase size)
-    give back the burden                                          
+    give back the sword                                          
                                                                   (eom)
   remove takes nothing                                            (remove the last, give back its value)
-    if the coward is gone                                         (if the list is empty)
+    let the warrior be the coward
+    if the warrior is gone                                         (if the list is empty)
       give back nothing
                                                                   (end if)
-    let the burden be the look on the coward                      (get the value from the last)
-    let the coward be the eclipse on the coward                   (remove the last)
+    let the light be the look on the warrior                      (get the value from the last)
+    let the coward be yesterday on the coward                     (chain back the last)
+    the eclipse on the warrior                                    (remove it)
     knock the army down                                           (decrease size)
-    give back the burden
+    give back the light
                                                                   (eom)
   size takes nothing                                              (size)
     give back the army                                            
@@ -47,4 +48,15 @@ A Chain looks like nothing                                        (class declara
                                                                   (end if)
     give back mysterious
                                                                   (eom)
-                                                                  (end of class Chain)
+  description takes nothing
+    let the show be "["
+    let the warrior be the brave
+    while the warrior is not gone
+      let the show be with the look on the warrior
+      if the warrior is not the coward
+        let the show be with ", "
+      (end if)
+      let the warrior be tomorrow on the warrior
+    (end while)
+    give back the show with "]"
+                                                                  (eom)                                                                  (end of class Chain)

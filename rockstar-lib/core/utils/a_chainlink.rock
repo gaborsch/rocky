@@ -1,36 +1,52 @@
 Album: Core, and Utils
 
-A ChainLink looks like nothing               (class declaration, inherits nothing)
+a chainlink looks like nothing                (class declaration, inherits nothing)
   the morning is nowhere                      (reference to previous)
   the evening is gone                         (reference to next)
   the load is nothing                         (the payload)
-  A ChainLink takes the burden               (constructor with the payload)
-    put the burden into the load              
+  a chainlink takes the light                 (constructor with the payload)
+    put the light into the load              
                                               (end of method)
-  the ray takes the burden                    ("set")
-    put the burden into the load              
-    give back the burden                      
+  the ray takes the light                     ("set")
+    put the light into the load              
+    give back the light                      
                                               (eom)
-  the sunrise takes the sun                   (attach to previous)
-    let the morning be the sun                
-    if the sun is not gone                    (call "attach to next" on the previous)
-      the sunset on the sun taking self       (method call, "self" access)
+  the sunrise takes the sun                   (add into the chain after this)
+    let today be the evening                  (next link)
+    if today is not gone                      (if not the last)
+      the dawn for today taking the sun       (set as previous)      
+      the sunset for the sun taking today     (set as next)
 
+    let the evening be the sun                
+    the dawn for the sun taking itself      
     give back the sun
                                               (eom)
-  the sunset takes the sun                    (attach to next)
+  the eclipse takes nothing                   (remove from the chain)
+    if the morning is not gone
+      the sunset in the morning taking the evening
+    
+    if the evening is not gone
+      the dawn in the evening taking the morning
+
+    the morning is nowhere
+    the evening is gone
+    give back itself
+                                              (eom)
+  the sunset takes the sun                    (set as next)
     let the evening be the sun                 
     give back the sun
                                               (eom)
-  the eclipse takes nothing                   (clearNext)
-    let tonight be the evening
-    let the evening be nowhere                
-    give back tonight
-                                              (end of method)
-  tomorrow takes nothing                      (getNext)
+  the dawn takes the sun                      (set as previous)
+    let the morning be the sun                 
+    give back the sun
+                                              (eom)
+  tomorrow takes nothing                      (get next)
+    give back the evening                     
+                                              (eom)
+  yesterday takes nothing                     (get prev)
     give back the morning                     
                                               (eom)
-  the look takes nothing                      (getPrevoius)
+  the look takes nothing                      (get payload)
     give back the load                        
                                               (eom)
-                                              (end of class A ChainLink)
+                                              (end of class a chainlink)

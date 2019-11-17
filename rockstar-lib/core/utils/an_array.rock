@@ -1,7 +1,7 @@
 Album: Core, and Utils
-Play A Chain
+Play a chain
 
-An Array looks like A Chain
+an array looks like a chain
   set takes the enemy, the sword                                  (set: index, value)
     if nothing is as weak as the enemy                            (if the index is non-negative)
       let the ghost be the enemy
@@ -27,17 +27,6 @@ An Array looks like A Chain
   get takes the enemy                                             (get)
     give back peek taking the enemy
                                                                   (eom)
-  description takes nothing
-    let the show be "["
-    let the warrior be the brave
-    while the warrior is not gone
-      let the show be with the look on the warrior
-      if the warrior is not the coward
-        let the show be with ", "
-      (end if)
-      let the warrior be tomorrow on the warrior
-    (end while)
-    give back the show with "]"
-                                                                  (eom)
+
                                                                   (end of class An Array)
 
