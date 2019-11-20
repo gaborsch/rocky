@@ -19,9 +19,19 @@ To install and run, you only need the `./rocky.jar` file, and one of the wrapper
 
 There are some Rockstar program in the `programs` folder and its subfolders, you may want to check them, too. They're mostly for test purposes, though.
 
-#### Docker Support
+#### Install for Docker 
 
-If you don't have Java on your local machine, you can create a docker image using the following command:
+If you don't have Java on your machine, you can run Rockstar within a Docker container. We have the `dockstar` command for you, where everything works just like with the `rockstar` command, but the image is run within Docker. The only difference is that you have to replace `\` path separators to `/` unix-style on command line.
+
+```
+./dockstar help
+./dockstar programs/fizzbuzz.rock
+./dockstar debug programs/fizzbuzz.rock
+```
+
+### Docker image
+
+You can also create a docker image using the following command:
 ```
 docker build -t rockstar .
 ``` 
@@ -32,7 +42,7 @@ Once created, you can use the container to run rocky. Here are some sample comma
 
 ### Usage
 
-To run a program, it's simple:
+It is very easy to run a program:
 ```
 $ ./rockstar programs/modulus.rock 
 Enter Dividend:
@@ -41,7 +51,7 @@ Enter Divisor:
 7
 The modulus is 2
 ```
-To list (and parse) a program, try `list` (note, that it is the parsed version, with indentations, to help better understanding. Whitespaces do not count in Rockstar)
+To list (and parse) a program, try `list`. Note, that it is the parsed version, with indentations, to help better understanding (whitespaces do not count in Rockstar).
 ```
 $ ./rockstar list programs/modulus.rock
 
@@ -65,7 +75,7 @@ $ ./rockstar list programs/modulus.rock
   say "The modulus is " with Modulus taking X and Y
 ```
 
-Time to get acquainted with Rockstar? Try the REPL (interactive) mode, start Rockstar with `-` option:
+Do you want to get acquainted with Rockstar? Try the REPL (interactive) mode, start Rockstar with `-` option:
 
 ```
 $ ./rockstar -

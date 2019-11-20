@@ -1,0 +1,1 @@
+@docker run -it -v %CD%:/local -w="/local" java:8-jdk-alpine java -classpath rocky.jar rockstar.Rockstar %*
