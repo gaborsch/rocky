@@ -487,6 +487,11 @@ public class Value implements Comparable<Value> {
             }
         }
 
+        // nothing values are equal
+        if (isNothing() && other.isNothing()) {
+            return 0;
+        }
+
         // mysterious is not equal to anything else
         if (isMysterious() || other.isMysterious()) {
             return 1;
@@ -532,6 +537,28 @@ public class Value implements Comparable<Value> {
         }
         // number vs null
         return getNumeric().compareTo(other.getNumeric());
+    }
+
+    private boolean isNothing() {
+        switch (this.type) {
+            case NULL:
+                return true;
+            case MYSTERIOUS:
+                return true;
+            case BOOLEAN:
+                return ! boolValue;
+            case NUMBER:
+                return numericValue.equals(RockNumber.ZERO);
+            case STRING:
+                return stringValue.isEmpty();
+            case OBJECT:
+                return false;
+            case ASSOC_ARRAY:
+                return false;
+            case LIST_ARRAY:
+                return false;
+        }
+        return false;
     }
 
     public Value isEquals(Value other) {
