@@ -27,7 +27,8 @@ public class TurnStatement extends Statement {
             this.desc = desc;
         }
 
-        private String getDesc() {
+        @Override
+        public String toString() {
             return desc;
         }
     };
@@ -65,11 +66,11 @@ public class TurnStatement extends Statement {
             ctx.setVariable(variable, Value.getValue(num));
             return;
         } 
-        throw new RockstarRuntimeException(v.getType() + " ++");
+        throw new RockstarRuntimeException("turn " + v.getType() + " " + direction);
     }
     
     @Override
     protected String explain() {
-        return variable.format() + " = " + direction.getDesc() + " " + variable.format();
+        return variable.format() + " = " + direction + " " + variable.format();
     }
 }

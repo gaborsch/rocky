@@ -20,6 +20,7 @@ import rockstar.parser.checker.WhileChecker;
 import rockstar.parser.checker.Checker;
 import rockstar.parser.checker.ExpressionStatementChecker;
 import rockstar.parser.checker.BreakItDownChecker;
+import rockstar.parser.checker.CastChecker;
 import rockstar.parser.checker.ClassBlockChecker;
 import rockstar.parser.checker.KnockDownChecker;
 import rockstar.parser.checker.ElseChecker;
@@ -64,6 +65,7 @@ public class StatementFactory {
         new PushChecker(),
         new PullChecker(),
         new TurnChecker(),
+        new CastChecker(),
         new ClassBlockChecker(),
         new InstantiationChecker(),
         new ExpressionStatementChecker(),
