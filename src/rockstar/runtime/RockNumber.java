@@ -125,5 +125,17 @@ public class RockNumber {
         hash = 47 * hash + Objects.hashCode(this.dblValue);
         return hash;
     }
+
+    public RockNumber ceil() {
+        return new RockNumber(Math.ceil(dblValue));
+    }
+
+    public RockNumber floor() {
+        return new RockNumber(Math.floor(dblValue));
+    }
+
+    public RockNumber round() {
+        return new RockNumber((double)Math.round(dblValue));
+    }
     
 }
