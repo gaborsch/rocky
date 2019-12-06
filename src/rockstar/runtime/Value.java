@@ -415,7 +415,11 @@ public class Value implements Comparable<Value> {
     public Value multiply(Value other) {
         RockNumber v2 = other.getNumeric();
         if (isString()) {
-            if (v2 != null) {
+            if (other.isString()) {
+                // String times String is mysterious
+                return MYSTERIOUS;
+            }
+            else if (v2 != null) {
                 // String repeating (STRING times NUMBER)
                 return Value.getValue(Utils.repeat(getString(), v2.asInt()));
             }
