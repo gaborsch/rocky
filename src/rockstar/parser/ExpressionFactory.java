@@ -121,7 +121,8 @@ public class ExpressionFactory {
         while (pos <= orig.length()) {
             char c = (pos < orig.length()) ? orig.charAt(pos) : ' ';
             if (!inComment) {
-                if (Character.isLetter(c)) {
+                // letters and hyphens are poetic text
+                if (Character.isLetter(c) || c == '-') {
                     digit++;
                 } else if (c == '.' || c == ' ' || c == '(') {
                     if (digit > 0) {

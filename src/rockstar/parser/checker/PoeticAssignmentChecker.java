@@ -49,22 +49,7 @@ public class PoeticAssignmentChecker extends Checker {
 						// was expecting either the matching word, or "'s", neither found
 						throw new ParseException("Unparsed poetic number assignment", line);
                     }
-					
-					/*
-					int p = orig.indexOf(" " + matched + " ");
-                    if (p >= 0) {
-                        p = p + matched.length() + 1;
-                    } else {
-                        // maybe "'s" was expanded to " is "
-                        p = orig.indexOf("'s");
-                        if (p >= 0) {
-                            p = p + 3; // "'s ".length()
-                        } else {
-                            // was expecting either the matching word, or "'s", neither found
-                            throw new ParseException("Unparsed poetic number assignment", line);
-                        }
-                    }
-					*/
+
                     String origEnd = orig.substring(p);
                     ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line, origEnd);
                     if (constValue != null) {
