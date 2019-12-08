@@ -5,16 +5,10 @@
  */
 package rockstar.statement;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
 import rockstar.expression.Expression;
-import rockstar.expression.ReferenceExpression;
+import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockNumber;
-import rockstar.runtime.RockstarBreakException;
-import rockstar.runtime.RockstarContinueException;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
@@ -50,9 +44,9 @@ public class IterateStatement extends Block {
         if (asExpr instanceof VariableReference) {
             valueVar = (VariableReference) asExpr;
             ctx.setLocalVariable(valueVar, Value.MYSTERIOUS);
-        } else if (asExpr instanceof ReferenceExpression) {
-            Expression valueExpr = ((ReferenceExpression) asExpr).getBaseExpression();
-            Expression keyExpr = ((ReferenceExpression) asExpr).getIndexExpression();
+        } else if (asExpr instanceof QualifierExpression) {
+            Expression valueExpr = ((QualifierExpression) asExpr).getArrayBaseRef();
+            Expression keyExpr = ((QualifierExpression) asExpr).getArrayIndexRef();
             if (valueExpr instanceof VariableReference) {
                 valueVar = (VariableReference) valueExpr;
                 ctx.setLocalVariable(valueVar, Value.MYSTERIOUS);

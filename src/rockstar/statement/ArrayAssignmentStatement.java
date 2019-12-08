@@ -8,7 +8,7 @@ package rockstar.statement;
 import java.util.LinkedList;
 import java.util.List;
 import rockstar.expression.Expression;
-import rockstar.expression.ReferenceExpression;
+import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
@@ -38,11 +38,11 @@ public class ArrayAssignmentStatement extends Statement {
         // adding to this index will append to the list
         Value idxValue = Value.getValue(RockNumber.getValue(expressionList.size()));
         for (Expression expr : expressionList) {
-            if (expr instanceof ReferenceExpression) {
+            if (expr instanceof QualifierExpression) {
                 // assoc array initialization
-                ReferenceExpression refExp = (ReferenceExpression) expr;
-                Value baseValue = refExp.getBaseExpression().evaluate(ctx);
-                Value indexValue = refExp.getIndexExpression().evaluate(ctx);
+                QualifierExpression refExp = (QualifierExpression) expr;
+                Value baseValue = refExp.getArrayBaseRef().evaluate(ctx);
+                Value indexValue = refExp.getArrayIndexRef().evaluate(ctx);
                 arrayValue = arrayValue.assign(indexValue, baseValue);
             } else {
                 Value memberValue = expr.evaluate(ctx);
