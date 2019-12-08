@@ -6,7 +6,7 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
-import rockstar.expression.ReferenceExpression;
+import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
@@ -20,7 +20,7 @@ public class AssignmentStatement extends Statement {
 
     private final VariableReference variable;
     private final Expression expression;
-    private final ReferenceExpression ref;
+    private final QualifierExpression ref;
 
     public AssignmentStatement(VariableReference variable, Expression expression) {
         this.expression = expression;
@@ -28,13 +28,15 @@ public class AssignmentStatement extends Statement {
         this.ref = null;
     }
 
-    public AssignmentStatement(ReferenceExpression ref, Expression expression) {
-        if (! (ref.getBaseExpression() instanceof VariableReference)) {
-            throw new ParseException("Assignment is not possible to a non-variable expression: " +ref.getBaseExpression(), getLine());
+    public AssignmentStatement(QualifierExpression ref, Expression expression) {
+        Expression base = ref.getArrayBaseRef();
+        if (base instanceof VariableReference) {
+            this.expression = expression;
+            this.variable = null;
+            this.ref = ref;
+        } else {
+            throw new ParseException("Assignment is not possible to a non-variable expression: " + ref.getArrayBaseRef(), getLine());
         }
-        this.expression = expression;
-        this.variable = null;
-        this.ref = ref;
     }
 
     @Override
@@ -44,15 +46,15 @@ public class AssignmentStatement extends Statement {
             ctx.setVariable(this.variable, value);
         } else {
             // the array reference
-            VariableReference vref = (VariableReference) ref.getBaseExpression();
+            VariableReference vref = (VariableReference) ref.getArrayBaseRef();
             // the index expression
-            Expression indexExpr = ref.getIndexExpression();
+            Expression indexExpr = ref.getArrayIndexRef();
             // evaluate the index
             Value indexValue = indexExpr.evaluate(ctx);
             // fetch the base variable
             Value baseValue = ctx.getVariableValue(vref);
             // assign the value to the specified index
-            Value newBaseValue = baseValue.assign(indexValue, value);
+            Value newBaseValue = (baseValue == null ? Value.NULL : baseValue).assign(indexValue, value);
             // save the new base variable object if changed
             if (newBaseValue != baseValue) {
                 ctx.setVariable(vref, newBaseValue);

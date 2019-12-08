@@ -27,7 +27,7 @@ public class OutputStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
         lastValue = v;
-        ctx.getEnv().getOutput().println(v.getString());
+        ctx.getEnv().getOutput().println(v.asScalar().getString());
     }
 
     @Override

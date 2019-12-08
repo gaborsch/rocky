@@ -62,10 +62,10 @@ public class FunctionCall extends CompoundExpression {
     @Override
     public CompoundExpression setupFinished() {
         Expression expr = getParameters().remove(0);
-        if (expr instanceof ObjectQualifierExpression) {
-            ObjectQualifierExpression oqe = (ObjectQualifierExpression) expr;
-            object = oqe.getObjectRef();
-            name = oqe.getQualifierRef().getName();
+        if (expr instanceof QualifierExpression) {
+            QualifierExpression oqe = (QualifierExpression) expr;
+            object = (VariableReference) oqe.getObjectRef();
+            name = oqe.getMethodRef().getName();
         } else if (expr instanceof VariableReference) {
             name = ((VariableReference) expr).getName();
         } else {

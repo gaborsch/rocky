@@ -24,7 +24,7 @@ import rockstar.expression.LogicalExpression.LogicalType;
 import rockstar.expression.MinusExpression;
 import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
-import rockstar.expression.ObjectQualifierExpression;
+import rockstar.expression.QualifierExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.SliceExpression;
@@ -341,16 +341,12 @@ public class ExpressionParser {
         if ("on".equals(token) || "by".equals(token) || "in".equals(token) || "at".equals(token)
                 || "to".equals(token) || "for".equals(token) || "from".equals(token) || "near".equals(token)) {
             next();
-            return new ObjectQualifierExpression();
+            return new QualifierExpression();
         }
 /*
         if ("at".equals(token)) {
             next();
-            return new ReferenceExpression(RefType.LIST);
-        }
-        if ("for".equals(token)) {
-            next();
-            return new ReferenceExpression(RefType.ASSOC_ARRAY);
+            return new ReferenceExpression();
         }
 */
         // logical operators

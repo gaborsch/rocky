@@ -55,7 +55,7 @@ public abstract class Block extends Statement {
      */
     @Override
     public void execute(BlockContext ctx) {
-        statements.forEach((statement) -> {
+        for (Statement statement : statements) {
             ctx.beforeStatement(statement);
             try {
                 statement.execute(ctx);
@@ -63,8 +63,8 @@ public abstract class Block extends Statement {
                 Line l = statement.getLine();
                 rre.addStacktraceLine(l, ctx);
                 throw rre;
-            }
-        });
+            }            
+        }
     }
 
 }

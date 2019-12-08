@@ -7,6 +7,7 @@ package rockstar.runtime;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,7 @@ public class Value implements Comparable<Value> {
         this.type = type;
         if (type == ExpressionType.ARRAY) {
             listArrayValue = new ArrayList<>();
-            assocArrayValue = new TreeMap<>();
+            assocArrayValue = new HashMap<>();
         }
     }
 
@@ -251,6 +252,22 @@ public class Value implements Comparable<Value> {
         return getValue(getBool());
     }
 
+    public Value asScalar() {
+        switch (type) {
+            case BOOLEAN:
+            case MYSTERIOUS:
+            case NULL:
+            case STRING:
+            case NUMBER:
+                return this;
+            case ARRAY:
+                return getValue(RockNumber.getValue(this.listArrayValue.size()));
+            case OBJECT:
+                return getValue(RockNumber.ONE);
+        }
+        return null;
+    }
+
     public List<Value> asListArray() {
         if (type == ExpressionType.ARRAY) {
             return this.listArrayValue;
@@ -275,8 +292,8 @@ public class Value implements Comparable<Value> {
             case BOOLEAN:
                 return Boolean.toString(boolValue);
             case ARRAY:
-                return ((listArrayValue.size() > 0) ? ("[" + listArrayValue.toString() + "]") : "")
-                        + (assocArrayValue.size() > 0 ? ("{" + assocArrayValue.toString() + "}") : "");
+                return ((listArrayValue.size() > 0) ? (listArrayValue.toString()) : "")
+                        + (assocArrayValue.size() > 0 ? (assocArrayValue.toString()) : "");
             case OBJECT:
                 return "Object(" + objectValue + ")";
         }
@@ -383,7 +400,7 @@ public class Value implements Comparable<Value> {
                 // remove element from list by index
                 Value v = newArrayValue();
                 // hash is not changed
-                v.assocArrayValue= this.assocArrayValue;
+                v.assocArrayValue = this.assocArrayValue;
                 // list is modified
                 v.listArrayValue.addAll(asListArray());
                 // remove by index
@@ -391,7 +408,7 @@ public class Value implements Comparable<Value> {
                 v.listArrayValue.remove(idx);
                 return v;
             }
-            throw new RockstarRuntimeException("Invalid subtraction from array: type "+other.getType());
+            throw new RockstarRuntimeException("Invalid subtraction from array: type " + other.getType());
         }
 
         RockNumber v1 = getNumeric();
