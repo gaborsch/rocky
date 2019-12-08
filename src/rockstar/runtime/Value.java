@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
-import rockstar.expression.RefType;
 import rockstar.statement.FunctionBlock;
 
 /**
@@ -26,7 +26,7 @@ public class Value implements Comparable<Value> {
     public static Value NULL = new Value(ExpressionType.NULL);
     public static Value BOOLEAN_TRUE = new Value(true);
     public static Value BOOLEAN_FALSE = new Value(false);
-    public static Value EMPTY_ARRAY = new Value(ExpressionType.LIST_ARRAY);
+    public static Value EMPTY_ARRAY = new Value(ExpressionType.ARRAY);
 
     private final ExpressionType type;
     private String stringValue;
@@ -49,23 +49,13 @@ public class Value implements Comparable<Value> {
     }
 
     public static Value getValue(Collection<Value> coll) {
-        Value v = getValue(RefType.LIST);
+        Value v = newArrayValue();
         v.listArrayValue.addAll(coll);
-        return v;
-    }
-
-    public static Value getValue(Map<Value, Value> m) {
-        Value v = getValue(RefType.ASSOC_ARRAY);
-        v.assocArrayValue.putAll(m);
         return v;
     }
 
     public static Value getValue(RockObject instance) {
         return new Value(instance);
-    }
-
-    private static Value getValue(RefType refType) {
-        return new Value(refType == RefType.LIST ? ExpressionType.LIST_ARRAY : ExpressionType.ASSOC_ARRAY);
     }
 
     public static Value parse(String s) {
@@ -89,11 +79,14 @@ public class Value implements Comparable<Value> {
         return getValue(s);
     }
 
+    private static Value newArrayValue() {
+        return new Value(ExpressionType.ARRAY);
+    }
+
     private Value(ExpressionType type) {
         this.type = type;
-        if (type == ExpressionType.LIST_ARRAY) {
-            listArrayValue = new LinkedList<>();
-        } else if (type == ExpressionType.ASSOC_ARRAY) {
+        if (type == ExpressionType.ARRAY) {
+            listArrayValue = new ArrayList<>();
             assocArrayValue = new TreeMap<>();
         }
     }
@@ -146,17 +139,13 @@ public class Value implements Comparable<Value> {
         return type == ExpressionType.OBJECT;
     }
 
+    public boolean isArray() {
+        return type == ExpressionType.ARRAY;
+    }
+
     public boolean isEmptyArray() {
-        return (type == ExpressionType.LIST_ARRAY && (this.listArrayValue == null || this.listArrayValue.isEmpty()))
-                || (type == ExpressionType.ASSOC_ARRAY && (this.assocArrayValue == null || this.assocArrayValue.isEmpty()));
-    }
-
-    public boolean isListArray() {
-        return type == ExpressionType.LIST_ARRAY;
-    }
-
-    public boolean isAssocArray() {
-        return type == ExpressionType.ASSOC_ARRAY;
+        return (this.listArrayValue == null || this.listArrayValue.isEmpty())
+                && (this.assocArrayValue == null || this.assocArrayValue.isEmpty());
     }
 
     public RockNumber getNumeric() {
@@ -177,10 +166,8 @@ public class Value implements Comparable<Value> {
                 return RockNumber.ZERO;
             case NULL:
                 return RockNumber.ZERO;
-            case LIST_ARRAY:
+            case ARRAY:
                 return RockNumber.getValue(listArrayValue.size());
-            case ASSOC_ARRAY:
-                return RockNumber.getValue(assocArrayValue.size());
         }
         throw new RockstarRuntimeException("unknown numeric value");
     }
@@ -214,21 +201,17 @@ public class Value implements Comparable<Value> {
                 return "mysterious";
             case NULL:
                 return "null";
-            case LIST_ARRAY: {
+            case ARRAY: {
                 StringBuilder sb = new StringBuilder();
                 listArrayValue.forEach(v -> {
                     sb.append(sb.length() == 0 ? "" : ",")
                             .append(v);
                 });
-                return sb.toString();
-            }
-            case ASSOC_ARRAY: {
-                StringBuilder sb = new StringBuilder();
                 assocArrayValue.forEach((k, v) -> {
                     sb.append(sb.length() == 0 ? "" : ",")
-                            .append(k)
-                            .append(" for ")
-                            .append(v);
+                            .append(v)
+                            .append(" at ")
+                            .append(k);
                 });
                 return sb.toString();
             }
@@ -251,10 +234,8 @@ public class Value implements Comparable<Value> {
                 return false;
             case NULL:
                 return false;
-            case LIST_ARRAY:
-                return listArrayValue.size() > 0;
-            case ASSOC_ARRAY:
-                return assocArrayValue.size() > 0;
+            case ARRAY:
+                return listArrayValue.size() + assocArrayValue.size() > 0;
         }
         throw new RockstarRuntimeException("unknown bool value");
     }
@@ -271,14 +252,14 @@ public class Value implements Comparable<Value> {
     }
 
     public List<Value> asListArray() {
-        if (type == ExpressionType.LIST_ARRAY) {
+        if (type == ExpressionType.ARRAY) {
             return this.listArrayValue;
         }
         return new LinkedList<>();
     }
 
     public Map<Value, Value> asAssocArray() {
-        if (type == ExpressionType.ASSOC_ARRAY) {
+        if (type == ExpressionType.ARRAY) {
             return this.assocArrayValue;
         }
         return new TreeMap<>();
@@ -293,10 +274,9 @@ public class Value implements Comparable<Value> {
                 return /*"\"" +*/ stringValue /*+ "\""*/;
             case BOOLEAN:
                 return Boolean.toString(boolValue);
-            case LIST_ARRAY:
-                return "[" + listArrayValue.toString() + "]";
-            case ASSOC_ARRAY:
-                return "{" + assocArrayValue.toString() + "}";
+            case ARRAY:
+                return ((listArrayValue.size() > 0) ? ("[" + listArrayValue.toString() + "]") : "")
+                        + (assocArrayValue.size() > 0 ? ("{" + assocArrayValue.toString() + "}") : "");
             case OBJECT:
                 return "Object(" + objectValue + ")";
         }
@@ -311,10 +291,8 @@ public class Value implements Comparable<Value> {
                 return /*"\"" +*/ stringValue /*+ "\""*/;
             case BOOLEAN:
                 return Boolean.toString(boolValue);
-            case LIST_ARRAY:
-                return "[" + listArrayValue.toString() + "]";
-            case ASSOC_ARRAY:
-                return "{" + assocArrayValue.toString() + "}";
+            case ARRAY:
+                return toString();
             case OBJECT:
                 return "Object(" + objectValue + ")\n" + objectValue.describe();
         }
@@ -327,34 +305,50 @@ public class Value implements Comparable<Value> {
     }
 
     public Value plus(Value other) {
-        if (isNull() && other.isNull()) {
-            return NULL;
-        }
-        if ((isAssocArray() || isEmptyArray()) && (other.isAssocArray() || other.isEmptyArray())) {
-            // merge assoc arrays
-            Value v = Value.getValue(RefType.ASSOC_ARRAY);
-            v.assocArrayValue.putAll(asAssocArray());
-            v.assocArrayValue.putAll(other.asAssocArray());
-        }
-        if ((isListArray() || isEmptyArray()) && (!other.isAssocArray())) {
-            // append to list or concatenate
-            Value v = Value.getValue(RefType.LIST);
-            v.listArrayValue.addAll(asListArray());
-            if (other.isListArray() || other.isEmptyArray()) {
-                // concatenate list
-                v.listArrayValue.addAll(other.asListArray());
-            } else {
-                // append to list
-                v.listArrayValue.add(other);
-            }
-            return v;
-        }
-        if (!isAssocArray() && other.isListArray()) {
-            // prepend to list
-            Value v = Value.getValue(RefType.LIST);
-            v.listArrayValue.add(this);
+
+        // merge assoc arrays
+        if (this.isArray() && other.isArray()) {
+            Value v = newArrayValue();
+            v.assocArrayValue.putAll(assocArrayValue);
+            v.assocArrayValue.putAll(other.assocArrayValue);
+            // concatenate list values, too
+            v.listArrayValue.addAll(listArrayValue);
             v.listArrayValue.addAll(other.listArrayValue);
             return v;
+        }
+
+        // append to list or concatenate
+        if (this.isArray() && (!other.isArray())) {
+            Value v = newArrayValue();
+            // it is changed
+            v.listArrayValue.addAll(other.listArrayValue);
+            // append value
+            v.listArrayValue.add(other);
+            // it is not changed, assigned by reference
+            v.assocArrayValue = assocArrayValue;
+            return v;
+        }
+
+        // append to list or concatenate
+        if (other.isArray() && (!this.isArray())) {
+            Value v = newArrayValue();
+            // prepend value
+            v.listArrayValue.add(this);
+            // it is changed
+            v.listArrayValue.addAll(other.listArrayValue);
+            // it is not changed, assigned by reference
+            v.assocArrayValue = other.assocArrayValue;
+            return v;
+        }
+
+        // mysterious remains mysterious
+        if (this.isMysterious() || other.isMysterious()) {
+            return MYSTERIOUS;
+        }
+
+        // null + null remains null
+        if (this.isNull() && other.isNull()) {
+            return NULL;
         }
 
         if (isString() || other.isString()) {
@@ -372,34 +366,32 @@ public class Value implements Comparable<Value> {
     }
 
     public Value minus(Value other) {
-        if (isAssocArray()) {
+        if (this.isArray()) {
             // remove subset of assoc arrays
-            Value v = Value.getValue(RefType.ASSOC_ARRAY);
-            v.assocArrayValue.putAll(asAssocArray());
-            if (other.isAssocArray()) {
-                // remove all matching keys (ignoring values)
-                other.asAssocArray().forEach((k, x) -> {
-                    v.assocArrayValue.remove(k);
-                });
-            } else if (other.isListArray()) {
-                // remove all list elements as keys
-                other.asListArray().forEach(k -> {
-                    v.assocArrayValue.remove(k);
-                });
-            } else {
-                // remove by key expression
+            if (other.isString()) {
+                // remove element from hash by key
+                Value v = newArrayValue();
+                // hash is modified
+                v.assocArrayValue.putAll(this.assocArrayValue);
+                // remove by key
                 v.assocArrayValue.remove(other);
+                // list is not changed
+                v.listArrayValue = this.listArrayValue;
+                return v;
             }
-            return v;
-        }
-
-        if (isListArray() && !other.isAssocArray()) {
-            // remove element by index
-            Value v = Value.getValue(RefType.LIST);
-            v.listArrayValue.addAll(asListArray());
-            int idx = other.getNumeric().asInt();
-            v.listArrayValue.remove(idx);
-            return v;
+            if (other.isNumeric()) {
+                // remove element from list by index
+                Value v = newArrayValue();
+                // hash is not changed
+                v.assocArrayValue= this.assocArrayValue;
+                // list is modified
+                v.listArrayValue.addAll(asListArray());
+                // remove by index
+                int idx = other.getNumeric().asInt();
+                v.listArrayValue.remove(idx);
+                return v;
+            }
+            throw new RockstarRuntimeException("Invalid subtraction from array: type "+other.getType());
         }
 
         RockNumber v1 = getNumeric();
@@ -418,8 +410,7 @@ public class Value implements Comparable<Value> {
             if (other.isString()) {
                 // String times String is mysterious
                 return MYSTERIOUS;
-            }
-            else if (v2 != null) {
+            } else if (v2 != null) {
                 // String repeating (STRING times NUMBER)
                 return Value.getValue(Utils.repeat(getString(), v2.asInt()));
             }
@@ -481,10 +472,9 @@ public class Value implements Comparable<Value> {
                     return (Objects.equals(boolValue, other.boolValue)) ? 0 : 1;
                 case OBJECT:
                     return Integer.compare(objectValue.getObjId(), other.objectValue.getObjId());
-                case ASSOC_ARRAY:
-                    return Integer.compare(this.asAssocArray().size(), other.asAssocArray().size());
-                case LIST_ARRAY:
-                    return Integer.compare(this.asListArray().size(), other.asListArray().size());
+                case ARRAY:
+                    return Integer.compare(assocArrayValue.size() + listArrayValue.size(),
+                            other.assocArrayValue.size() + other.listArrayValue.size());
                 default:
                     // null, mysterious are equal to themselves
                     return 0;
@@ -550,17 +540,15 @@ public class Value implements Comparable<Value> {
             case MYSTERIOUS:
                 return true;
             case BOOLEAN:
-                return ! boolValue;
+                return !boolValue;
             case NUMBER:
                 return numericValue.equals(RockNumber.ZERO);
             case STRING:
                 return stringValue.isEmpty();
             case OBJECT:
                 return false;
-            case ASSOC_ARRAY:
-                return false;
-            case LIST_ARRAY:
-                return false;
+            case ARRAY:
+                return assocArrayValue.size() + listArrayValue.size() == 0;
         }
         return false;
     }
@@ -610,10 +598,9 @@ public class Value implements Comparable<Value> {
                     return true;
                 case BOOLEAN:
                     return Objects.equals(boolValue, o.boolValue);
-                case LIST_ARRAY:
-                    return Utils.isListEquals(listArrayValue, o.listArrayValue);
-                case ASSOC_ARRAY:
-                    return Utils.isMapEquals(asAssocArray(), o.asAssocArray());
+                case ARRAY:
+                    return Utils.isListEquals(listArrayValue, o.listArrayValue)
+                            && Utils.isMapEquals(asAssocArray(), o.asAssocArray());
             }
         }
         return false;
@@ -631,48 +618,60 @@ public class Value implements Comparable<Value> {
         return hash;
     }
 
-    public Value reference(RefType refType, Value refValue) {
-        if (refType == RefType.ASSOC_ARRAY && isAssocArray()) {
-            return this.assocArrayValue.getOrDefault(refValue, Value.MYSTERIOUS);
-        } else if (refType == RefType.LIST && isListArray()) {
-            int idx = refValue.getNumeric().asInt();
-            if (listArrayValue != null && idx >= 0 && idx < listArrayValue.size()) {
-                return listArrayValue.get(idx);
-            } else {
-                return MYSTERIOUS;
+    public Value reference(Value refValue) {
+
+        if (isArray()) {
+            if (refValue.isString()) {
+                return assocArrayValue.getOrDefault(refValue, MYSTERIOUS);
+            } else if (refValue.isNumeric()) {
+                int idx = refValue.getNumeric().asInt();
+                if (idx >= 0 && idx < listArrayValue.size()) {
+                    return listArrayValue.get(idx);
+                } else if (idx >= 0) {
+                    return MYSTERIOUS;
+                } else {
+                    throw new RockstarRuntimeException("Negative array index: " + idx);
+                }
             }
+            throw new RockstarRuntimeException("Invalid array index type: " + refValue.getType());
         }
         throw new RockstarRuntimeException("Dereferencing " + getType() + " type");
+
     }
 
-    public Value assign(RefType refType, Value refValue, Value setValue) {
-        // Empty array handling
-        Value v = (isEmptyArray() || isNull()) ? getValue(refType) : this;
-        if (refType == RefType.LIST) {
-            int idx = refValue.getNumeric().asInt();
-            if (idx >= 0) {
-                if (v.getType() == ExpressionType.LIST_ARRAY) {
-                    if (idx < v.listArrayValue.size()) {
-                        v.listArrayValue.set(idx, setValue);
+    public Value assign(Value refValue, Value setValue) {
+        if (isNull() || isArray()) {
+            // Empty array handling
+            Value v = (isNull() || isEmptyArray()) ? newArrayValue() : this;
+            if (refValue.isString()) {
+                // set hash value
+                v.assocArrayValue.put(refValue, setValue);
+                return v;
+            } else if (refValue.isNumeric()) {
+                // set array index
+                int idx = refValue.getNumeric().asInt();
+                if (idx >= 0) {
+                    List<Value> la = v.listArrayValue;
+                    if (idx < la.size()) {
+                        // if we have the index, set it
+                        la.set(idx, setValue);
                     } else {
-                        v.listArrayValue.add(setValue);
+                        // if we don't have it, add MYSTERIOUS as the skipped ones
+                        while (idx > la.size()) {
+                            la.add(MYSTERIOUS);
+                        }
+                        // finally add the value as last one
+                        la.add(setValue);
                     }
                     return v;
                 } else {
-                    throw new RockstarRuntimeException("Indexing " + getType() + " type");
+                    throw new RockstarRuntimeException("Negative array index: " + idx);
                 }
             } else {
-                throw new RockstarRuntimeException("Negative array index: " + idx);
-            }
-        } else if (refType == RefType.ASSOC_ARRAY) {
-            if (v.getType() == ExpressionType.ASSOC_ARRAY) {
-                v.assocArrayValue.put(refValue, setValue);
-                return v;
-            } else {
-                throw new RockstarRuntimeException("Referencing " + getType() + " type");
+                throw new RockstarRuntimeException("Invalid array index type: " + refValue.getType());
             }
         }
-        // should not reach here
-        throw new RuntimeException("Unknown reference type");
+        throw new RockstarRuntimeException("Indexing a non-array type: " + getType());
     }
+
 }

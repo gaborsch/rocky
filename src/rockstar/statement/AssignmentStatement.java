@@ -52,7 +52,7 @@ public class AssignmentStatement extends Statement {
             // fetch the base variable
             Value baseValue = ctx.getVariableValue(vref);
             // assign the value to the specified index
-            Value newBaseValue = baseValue.assign(ref.getRefType(), indexValue, value);
+            Value newBaseValue = baseValue.assign(indexValue, value);
             // save the new base variable object if changed
             if (newBaseValue != baseValue) {
                 ctx.setVariable(vref, newBaseValue);

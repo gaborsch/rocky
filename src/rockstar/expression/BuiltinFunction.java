@@ -86,7 +86,7 @@ public class BuiltinFunction extends CompoundExpression {
     }
 
     private Value sort(Value v) {
-        if (v.isListArray()) {
+        if (v.isArray()) {
             List<Value> l = v.asListArray();
             Value[] vals = l.toArray(new Value[l.size()]);
             Arrays.sort(vals);
@@ -96,19 +96,16 @@ public class BuiltinFunction extends CompoundExpression {
     }
 
     private Value sizeof(Value v) {
-        if (v.isListArray()) {
+        if (v.isArray()) {
             List<Value> l = v.asListArray();
-            return Value.getValue(RockNumber.getValue(l.size()));
-        }
-        if (v.isAssocArray()) {
             Map<Value, Value> m = v.asAssocArray();
-            return Value.getValue(RockNumber.getValue(m.size()));
+            return Value.getValue(RockNumber.getValue(l.size() + m.size()));
         }
         throw new RockstarRuntimeException("Invalid type: length of " + v.getType());
     }
 
     private Value peek(Value v) {
-        if (v.isListArray()) {
+        if (v.isArray()) {
             List<Value> l = v.asListArray();
             return l.isEmpty() ? Value.MYSTERIOUS : l.get(l.size()-1);
         }
@@ -116,7 +113,7 @@ public class BuiltinFunction extends CompoundExpression {
     }
 
     private Value keys(Value v) {
-        if (v.isAssocArray()) {
+        if (v.isArray()) {
             Map<Value, Value> m = v.asAssocArray();
             return Value.getValue(m.keySet());
         }
@@ -124,7 +121,7 @@ public class BuiltinFunction extends CompoundExpression {
     }
 
     private Value values(Value v) {
-        if (v.isAssocArray()) {
+        if (v.isArray()) {
             Map<Value, Value> m = v.asAssocArray();
             return Value.getValue(m.values());
         }

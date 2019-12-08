@@ -6,10 +6,9 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
-import rockstar.expression.ReferenceExpression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -26,16 +25,17 @@ public class PushStatement extends Statement {
         this.variable = variable;
     }
 
-
     @Override
     public void execute(BlockContext ctx) {
         Value value = expression.evaluate(ctx);
-        if (this.variable != null) {
-            Value varValue = this.variable.evaluate(ctx);
-            if (varValue.isListArray()) {
-                ctx.setVariable(this.variable, varValue.plus(value));
-            } 
-        } 
+        Value varValue = variable.evaluate(ctx);
+        if (varValue == null) {
+            throw new RockstarRuntimeException("Pushing into a nonexistent variable: " + variable);
+        } else if (varValue.isArray()) {
+            ctx.setVariable(this.variable, varValue.plus(value));
+        } else {
+            throw new RockstarRuntimeException("Pushing into a non-array type: " + varValue.getType());
+        }
     }
 
     @Override

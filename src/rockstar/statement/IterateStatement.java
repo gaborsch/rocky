@@ -68,7 +68,8 @@ public class IterateStatement extends Block {
         Value currValue;
         Value currKey;
         switch (arrayValue.getType()) {
-            case LIST_ARRAY:
+// TODO: refactor to ExpressionType.ARRAY
+/*            case LIST_ARRAY:
                 List<Value> list = arrayValue.asListArray();
                 Iterator<Value> listIter = list.iterator();
                 for(int i=0; canContinue && listIter.hasNext(); i++) {
@@ -118,6 +119,7 @@ public class IterateStatement extends Block {
                     }                    
                 }
                 break;
+*/
             case NULL:
             case MYSTERIOUS:
                 // NULL and MYSTERIOUS are empty arrays

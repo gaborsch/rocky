@@ -77,7 +77,7 @@ public class SliceExpression extends CompoundExpression {
             toVal = exprTo.evaluate(ctx).getNumeric().asInt();
         }
         Value retValue = Value.MYSTERIOUS;
-        if (baseVal.isListArray()) {
+        if (baseVal.isArray()) {
             List<Value> baseList = baseVal.asListArray();
             List<Value> newList = baseList.subList(fromVal == null ? 0 : fromVal, toVal == null ? baseList.size() : toVal + 1);
             retValue = Value.getValue(newList);

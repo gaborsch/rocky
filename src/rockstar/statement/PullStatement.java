@@ -5,13 +5,11 @@
  */
 package rockstar.statement;
 
-import rockstar.expression.Expression;
-import rockstar.expression.ReferenceExpression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 import java.util.List;
+import rockstar.runtime.RockstarRuntimeException;
 
 /**
  *
@@ -32,8 +30,8 @@ public class PullStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value array = variable.evaluate(ctx);
         if (this.targetRef != null) {
-            Value targetValue = null;
-            if (array.isListArray()) {
+            if (array.isArray()) {
+                Value targetValue;
                 List<Value> list = array.asListArray();
                 if (! list.isEmpty()) {
                     targetValue = list.remove(list.size()-1);
@@ -41,8 +39,12 @@ public class PullStatement extends Statement {
                     targetValue = Value.MYSTERIOUS;
                 }
                 ctx.setVariable(this.targetRef, targetValue);
-            } 
-        } 
+            } else {
+                throw new RockstarRuntimeException("Pulling from a non-array type: "+array.getType());
+            }
+        } else {
+            throw new RockstarRuntimeException("Pushing into a nonexistent variable: " + variable);
+        }
     }
 
 

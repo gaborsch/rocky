@@ -14,28 +14,23 @@ import rockstar.runtime.Value;
  */
 public class ReferenceExpression extends CompoundExpression {
 
-    private final RefType refType;
-
-    public ReferenceExpression(RefType refType) {
-        this.refType = refType;
+    public ReferenceExpression() {
     }
 
-    public RefType getRefType() {
-        return refType;
-    }
-    
     /**
-     * the base expression may contain the value (in case of definition) or the array (in case of evaluation)
-     * @return 
+     * the base expression may contain the value (in case of definition) or the
+     * array (in case of evaluation)
+     *
+     * @return
      */
     public Expression getBaseExpression() {
         return this.getParameters().get(0);
     }
-    
+
     public Expression getIndexExpression() {
         return this.getParameters().get(1);
     }
-    
+
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
@@ -43,7 +38,7 @@ public class ReferenceExpression extends CompoundExpression {
         Value baseValue = baseExpression.evaluate(ctx);
         Expression indexExpression = getIndexExpression();
         Value indexValue = indexExpression.evaluate(ctx);
-        return ctx.afterExpression(this, baseValue.reference(refType, indexValue));
+        return ctx.afterExpression(this, baseValue.reference(indexValue));
     }
 
     @Override
@@ -58,19 +53,12 @@ public class ReferenceExpression extends CompoundExpression {
 
     @Override
     public String format() {
-        switch (refType) {
-            case ASSOC_ARRAY:
-                return String.format("%s->%s", getBaseExpression(), getIndexExpression());
-            case LIST:
-                return String.format("%s[%s]", getBaseExpression(), getIndexExpression());
-        }
-        throw new RuntimeException("Unknown reference type");
+        return String.format("%s[%s]", getBaseExpression(), getIndexExpression());
     }
 
     @Override
     public String getFormat() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
-    
 }

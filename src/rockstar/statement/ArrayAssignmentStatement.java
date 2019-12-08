@@ -8,7 +8,6 @@ package rockstar.statement;
 import java.util.LinkedList;
 import java.util.List;
 import rockstar.expression.Expression;
-import rockstar.expression.RefType;
 import rockstar.expression.ReferenceExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
@@ -44,10 +43,10 @@ public class ArrayAssignmentStatement extends Statement {
                 ReferenceExpression refExp = (ReferenceExpression) expr;
                 Value baseValue = refExp.getBaseExpression().evaluate(ctx);
                 Value indexValue = refExp.getIndexExpression().evaluate(ctx);
-                arrayValue = arrayValue.assign(refExp.getRefType(), indexValue, baseValue);
+                arrayValue = arrayValue.assign(indexValue, baseValue);
             } else {
                 Value memberValue = expr.evaluate(ctx);
-                arrayValue = arrayValue.assign(RefType.LIST, idxValue, memberValue);
+                arrayValue = arrayValue.assign(idxValue, memberValue);
             }
         }
         ctx.setVariable(this.variable, arrayValue);
