@@ -95,10 +95,12 @@ When instantiating, all fields are initialized and all methods are declared, in 
 
 ### Method call:
 
-`<method> on <object-value> [taking <parameter-list>]`. Aliases for `on`: `by`, `in`, `at`, `to`, `from`, `for` or `near`. There are no multiple method calls (like `method2 on method1 on Object`).
+`<method> on <object-value> [taking <parameter-list>]`. Aliases for `on`: `by`, `in`, `to`, `from`, `for` or `near`. There are no multiple method calls (like `method2 on method1 on Object`).
 The precedence of the method call is the highest, higher than the currently highest operator (function call).
 
 In an object context, the instance methods and inherited methods can be called without qualifying the object (implicit `this` reference). Also, in an object context, `parent` (and its aliases) refer to the parent constructor.
+
+Note, that `at` is reserved for array access in core Rockstar, thus cannot be used.
 
 ### Visibility:
 

@@ -341,7 +341,7 @@ public class ExpressionParser {
         if ("on".equals(token) || "by".equals(token) || "in".equals(token) || "at".equals(token)
                 || "to".equals(token) || "for".equals(token) || "from".equals(token) || "near".equals(token)) {
             next();
-            return new QualifierExpression();
+            return new QualifierExpression(token);
         }
 /*
         if ("at".equals(token)) {

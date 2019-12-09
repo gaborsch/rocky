@@ -17,6 +17,19 @@ import rockstar.runtime.RockstarRuntimeException;
  */
 public class QualifierExpression extends CompoundExpression {
 
+    private final String token;
+    private final boolean isArrayIndexing;
+
+    public QualifierExpression(String token) {
+        super();
+        this.token = token;
+        this.isArrayIndexing = "at".equals(token);
+    }
+
+    public boolean isArrayIndexing() {
+        return isArrayIndexing;
+    }
+
 // Object reference handling 
     public Expression getObjectRef() {
         return this.getParameters().get(1);
@@ -58,27 +71,36 @@ public class QualifierExpression extends CompoundExpression {
     @Override
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
-        // check if the second parameter is Object
-        Value possibleObjValue = getObjectRef().evaluate(ctx);
-        if (possibleObjValue != null) {
-            if (possibleObjValue.isObject()) {
-                // evaluate as a parameterless method call
-                if (wrappedFunctionCall == null) {
-                    String name = getMethodRef().getName();
-                    wrappedFunctionCall = new FunctionCall((VariableReference) getObjectRef(), name);
+        if (isArrayIndexing) {
+            // evaluate as array reference
+            Value baseValue = getArrayBaseRef().evaluate(ctx);
+            if (baseValue != null) {
+                if (baseValue.isArray()) {
+                    // evaluate the index
+                    Value indexValue = getArrayIndexRef().evaluate(ctx);
+                    return ctx.afterExpression(this, baseValue.reference(indexValue));
+                }else {
+                    throw new RockstarRuntimeException("Non-Array referenced: " + getArrayBaseRef() + " is " + baseValue.getType());
                 }
-                return ctx.afterExpression(this, wrappedFunctionCall.evaluate(ctx));
             } else {
-                // evaluate as array reference
-                Expression baseExpression = getArrayBaseRef();
-                Value baseValue = baseExpression.evaluate(ctx);
-                // the index is the second parameter, the same as the evaluated possibleObjValue
-                Value indexValue = possibleObjValue;
-                return ctx.afterExpression(this, baseValue.reference(indexValue));
+                throw new RockstarRuntimeException("Null reference: " + getArrayBaseRef());
             }
         } else {
-            throw new RockstarRuntimeException("Null referenece: " + getArrayIndexRef());
+            Value objValue = getObjectRef().evaluate(ctx);
+            if (objValue != null) {
+                if (objValue.isObject()) {
+                    // evaluate as a parameterless method call
+                    if (wrappedFunctionCall == null) {
+                        String name = getMethodRef().getName();
+                        wrappedFunctionCall = new FunctionCall((VariableReference) getObjectRef(), name);
+                    }
+                    return ctx.afterExpression(this, wrappedFunctionCall.evaluate(ctx));
+                } else {
+                    throw new RockstarRuntimeException("Non-Object referenced: " + getObjectRef() + " is " + objValue.getType());
+                }
+            } else {
+                throw new RockstarRuntimeException("Null reference: " + getObjectRef());
+            }
         }
     }
-
 }
