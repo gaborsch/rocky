@@ -95,6 +95,11 @@ public class RockNumber {
 
     @Override
     public String toString() {
+        if (dblValue.equals((double)Math.round(dblValue))) {
+            // integral value
+            return Long.toString(dblValue.longValue());
+        }
+        // fractional value
         String s = dblValue.toString();
         if (s.endsWith(".0")) {
             // chop fraction if integral value

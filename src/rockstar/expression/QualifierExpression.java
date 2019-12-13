@@ -79,7 +79,22 @@ public class QualifierExpression extends CompoundExpression {
                     // evaluate the index
                     Value indexValue = getArrayIndexRef().evaluate(ctx);
                     return ctx.afterExpression(this, baseValue.reference(indexValue));
-                }else {
+                } else if (baseValue.isString()) {
+                    // evaluate the index
+                    Value indexValue = getArrayIndexRef().evaluate(ctx);
+                    if (indexValue != null && indexValue.isNumeric()) {
+                        int index = indexValue.getNumeric().asInt();
+                        String str = baseValue.getString();
+                        Value referencedValue = Value.MYSTERIOUS;
+                        if ((index >= 0) && (index < str.length())) {
+                            String substr = str.substring(index, index+1);
+                            referencedValue = Value.getValue(substr);
+                        }
+                        return ctx.afterExpression(this, referencedValue);
+                    } else {
+                        throw new RockstarRuntimeException("Invalid index type: " + indexValue);
+                    }
+                } else {
                     throw new RockstarRuntimeException("Non-Array referenced: " + getArrayBaseRef() + " is " + baseValue.getType());
                 }
             } else {
