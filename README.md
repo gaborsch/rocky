@@ -130,6 +130,13 @@ Also, I included OOP tests that do not pass on other Rockstar implementations th
 $ ./rockstar test -v programs/tests/
 PARSE_ERROR tests in programs/tests/failures
    [ OK ] invalid_comments.rock
+CORRECT tests in programs/tests/fixtures/arrays
+   [ OK ] arrayalike.rock
+   [ OK ] arrays.rock
+   [ OK ] hash.rock
+   [ OK ] join.rock
+   [ OK ] split.rock
+   [ OK ] split_delimiters.rock
 CORRECT tests in programs/tests/fixtures/assignment
    [ OK ] compound_assignments.rock
    [ OK ] lets.rock
@@ -176,11 +183,14 @@ CORRECT tests in programs/tests/fixtures/literals
    [ OK ] literalAliases.rock
    [ OK ] literalstrings.rock
    [ OK ] poeticLiterals.rock
+   [ OK ] poeticLiteralswithHyphen.rock
    [ OK ] poeticNumbers.rock
 CORRECT tests in programs/tests/fixtures/math
    [ OK ] operators.rock
    [ OK ] operator_aliases.rock
    [ OK ] operator_precedence.rock
+   [ OK ] rounding.rock
+   [ OK ] rounding_pronouns.rock
 CORRECT tests in programs/tests/fixtures/oop
    [ OK ] abstract_method.rock
    [ OK ] class_declaration.rock
@@ -194,6 +204,7 @@ CORRECT tests in programs/tests/fixtures/oop
    [ OK ] parameterless_method.rock
    [ OK ] parent_constructor.rock
    [ OK ] parent_ref.rock
+   [ OK ] self_reference.rock
 CORRECT tests in programs/tests/fixtures/operators
    [ OK ] addOperator.rock
    [ OK ] andTest.rock
@@ -206,6 +217,8 @@ CORRECT tests in programs/tests/fixtures/operators
    [ OK ] orderingComparison.rock
    [ OK ] orNorTest.rock
    [ OK ] subtractOperator.rock
+CORRECT tests in programs/tests/fixtures/types
+   [ OK ] parsing.rock
 CORRECT tests in programs/tests/fixtures/variables
    [ OK ] common_variables.rock
    [ OK ] globalVariables.rock
@@ -232,11 +245,12 @@ RUNTIME_ERROR tests in programs/tests/runtime-errors
 ============================================================
 Test results for programs/tests/:
 ============================================================
-All tests:    83
+All tests:    94
 Failed tests: 0
-Passed tests: 83
+Passed tests: 94
 Pass ratio:   100.00%
 ============================================================
+
 
 ```
 
