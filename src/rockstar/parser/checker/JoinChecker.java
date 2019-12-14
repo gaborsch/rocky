@@ -5,6 +5,7 @@
  */
 package rockstar.parser.checker;
 
+import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
@@ -24,12 +25,19 @@ public class JoinChecker extends Checker {
                 || match("Join", 1, "into", 3, "with", 2) // 1: targeted, with separator
                 || match("Join", 1, "with", 2) // 2: in-place, with separator
                 || match("Join", 1, "into", 3) // 3: targeted, separatorless
-                || match("Join", 1)) {                     // 4: in-place, separatorless
+                || match("Join", 1) // 4: in-place, separatorless
+                || match("Unite", 1, "with", 2, "into", 3) // 0: targeted, with separator
+                || match("Unite", 1, "into", 3, "with", 2) // 1: targeted, with separator
+                || match("Unite", 1, "with", 2) // 2: in-place, with separator
+                || match("Unite", 1, "into", 3) // 3: targeted, separatorless
+                || match("Unite", 1) // 4: in-place, separatorless
+                ) {
 
             // Value first
             Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
             if (valueExpr != null) {
-                int matchIdx = getMatchCounter() - 1;
+                // we have 5 variants listed up there
+                int matchIdx = (getMatchCounter() - 1) % 5;
 
                 // target check
                 Expression targetReference;

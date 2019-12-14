@@ -24,12 +24,24 @@ public class SplitChecker extends Checker {
                 || match("Split", 1, "into", 3, "with", 2) // 1: targeted, with separator
                 || match("Split", 1, "with", 2) // 2: in-place, with separator
                 || match("Split", 1, "into", 3) // 3: targeted, separatorless
-                || match("Split", 1)) {                     // 4: in-place, separatorless
+                || match("Split", 1) // 4: in-place, separatorless
+                || match("Cut", 1, "with", 2, "into", 3) // 0: targeted, with separator
+                || match("Cut", 1, "into", 3, "with", 2) // 1: targeted, with separator
+                || match("Cut", 1, "with", 2) // 2: in-place, with separator
+                || match("Cut", 1, "into", 3) // 3: targeted, separatorless
+                || match("Cut", 1) // 4: in-place, separatorless
+                || match("Shatter", 1, "with", 2, "into", 3) // 0: targeted, with separator
+                || match("Shatter", 1, "into", 3, "with", 2) // 1: targeted, with separator
+                || match("Shatter", 1, "with", 2) // 2: in-place, with separator
+                || match("Shatter", 1, "into", 3) // 3: targeted, separatorless
+                || match("Shatter", 1) // 4: in-place, separatorless
+                ) {                     
 
             // Value first
             Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
             if (valueExpr != null) {
-                int matchIdx = getMatchCounter() - 1;
+                // we have 5 variants listed up there
+                int matchIdx = (getMatchCounter() - 1) % 5;
 
                 // target check
                 Expression targetReference;
