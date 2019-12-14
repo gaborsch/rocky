@@ -26,20 +26,16 @@ public class TurnChecker extends Checker {
 
     @Override
     public Statement check() {
-        if (match("Turn", 1, "up")
-                || match("Turn", "up", 1)
-                || match("Turn", 1, "down")
-                || match("Turn", "down", 1)
-                || match("Turn", 1, "round")
-                || match("Turn", "round", 1)
-                || match("Turn", 1, "around")
-                || match("Turn", "around", 1)) {
+        if (match("Turn", 1, "up") || match("Turn", "up", 1)
+                || match("Turn", 1, "down") || match("Turn", "down", 1)
+                || match("Turn", 1, "round") || match("Turn", "round", 1)
+                || match("Turn", 1, "around") || match("Turn", "around", 1)) {
             VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
             if (varRef != null) {
                 // set direction for the match count
                 int matchIdx = getMatchCounter() - 1;
                 Direction dir = DIRECTION_LOOKUP[matchIdx];
-                
+
                 return new TurnStatement(varRef, dir);
             }
         }

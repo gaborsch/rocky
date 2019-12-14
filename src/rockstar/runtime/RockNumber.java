@@ -95,7 +95,8 @@ public class RockNumber {
 
     @Override
     public String toString() {
-        if (dblValue.equals((double)Math.round(dblValue))) {
+        double rounded = (double)Math.round(dblValue);
+        if (dblValue.equals(rounded)) {
             // integral value
             return Long.toString(dblValue.longValue());
         }

@@ -40,11 +40,14 @@ public class IncrementStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         Value v = ctx.getVariableValue(variable);
+
+        // default to numeric 0 value
         if (v.isMysterious() || v.isNull()) {
             v = Value.getValue(RockNumber.ZERO);
             // v is set to a numeric value
             ctx.setVariable(variable, v);
         }
+
         if (v.isNumeric()) {
             // increment by count
             Value value = getPlus().evaluate(ctx);
@@ -62,9 +65,9 @@ public class IncrementStatement extends Statement {
         }
         throw new RockstarRuntimeException(v.getType() + " ++");
     }
-    
+
     @Override
     protected String explain() {
-        return variable.format()+ " += " + count;
+        return variable.format() + " += " + count;
     }
 }

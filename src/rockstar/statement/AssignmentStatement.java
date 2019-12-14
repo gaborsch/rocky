@@ -8,8 +8,8 @@ package rockstar.statement;
 import rockstar.expression.Expression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -18,33 +18,34 @@ import rockstar.runtime.Value;
  */
 public class AssignmentStatement extends Statement {
 
-    private final VariableReference variable;
-    private final Expression expression;
-    private final QualifierExpression ref;
+    private final Expression variableExpression;
+    private final Expression valueExpression;
 
-    public AssignmentStatement(VariableReference variable, Expression expression) {
-        this.expression = expression;
-        this.variable = variable;
-        this.ref = null;
-    }
-
-    public AssignmentStatement(QualifierExpression ref, Expression expression) {
-        Expression base = ref.getArrayBaseRef();
-        if (base instanceof VariableReference) {
-            this.expression = expression;
-            this.variable = null;
-            this.ref = ref;
-        } else {
-            throw new ParseException("Assignment is not possible to a non-variable expression: " + ref.getArrayBaseRef(), getLine());
+    public AssignmentStatement(Expression variableExpression, Expression valueExpression) {
+        this.valueExpression = valueExpression;
+        this.variableExpression = variableExpression;
+        if (! (variableExpression instanceof VariableReference || variableExpression instanceof QualifierExpression)) {
+            throw new RockstarRuntimeException("Cannot assign to " + variableExpression.format());
         }
     }
 
     @Override
     public void execute(BlockContext ctx) {
-        Value value = expression.evaluate(ctx);
-        if (this.variable != null) {
-            ctx.setVariable(this.variable, value);
-        } else {
+        Value value = valueExpression.evaluate(ctx);
+        assign(variableExpression, value, ctx);
+    }
+    
+    /**
+     * Public method to handle array assignments
+     * @param variableExpr
+     * @param value
+     * @param ctx 
+     */
+    public static void assign(Expression variableExpr, Value value, BlockContext ctx) {
+         if (variableExpr instanceof VariableReference) {
+            ctx.setVariable((VariableReference) variableExpr, value);
+        } else if (variableExpr instanceof QualifierExpression) {
+            QualifierExpression ref = (QualifierExpression) variableExpr;
             // the array reference
             VariableReference vref = (VariableReference) ref.getArrayBaseRef();
             // the index expression
@@ -59,11 +60,13 @@ public class AssignmentStatement extends Statement {
             if (newBaseValue != baseValue) {
                 ctx.setVariable(vref, newBaseValue);
             }
+        } else {
+            throw new RockstarRuntimeException("Cannot assign to " + variableExpr.format());
         }
     }
 
     @Override
     protected String explain() {
-        return (ref != null ? ref : variable).format() + " := " + expression.format();
+        return variableExpression.format() + " := " + valueExpression.format();
     }
 }

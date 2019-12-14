@@ -32,6 +32,7 @@ import rockstar.parser.checker.PoeticArrayAssignmentChecker;
 import rockstar.parser.checker.TakeItToTheTopChecker;
 import rockstar.parser.checker.PushChecker;
 import rockstar.parser.checker.PullChecker;
+import rockstar.parser.checker.SplitChecker;
 import rockstar.parser.checker.TurnChecker;
 import rockstar.statement.Statement;
 
@@ -66,6 +67,7 @@ public class StatementFactory {
         new PullChecker(),
         new TurnChecker(),
         new CastChecker(),
+        new SplitChecker(),
         new ClassBlockChecker(),
         new InstantiationChecker(),
         new ExpressionStatementChecker(),

@@ -24,11 +24,9 @@ public class AssignmentChecker extends Checker {
             Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
             Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, varExpr);
             if (varExpr != null && valueExpr != null) {
-                if (varExpr instanceof VariableReference) {
-                    return new AssignmentStatement((VariableReference) varExpr, valueExpr);
-                } else if (varExpr instanceof QualifierExpression) {
-                    return new AssignmentStatement((QualifierExpression) varExpr, valueExpr);
-                }
+                if (varExpr instanceof VariableReference || varExpr instanceof QualifierExpression) {
+                    return new AssignmentStatement(varExpr, valueExpr);
+                } 
             }
         }
         return null;
