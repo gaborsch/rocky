@@ -5,9 +5,9 @@
  */
 package rockstar.expression;
 
+import java.util.Arrays;
+import java.util.List;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockObject;
-import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -15,66 +15,6 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public class VariableReference extends SimpleExpression {
-
-    private final String name;
-    private boolean isFunctionName = false;
-    private boolean isLastVariable = false;
-
-    public VariableReference(String name, boolean isFunctionName, boolean isLastVariable) {
-        this.name = name;
-        this.isFunctionName = isFunctionName;
-        this.isLastVariable = isLastVariable;
-    }
-
-    public VariableReference getEffectiveVref(BlockContext ctx) {
-        return isLastVariable ? ctx.getLastVariableRef() : this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isFunctionName() {
-        return isFunctionName;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    @Override
-    public Value evaluate(BlockContext ctx) {
-        ctx.beforeExpression(this);
-
-        if (isSelfReference()) {
-            RockObject obj = ctx.getThisObjectCtx()
-                    .orElseThrow(() -> new RockstarRuntimeException("Self reference in a non-class context"));
-            return ctx.afterExpression(this, Value.getValue(obj));
-        }
-
-        VariableReference effectiveVRef = this;
-        if (isLastVariable) {
-            effectiveVRef = ctx.getLastVariableRef();
-        }
-
-        Value value = ctx.getVariableValue(effectiveVRef);
-
-        if (value == null) {
-            // is it a function reference?
-            BlockContext funcCtx = ctx.getContextForFunction(name);
-            if (funcCtx != null) {
-                value = Value.BOOLEAN_TRUE;
-            }
-        }
-
-        if (value == null) {
-            value = Value.MYSTERIOUS;
-            ctx.setVariable(this, value);
-        }
-
-        return ctx.afterExpression(this, value);
-    }
 
     public static boolean isSelfReference(String ref) {
         return "self".equals(ref)
@@ -86,11 +26,6 @@ public class VariableReference extends SimpleExpression {
                 || "ourselves".equals(ref)
                 || "yourselves".equals(ref)
                 || "themselves".equals(ref);
-
-    }
-
-    private boolean isSelfReference() {
-        return isSelfReference(this.name);
     }
 
     public static boolean isParentReference(String ref) {
@@ -99,16 +34,74 @@ public class VariableReference extends SimpleExpression {
                 || "mother".equals(ref)
                 || "papa".equals(ref)
                 || "mama".equals(ref);
-
     }
 
-    public boolean isLastVariableRef() {
-        return isLastVariable;
+    private static final List<String> LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS = Arrays.asList(new String[]{
+        "it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver",
+        "It", "He", "She", "Him", "Her", "They", "Them", "Ze", "Hir", "Zie", "Zir", "Xe", "Xem", "Ve", "Ver"});
+
+    public static boolean isLastVariableReference(String ref) {
+        return (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(ref));
+    }
+
+    public static VariableReference getInstance(String name) {
+        if (isSelfReference(name) || isParentReference(name)) {
+            return new SelfVariableReference(name);
+        }
+        if (isLastVariableReference(name)) {
+            return new LastVariableReference(name);
+        }
+        return new VariableReference(name);
+    }
+
+    private final String name;
+//    private boolean isFunctionName = false;
+
+    protected VariableReference(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public Value evaluate(BlockContext ctx) {
+        // the effective variable reference is <this>
+        return evaluate(ctx, this);
+    }
+
+    protected Value evaluate(BlockContext ctx, VariableReference vref) {
+        Value value = ctx.getVariableValue(vref);
+
+        if (value == null) {
+            // is it a function reference?
+            BlockContext funcCtx = ctx.getContextForFunction(vref.name);
+            if (funcCtx != null) {
+                value = Value.BOOLEAN_TRUE;
+            }
+        }
+
+        if (value == null) {
+            value = Value.MYSTERIOUS;
+            ctx.setVariable(vref, value);
+        }
+
+        return ctx.afterExpression(vref, value);
+    }
+
+    private boolean isSelfReference() {
+        return false;
     }
 
     @Override
     public String format() {
-        return isLastVariable ? "<it>" : name;
+        return name;
     }
 
     @Override
@@ -121,6 +114,10 @@ public class VariableReference extends SimpleExpression {
             return name.equals(o.name);
         }
         return false;
+    }
+
+    public VariableReference getEffectiveVref(BlockContext ctx) {
+        return this;
     }
 
 }

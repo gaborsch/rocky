@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package rockstar.statement;
-
+    
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
@@ -35,7 +35,7 @@ public class CastStatement extends Statement {
             return;
         } 
         else if (v.isString()) {
-            // round it according to the direction
+            // 
             RockNumber num = v.getNumeric();
             ctx.setVariable(variable, Value.getValue(num));
             return;

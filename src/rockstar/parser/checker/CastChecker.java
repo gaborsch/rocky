@@ -5,6 +5,7 @@
  */
 package rockstar.parser.checker;
 
+import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.statement.CastStatement;
@@ -18,8 +19,9 @@ public class CastChecker extends Checker {
 
     @Override
     public Statement check() {
-        if (match("cast", 1)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+        if (match("cast", 1) || match("burn", 1)) {
+            Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line);
+            VariableReference varRef = null;
             if (varRef != null) {
                 return new CastStatement(varRef);
             }

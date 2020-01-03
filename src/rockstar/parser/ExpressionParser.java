@@ -18,6 +18,7 @@ import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.InstanceCheckExpression;
+import rockstar.expression.LastVariableReference;
 import rockstar.expression.ListExpression;
 import rockstar.expression.LogicalExpression;
 import rockstar.expression.LogicalExpression.LogicalType;
@@ -156,22 +157,18 @@ public class ExpressionParser {
     }
     private static final List<String> COMMON_VARIABLE_KEYWORDS = Arrays.asList(new String[]{
         "a", "an", "the", "my", "your", "A", "An", "The", "My", "Your"});
-    private static final List<String> LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS = Arrays.asList(new String[]{
-        "it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver",
-        "It", "He", "She", "Him", "Her", "They", "Them", "Ze", "Hir", "Zie", "Zir", "Xe", "Xem", "Ve", "Ver"});
-
-    /**
+   /**
      * parses a variable name or function name (including "it" backreference)
      *
      * @return VariableReference on success, null otherwise
      */
     VariableReference parseVariableReference() {
         String name = null;
-        boolean isFunctionName = false;
         if (isFullyParsed()) {
             return null;
         }
         String token0 = peekCurrent();
+        // "my" "dream"
         if (COMMON_VARIABLE_KEYWORDS.contains(token0) && containsAtLeast(2)) {
             // common variable
             String token1 = peekNext();
@@ -181,6 +178,7 @@ public class ExpressionParser {
                 next(2);
             }
         }
+        // "Eric" "Cooper"
         if (name == null && token0.length() > 0 && Character.isUpperCase(token0.charAt(0))) {
             // proper variable
             next(); // first part processed
@@ -196,28 +194,17 @@ public class ExpressionParser {
                     break;
                 }
             }
-            // if a Proper Name is followed by "taking" or "takes", it is a function call
-            if (!isFullyParsed() && (peekCurrent().equals("taking") || peekCurrent().equals("takes"))) {
-                isFunctionName = true;
-            }
             name = sb.toString();
         }
-        // not a proper variable
-        if (name == null && containsAtLeast(1)) {
-            // Variable backreference: 'it'
-            if (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(token0)) {
-                next();
-                VariableReference varRef = new VariableReference(token0, false, true);
-                return varRef;
-            }
-        }
+
+        // "something" (or "it" or "self" etc)
         if (name == null) {
             // simple variables are single-word identifiers
             name = token0;
             next(); // first part processed
         }
         if (name != null) {
-            VariableReference varRef = new VariableReference(name, isFunctionName, false);
+            VariableReference varRef = VariableReference.getInstance(name);
             return varRef;
         }
         return null;
@@ -338,8 +325,13 @@ public class ExpressionParser {
             next();
         }
         // qualifiers
-        if ("on".equals(token) || "by".equals(token) || "in".equals(token) || "at".equals(token)
+        if ("on".equals(token) || "by".equals(token) || "in".equals(token)
                 || "to".equals(token) || "for".equals(token) || "from".equals(token) || "near".equals(token)) {
+            next();
+            return new QualifierExpression(token);
+        }
+        // array index
+        if ("at".equals(token)) {
             next();
             return new QualifierExpression(token);
         }

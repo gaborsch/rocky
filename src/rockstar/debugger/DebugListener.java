@@ -132,13 +132,13 @@ public class DebugListener implements BlockContextListener {
                     } else if (line.startsWith("s ")) {
                         // show variable
                         String varName = line.substring(2).trim();
-                        VariableReference vref = new VariableReference(varName, false, false);
+                        VariableReference vref = VariableReference.getInstance(varName);
                         Value value = ctx.getVariableValue(vref);
                         System.out.format("%s = %s\n", varName, value.describe());
                     } else if (line.startsWith("w ")) {
                         // add watch
                         String varName = line.substring(2).trim();
-                        VariableReference vref = new VariableReference(varName, false, false);
+                        VariableReference vref = VariableReference.getInstance(varName);
                         watches.add(vref);
                         Value value = ctx.getVariableValue(vref);
                         System.out.format("Watch #%d: %s = %s\n", watches.size(), varName, value.toString());
@@ -153,7 +153,7 @@ public class DebugListener implements BlockContextListener {
                                 // fall back to exact string match
                             }
                         }
-                        VariableReference vref = new VariableReference(varName, false, false);
+                        VariableReference vref = VariableReference.getInstance(varName);
                         if (watches.remove(vref)) {
                             System.out.format("Watch removed: %s\n", varName);
                         } else {

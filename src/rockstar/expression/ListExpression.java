@@ -111,7 +111,7 @@ public class ListExpression extends CompoundExpression {
         if (expr instanceof ConstantExpression) {
             return new ListExpression(expr);
         }
-        if (expr instanceof VariableReference && !((VariableReference) expr).isFunctionName()) {
+        if (expr instanceof VariableReference) {
             return new ListExpression(expr);
         }
         if (expr instanceof LogicalExpression) {

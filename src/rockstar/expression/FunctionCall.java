@@ -81,12 +81,7 @@ public class FunctionCall extends CompoundExpression {
             if (paramExpr instanceof ConstantExpression) {
                 addParameter(paramExpr);
             } else if (paramExpr instanceof VariableReference) {
-                VariableReference varRef = (VariableReference) paramExpr;
-                if (!varRef.isFunctionName()) {
-                    addParameter(paramExpr);
-                } else {
-                    return null;
-                }
+                addParameter(paramExpr);
             } else {
                 return null;
             }
