@@ -14,7 +14,7 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public class VariableReference extends SimpleExpression {
+public class VariableReference extends SimpleExpression implements LHSExpression {
 
     public static boolean isSelfReference(String ref) {
         return "self".equals(ref)
@@ -76,12 +76,12 @@ public class VariableReference extends SimpleExpression {
         return evaluate(ctx, this);
     }
 
-    protected Value evaluate(BlockContext ctx, VariableReference vref) {
+    protected Value evaluate(BlockContext ctx, LHSExpression vref) {
         Value value = ctx.getVariableValue(vref);
 
         if (value == null) {
             // is it a function reference?
-            BlockContext funcCtx = ctx.getContextForFunction(vref.name);
+            BlockContext funcCtx = ctx.getContextForFunction(vref.getName());
             if (funcCtx != null) {
                 value = Value.BOOLEAN_TRUE;
             }
@@ -94,11 +94,7 @@ public class VariableReference extends SimpleExpression {
 
         return ctx.afterExpression(vref, value);
     }
-
-    private boolean isSelfReference() {
-        return false;
-    }
-
+    
     @Override
     public String format() {
         return name;
@@ -116,8 +112,13 @@ public class VariableReference extends SimpleExpression {
         return false;
     }
 
-    public VariableReference getEffectiveVref(BlockContext ctx) {
+    @Override
+    public LHSExpression getEffectiveVariableRef(BlockContext ctx) {
         return this;
+    }
+
+    public Value assignValue(Value baseValue, Value setValue) {
+        return setValue;
     }
 
 }

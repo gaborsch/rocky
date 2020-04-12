@@ -6,6 +6,7 @@
 package rockstar.statement;
 
 import rockstar.expression.Expression;
+import rockstar.expression.LHSExpression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.BlockContext;
@@ -24,7 +25,7 @@ public class AssignmentStatement extends Statement {
     public AssignmentStatement(Expression variableExpression, Expression valueExpression) {
         this.valueExpression = valueExpression;
         this.variableExpression = variableExpression;
-        if (! (variableExpression instanceof VariableReference || variableExpression instanceof QualifierExpression)) {
+        if (! (variableExpression instanceof LHSExpression)) {
             throw new RockstarRuntimeException("Cannot assign to " + variableExpression.format());
         }
     }
@@ -42,6 +43,11 @@ public class AssignmentStatement extends Statement {
      * @param ctx 
      */
     public static void assign(Expression variableExpr, Value value, BlockContext ctx) {
+        if (variableExpr instanceof LHSExpression) {
+            LHSExpression lhs = (LHSExpression) variableExpr;
+            ctx.setVariable(lhs, value);
+        }
+        
          if (variableExpr instanceof VariableReference) {
             ctx.setVariable((VariableReference) variableExpr, value);
         } else if (variableExpr instanceof QualifierExpression) {

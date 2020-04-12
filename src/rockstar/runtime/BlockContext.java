@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import rockstar.expression.Expression;
+import rockstar.expression.LHSExpression;
 import rockstar.expression.VariableReference;
 import rockstar.statement.FunctionBlock;
 import rockstar.statement.Statement;
@@ -130,9 +131,9 @@ public class BlockContext {
     }
 
     // last assigned variable name in this context
-    private VariableReference lastVariableRef = null;
+    private LHSExpression lastVariableRef = null;
 
-    public VariableReference getLastVariableRef() {
+    public LHSExpression getLastVariableRef() {
         BlockContext lastvarCtx = getContextFor(this, ctx -> lastVariableRef != null);
         return lastvarCtx.lastVariableRef;
     }
@@ -143,12 +144,12 @@ public class BlockContext {
      * @param vref
      * @param value
      */
-    public void setVariable(VariableReference vref, Value value) {
+    public void setVariable(LHSExpression vref, Value value) {
         // Find out the effective variable reference
-        VariableReference effectiveVref = vref.getEffectiveVref(this);
+        VariableReference effectiveVref = vref.getEffectiveVariableRef(this);
 
         doSetVariable(effectiveVref, value);
-        
+
         // last assigned variable name, if wasn't "it" reference
         if (vref == effectiveVref) {
             this.lastVariableRef = vref;
@@ -208,14 +209,18 @@ public class BlockContext {
     }
 
     /**
-     * Set a variable in the local context, hiding global variables (e.g.
-     * function parameters)
+     * Set a variable in the local context, hiding global variables (e.g.function parameters)
      *
      * @param vref
-     * @param value
+     * @param setValue
      */
-    public void setLocalVariable(VariableReference vref, Value value) {
-        vars.put(vref.getName(), value);
+    public void setLocalVariable(VariableReference vref, Value setValue) {
+        // fetch the original value
+        Value baseValue = vars.get(vref.getName());
+        // return the assignable value
+        Value newValue = vref.assignValue(baseValue, setValue);
+        // save the new value to the store
+        vars.put(vref.getName(), newValue);
     }
 
     /**
@@ -227,7 +232,7 @@ public class BlockContext {
     public Value getVariableValue(VariableReference vref) {
         // find the context where the variable was defined 
         Value v = null;
-        String vname = vref.getEffectiveVref(this).getName();
+        String vname = vref.getEffectiveVariableRef(this).getName();
         BlockContext ctx = this;
         while (v == null && ctx != null) {
             v = ctx.vars.get(vname);

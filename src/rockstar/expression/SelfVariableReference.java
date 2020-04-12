@@ -33,9 +33,4 @@ public class SelfVariableReference extends VariableReference {
         return "<self>";
     }
 
-    @Override
-    public VariableReference getEffectiveVref(BlockContext ctx) {
-        return ctx.getLastVariableRef();
-    }
-
 }

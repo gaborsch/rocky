@@ -17,8 +17,8 @@ import rockstar.expression.DivideExpression;
 import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
+import rockstar.expression.IndexedVariableExpresion;
 import rockstar.expression.InstanceCheckExpression;
-import rockstar.expression.LastVariableReference;
 import rockstar.expression.ListExpression;
 import rockstar.expression.LogicalExpression;
 import rockstar.expression.LogicalExpression.LogicalType;
@@ -333,14 +333,9 @@ public class ExpressionParser {
         // array index
         if ("at".equals(token)) {
             next();
-            return new QualifierExpression(token);
+            return new IndexedVariableExpresion(token);
         }
-/*
-        if ("at".equals(token)) {
-            next();
-            return new ReferenceExpression();
-        }
-*/
+
         // logical operators
         if ("not".equals(token)) {
             next();

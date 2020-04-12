@@ -6,6 +6,7 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
+import rockstar.expression.LHSExpression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
@@ -24,7 +25,7 @@ public class AssignmentChecker extends Checker {
             Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
             Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, varExpr);
             if (varExpr != null && valueExpr != null) {
-                if (varExpr instanceof VariableReference || varExpr instanceof QualifierExpression) {
+                if (varExpr instanceof LHSExpression) {
                     return new AssignmentStatement(varExpr, valueExpr);
                 } 
             }

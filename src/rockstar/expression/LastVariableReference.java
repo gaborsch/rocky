@@ -20,7 +20,7 @@ public class LastVariableReference extends VariableReference {
 
     @Override
     public Value evaluate(BlockContext ctx) {
-        VariableReference effectiveVRef = ctx.getLastVariableRef();
+        LHSExpression effectiveVRef = ctx.getLastVariableRef();
         // evaluate the actual variable reference
         return evaluate(ctx, effectiveVRef);
     }
@@ -32,9 +32,8 @@ public class LastVariableReference extends VariableReference {
     }
 
     @Override
-    public VariableReference getEffectiveVref(BlockContext ctx) {
+    public LHSExpression getEffectiveVariableRef(BlockContext ctx) {
         return ctx.getLastVariableRef();
     }
 
-    
 }
