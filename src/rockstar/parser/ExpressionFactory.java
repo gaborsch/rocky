@@ -9,6 +9,9 @@ import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
+import rockstar.expression.IntoExpression;
+import rockstar.expression.MutationExpression;
+import rockstar.expression.PlusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.RockNumber;
 
@@ -61,8 +64,7 @@ public class ExpressionFactory {
         }
         return null;
     }
-
-
+    
     /**
      * Try a variable reference, returns null if failed
      *
@@ -93,6 +95,29 @@ public class ExpressionFactory {
         if (literal != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
             return literal;
+        }
+        return null;
+    }
+    
+    /**
+     * Try to parse a MutationExpression, returns null if failed
+     * @param list
+     * @param line
+     * @return 
+     */
+    public static MutationExpression tryMutationExpressionFor(List<String> list, Line line) {
+        ExpressionParser parser = new ExpressionParser(list, line);
+        Expression expr = parser.parse(null);
+        if (expr != null && parser.isFullyParsed()) {
+            // has valid value and parsed through the list
+            if (expr instanceof VariableReference) {
+                return new MutationExpression((VariableReference) expr);
+            } else if (expr instanceof IntoExpression) {
+                return new MutationExpression((IntoExpression) expr);
+            } else if (expr instanceof PlusExpression) {
+                return new MutationExpression((PlusExpression) expr);
+            }
+            // invalid setup
         }
         return null;
     }

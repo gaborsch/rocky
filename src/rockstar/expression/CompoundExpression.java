@@ -45,6 +45,7 @@ public abstract class CompoundExpression extends Expression {
     800: and, or, nor
     700: is, isn't, >, <, >=, <=
     600: not
+    550: into (mutation modifier)
     500: +, -
     400: *, /
     300: ^ (power)

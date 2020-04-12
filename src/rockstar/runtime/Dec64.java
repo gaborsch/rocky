@@ -74,6 +74,17 @@ public class Dec64 extends RockNumber {
         return getFromCache(m, e);
     }
 
+    public static RockNumber parseWithRadix(String stringValue, RockNumber radix) {
+        try {
+            // parse as long
+            long value = Long.parseLong(stringValue, radix.asInt());
+            return getValue(value);
+        } catch (NumberFormatException nfe) {
+        }
+        return null;
+    }
+    
+
     // caches for zero exponent and one mantissa
     private static final Map<Long, Dec64> ZeroExpCache = new HashMap<>();
     private static final Map<Integer, Dec64> OneMantCache = new HashMap<>();

@@ -18,7 +18,7 @@ import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.InstanceCheckExpression;
-import rockstar.expression.LastVariableReference;
+import rockstar.expression.IntoExpression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.LogicalExpression;
 import rockstar.expression.LogicalExpression.LogicalType;
@@ -443,6 +443,10 @@ public class ExpressionParser {
         if ("plus".equals(token) || "with".equals(token) || "+".equals(token)) {
             next();
             return new PlusExpression();
+        }
+        if ("into".equals(token) ) {
+            next();
+            return new IntoExpression();
         }
         if ("minus".equals(token) || "without".equals(token) || "-".equals(token)) {
             next();

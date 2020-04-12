@@ -41,7 +41,26 @@ public class RockNumber {
             return Dec64.parse(stringValue);
         } else {
             try {
+                // parse as double
                 return new RockNumber(Double.parseDouble(stringValue));
+            } catch (NumberFormatException nfe) {
+                try {
+                    // parse as long
+                    return new RockNumber((double)Long.parseLong(stringValue));
+                } catch (NumberFormatException nfe2) {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public static RockNumber parseWithRadix(String stringValue, RockNumber radix) {
+        if (IS_DEC64) {
+            return Dec64.parseWithRadix(stringValue, radix);
+        } else {
+            try {
+                // parse as long
+                return new RockNumber((double)Long.parseLong(stringValue, radix.asInt()));
             } catch (NumberFormatException nfe) {
                 return null;
             }
