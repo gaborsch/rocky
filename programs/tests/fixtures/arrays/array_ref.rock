@@ -1,0 +1,26 @@
+Say "Build up, knock down"
+Let my array at 0 be 3
+Build my array at 0 up
+say my array at 0            (4)
+Knock my array at 0 down, down
+say my array at 0            (2)
+
+Say "Arithmetics"
+Let my array at 1 be 3
+Let my array at 2 be 4
+say my array at 0 plus my array at 1 times my array at 2            (14)
+
+Say "Cast"
+Let my array at 3 be 35
+cast my array at 3
+Say my array at 3               (#)
+Cast 36 into my array at 4
+Say my array at 4               ($)
+
+
+Say "Listen"
+Listen to my array at 5         (input: abcd)
+Say my array at 5               (abcd)
+
+
+

@@ -1,0 +1,59 @@
+(Album: Core, and Utils)
+from core, utils play an array, a chain, a set
+
+the rainbow would be a chain              (instantiation)
+
+add to the rainbow taking "Red"            (method calls)
+add to the rainbow taking "Orange"
+add to the rainbow taking "Green"
+add to the rainbow taking "Blue"
+add to the rainbow taking "Violet"
+
+shout last on the rainbow (Violet)
+shout peek to the rainbow taking 2 (Green - index starts at 0)
+shout peek to the rainbow taking 5 (mysterious - no such index)
+say remove from the rainbow (Violet) (remove all elements, one by one)
+say remove from the rainbow (Blue)
+say size for the rainbow (3)        (3 elements left)
+say remove from the rainbow (Green)
+say remove from the rainbow (Orange)
+say remove from the rainbow (Red)
+say size for the rainbow (0)        (all elements removed)
+
+x will be an array
+set to x taking 3,"d"
+say description on x
+set to x taking 0,"a"
+say description on x
+set to x taking 6,"g"
+set to x taking 3, mysterious
+say description on x
+
+
+s will be a set
+say "s is a set: " + s
+add to s taking "aa"
+add to s taking "bb"
+add to s taking "cc"
+say s
+
+add to s taking "aa"
+add to s taking "bb"
+add to s taking "cc"
+add to s taking "dd"
+add to s taking "ee"
+say s
+remove from s taking "cc"
+say s
+remove from s taking "ee"
+say s
+remove from s taking "aa"
+say s
+remove from s taking "bb"
+say s
+add to s taking "dd"
+remove from s taking "dd"
+say s
+add to s taking "ff"
+say s
+
