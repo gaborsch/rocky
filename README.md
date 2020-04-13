@@ -14,7 +14,7 @@ Features include:
 
 **Special feature:** [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
 
-It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix.
+Rocky requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix. Alternatively you can also use Docker to run.
 
 ### Install
 
