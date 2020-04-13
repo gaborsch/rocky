@@ -1,6 +1,8 @@
 # Rocky - Rockstar Java interpreter
 
-Rocky is a 100% [Rockstar](https://codewithrockstar.com/) compatible RockStar Interpreter, written in Java. Have fun and play with it! I like to receive feedbacks, should you have any issues, requests, wishes or troubles, open a ticket for it and I'll help you to resolve. 
+Rocky is a 100% [Rockstar](https://codewithrockstar.com/) compatible RockStar Interpreter, written in Java. Have fun and play with it! Should you have any issues, requests, wishes or troubles, open a ticket for it and I'll help you to resolve. 
+
+Rocky supports all Rockstar language features announced before 2020.04.13. If you miss any feature, please open an issue for it.
 
 Features include:
 * Fully compliant Rockstar implementation to date (all of the new test are OK, except the reported bugs)
@@ -9,7 +11,8 @@ Features include:
 * List command (parse a file without running it)
 * Detailed help with options explanation
 * IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
-* **NEW!!!** Rockstar [Object Oriented Programming](OOP.md)! Yes, you can write OOP code in Rockstar!
+
+**Special feature:** [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
 
 It requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix.
 

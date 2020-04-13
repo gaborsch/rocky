@@ -1,8 +1,19 @@
 # Object Oriented Programming. 
 
-It sounds a big scary thing for Rockstar, but the basic building blocks are already in there. Because we recently clarified and implemented the _nested functions_ feature, we can define named blocks within named blocks, with local scope variables. The OOP concept described here is not too different from that, and we can fare quite long with these features. The OOP described below is not a full-fledged OOP, but encapsulation, inheritance, abstraction and polymorphism are covered (the latter two are partially). 
+## Preface
 
-Let me show you a small example (this uses the "parameterless method" syntax I proposed earlier, but only as an object method call):
+Writing Object Oriented programs in Rockstar is quite simple. You can define classes, constructors, private fields, public methods, method overrides. 
+You can instantiate a class with the constructor and call member methods. You can extend other classes and even define abstract methods to be implemented in child classes.
+Within the member methods you can access the parent class methods and the object instance itself. If you have a variable, you can check its runtime class. 
+All these are of course within the Rockstar limitations: no strong typing, no method overload, no null hassle (every declaration comes with assignment).
+
+This is very much like a traditional OOP, without the interfaces. Of the OOP principles, all encapsulation, inheritance, abstraction and polymorphism are covered (the latter two are partially). 
+
+## Let's get dirty!
+
+Let me show you a small example (this uses the "parameterless method" syntax, but only as an object method call). The explanations are on the right side.
+
+This class represents a simple sequence class, holding a counter value and return the next value each time it is called.
 
 ```
 a sequence looks like nothing                 (class declaration, inherits nothing)
@@ -22,10 +33,10 @@ say 2 times next from ID                      (output: "6")
 say current from ID                           (output: "3")
 ```
 
-With the class feature we can write a built-in library, that could be supplied with each interpreter/transpiler. 
-These functions can be the core of the system, and Rockstar developers could easily contribute. 
-I've already written a few classes under the `rockstar-lib` folder, including an indexed linked list implementation that can be used as an alternative for native array implementation. 
-After implementing the OOP feature we don't need to extend the language any more (the only exceptions would be the string handling and type conversions like `cast`).
+It's easy t see that with the class feature we can write a built-in library, that could be supplied with each supporting interpreter/transpiler. 
+
+There are a few classes under the `rockstar-lib` folder, including an indexed linked list implementation that can be used as an alternative for native array implementation. 
+After implementing the OOP feature we don't need to extend the language anymore.
 
 ## Features
 I summarized the main characterisics of the OOP feature below. How it works, what will be the user experience, what's covered and what's not. I tried to highlight the most relevant OOP questions as well.
