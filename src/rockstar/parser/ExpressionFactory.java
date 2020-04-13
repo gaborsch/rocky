@@ -11,8 +11,8 @@ import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.IntoExpression;
 import rockstar.expression.MutationExpression;
-import rockstar.expression.PlusExpression;
 import rockstar.expression.VariableReference;
+import rockstar.expression.WithExpression;
 import rockstar.runtime.RockNumber;
 
 /**
@@ -114,8 +114,8 @@ public class ExpressionFactory {
                 return new MutationExpression((VariableReference) expr);
             } else if (expr instanceof IntoExpression) {
                 return new MutationExpression((IntoExpression) expr);
-            } else if (expr instanceof PlusExpression) {
-                return new MutationExpression((PlusExpression) expr);
+            } else if (expr instanceof WithExpression) {
+                return new MutationExpression((WithExpression) expr);
             }
             // invalid setup
         }

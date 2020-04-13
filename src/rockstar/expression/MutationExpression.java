@@ -35,18 +35,18 @@ public class MutationExpression extends CompoundExpression {
     /**
      * With usage: "Mutate `variable`" with `expression`"
      *
-     * @param plusExpression
+     * @param withExpression
      */
-    public MutationExpression(PlusExpression plusExpression) {
+    public MutationExpression(WithExpression withExpression) {
         // With usage
-        List<Expression> plusParams = ((PlusExpression) plusExpression).getParameters();
-        Expression plusParam0 = plusParams.get(0);
-        if (plusParam0 instanceof VariableReference) {
-            this.baseExpr = (VariableReference) plusParam0;
-            this.withExpr = plusParams.get(1);
-            this.intoExpr = (VariableReference) plusParam0;
+        List<Expression> withParams = ((WithExpression) withExpression).getParameters();
+        Expression withParam0 = withParams.get(0);
+        if (withParam0 instanceof VariableReference) {
+            this.baseExpr = (VariableReference) withParam0;
+            this.withExpr = withParams.get(1);
+            this.intoExpr = (VariableReference) withParam0;
         } else {
-            throw new RockstarRuntimeException("Cannot use " + plusParam0 + " as target for 'into'");
+            throw new RockstarRuntimeException("Cannot use " + withParam0 + " as target for 'into'");
         }
     }
 
@@ -63,23 +63,23 @@ public class MutationExpression extends CompoundExpression {
         List<Expression> intoParams = intoExpression.getParameters();
         Expression intoParam0 = intoParams.get(0);
         Expression intoParam1 = intoParams.get(1);
-        if (intoParam1 instanceof PlusExpression) {
+        if (intoParam1 instanceof WithExpression) {
             // Into-With usage
-            List<Expression> plusParams = ((PlusExpression) intoParam1).getParameters();
-            Expression plusParam0 = plusParams.get(0);
-            if (plusParam0 instanceof VariableReference) {
+            List<Expression> withParams = ((WithExpression) intoParam1).getParameters();
+            Expression withParam0 = withParams.get(0);
+            if (withParam0 instanceof VariableReference) {
                 this.baseExpr = intoParam0;
-                this.intoExpr = (VariableReference) plusParam0;
-                this.withExpr = plusParams.get(1);
+                this.intoExpr = (VariableReference) withParam0;
+                this.withExpr = withParams.get(1);
             } else {
-                throw new RockstarRuntimeException("Cannot use " + plusParam0 + " as target for 'into'");
+                throw new RockstarRuntimeException("Cannot use " + withParam0 + " as target for 'into'");
             }
-        } else if (intoParam0 instanceof PlusExpression) {
+        } else if (intoParam0 instanceof WithExpression) {
             // With-Into usage
-            List<Expression> plusParams = ((PlusExpression) intoParam0).getParameters();
+            List<Expression> withParams = ((WithExpression) intoParam0).getParameters();
             if (intoParam1 instanceof VariableReference) {
-                this.baseExpr = plusParams.get(0);
-                this.withExpr = plusParams.get(1);
+                this.baseExpr = withParams.get(0);
+                this.withExpr = withParams.get(1);
                 this.intoExpr = (VariableReference) intoParam1;
             } else {
                 throw new RockstarRuntimeException("Cannot use " + intoParam1 + " as target for 'into'");

@@ -31,6 +31,7 @@ import rockstar.expression.SimpleExpression;
 import rockstar.expression.SliceExpression;
 import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
+import rockstar.expression.WithExpression;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Value;
@@ -118,7 +119,8 @@ public class ExpressionParser {
                 next();
                 String literal = token.substring(1, token.length() - 1);
                 // replace escaped backslash sequences with characters
-                literal = literal.replace("\\t", "\t").replace("\\r", "\r").replace("\\n", "\n").replace("\\\\", "\\");
+                // negative lookbehind (?<!): should not match if preceded with \\
+                literal = literal.replace("(?<!\\)\\t", "\t").replace("(?<!\\)\\r", "\r").replace("(?<!\\)\\n", "\n").replace("\\\\", "\\");
                 return new ConstantExpression(literal);
             }
             token = token.toLowerCase();
@@ -321,7 +323,7 @@ public class ExpressionParser {
         String token = this.peekCurrent();
 
         if (isAfterOperator && "+".equals(token)) {
-            // unary plus
+            // unary plus: skip
             next();
         }
         // qualifiers
@@ -440,7 +442,11 @@ public class ExpressionParser {
             return new UnaryMinusExpression();
         }
 
-        if ("plus".equals(token) || "with".equals(token) || "+".equals(token)) {
+        if ("with".equals(token)) {
+            next();
+            return new WithExpression();
+        }
+        if ("plus".equals(token) || "+".equals(token)) {
             next();
             return new PlusExpression();
         }

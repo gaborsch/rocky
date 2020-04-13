@@ -19,16 +19,9 @@ import rockstar.runtime.Value;
  */
 public class CastStatement extends Statement {
 
-//    private final VariableReference variable;
     private final MutationExpression expr;
 
-    public CastStatement(VariableReference variable) {
-//        this.variable = variable;
-        this.expr = null;
-    }
-
     public CastStatement(MutationExpression mutationExpression) {
-//        this.variable = null;
         this.expr = mutationExpression;
     }
 

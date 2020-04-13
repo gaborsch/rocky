@@ -5,10 +5,10 @@
  */
 package rockstar.statement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import rockstar.expression.Expression;
+import java.util.stream.Collectors;
+import rockstar.expression.MutationExpression;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -18,42 +18,57 @@ import rockstar.runtime.Value;
  */
 public class SplitStatement extends Statement {
 
-    private final Expression valueExpr;
-    private final Expression separatorExpr;
-    private final Expression targetReference;
+    private final MutationExpression expr;
 
-    public SplitStatement(Expression valueExpr, Expression separatorExpr, Expression targetReference) {
-        this.valueExpr = valueExpr;
-        this.separatorExpr = separatorExpr;
-        this.targetReference = targetReference;
-
+    public SplitStatement(MutationExpression expr) {
+        this.expr = expr;
     }
 
     @Override
     public void execute(BlockContext ctx) {
         // evaluate string
-        Value value = valueExpr.evaluate(ctx);
+        Value value = expr.getSourceExpr().evaluate(ctx);
         String strValue = value.getString();
         // evaluate separator, use default if not present
-        String sep = (separatorExpr == null) ? "" : separatorExpr.evaluate(ctx).getString();
+        String sep = (expr.getParameterExpr() == null) ? "" : expr.getParameterExpr().evaluate(ctx).getString();
         // SPLIT the string into array
-        String[] array = strValue.split(sep);
-        // convert array into List<Value>
-        List<Value> list = new ArrayList<>(array.length);
-        Arrays.stream(array).forEach(
-                s -> list.add(Value.getValue(s)));
+        List<String> parts = split(strValue, sep);
+        // convert Strings into List<Value>
+        List<Value> list = parts.stream().map(s -> Value.getValue(s)).collect(Collectors.toList());
         // create array Value
         Value arrayValue = Value.getValue(list);
         // assign the value to the variable
-        Expression target = targetReference != null ? targetReference : valueExpr;
-        AssignmentStatement.assign(target, arrayValue, ctx);
+        AssignmentStatement.assign(expr.getTargetReference(), arrayValue, ctx);
         
+    }
+    
+    /**
+     * Split a string with a given separator
+     * @param orig
+     * @param sep
+     * @return 
+     */
+    private List<String> split(String orig, String sep) {
+        List<String> parts = new LinkedList<>();
+        boolean emptySep = sep.isEmpty();
+        int sepLen = sep.length();
+        int start = 0;
+        int len = orig.length();
+        
+        while(start < len) {
+            int end = (emptySep ? start+1 : orig.indexOf(sep, start));
+            if (end < 0) {
+                end = len;
+            }
+            String part = orig.substring(start, end);
+            parts.add(part);
+            start = end + sepLen;
+        }
+        return parts;
     }
 
     @Override
     protected String explain() {
-        return "split" + valueExpr.format()
-                + (targetReference == null ? " " : "into" + targetReference.format())
-                + (separatorExpr == null ? " " : "with" + separatorExpr.format());
+        return expr.getTargetReference().format() + " = split " + expr.format();
     }
 }
