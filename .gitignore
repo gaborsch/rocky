@@ -1,3 +1,7 @@
 /dist/
 /**/*.rock.current
 /build/
+/nbproject/private/
+/nbproject
+
+
