@@ -21,12 +21,9 @@ public class OutputStatement extends Statement {
         this.expression = expression;
     }
 
-    private Value lastValue = Value.MYSTERIOUS;
-    
     @Override
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
-        lastValue = v;
         ctx.getEnv().getOutput().println(v.asScalar().getString());
     }
 

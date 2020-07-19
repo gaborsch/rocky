@@ -337,12 +337,6 @@ public class ExpressionParser {
             next();
             return new QualifierExpression(token);
         }
-/*
-        if ("at".equals(token)) {
-            next();
-            return new ReferenceExpression();
-        }
-*/
         // logical operators
         if ("not".equals(token)) {
             next();

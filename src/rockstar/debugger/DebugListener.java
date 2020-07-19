@@ -69,7 +69,7 @@ public class DebugListener implements BlockContextListener {
         // expression debug is stopped at new statement
         stepIntoExpr = stepIntoExprSticky;
 
-        if (stopAtStetement(ctx, stmt)) {
+        if (isStoppingAtStetement(ctx, stmt)) {
             Line l = stmt.getLine();
 
             System.out.format("Line %d: %s\n", l.getLnum(), l.getOrigLine());
@@ -105,7 +105,7 @@ public class DebugListener implements BlockContextListener {
                         stepInto = true;
                         continueRun = true;
                     } else if (line.equals("6")) {
-                        // steo over
+                        // step over
                         // stop at the next statement in the same context
                         stepOvers.push(ctx);
                         continueRun = true;
@@ -236,7 +236,7 @@ public class DebugListener implements BlockContextListener {
     private final Stack<BlockContext> stepOvers = new Stack<>();
     private final List<Integer> breakpoints = new LinkedList<>();
 
-    private boolean stopAtStetement(BlockContext ctx, Statement stmt) {
+    private boolean isStoppingAtStetement(BlockContext ctx, Statement stmt) {
         // stop at each statement if stepInto mode
         boolean stop = false;
         if (stepInto) {

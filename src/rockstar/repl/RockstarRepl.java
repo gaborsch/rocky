@@ -42,7 +42,7 @@ public class RockstarRepl {
         FileContext ctx = new FileContext(env);
 
         // pre-run any programs defined as parameter
-        files.forEach((filename) -> {
+        files.forEach((String filename) -> {
             try {
                 Program prg = new Parser(filename).parse();
                 prg.execute(ctx);

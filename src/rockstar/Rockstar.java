@@ -73,7 +73,7 @@ public class Rockstar {
                 String value = (eqIdx >= 0) ? a.substring(eqIdx+1): a;
                 options.put(key, value);
             } else {
-                // normal parh name
+                // normal path name
                 files.add(a);
             }
         }

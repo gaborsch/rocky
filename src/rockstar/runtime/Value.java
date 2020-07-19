@@ -288,7 +288,7 @@ public class Value implements Comparable<Value> {
             case NUMBER:
                 return numericValue.toString();
             case STRING:
-                return /*"\"" +*/ stringValue /*+ "\""*/;
+                return stringValue;
             case BOOLEAN:
                 return Boolean.toString(boolValue);
             case ARRAY:
@@ -305,7 +305,7 @@ public class Value implements Comparable<Value> {
             case NUMBER:
                 return numericValue.toString();
             case STRING:
-                return /*"\"" +*/ stringValue /*+ "\""*/;
+                return stringValue;
             case BOOLEAN:
                 return Boolean.toString(boolValue);
             case ARRAY:

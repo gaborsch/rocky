@@ -16,7 +16,5 @@ public enum ExpressionType {
     NUMBER,
     STRING,
     OBJECT,
-    ARRAY/*,
-    LIST_ARRAY,
-    ASSOC_ARRAY*/
+    ARRAY
 }
