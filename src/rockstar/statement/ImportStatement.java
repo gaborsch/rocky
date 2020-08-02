@@ -31,7 +31,7 @@ public class ImportStatement extends Statement {
     public void execute(BlockContext ctx) {
         FileContext fileCtx = ctx.getFileCtx();
         ProgramContext root = ctx.getRootCtx();
-        // the path is either given, or comes from the file, or the defeult package
+        // the path is either given, or comes from the file, or the default package
         PackagePath p = this.path;
         p = (p == null) ? fileCtx.getPackagePath() : p;
         p = (p == null) ? PackagePath.DEFAULT : p;

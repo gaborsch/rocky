@@ -5,6 +5,7 @@
  */
 package rockstar.parser;
 
+import rockstar.parser.checker.AliasChecker;
 import rockstar.parser.checker.IfChecker;
 import rockstar.parser.checker.ListenChecker;
 import rockstar.parser.checker.BuildUpChecker;
@@ -35,6 +36,8 @@ import rockstar.parser.checker.PushChecker;
 import rockstar.parser.checker.PullChecker;
 import rockstar.parser.checker.SplitChecker;
 import rockstar.parser.checker.TurnChecker;
+import rockstar.statement.AliasStatement;
+import rockstar.statement.Block;
 import rockstar.statement.Statement;
 
 /**
@@ -44,6 +47,7 @@ import rockstar.statement.Statement;
 public class StatementFactory {
 
     private static final Checker CHECKERS[] = new Checker[]{
+        new AliasChecker(),
         new PkgDefChecker(),
         new ImportChecker(),
         new TakeItToTheTopChecker(),
@@ -76,15 +80,15 @@ public class StatementFactory {
         new NoOpChecker()
     };
 
-    public static Statement getStatementFor(Line line) {
+    public static Statement getStatementFor(Line line, Block currentBlock) {
         Statement stmt = null;
         for (Checker checker : CHECKERS) {
-            stmt = checker.initialize(line).check();
+            stmt = checker.initialize(line, currentBlock).check();
             if (stmt != null) {
                 break;
             }
         }
-
+        
         if (stmt != null) {
             stmt.setDebugInfo(line);
         }

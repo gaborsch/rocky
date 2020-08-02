@@ -5,8 +5,10 @@
  */
 package rockstar.parser.checker;
 
+import java.util.LinkedList;
 import java.util.List;
 import rockstar.parser.Line;
+import rockstar.statement.Block;
 import rockstar.statement.Statement;
 
 /**
@@ -16,8 +18,15 @@ import rockstar.statement.Statement;
 public abstract class Checker {
     
     protected Line line;
+    private Block block;
     //        private final Map<String, Integer> positionsMap = new HashMap<>();
+
     private final List<String>[] result = new List[10];
+    private int lastPos;
+    private Integer lastNum;
+    private int nextPosStart;
+    private int nextPosEnd;
+
     private boolean hasMatch = false;
     private int matchCounter = 0;
     private Object[] matchedParams;
@@ -30,8 +39,9 @@ public abstract class Checker {
         return matchCounter;
     }
     
-    public Checker initialize(Line l) {
+    public Checker initialize(Line l, Block currentBlock) {
         this.line = l;
+        this.block = currentBlock;
         this.hasMatch = false;
         this.matchedParams = null;
         this.matchCounter = 0;
@@ -59,28 +69,37 @@ public abstract class Checker {
             result[i] = null;
         }
         // match cycle
-        int lastPos = -1;
-        Integer lastNum = null;
+        lastPos = -1;
+        lastNum = null;
         for (Object param : params) {
-            if (param instanceof String) {
-                int nextPos = this.findNext((String) param, lastPos);
-                if (nextPos > lastPos) {
+            if (param instanceof Integer) {
+                lastNum = (Integer) param;
+            } else {
+                List<String> needle = null;
+                if (param instanceof List) {
+                    needle = (List<String>) param;
+                } else if (param instanceof String) {
+                    needle = new LinkedList();
+                    needle.add(((String) param).toLowerCase());
+                }
+                // set nextPosStart and nextPosEnd
+                findNext(needle, lastPos, tokens);
+                
+                if (nextPosEnd > lastPos) {
                     if (lastNum != null) {
                         // save the sublist as the numbered result
-                        result[lastNum] = tokens.subList(lastPos + 1, nextPos);
+                        result[lastNum] = tokens.subList(lastPos + 1, nextPosStart);
                         lastNum = null;
-                    } else if (nextPos != lastPos + 1) {
+                    } else if (nextPosStart != lastPos + 1) {
                         // tokens must follow each other
                         return false;
                     }
-                    lastPos = nextPos;
+                    lastPos = nextPosEnd;
                 } else {
                     // wrong order
                     return false;
                 }
-            } else if (param instanceof Integer) {
-                lastNum = (Integer) param;
-            }
+            } 
         }
         if (lastNum != null) {
             // save the tail as the numbered result
@@ -94,15 +113,36 @@ public abstract class Checker {
         return true;
     }
 
-    private int findNext(String needle, int lastPos) {
-        List<String> tokens = line.getTokens();
-        for (int idx = lastPos + 1; idx < tokens.size(); idx++) {
-            String token = tokens.get(idx);
-            if (token.equalsIgnoreCase(needle)) {
-                return idx;
+    private void findNext(List<String> needle, int lastPos, List<String> tokens) {
+        List<List<String>> allNeedles = block.getAliasesFor(needle);
+        if (allNeedles == null) {
+            allNeedles = new LinkedList<>();
+        } else {
+            allNeedles = new LinkedList<>(allNeedles);
+        }
+        allNeedles.add(0, needle);
+        
+        int tokenLen = tokens.size();
+        
+        for (int idx = lastPos + 1; idx < tokenLen; idx++) {
+            for (List<String> currentNeedle : allNeedles) {
+                boolean matching = true;
+                int len = currentNeedle.size();
+                for(int i = 0; i<len && idx+i < tokenLen; i++) {
+                    String token = tokens.get(idx + i);
+                    if (! token.equalsIgnoreCase(currentNeedle.get(i))) {
+                        matching = false;
+                        break;
+                    }
+                }
+                if (matching) {
+                    nextPosStart = idx;
+                    nextPosEnd = idx + len - 1;
+                    return;
+                }
             }
         }
-        return -1;
+        nextPosEnd = -1;
     }
     
     protected String getMatchedStringObject(int n) {

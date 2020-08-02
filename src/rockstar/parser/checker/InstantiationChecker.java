@@ -5,6 +5,8 @@
  */
 package rockstar.parser.checker;
 
+import java.util.ArrayList;
+import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
@@ -18,13 +20,38 @@ import rockstar.statement.Statement;
  */
 public class InstantiationChecker extends Checker {
 
+    private static final List<String> WANTS_TO_BE = new ArrayList<String>();
+    private static final List<String> WANT_TO_BE = new ArrayList<String>();
+    private static final List<String> WANNA_BE = new ArrayList<String>();
+    private static final List<String> WILL_BE = new ArrayList<String>();
+    private static final List<String> WOULD_BE = new ArrayList<String>();
+    
+    static {
+        WANTS_TO_BE.add("wants");
+        WANTS_TO_BE.add("to");
+        WANTS_TO_BE.add("be");
+
+        WANT_TO_BE.add("want");
+        WANT_TO_BE.add("to");
+        WANT_TO_BE.add("be");
+
+        WANNA_BE.add("wanna");
+        WANNA_BE.add("be");
+
+        WILL_BE.add("will");
+        WILL_BE.add("be");
+
+        WOULD_BE.add("would");
+        WOULD_BE.add("be");
+    }    
+    
     @Override
     public Statement check() {
-        if (match(0, "wants", "to", "be", 1, "taking", 2)     || match(0, "wants", "to", "be", 1)
-            || match(0, "want", "to", "be", 1, "taking", 2)   || match(0, "want", "to", "be", 1)
-            || match(0, "wanna", "be", 1, "taking", 2)        || match(0, "wanna", "be", 1)
-            || match(0, "will", "be", 1, "taking", 2)         || match(0, "will", "be", 1)
-            || match(0, "would", "be", 1, "taking", 2)        || match(0, "would", "be", 1)) {
+        if (match(0, WANTS_TO_BE, 1, "taking", 2)     || match(0, WANTS_TO_BE, 1)
+            || match(0, WANT_TO_BE, 1, "taking", 2)   || match(0, WANT_TO_BE, 1)
+            || match(0, WANNA_BE, 1, "taking", 2)        || match(0, WANNA_BE, 1)
+            || match(0, WILL_BE, 1, "taking", 2)         || match(0, WILL_BE, 1)
+            || match(0, WOULD_BE, 1, "taking", 2)        || match(0, WOULD_BE, 1)) {
 
             // class  name looks like the same as a variable name
             VariableReference variableRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line);
@@ -43,7 +70,6 @@ public class InstantiationChecker extends Checker {
                             for (Expression expression : listExpr.getParameters()) {
                                     stmt.addParameter(expression);
                             }
-//                        }
                         }
                     }
                     return stmt;

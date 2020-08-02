@@ -17,7 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import rockstar.runtime.FileContext;
 import rockstar.runtime.Utils;
+import rockstar.statement.AliasStatement;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
 import rockstar.statement.Program;
@@ -67,7 +69,12 @@ public class Parser {
         try {
             while ((line = rdr.readLine()) != null) {
                 l = new Line(line, filename, rdr.getLnum());
-                Statement stmt = StatementFactory.getStatementFor(l);
+                Block currentBlock = blocks.peek();
+                Statement stmt = StatementFactory.getStatementFor(l, currentBlock);
+                if (stmt instanceof AliasStatement) {
+                    AliasStatement aliasStmt = (AliasStatement) stmt;
+                    currentBlock.defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
+                } 
                 if (stmt instanceof BlockEnd) {
                     // simple block closing: no need to add it anywhere
                     if (blocks.size() > 1) {
@@ -83,7 +90,7 @@ public class Parser {
 
                     // append statement to current block
                     if (!blocks.isEmpty()) {
-                        blocks.peek().addStatement(stmt);
+                        currentBlock.addStatement(stmt);
                     } else {
                         parseError("Statement out of block", l);
                     }

@@ -6,7 +6,11 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
@@ -21,6 +25,8 @@ public abstract class Block extends Statement {
     private Block parent;
 
     private final List<Statement> statements = new ArrayList<>();
+
+    private final Map<List<String>, List<List<String>>> aliasesFor = new HashMap<>();
 
     public List<Statement> getStatements() {
         return statements;
@@ -46,6 +52,18 @@ public abstract class Block extends Statement {
 
     public Block getParent() {
         return parent;
+    }
+
+    public void defineAlias(List<String> alias, List<String> keyword) {
+        List<String> lcAlias = alias.stream().map(String::toLowerCase).collect(Collectors.toList());
+        List<String> lcKeywords = keyword.stream().map(String::toLowerCase).collect(Collectors.toList());
+        aliasesFor
+            .computeIfAbsent(lcKeywords, (l) -> new LinkedList<>())
+            .add(lcAlias);
+    }
+    
+    public List<List<String>> getAliasesFor(List<String> keyword) {
+        return aliasesFor.get(keyword);
     }
 
     /**

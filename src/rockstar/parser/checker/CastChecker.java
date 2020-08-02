@@ -5,9 +5,7 @@
  */
 package rockstar.parser.checker;
 
-import rockstar.expression.Expression;
 import rockstar.expression.MutationExpression;
-import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.statement.CastStatement;
 import rockstar.statement.Statement;

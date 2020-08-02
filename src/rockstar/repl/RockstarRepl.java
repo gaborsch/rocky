@@ -86,7 +86,7 @@ public class RockstarRepl {
                     try {
                         final Line line = new Line(l, "<input>", 1);
                         // parse the statement
-                        Statement stmt = StatementFactory.getStatementFor(line);
+                        Statement stmt = StatementFactory.getStatementFor(line, blocks.peek());
 
                         if (stmt == null) {
                             throw new ParseException("Unknown statement", line);

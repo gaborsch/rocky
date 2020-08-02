@@ -5,6 +5,8 @@
  */
 package rockstar.parser.checker;
 
+import java.util.ArrayList;
+import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.parser.ExpressionFactory;
 import rockstar.statement.ReturnStatement;
@@ -16,9 +18,16 @@ import rockstar.statement.Statement;
  */
 public class GiveBackChecker extends Checker {
     
+    private static final List<String> GIVE_BACK = new ArrayList<String>();
+    
+    static {
+        GIVE_BACK.add("give");
+        GIVE_BACK.add("back");
+    }
+
     @Override
     public Statement check() {
-        if (match("Give", "back", 1)) {
+        if (match(GIVE_BACK, 1)) {
             Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line);
             if (expression != null) {
                 return new ReturnStatement(expression);
