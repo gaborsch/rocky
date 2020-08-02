@@ -22,11 +22,11 @@ public class PoeticAssignmentChecker extends Checker {
     @Override
     public Statement check() {
         if (match(1, "is", 2) || match(1, "was", 2) || match(1, "are", 2) || match(1, "were", 2)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
             if (varRef != null) {
                 List<String> list2 = getResult()[2];
                 // poetic expressions
-                ConstantExpression literalValue = ExpressionFactory.tryLiteralFor(list2.subList(0, 1), line);
+                ConstantExpression literalValue = ExpressionFactory.tryLiteralFor(list2.subList(0, 1), line, block);
                 if (literalValue != null) {
                     if (list2.size() == 1) {
                         return new AssignmentStatement(varRef, literalValue);
@@ -51,7 +51,7 @@ public class PoeticAssignmentChecker extends Checker {
                     }
 
                     String origEnd = orig.substring(p);
-                    ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line, origEnd);
+                    ConstantExpression constValue = ExpressionFactory.getPoeticLiteralFor(list2, line, origEnd, block);
                     if (constValue != null) {
                         return new AssignmentStatement(varRef, constValue);
                     }

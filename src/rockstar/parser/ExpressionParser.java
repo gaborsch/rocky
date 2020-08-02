@@ -5,6 +5,7 @@
  */
 package rockstar.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -35,6 +36,7 @@ import rockstar.expression.WithExpression;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Value;
+import rockstar.statement.Block;
 
 /**
  *
@@ -49,10 +51,12 @@ public class ExpressionParser {
     // saved position
     private int savedIdx;
     private final Line line;
+    private Block block;
 
-    ExpressionParser(List<String> list, Line line) {
+    ExpressionParser(List<String> list, Line line, Block block) {
         this.list = list;
         this.line = line;
+        this.block = block;
         idx = 0;
     }
 
@@ -476,7 +480,7 @@ public class ExpressionParser {
         }
 
         // function call
-        if ("taking".equals(token)) {
+        if (check("taking", 0)) {
             next();
             return new FunctionCall();
         }
@@ -515,6 +519,28 @@ public class ExpressionParser {
         }
 
         return type == null ? null : new BuiltinFunction(type);
+    }
+    
+    private boolean check(String keyword, int offset) {
+        if (list.size() >= idx + offset + 1) {
+            List<String> keywordList = new ArrayList<>();
+            keywordList.add(keyword);
+            List<List<String>> allAliases = block.getAliasesFor(keywordList);
+            for (List<String> aliasParts : allAliases) {
+                boolean matching = true;
+                for (int i = 0; i < aliasParts.size(); i++) {
+                    if (! aliasParts.get(i).equals(peekNext(i))) {
+                        matching = false;
+                        break;
+                    }
+                }
+                if (matching) {
+                    idx += aliasParts.size() -1;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static class EndOfExpression extends CompoundExpression {

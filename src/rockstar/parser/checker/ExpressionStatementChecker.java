@@ -22,7 +22,7 @@ public class ExpressionStatementChecker extends Checker {
     public Statement check() {
         if (match(1)) {
             try {
-                Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line);
+                Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
                 if (((expression != null) && (expression instanceof FunctionCall)) || (expression instanceof QualifierExpression)) {
                     return new ExpressionStatement(expression);
                 }

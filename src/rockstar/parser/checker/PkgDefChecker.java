@@ -29,7 +29,7 @@ public class PkgDefChecker extends Checker {
     @Override
     public Statement check() {
         if (match("Album", 1)) {
-            Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line);
+            Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
 
             Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(expr);
             if (pathOpt.isPresent()) {

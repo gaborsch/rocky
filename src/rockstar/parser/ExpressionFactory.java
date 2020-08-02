@@ -14,6 +14,7 @@ import rockstar.expression.MutationExpression;
 import rockstar.expression.VariableReference;
 import rockstar.expression.WithExpression;
 import rockstar.runtime.RockNumber;
+import rockstar.statement.Block;
 
 /**
  *
@@ -26,10 +27,11 @@ public class ExpressionFactory {
      *
      * @param tokens the tokens to parse
      * @param line the Line
+     * @param block
      * @return
      */
-    public static Expression getExpressionFor(List<String> tokens, Line line) {
-        return getExpressionFor(tokens, line, null);
+    public static Expression getExpressionFor(List<String> tokens, Line line, Block block) {
+        return getExpressionFor(tokens, line, null, block);
     }
 
     /**
@@ -38,10 +40,12 @@ public class ExpressionFactory {
      * @param tokens the tokens to parse
      * @param line the Line
      * @param defaultExpr
+     * @param block
      * @return
      */
-    public static Expression getExpressionFor(List<String> tokens, Line line, Expression defaultExpr) {
-        Expression parsed = new ExpressionParser(tokens, line).parse(defaultExpr);
+    public static Expression getExpressionFor(List<String> tokens, Line line, Expression defaultExpr, Block block) {
+        Expression parsed = new ExpressionParser(tokens, line, block)
+                .parse(defaultExpr);
         if (parsed != null) {
             return parsed;
         }
@@ -53,10 +57,11 @@ public class ExpressionFactory {
      *
      * @param list
      * @param line
+     * @param block
      * @return
      */
-    public static Expression tryExpressionFor(List<String> list, Line line) {
-        ExpressionParser parser = new ExpressionParser(list, line);
+    public static Expression tryExpressionFor(List<String> list, Line line, Block block) {
+        ExpressionParser parser = new ExpressionParser(list, line, block);
         Expression expr = parser.parse(null);
         if (expr != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
@@ -70,10 +75,11 @@ public class ExpressionFactory {
      *
      * @param list
      * @param line
+     * @param block
      * @return
      */
-    public static VariableReference tryVariableReferenceFor(List<String> list, Line line) {
-        ExpressionParser parser = new ExpressionParser(list, line);
+    public static VariableReference tryVariableReferenceFor(List<String> list, Line line, Block block) {
+        ExpressionParser parser = new ExpressionParser(list, line, block);
         VariableReference varRef = parser.parseVariableReference();
         if (varRef != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
@@ -87,10 +93,11 @@ public class ExpressionFactory {
      *
      * @param list
      * @param line
+     * @param block
      * @return
      */
-    public static ConstantExpression tryLiteralFor(List<String> list, Line line) {
-        ExpressionParser parser = new ExpressionParser(list, line);
+    public static ConstantExpression tryLiteralFor(List<String> list, Line line, Block block) {
+        ExpressionParser parser = new ExpressionParser(list, line, block);
         ConstantExpression literal = parser.parseLiteral();
         if (literal != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
@@ -103,10 +110,11 @@ public class ExpressionFactory {
      * Try to parse a MutationExpression, returns null if failed
      * @param list
      * @param line
+     * @param block
      * @return 
      */
-    public static MutationExpression tryMutationExpressionFor(List<String> list, Line line) {
-        ExpressionParser parser = new ExpressionParser(list, line);
+    public static MutationExpression tryMutationExpressionFor(List<String> list, Line line, Block block) {
+        ExpressionParser parser = new ExpressionParser(list, line, block);
         Expression expr = parser.parse(null);
         if (expr != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
@@ -128,11 +136,12 @@ public class ExpressionFactory {
      * @param list
      * @param line
      * @param orig
+     * @param block
      * @return
      */
-    public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line, String orig) {
+    public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line, String orig, Block block) {
         // if a literal word like "nothing", then use that
-        ConstantExpression literal = tryLiteralFor(list, line);
+        ConstantExpression literal = tryLiteralFor(list, line, block);
         if (literal != null) {
             return literal;
         }

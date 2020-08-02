@@ -19,7 +19,7 @@ public class CastChecker extends Checker {
     @Override
     public Statement check() {
         if (match("cast", 1) || match("burn", 1)) {
-            MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(getResult()[1], line);
+            MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(getResult()[1], line, block);
             if (expr != null) {
                 return new CastStatement(expr);
             }

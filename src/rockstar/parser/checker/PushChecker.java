@@ -20,8 +20,8 @@ public class PushChecker extends Checker {
     @Override
     public Statement check() {
         if (match("Push", 1, "into", 2) || match("Rock", 1, "into", 2) ) {
-            Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
-            Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
+            Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
+            Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line, block);
             if (varExpr != null && valueExpr != null) {
                 if (varExpr instanceof VariableReference) {
                     return new PushStatement((VariableReference)varExpr, valueExpr);

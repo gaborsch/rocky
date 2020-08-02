@@ -31,7 +31,7 @@ public class ImportChecker extends Checker {
             // determine package path, if present
             PackagePath path = null;
             if (getResult()[1] != null) {
-                Expression pkgExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
+                Expression pkgExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
                 Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(pkgExpr);
                 if (!pathOpt.isPresent()) {
                     return null;
@@ -40,7 +40,7 @@ public class ImportChecker extends Checker {
                 
             }
             // Process class list expression
-            Expression classesExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
+            Expression classesExpr = ExpressionFactory.getExpressionFor(getResult()[2], line, block);
             List<String> clsList = new LinkedList<>();
             if(classesExpr instanceof ListExpression) {
                 // if it is a proper list expression

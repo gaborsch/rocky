@@ -20,7 +20,7 @@ public class PoeticStringAssignmentChecker extends Checker {
     @Override
     public Statement check() {
         if (match(1, "says", 2)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
             if (varRef != null) {
                 // grab original string from line
                 String poeticLiteralString = line.getOrigLine().substring(line.getOrigLine().indexOf("says ") + 5);

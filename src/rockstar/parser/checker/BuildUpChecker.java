@@ -19,7 +19,7 @@ public class BuildUpChecker extends Checker {
     @Override
     public Statement check() {
         if (match("Build", 1, "up", 2)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
             int count = 1;
             boolean isAndPossible = true;
             for (String s : getResult()[2]) {

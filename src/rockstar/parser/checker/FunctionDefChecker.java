@@ -24,11 +24,11 @@ public class FunctionDefChecker extends Checker {
     public Statement check() {
         if (match(0, "takes", 1)) {
             // function name is the same as a variable name
-            VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line);
+            VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line, block);
             if (nameRef != null) {
                 FunctionBlock fb = new FunctionBlock(nameRef.getName());
                 // parse the expression, for an expression list
-                Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line);
+                Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line, block);
                 // treats null expression
                 if (expr instanceof ConstantExpression) {
                     ConstantExpression constExpr = (ConstantExpression) expr;

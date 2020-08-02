@@ -30,7 +30,7 @@ public class TurnChecker extends Checker {
                 || match("Turn", 1, "down") || match("Turn", "down", 1)
                 || match("Turn", 1, "round") || match("Turn", "round", 1)
                 || match("Turn", 1, "around") || match("Turn", "around", 1)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
             if (varRef != null) {
                 // set direction for the match count
                 int matchIdx = getMatchCounter() - 1;

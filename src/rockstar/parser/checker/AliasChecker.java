@@ -5,16 +5,8 @@
  */
 package rockstar.parser.checker;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import rockstar.expression.Expression;
-import rockstar.expression.ListExpression;
-import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
-import rockstar.runtime.PackagePath;
 import rockstar.statement.AliasStatement;
-import rockstar.statement.ImportStatement;
 import rockstar.statement.Statement;
 
 /**

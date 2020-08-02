@@ -18,8 +18,7 @@ import rockstar.statement.Statement;
 public abstract class Checker {
     
     protected Line line;
-    private Block block;
-    //        private final Map<String, Integer> positionsMap = new HashMap<>();
+    protected Block block;
 
     private final List<String>[] result = new List[10];
     private int lastPos;
@@ -115,12 +114,6 @@ public abstract class Checker {
 
     private void findNext(List<String> needle, int lastPos, List<String> tokens) {
         List<List<String>> allNeedles = block.getAliasesFor(needle);
-        if (allNeedles == null) {
-            allNeedles = new LinkedList<>();
-        } else {
-            allNeedles = new LinkedList<>(allNeedles);
-        }
-        allNeedles.add(0, needle);
         
         int tokenLen = tokens.size();
         

@@ -34,11 +34,11 @@ public class ClassBlockChecker extends Checker {
     @Override
     public Statement check() {
         if (match(1, LOOK_LIKE, 2) || match(1, LOOKS_LIKE, 2)) {
-            VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+            VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
             if (nameRef != null) {
                 String name = nameRef.getName();
                 // checking for "nothing" and aliases
-                ConstantExpression literal = ExpressionFactory.tryLiteralFor(getResult()[2], line);
+                ConstantExpression literal = ExpressionFactory.tryLiteralFor(getResult()[2], line, block);
                 if (literal != null) {
                     Value v = literal.getValue();
                     if (v.isNull()) {
@@ -46,7 +46,7 @@ public class ClassBlockChecker extends Checker {
                     }
                 } else {
                     // checking for class name
-                    VariableReference parentRef = ExpressionFactory.tryVariableReferenceFor(getResult()[2], line);
+                    VariableReference parentRef = ExpressionFactory.tryVariableReferenceFor(getResult()[2], line, block);
                     if (parentRef != null) {
                         // TODO proper classname check: self, parent, it, ...
                         return new ClassBlock(name, parentRef.getName());

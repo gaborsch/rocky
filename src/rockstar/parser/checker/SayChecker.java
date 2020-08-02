@@ -19,7 +19,7 @@ public class SayChecker extends Checker {
     @Override
     public Statement check() {
         if (match("Say", 1) || match("Shout", 1) || match("Whisper", 1) || match("Scream", 1)) {
-            Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line);
+            Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
             if (expr != null) {
                 return new OutputStatement(expr);
             }

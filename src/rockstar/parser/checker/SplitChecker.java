@@ -19,7 +19,7 @@ public class SplitChecker extends Checker {
     @Override
     public Statement check() {
         if (match("split", 1) || match("cut", 1) || match("shatter", 1)) {
-            MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(getResult()[1], line);
+            MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(getResult()[1], line, block);
             if (expr != null) {
                 return new SplitStatement(expr);
             }

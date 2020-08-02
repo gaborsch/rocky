@@ -33,7 +33,7 @@ public class PoeticArrayAssignmentChecker extends Checker {
                 || match(1, "contains", 2)
                 || match(1, "hold", 2)
                 || match(1, "holds", 2)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
             if (varRef != null) {
                 ArrayAssignmentStatement stmt = new ArrayAssignmentStatement(varRef);
                 List<String> valueList = getResult()[2];
@@ -41,7 +41,7 @@ public class PoeticArrayAssignmentChecker extends Checker {
                 while (startIdx < valueList.size()) {
                     int endIdx = Utils.findInList(valueList, "and", startIdx);
                     List<String> exprSubList = valueList.subList(startIdx, endIdx);
-                    Expression expr = ExpressionFactory.tryExpressionFor(exprSubList, line);
+                    Expression expr = ExpressionFactory.tryExpressionFor(exprSubList, line, block);
                     if (expr != null) {
                         // variable reference
                         stmt.addExpression(expr);

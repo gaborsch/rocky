@@ -19,7 +19,7 @@ public class IfChecker extends Checker {
     @Override
     public Statement check() {
         if (match("If", 1) || match("When", 1)) {
-            Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line);
+            Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
             if (condition != null) {
                 return new IfStatement(condition);
             }

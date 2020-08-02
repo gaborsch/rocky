@@ -54,16 +54,16 @@ public class InstantiationChecker extends Checker {
             || match(0, WOULD_BE, 1, "taking", 2)        || match(0, WOULD_BE, 1)) {
 
             // class  name looks like the same as a variable name
-            VariableReference variableRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line);
+            VariableReference variableRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line, block);
             if (variableRef != null) {
-                VariableReference classRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line);
+                VariableReference classRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
                 if (classRef != null) {
                     String className = classRef.getName();
                     InstantiationStatement stmt = new InstantiationStatement(variableRef, className);
 
                     if (getResult()[2] != null) {
                         // has constructor parameters
-                        Expression expr = ExpressionFactory.tryExpressionFor(getResult()[2], line);
+                        Expression expr = ExpressionFactory.tryExpressionFor(getResult()[2], line, block);
                         // treats null expression
                         ListExpression listExpr = ListExpression.asListExpression(expr);
                         if (listExpr != null) {

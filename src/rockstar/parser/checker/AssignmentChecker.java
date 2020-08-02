@@ -21,8 +21,8 @@ public class AssignmentChecker extends Checker {
     @Override
     public Statement check() {
         if (match("Let", 2, "be", 1) || match("Put", 1, "into", 2) || match(2, "thinks", 1)) {
-            Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
-            Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, varExpr);
+            Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line, block);
+            Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, varExpr, block);
             if (varExpr != null && valueExpr != null) {
                 if (varExpr instanceof VariableReference || varExpr instanceof QualifierExpression) {
                     return new AssignmentStatement(varExpr, valueExpr);

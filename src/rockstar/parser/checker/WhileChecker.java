@@ -19,7 +19,7 @@ public class WhileChecker extends Checker {
     @Override
     public Statement check() {
         if (match("While", 1)) {
-            Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line);
+            Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
             if (condition != null) {
                 return new WhileStatement(condition);
             }

@@ -26,7 +26,7 @@ public class ListenChecker extends Checker {
             }
             if (rest.size() >= 2) {
                 if (rest.get(0).equals("to")) {
-                    VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(rest.subList(1, rest.size()), line);
+                    VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(rest.subList(1, rest.size()), line, block);
                     if (varRef != null) {
                         return new InputStatement(varRef);
                     }

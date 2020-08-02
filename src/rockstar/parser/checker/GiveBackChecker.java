@@ -28,7 +28,7 @@ public class GiveBackChecker extends Checker {
     @Override
     public Statement check() {
         if (match(GIVE_BACK, 1)) {
-            Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line);
+            Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
             if (expression != null) {
                 return new ReturnStatement(expression);
             }

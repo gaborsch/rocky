@@ -21,9 +21,9 @@ public class IterateChecker extends Checker {
     public Statement check() {
         if (match("While", 1, "as", 2)
              || match("While", 1, "alike", 2)) {
-            Expression arrayExpr = ExpressionFactory.getExpressionFor(getResult()[1], line);
+            Expression arrayExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
             if (arrayExpr != null && !(arrayExpr instanceof ExpressionError)) {
-                Expression asExpr = ExpressionFactory.getExpressionFor(getResult()[2], line);
+                Expression asExpr = ExpressionFactory.getExpressionFor(getResult()[2], line, block);
                 if (asExpr != null && !(arrayExpr instanceof ExpressionError)) {
                     return new IterateStatement(arrayExpr, asExpr);
                 }

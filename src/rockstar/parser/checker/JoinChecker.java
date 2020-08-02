@@ -19,7 +19,7 @@ public class JoinChecker extends Checker {
     @Override
     public Statement check() {
         if (match("join", 1) || match("unite", 1)) {
-            MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(getResult()[1], line);
+            MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(getResult()[1], line, block);
             if (expr != null) {
                 return new JoinStatement(expr);
             }
