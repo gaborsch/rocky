@@ -12,23 +12,71 @@ import java.util.Map;
  *
  * @author Gabor
  */
-public class Dec64 extends RockNumber {
+public class RockNumberDec64 extends RockNumber {
+
+    // caches for zero exponent and one mantissa
+    private static final Map<Long, RockNumberDec64> CACHE_ZERO_EXPONENT = new HashMap<>();
+    private static final Map<Integer, RockNumberDec64> CACHE_ONE_MANTISSA = new HashMap<>();
+
+    // static values
+    public static final RockNumberDec64 ZERO = new RockNumberDec64(0, 0);
+    public static final RockNumberDec64 ONE = new RockNumberDec64(1, 0);
+    public static final RockNumberDec64 TEN = new RockNumberDec64(10, 0);
+    public static final RockNumberDec64 MINUS_ONE = new RockNumberDec64(-1, 0);
+    public static final RockNumberDec64 ONE_HALF = new RockNumberDec64(5, -1);
+
 
     private final long mantissa;
     private final int exponent;
 
-    public static Dec64 getValue(long l) {
+    private RockNumberDec64(long mantissa, int exponent) {
+        this.mantissa = mantissa;
+        this.exponent = exponent;
+    }
+
+    private RockNumberDec64() {
+        this(0L, 0);
+    }
+
+    
+    @Override
+    public RockNumber getZERO() {
+        return ZERO;
+    }
+
+    @Override
+    public RockNumber getONE() {
+        return ONE;
+    }
+
+    
+    @Override
+    public RockNumberDec64 getValue(long l) {
         return getFromCache(l, 0);
     }
 
-    public static Dec64 getValue(long digits, int fractionCount) {
-        return getFromCache(digits, -fractionCount);
-    }
+//    public static RockNumberDec64 getValue(long digits, int fractionCount) {
+//        return getFromCache(digits, -fractionCount);
+//    }
 
     private static final long MAX_VALUE = 0x7fffffffffffffffL;
     private static final long MAX_PARSED_MANTISSA = MAX_VALUE / 10;
 
-    public static Dec64 parse(String s) {
+    @Override
+    protected RockNumber doParse(String stringValue, int radix) {
+        if (radix == 10) {
+            return doParseBase10(stringValue);
+        }
+        try {
+            // parse as long
+            long value = Long.parseLong(stringValue, radix);
+            return getValue(value);
+        } catch (NumberFormatException nfe) {
+        }
+        return null;
+    }
+
+    private RockNumberDec64 doParseBase10(String s) {
         boolean fraction = false;
         boolean exp = false;
         boolean negativeM = false;
@@ -74,48 +122,24 @@ public class Dec64 extends RockNumber {
         return getFromCache(m, e);
     }
 
-    public static RockNumber parseWithRadix(String stringValue, RockNumber radix) {
-        try {
-            // parse as long
-            long value = Long.parseLong(stringValue, radix.asInt());
-            return getValue(value);
-        } catch (NumberFormatException nfe) {
-        }
-        return null;
-    }
-    
 
-    // caches for zero exponent and one mantissa
-    private static final Map<Long, Dec64> ZeroExpCache = new HashMap<>();
-    private static final Map<Integer, Dec64> OneMantCache = new HashMap<>();
 
-    // static values
-    public static final Dec64 ZERO = new Dec64(0, 0);
-    public static final Dec64 ONE = new Dec64(1, 0);
-    public static final Dec64 TEN = new Dec64(10, 0);
-    public static final Dec64 MINUS_ONE = new Dec64(-1, 0);
-
-    private static Dec64 getFromCache(long mantissa, int exponent) {
-        Dec64 n = null;
+    private static RockNumberDec64 getFromCache(long mantissa, int exponent) {
+        RockNumberDec64 n = null;
         if (exponent == 0) {
-            n = ZeroExpCache.get(mantissa);
+            n = CACHE_ZERO_EXPONENT.get(mantissa);
         } else if (mantissa == 1) {
-            n = OneMantCache.get(exponent);
+            n = CACHE_ONE_MANTISSA.get(exponent);
         }
         if (n == null) {
-            n = new Dec64(mantissa, exponent);
+            n = new RockNumberDec64(mantissa, exponent);
             if (exponent == 0 && mantissa >= -127 && (mantissa < 128)) {
-                ZeroExpCache.put(mantissa, n);
+                CACHE_ZERO_EXPONENT.put(mantissa, n);
             } else if (mantissa == 1) {
-                OneMantCache.put(exponent, n);
+                CACHE_ONE_MANTISSA.put(exponent, n);
             }
         }
         return n;
-    }
-
-    private Dec64(long mantissa, int exponent) {
-        this.mantissa = mantissa;
-        this.exponent = exponent;
     }
 
     private static final long[] TEN_POWERS = {
@@ -139,7 +163,7 @@ public class Dec64 extends RockNumber {
         100000000000000000L
     };
 
-    private static int normalE(Dec64 a) {
+    private static int normalE(RockNumberDec64 a) {
         long m = a.mantissa;
         int e = a.exponent;
         if (m == 0L) {
@@ -152,7 +176,7 @@ public class Dec64 extends RockNumber {
         return e;
     }
 
-    private static int maxE(Dec64 a) {
+    private static int maxE(RockNumberDec64 a) {
         long m = a.mantissa > 0 ? a.mantissa : -a.mantissa;
         int e = a.exponent;
         while (m < MAX_PARSED_MANTISSA && (TEN_POWERS.length - 1 > -e)) {
@@ -162,7 +186,7 @@ public class Dec64 extends RockNumber {
         return e;
     }
 
-    private static long transformM(Dec64 d, int targetE) {
+    private static long transformM(RockNumberDec64 d, int targetE) {
         int e = d.exponent - targetE;
         long m = d.mantissa;
         if (e < 0) {
@@ -179,127 +203,79 @@ public class Dec64 extends RockNumber {
         return m;
     }
 
-    public static Dec64 add(Dec64 a, Dec64 b) {
-        return a.add(b);
+    private RockNumberDec64 convert(RockNumber bn) {
+         if (bn instanceof RockNumberDec64) {
+            return (RockNumberDec64) bn;
+        }
+        throw new RockstarRuntimeException("Mixed number types");
+    }
+    
+    @Override
+    public RockNumber add(RockNumber bn) {
+        RockNumberDec64 b = convert(bn);
+        int commonE = Integer.min(normalE(this), normalE(b));
+        long am = transformM(this, commonE);
+        long bm = transformM(b, commonE);
+        return getFromCache(am + bm, commonE);
     }
 
     @Override
-    public Dec64 add(RockNumber bn) {
-        if (bn instanceof RockNumber) {
-            Dec64 b = (Dec64) bn;
-            int commonE = Integer.min(normalE(this), normalE(b));
-            long am = transformM(this, commonE);
-            long bm = transformM(b, commonE);
-            return getFromCache(am + bm, commonE);
-        }
-        throw new RockstarRuntimeException("Dec64-Double mix");
-    }
-
-    public static Dec64 subtract(Dec64 a, Dec64 b) {
-        return a.subtract(b);
+    public RockNumber subtract(RockNumber bn) {
+        RockNumberDec64 b = convert(bn);
+        int commonE = Integer.min(normalE(this), normalE(b));
+        long am = transformM(this, commonE);
+        long bm = transformM(b, commonE);
+        return getFromCache(am - bm, commonE);
     }
 
     @Override
-    public Dec64 subtract(RockNumber bn) {
-        if (bn instanceof RockNumber) {
-            Dec64 b = (Dec64) bn;
-            int commonE = Integer.min(normalE(this), normalE(b));
-            long am = transformM(this, commonE);
-            long bm = transformM(b, commonE);
-            return getFromCache(am - bm, commonE);
-        }
-        throw new RockstarRuntimeException("Dec64-Double mix");
+    public RockNumber multiply(RockNumber bn) {
+        RockNumberDec64 b = convert(bn);
+        int ae = normalE(this);
+        int be = normalE(b);
+        long m = transformM(this, ae) * transformM(b, be);
+        return getFromCache(m, ae + be);
     }
 
-    public static Dec64 multiply(Dec64 a, Dec64 b) {
-        return a.multiply(b);
-    }
-
-    @Override
-    public Dec64 multiply(RockNumber bn) {
-        if (bn instanceof RockNumber) {
-            Dec64 b = (Dec64) bn;
-            int ae = normalE(this);
-            int be = normalE(b);
-            long m = transformM(this, ae) * transformM(b, be);
-            return getFromCache(m, ae + be);
-        }
-        throw new RockstarRuntimeException("Dec64-Double mix");
-    }
-
-    public static Dec64 intDivide(Dec64 a, Dec64 b) {
-        return a.intDivide(b);
-    }
-
-    public Dec64 intDivide(RockNumber bn) {
-        if (bn instanceof RockNumber) {
-            Dec64 b = (Dec64) bn;
-            int ae = normalE(this);
-            int be = normalE(b);
-            long m = transformM(this, ae) / transformM(b, be);
-            return getFromCache(m, ae - be);
-        }
-        throw new RockstarRuntimeException("Dec64-Double mix");
-    }
-
-    public static Dec64 divide(Dec64 a, Dec64 b) {
-        return a.divide(b);
+    public RockNumber intDivide(RockNumber bn) {
+        RockNumberDec64 b = convert(bn);
+        int ae = normalE(this);
+        int be = normalE(b);
+        long m = transformM(this, ae) / transformM(b, be);
+        return getFromCache(m, ae - be);
     }
 
     @Override
-    public Dec64 divide(RockNumber bn) {
-        if (bn instanceof RockNumber) {
-            Dec64 b = (Dec64) bn;
-            int ae = maxE(this);
-            int be = normalE(b);
-            long m = transformM(this, ae) / transformM(b, be);
-            return getFromCache(m, ae - be);
-        }
-        throw new RockstarRuntimeException("Dec64-Double mix");
+    public RockNumber divide(RockNumber bn) {
+        RockNumberDec64 b = convert(bn);
+        int ae = maxE(this);
+        int be = normalE(b);
+        long m = transformM(this, ae) / transformM(b, be);
+        return getFromCache(m, ae - be);
     }
 
-    public static Dec64 negate(Dec64 a) {
-        return getFromCache(-a.mantissa, a.exponent);
+    public boolean isNegative() {
+        return mantissa>=0;
     }
-
-    public Dec64 negate() {
+    
+    public RockNumberDec64 negate() {
         return getFromCache(-mantissa, exponent);
     }
 
-    public static Dec64 floor(Dec64 a) {
-        return getFromCache(transformM(a, 0), 0);
-    }
-
-    public Dec64 floor() {
-        return getFromCache(transformM(this, 0), 0);
-    }
-
-    public static int compareTo(Dec64 a, Dec64 b) {
-        return a.compareTo(b);
-    }
-
+    
     @Override
     public int compareTo(RockNumber bn) {
-        if (bn instanceof RockNumber) {
-            Dec64 b = (Dec64) bn;
-            int commonE = Integer.min(normalE(this), normalE(b));
-            return Long.compare(transformM(this, commonE), transformM(b, commonE));
-        }
-        throw new RockstarRuntimeException("Dec64-Double mix");
+        RockNumberDec64 b = convert(bn);
+        int commonE = Integer.min(normalE(this), normalE(b));
+        return Long.compare(transformM(this, commonE), transformM(b, commonE));
     }
-
-    public static long asLong(Dec64 a) {
-        return transformM(a, 0);
-    }
-
+    
+    @Override
     public long asLong() {
         return transformM(this, 0);
     }
 
-    public static int asInt(Dec64 a) {
-        return (int) transformM(a, 0);
-    }
-
+    @Override
     public int asInt() {
         return (int) transformM(this, 0);
     }
@@ -337,8 +313,8 @@ public class Dec64 extends RockNumber {
         if (obj == this) {
             return true;
         }
-        if(obj instanceof Dec64) {
-            Dec64 o = (Dec64) obj;
+        if(obj instanceof RockNumberDec64) {
+            RockNumberDec64 o = (RockNumberDec64) obj;
             int commonE = Integer.min(normalE(this), normalE(o));
             return transformM(this, commonE) == transformM(o, commonE);
         }
@@ -351,6 +327,38 @@ public class Dec64 extends RockNumber {
         hash = 29 * hash + (int) (this.mantissa ^ (this.mantissa >>> 32));
         hash = 29 * hash + this.exponent;
         return hash;
+    }
+
+    @Override
+    public RockNumber getValue(Double dblValue) {
+        return parse(Double.toString(dblValue));
+    }
+
+    @Override
+    public RockNumberDec64 floor() {
+        if (isNegative()) {
+            return getFromCache(transformM(this, 0), 0);
+        } else {
+            return getFromCache(-transformM(negate(), 0) - 1, 0);
+        }
+    }
+
+    @Override
+    public RockNumber ceil() {
+        RockNumber floor = floor();
+        if (equals(floor)) {
+            return floor;
+        }
+        return floor.add(ONE);
+    }
+
+    @Override
+    public RockNumber round() {
+        RockNumber floor = floor();
+        if ((compareTo(floor.add(ONE_HALF)) < 0)) {
+            return floor;
+        }
+        return floor.add(ONE);
     }
     
 }

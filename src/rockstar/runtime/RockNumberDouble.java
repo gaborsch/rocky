@@ -7,33 +7,33 @@ import java.util.Objects;
  *
  * @author Gabor
  */
-public class RockNumberNew extends Number {
+public class RockNumberDouble extends RockNumber {
 
-    static final RockNumberNew ZERO = new RockNumberNew(0.0D);
-    static final RockNumberNew ONE = new RockNumberNew(1.0D);
+    static final RockNumberDouble ZERO = new RockNumberDouble(0.0D);
+    static final RockNumberDouble ONE = new RockNumberDouble(1.0D);
     
     public final Double dblValue;
 
-    private RockNumberNew(Double dblValue) {
+    private RockNumberDouble(Double dblValue) {
         this.dblValue = dblValue;
     }
 
     @Override
-    Number getZERO() {
+    public RockNumber getZERO() {
         return ZERO;
     }
 
     @Override
-    Number getONE() {
+    public RockNumber getONE() {
         return ONE;
     }
 
     @Override
-    Number doParse(String stringValue, int radix) {
+    protected RockNumber doParse(String stringValue, int radix) {
         if (radix == 10) {
             try {
                 // parse as double
-                return new RockNumberNew(Double.parseDouble(stringValue));
+                return new RockNumberDouble(Double.parseDouble(stringValue));
             } catch (NumberFormatException nfe) {
             }
         }
@@ -41,52 +41,52 @@ public class RockNumberNew extends Number {
         
         try {
             // parse as long
-            return new RockNumberNew((double)Long.parseLong(stringValue, radix));
+            return new RockNumberDouble((double)Long.parseLong(stringValue, radix));
         } catch (NumberFormatException nfe) {
             return null;
         }
     }
 
     @Override
-    Number getValue(Double dblValue) {
-        return new RockNumberNew(dblValue);
+    public RockNumber getValue(Double dblValue) {
+        return new RockNumberDouble(dblValue);
     }
 
     @Override
-    Number getValue(long l) {
-        return new RockNumberNew((double) l);
+    public RockNumber getValue(long l) {
+        return new RockNumberDouble((double) l);
     }
 
-    private double convertToDbl(Number n) {
-        if (n instanceof RockNumberNew) {
-            return ((RockNumberNew) n).dblValue;
+    private double convertToDbl(RockNumber n) {
+        if (n instanceof RockNumberDouble) {
+            return ((RockNumberDouble) n).dblValue;
         }
         throw new RockstarRuntimeException("Mixed number types");
     }    
     
     @Override
-    public int compareTo(Number rn) {
+    public int compareTo(RockNumber rn) {
         return dblValue.compareTo(convertToDbl(rn));
     }
 
     @Override
-    public RockNumberNew add(Number rn) {
-        return new RockNumberNew(dblValue + convertToDbl(rn));
+    public RockNumberDouble add(RockNumber rn) {
+        return new RockNumberDouble(dblValue + convertToDbl(rn));
     }
 
     @Override
-    public RockNumberNew subtract(Number rn) {
-        return new RockNumberNew(dblValue - convertToDbl(rn));
+    public RockNumberDouble subtract(RockNumber rn) {
+        return new RockNumberDouble(dblValue - convertToDbl(rn));
     }
 
     @Override
-    public RockNumberNew multiply(Number rn) {
-        return new RockNumberNew(dblValue * convertToDbl(rn));
+    public RockNumberDouble multiply(RockNumber rn) {
+        return new RockNumberDouble(dblValue * convertToDbl(rn));
     }
 
     @Override
-    public RockNumberNew divide(Number rn) {
-        return new RockNumberNew(dblValue / convertToDbl(rn));
+    public RockNumberDouble divide(RockNumber rn) {
+        return new RockNumberDouble(dblValue / convertToDbl(rn));
     }
 
     @Override
@@ -120,8 +120,8 @@ public class RockNumberNew extends Number {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof RockNumberNew) {
-            RockNumberNew o = (RockNumberNew) obj;
+        if (obj instanceof RockNumberDouble) {
+            RockNumberDouble o = (RockNumberDouble) obj;
             return Objects.equals(this.dblValue, o.dblValue);
         }
         return false;
@@ -135,18 +135,18 @@ public class RockNumberNew extends Number {
     }
 
     @Override
-    public Number ceil() {
-        return new RockNumberNew(Math.ceil(dblValue));
+    public RockNumber ceil() {
+        return new RockNumberDouble(Math.ceil(dblValue));
     }
 
     @Override
-    public Number floor() {
-        return new RockNumberNew(Math.floor(dblValue));
+    public RockNumber floor() {
+        return new RockNumberDouble(Math.floor(dblValue));
     }
 
     @Override
-    public Number round() {
-        return new RockNumberNew((double)Math.round(dblValue));
+    public RockNumber round() {
+        return new RockNumberDouble((double)Math.round(dblValue));
     }
 
     

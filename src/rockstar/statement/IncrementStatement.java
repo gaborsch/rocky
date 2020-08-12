@@ -43,7 +43,7 @@ public class IncrementStatement extends Statement {
 
         // default to numeric 0 value
         if (v.isMysterious() || v.isNull()) {
-            v = Value.getValue(RockNumber.ZERO);
+            v = Value.getValue(RockNumber.ZERO());
             // v is set to a numeric value
             ctx.setVariable(variable, v);
         }

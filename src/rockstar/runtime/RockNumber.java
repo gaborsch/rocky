@@ -1,161 +1,64 @@
 package rockstar.runtime;
 
-import java.util.Objects;
-
 /**
  * RockNumber is the number abstraction layer for Rockstar
  *
  * @author Gabor
  */
-public class RockNumber {
+public abstract class RockNumber {
 
     private static boolean IS_DEC64 = false;
-
+    
+    // an instance to delegate the static methods
+    private static RockNumber instance = RockNumberDouble.ZERO;
+    
     public static void setDec64(boolean isDec64) {
-        if (ZERO == null || (isDec64 != IS_DEC64)) {
-            if (isDec64) {
-                ZERO = Dec64.ZERO;
-                ONE = Dec64.ONE;
-            } else {
-                ZERO = new RockNumber(0.0d);
-                ONE = new RockNumber(1.0d);
-            }
+        if (IS_DEC64 != isDec64) {
             IS_DEC64 = isDec64;
+            instance = isDec64 ? RockNumberDec64.ZERO : RockNumberDouble.ZERO;
         }
     }
 
-    public static RockNumber ONE;
-    public static RockNumber ZERO;
+    protected abstract RockNumber getZERO();
+    protected abstract RockNumber getONE();
 
-    static {
-        setDec64(false);
+    public static RockNumber ZERO() {
+        return instance.getZERO();
     }
-
+    public static RockNumber ONE() {
+        return instance.getONE();
+    }
+    
+    protected abstract RockNumber doParse(String stringValue, int radix);
+    
     public static RockNumber parse(String stringValue) {
-        if (IS_DEC64) {
-            return Dec64.parse(stringValue);
-        } else {
-            try {
-                // parse as double
-                return new RockNumber(Double.parseDouble(stringValue));
-            } catch (NumberFormatException nfe) {
-                try {
-                    // parse as long
-                    return new RockNumber((double)Long.parseLong(stringValue));
-                } catch (NumberFormatException nfe2) {
-                    return null;
-                }
-            }
-        }
+        return instance.doParse(stringValue, 10);
     }
 
     public static RockNumber parseWithRadix(String stringValue, RockNumber radix) {
-        if (IS_DEC64) {
-            return Dec64.parseWithRadix(stringValue, radix);
-        } else {
-            try {
-                // parse as long
-                return new RockNumber((double)Long.parseLong(stringValue, radix.asInt()));
-            } catch (NumberFormatException nfe) {
-                return null;
-            }
-        }
+        int r = radix.asInt();
+        return instance.doParse(stringValue, r);
     }
 
-    public Double dblValue;
-
-    public RockNumber() {
-    }
-
-    public RockNumber(Double dblValue) {
-        this.dblValue = dblValue;
-    }
-
-    public static RockNumber getValue(long l) {
-        if (IS_DEC64) {
-            return Dec64.getValue(l);
-        } else {
-            return new RockNumber((double) l);
-        }
-    }
-
-    public int compareTo(RockNumber rn) {
-        return dblValue.compareTo(rn.dblValue);
-    }
-
-    public RockNumber add(RockNumber rn) {
-        return new RockNumber(dblValue + rn.dblValue);
-    }
-
-    public RockNumber subtract(RockNumber rn) {
-        return new RockNumber(dblValue - rn.dblValue);
-    }
-
-    public RockNumber multiply(RockNumber rn) {
-        return new RockNumber(dblValue * rn.dblValue);
-    }
-
-    public RockNumber divide(RockNumber rn) {
-        return new RockNumber(dblValue / rn.dblValue);
-    }
-
-    public int asInt() {
-        return dblValue.intValue();
-    }
-
-    public long asLong() {
-        return dblValue.longValue();
-    }
-
-    @Override
-    public String toString() {
-        double rounded = (double)Math.round(dblValue);
-        if (dblValue.equals(rounded)) {
-            // integral value
-            return Long.toString(dblValue.longValue());
-        }
-        // fractional value
-        String s = dblValue.toString();
-        if (s.endsWith(".0")) {
-            // chop fraction if integral value
-            return s.substring(0, s.length() - 2);
-        }
-        return s;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj instanceof RockNumber) {
-            RockNumber o = (RockNumber) obj;
-            if (o instanceof Dec64) {
-                return false;
-            }
-            return Objects.equals(this.dblValue, o.dblValue);
-        }
-
-        return false;
-    }    
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.dblValue);
-        return hash;
-    }
-
-    public RockNumber ceil() {
-        return new RockNumber(Math.ceil(dblValue));
-    }
-
-    public RockNumber floor() {
-        return new RockNumber(Math.floor(dblValue));
-    }
-
-    public RockNumber round() {
-        return new RockNumber((double)Math.round(dblValue));
+    protected abstract RockNumber getValue(Double dblValue);
+    protected abstract RockNumber getValue(long l);
+    
+    public static RockNumber getValueFromLong(long l) {
+        return instance.getValue(l);
     }
     
+    public abstract int compareTo(RockNumber rn);
+
+    public abstract RockNumber add(RockNumber rn);
+    public abstract RockNumber subtract(RockNumber rn);
+    public abstract RockNumber multiply(RockNumber rn);
+    public abstract RockNumber divide(RockNumber rn);
+
+    public abstract int asInt();
+    public abstract long asLong();
+
+    public abstract RockNumber ceil();
+    public abstract RockNumber floor();
+    public abstract RockNumber round();
+
 }

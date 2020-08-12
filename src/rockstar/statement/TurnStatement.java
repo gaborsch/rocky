@@ -45,7 +45,7 @@ public class TurnStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value v = ctx.getVariableValue(variable);
         if (v.isMysterious() || v.isNull()) {
-            v = Value.getValue(RockNumber.ZERO);
+            v = Value.getValue(RockNumber.ZERO());
             // v is set to a numeric value
             ctx.setVariable(variable, v);
         }

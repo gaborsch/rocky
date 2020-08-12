@@ -32,7 +32,7 @@ public class ConstantExpression extends SimpleExpression {
     }
 
     public ConstantExpression(long n) {
-        this.value = Value.getValue(RockNumber.getValue(n));
+        this.value = Value.getValue(n);
     }
 
     public ConstantExpression(Value value) {

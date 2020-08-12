@@ -53,6 +53,10 @@ public class Value implements Comparable<Value> {
         return new Value(n);
     }
 
+    public static Value getValue(long n) {
+        return new Value(RockNumber.getValueFromLong(n));
+    }
+
     public static Value getValue(boolean b) {
         return b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     }
@@ -168,15 +172,15 @@ public class Value implements Comparable<Value> {
                     return null;
                 }
             case BOOLEAN:
-                return boolValue ? RockNumber.ONE : RockNumber.ZERO;
+                return boolValue ? RockNumber.ONE() : RockNumber.ZERO();
             case OBJECT:
-                return RockNumber.ZERO;
+                return RockNumber.ZERO();
             case MYSTERIOUS:
-                return RockNumber.ZERO;
+                return RockNumber.ZERO();
             case NULL:
-                return RockNumber.ZERO;
+                return RockNumber.ZERO();
             case ARRAY:
-                return RockNumber.getValue(listArrayValue.size());
+                return RockNumber.getValueFromLong(listArrayValue.size());
         }
         throw new RockstarRuntimeException("unknown numeric value");
     }
@@ -234,7 +238,7 @@ public class Value implements Comparable<Value> {
             case BOOLEAN:
                 return boolValue;
             case NUMBER:
-                return numericValue.compareTo(RockNumber.ZERO) != 0;
+                return numericValue.compareTo(RockNumber.ZERO()) != 0;
             case STRING:
                 return this.stringValue.length() > 0;
             case OBJECT:
@@ -269,9 +273,9 @@ public class Value implements Comparable<Value> {
             case NUMBER:
                 return this;
             case ARRAY:
-                return getValue(RockNumber.getValue(this.listArrayValue.size()));
+                return getValue(this.listArrayValue.size());
             case OBJECT:
-                return getValue(RockNumber.ONE);
+                return getValue(RockNumber.ONE());
         }
         return null;
     }
@@ -568,7 +572,7 @@ public class Value implements Comparable<Value> {
             case BOOLEAN:
                 return !boolValue;
             case NUMBER:
-                return numericValue.equals(RockNumber.ZERO);
+                return numericValue.equals(RockNumber.ZERO());
             case STRING:
                 return stringValue.isEmpty();
             case OBJECT:

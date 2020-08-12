@@ -99,7 +99,7 @@ public class BuiltinFunction extends CompoundExpression {
         if (v.isArray()) {
             List<Value> l = v.asListArray();
             Map<Value, Value> m = v.asAssocArray();
-            return Value.getValue(RockNumber.getValue(l.size() + m.size()));
+            return Value.getValue(l.size() + m.size());
         }
         throw new RockstarRuntimeException("Invalid type: length of " + v.getType());
     }

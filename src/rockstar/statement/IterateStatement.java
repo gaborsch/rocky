@@ -97,7 +97,7 @@ public class IterateStatement extends Block {
             for(int i=0; canContinue && listIter.hasNext(); i++) {
                 // initialize local loop variables
                 if (keyVar != null) {
-                    currKey = Value.getValue(RockNumber.getValue(i));
+                    currKey = Value.getValue(i);
                     ctx.setVariable(keyVar, currKey);
                 }
                 currValue = listIter.next();

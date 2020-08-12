@@ -36,7 +36,7 @@ public class ArrayAssignmentStatement extends Statement {
         // empty array is null
         Value arrayValue = Value.NULL;
         // adding to this index will append to the list
-        Value idxValue = Value.getValue(RockNumber.getValue(expressionList.size()));
+        Value idxValue = Value.getValue(expressionList.size());
         for (Expression expr : expressionList) {
             if (expr instanceof QualifierExpression) {
                 // assoc array initialization
