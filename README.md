@@ -4,15 +4,17 @@ Rocky is a 100% [Rockstar](https://codewithrockstar.com/) compatible RockStar In
 
 Rocky supports all Rockstar language features announced before 2020.04.13. If you miss any feature, please open an issue for it.
 
-Features include:
-* Fully compliant Rockstar implementation to date (all of the new test are OK, except the reported bugs)
+**Features include:**
+* Fully compliant Rockstar implementation to date (all of the tests are OK, except the reported bugs)
 * Advanced Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable, trace expression evaluation!)
 * Interactive terminal mode (REPL - Read - Eval - Print Loop)
 * List command (parse a file without running it)
 * Detailed help with options explanation
 * IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
 
-**Special feature:** [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
+**Special features:** 
+* [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
+* Advanced array iteration (`while ... as/alike ...`, `while ... as/alike ... for ...`)
 
 Rocky requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix. Alternatively you can also use Docker to run.
 
@@ -38,7 +40,7 @@ You can also create a docker image using the following command:
 ```
 docker build -t rockstar .
 ``` 
-Once created, you can use the container to run rocky. Here are some sample commands:
+Once created, you can use the container to run Rocky. Here are some sample commands:
 * Get help: `docker run --rm rockstar help`
 * Run a program: `docker run --rm -v ${pwd}:/local rockstar /local/programs/gameoflife.rock`
 * Run a program (with input): `docker run --rm -v ${pwd}:/local --interactive --tty rockstar /local/programs/modulus.rock`
@@ -132,125 +134,134 @@ Also, I included OOP tests that do not pass on other Rockstar implementations th
 ```
 $ ./rockstar test -v programs/tests/
 PARSE_ERROR tests in programs/tests/failures
-   [ OK ] invalid_comments.rock
+   [ OK ] invalid_comments.rock                   
+CORRECT tests in programs/tests/fixtures/aliases
+   [ OK ] define_alias.rock                       
+   [ OK ] define_changing_alias.rock              
+   [ OK ] define_changing_expr_alias.rock         
+   [ OK ] define_expr_alias.rock                  
 CORRECT tests in programs/tests/fixtures/arrays
-   [ OK ] arrayalike.rock
-   [ OK ] arrays.rock
-   [ OK ] hash.rock
-   [ OK ] join.rock
-   [ OK ] split.rock
-   [ OK ] split_delimiters.rock
+   [ OK ] arrayalike.rock                         
+   [ OK ] arrays.rock                             
+   [ OK ] hash.rock                               
+   [ OK ] join.rock                               
+   [ OK ] split.rock                              
+   [ OK ] split_delimiters.rock                   
+CORRECT tests in programs/tests/fixtures/arrays_ext
+   [ OK ] while_alike.rock                        
+   [ OK ] while_alike_for.rock                    
 CORRECT tests in programs/tests/fixtures/assignment
-   [ OK ] compound_assignments.rock
-   [ OK ] lets.rock
+   [ OK ] compound_assignments.rock               
+   [ OK ] lets.rock                               
 CORRECT tests in programs/tests/fixtures/comments
-   [ OK ] complex_comments.rock
-   [ OK ] simpleComments.rock
-   [ OK ] simple_comment.rock
+   [ OK ] complex_comments.rock                   
+   [ OK ] simpleComments.rock                     
+   [ OK ] simple_comment.rock                     
 CORRECT tests in programs/tests/fixtures/conditionals
-   [ OK ] empty_if.rock
-   [ OK ] simpleConditionals.rock
-   [ OK ] truthinessTest.rock
+   [ OK ] empty_if.rock                           
+   [ OK ] simpleConditionals.rock                 
+   [ OK ] truthinessTest.rock                     
 CORRECT tests in programs/tests/fixtures/constants
-   [ OK ] constants.rock
+   [ OK ] constants.rock                          
 CORRECT tests in programs/tests/fixtures/control-flow
-   [ OK ] nested_loops.rock
-   [ OK ] simpleLoops.rock
+   [ OK ] nested_loops.rock                       
+   [ OK ] simpleLoops.rock                        
 CORRECT tests in programs/tests/fixtures/equality
-   [ OK ] booleans.rock
-   [ OK ] equalityComparison.rock
-   [ OK ] mysterious.rock
-   [ OK ] negation.rock
-   [ OK ] nothing.rock
-   [ OK ] null.rock
-   [ OK ] numbers.rock
-   [ OK ] strings.rock
+   [ OK ] booleans.rock                           
+   [ OK ] equalityComparison.rock                 
+   [ OK ] mysterious.rock                         
+   [ OK ] negation.rock                           
+   [ OK ] nothing.rock                            
+   [ OK ] null.rock                               
+   [ OK ] numbers.rock                            
+   [ OK ] strings.rock                            
 CORRECT tests in programs/tests/fixtures/examples
-   [ OK ] 99_beers.rock
-   [ OK ] factorial.rock
-   [ OK ] fibonacci.rock
-   [ OK ] fizzbuzz-idiomatic.rock
-   [ OK ] fizzbuzz-minimalist.rock
+   [ OK ] 99_beers.rock                           
+   [ OK ] factorial.rock                          
+   [ OK ] fibonacci.rock                          
+   [ OK ] fizzbuzz-idiomatic.rock                 
+   [ OK ] fizzbuzz-minimalist.rock                
 CORRECT tests in programs/tests/fixtures/functions
-   [ OK ] functionCalls.rock
-   [ OK ] nested_functions.rock
-   [ OK ] nested_function_scopes.rock
-   [ OK ] recursion.rock
-   [ OK ] simpleFunctions.rock
+   [ OK ] functionCalls.rock                      
+   [ OK ] nested_functions.rock                   
+   [ OK ] nested_function_scopes.rock             
+   [ OK ] recursion.rock                          
+   [ OK ] simpleFunctions.rock                    
 CORRECT tests in programs/tests/fixtures/io
-   [ OK ] hello_number.rock
-   [ OK ] hello_world.rock
-   [ OK ] inputTest.rock
-   [ OK ] inputTest2.rock
+   [ OK ] hello_number.rock                       
+   [ OK ] hello_world.rock                        
+   [ OK ] inputTest.rock                          
+   [ OK ] inputTest2.rock                         
 CORRECT tests in programs/tests/fixtures/literals
-   [ OK ] literalAliases.rock
-   [ OK ] literalstrings.rock
-   [ OK ] poeticLiterals.rock
-   [ OK ] poeticLiteralswithHyphen.rock
-   [ OK ] poeticNumbers.rock
+   [ OK ] literalAliases.rock                     
+   [ OK ] literalstrings.rock                     
+   [ OK ] poeticLiterals.rock                     
+   [ OK ] poeticLiteralswithHyphen.rock           
+   [ OK ] poeticNumbers.rock                      
 CORRECT tests in programs/tests/fixtures/math
-   [ OK ] operators.rock
-   [ OK ] operator_aliases.rock
-   [ OK ] operator_precedence.rock
-   [ OK ] rounding.rock
-   [ OK ] rounding_pronouns.rock
+   [ OK ] operators.rock                          
+   [ OK ] operator_aliases.rock                   
+   [ OK ] operator_precedence.rock                
+   [ OK ] rounding.rock                           
+   [ OK ] rounding_pronouns.rock                  
 CORRECT tests in programs/tests/fixtures/oop
-   [ OK ] abstract_method.rock
-   [ OK ] class_declaration.rock
-   [ OK ] constructor.rock
-   [ OK ] field_declaration.rock
-   [ OK ] field_visibility.rock
-   [ OK ] instance_check.rock
-   [ OK ] instantiation.rock
-   [ OK ] method.rock
-   [ OK ] method_override.rock
-   [ OK ] parameterless_method.rock
-   [ OK ] parent_constructor.rock
-   [ OK ] parent_ref.rock
-   [ OK ] self_reference.rock
+   [ OK ] abstract_method.rock                    
+   [ OK ] class_declaration.rock                  
+   [ OK ] constructor.rock                        
+   [ OK ] field_declaration.rock                  
+   [ OK ] field_visibility.rock                   
+   [ OK ] instance_check.rock                     
+   [ OK ] instantiation.rock                      
+   [ OK ] method.rock                             
+   [ OK ] method_override.rock                    
+   [ OK ] parameterless_method.rock               
+   [ OK ] parent_constructor.rock                 
+   [ OK ] parent_ref.rock                         
+   [ OK ] self_reference.rock                     
 CORRECT tests in programs/tests/fixtures/operators
-   [ OK ] addOperator.rock
-   [ OK ] andTest.rock
-   [ OK ] booleans.rock
-   [ OK ] divisionOperator.rock
-   [ OK ] incrementAndDecrement.rock
-   [ OK ] list_expressions_arithmetic.rock
-   [ OK ] multiplicationOperator.rock
-   [ OK ] notTest.rock
-   [ OK ] orderingComparison.rock
-   [ OK ] orNorTest.rock
-   [ OK ] subtractOperator.rock
+   [ OK ] addOperator.rock                        
+   [ OK ] andTest.rock                            
+   [ OK ] booleans.rock                           
+   [ OK ] divisionOperator.rock                   
+   [ OK ] incrementAndDecrement.rock              
+   [ OK ] list_expressions_arithmetic.rock        
+   [ OK ] multiplicationOperator.rock             
+   [ OK ] notTest.rock                            
+   [ OK ] orderingComparison.rock                 
+   [ OK ] orNorTest.rock                          
+   [ OK ] subtractOperator.rock                   
 CORRECT tests in programs/tests/fixtures/types
-   [ OK ] parsing.rock
+   [ OK ] parsing.rock                            
 CORRECT tests in programs/tests/fixtures/variables
-   [ OK ] common_variables.rock
-   [ OK ] globalVariables.rock
-   [ OK ] poeticStrings.rock
-   [ OK ] pronouns.rock
-   [ OK ] proper_variables.rock
-   [ OK ] simple_pronouns.rock
-   [ OK ] simple_variables.rock
-   [ OK ] umlauts.rock
+   [ OK ] common_variables.rock                   
+   [ OK ] globalVariables.rock                    
+   [ OK ] poeticStrings.rock                      
+   [ OK ] pronouns.rock                           
+   [ OK ] proper_variables.rock                   
+   [ OK ] simple_pronouns.rock                    
+   [ OK ] simple_variables.rock                   
+   [ OK ] umlauts.rock                            
+   [ OK ] writeGlobal.rock                        
 CORRECT tests in programs/tests/fixtures/whitespace
-   [ OK ] apostrophesIgnored.rock
-   [ OK ] leading_blank_lines.rock
-   [ OK ] leading_empty_lines.rock
-   [ OK ] leading_whitespace.rock
-   [ OK ] no_newline_at_eof.rock
-   [ OK ] trailing_blank_lines.rock
-   [ OK ] trailing_empty_lines.rock
+   [ OK ] apostrophesIgnored.rock                 
+   [ OK ] leading_blank_lines.rock                
+   [ OK ] leading_empty_lines.rock                
+   [ OK ] leading_whitespace.rock                 
+   [ OK ] no_newline_at_eof.rock                  
+   [ OK ] trailing_blank_lines.rock               
+   [ OK ] trailing_empty_lines.rock               
 RUNTIME_ERROR tests in programs/tests/runtime-errors
-   [ OK ] abstract_instantiation.rock
-   [ OK ] field_access_outside.rock
-   [ OK ] undefined_method.rock
-   [ OK ] undefined_method_from_object.rock
+   [ OK ] abstract_instantiation.rock             
+   [ OK ] field_access_outside.rock               
+   [ OK ] undefined_method.rock                   
+   [ OK ] undefined_method_from_object.rock       
 
 ============================================================
-Test results for programs/tests/:
+Test results for programs/tests:
 ============================================================
-All tests:    94
+All tests:    101
 Failed tests: 0
-Passed tests: 94
+Passed tests: 101
 Pass ratio:   100.00%
 ============================================================
 
