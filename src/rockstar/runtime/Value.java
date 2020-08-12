@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package rockstar.runtime;
 
 import java.util.ArrayList;
@@ -18,6 +14,18 @@ import rockstar.expression.ExpressionType;
 import rockstar.statement.FunctionBlock;
 
 /**
+ * Holds a RockStar value, and defines the possible operations and conversions of a given value.
+ *
+ * A value can be anything defined in ExpressionType:     
+ * - MYSTERIOUS,
+ * - NULL,
+ * - BOOLEAN,
+ * - NUMBER,
+ * - STRING,
+ * - OBJECT,
+ * - ARRAY
+ *   + List (linear array)
+ *   + Map (associative array)
  *
  * @author Gabor
  */
@@ -323,9 +331,10 @@ public class Value implements Comparable<Value> {
 
     public Value plus(Value other) {
 
-        // merge assoc arrays
+        // merge arrays
         if (this.isArray() && other.isArray()) {
             Value v = newArrayValue();
+            // assoc arrays
             v.assocArrayValue.putAll(assocArrayValue);
             v.assocArrayValue.putAll(other.assocArrayValue);
             // concatenate list values, too
@@ -337,7 +346,7 @@ public class Value implements Comparable<Value> {
         // append to list or concatenate
         if (this.isArray() && (!other.isArray())) {
             Value v = newArrayValue();
-            // it is changed
+            // original value should not be changed
             v.listArrayValue.addAll(other.listArrayValue);
             // append value
             v.listArrayValue.add(other);
@@ -346,12 +355,12 @@ public class Value implements Comparable<Value> {
             return v;
         }
 
-        // append to list or concatenate
+        // prepend to list or concatenate
         if (other.isArray() && (!this.isArray())) {
             Value v = newArrayValue();
             // prepend value
             v.listArrayValue.add(this);
-            // it is changed
+            // original value should not be changed
             v.listArrayValue.addAll(other.listArrayValue);
             // it is not changed, assigned by reference
             v.assocArrayValue = other.assocArrayValue;
@@ -681,12 +690,10 @@ public class Value implements Comparable<Value> {
                         la.add(setValue);
                     }
                     return v;
-                } else {
-                    throw new RockstarRuntimeException("Negative array index: " + idx);
-                }
-            } else {
-                throw new RockstarRuntimeException("Invalid array index type: " + refValue.getType());
-            }
+                } 
+                throw new RockstarRuntimeException("Negative array index: " + idx);
+            } 
+            throw new RockstarRuntimeException("Invalid array index type: " + refValue.getType());
         }
         throw new RockstarRuntimeException("Indexing a non-array type: " + getType());
     }

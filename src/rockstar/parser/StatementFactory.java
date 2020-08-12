@@ -5,38 +5,7 @@
  */
 package rockstar.parser;
 
-import rockstar.parser.checker.AliasChecker;
-import rockstar.parser.checker.IfChecker;
-import rockstar.parser.checker.ListenChecker;
-import rockstar.parser.checker.BuildUpChecker;
-import rockstar.parser.checker.BlockEndChecker;
-import rockstar.parser.checker.AssignmentChecker;
-import rockstar.parser.checker.UntilChecker;
-import rockstar.parser.checker.GiveBackChecker;
-import rockstar.parser.checker.SayChecker;
-import rockstar.parser.checker.PoeticAssignmentChecker;
-import rockstar.parser.checker.PoeticStringAssignmentChecker;
-import rockstar.parser.checker.IterateChecker;
-import rockstar.parser.checker.WhileChecker;
-import rockstar.parser.checker.Checker;
-import rockstar.parser.checker.ExpressionStatementChecker;
-import rockstar.parser.checker.BreakItDownChecker;
-import rockstar.parser.checker.CastChecker;
-import rockstar.parser.checker.ClassBlockChecker;
-import rockstar.parser.checker.KnockDownChecker;
-import rockstar.parser.checker.ElseChecker;
-import rockstar.parser.checker.FunctionDefChecker;
-import rockstar.parser.checker.ImportChecker;
-import rockstar.parser.checker.InstantiationChecker;
-import rockstar.parser.checker.JoinChecker;
-import rockstar.parser.checker.PkgDefChecker;
-import rockstar.parser.checker.PoeticArrayAssignmentChecker;
-import rockstar.parser.checker.TakeItToTheTopChecker;
-import rockstar.parser.checker.PushChecker;
-import rockstar.parser.checker.PullChecker;
-import rockstar.parser.checker.SplitChecker;
-import rockstar.parser.checker.TurnChecker;
-import rockstar.statement.AliasStatement;
+import rockstar.parser.checker.*;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
 
