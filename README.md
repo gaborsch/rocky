@@ -14,7 +14,11 @@ Rocky supports all Rockstar language features announced before 2020.04.13. If yo
 
 **Special features:** 
 * [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
-* Advanced array iteration (`while ... as/alike ...`, `while ... as/alike ... for ...`)
+* Advanced array management features
+* For all additional feature details [check the extras page!](spec_ext.md)
+
+
+### Prerequisites
 
 Rocky requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrappers make it easy to execute on Windows and Unix. Alternatively you can also use Docker to run.
 
@@ -22,7 +26,7 @@ Rocky requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrap
 
 To install and run, you only need the `./rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`, depending on your OS). Everything else is for development.
 
-There are some Rockstar program in the `programs` folder and its subfolders, you may want to check them, too. They're mostly for test purposes, though.
+There are some Rockstar program in the [programs](https://github.com/gaborsch/rocky/tree/master/programs) folder and its subfolders, you may want to check them, too. They're mostly for test purposes, but you can peek into if you want to get inspired or check some features.
 
 #### Install for Docker 
 
@@ -45,7 +49,7 @@ Once created, you can use the container to run Rocky. Here are some sample comma
 * Run a program: `docker run --rm -v ${pwd}:/local rockstar /local/programs/gameoflife.rock`
 * Run a program (with input): `docker run --rm -v ${pwd}:/local --interactive --tty rockstar /local/programs/modulus.rock`
 
-### Usage
+### How to use:
 
 It is very easy to run a program:
 ```
@@ -129,7 +133,7 @@ Each command has a more detailed help with options, so try `rockstar help run`, 
 
 *100%* of the tests have passed! With some buggy test cases fixed locally ( https://github.com/RockstarLang/rockstar/issues/202 and https://github.com/RockstarLang/rockstar/issues/203 ), everything works!
 
-Also, I included OOP tests that do not pass on other Rockstar implementations that don't have OOP feature.
+Also, I included OOP tests and Rocky extension tests that do not pass on other Rockstar implementations.
 
 ```
 $ ./rockstar test -v programs/tests/
@@ -147,9 +151,6 @@ CORRECT tests in programs/tests/fixtures/arrays
    [ OK ] join.rock                               
    [ OK ] split.rock                              
    [ OK ] split_delimiters.rock                   
-CORRECT tests in programs/tests/fixtures/arrays_ext
-   [ OK ] while_alike.rock                        
-   [ OK ] while_alike_for.rock                    
 CORRECT tests in programs/tests/fixtures/assignment
    [ OK ] compound_assignments.rock               
    [ OK ] lets.rock                               
@@ -230,6 +231,10 @@ CORRECT tests in programs/tests/fixtures/operators
    [ OK ] orderingComparison.rock                 
    [ OK ] orNorTest.rock                          
    [ OK ] subtractOperator.rock                   
+CORRECT tests in programs/tests/fixtures/rocky_ext
+   [ OK ] array_functions.rock                    
+   [ OK ] while_alike.rock                        
+   [ OK ] while_alike_for.rock                    
 CORRECT tests in programs/tests/fixtures/types
    [ OK ] parsing.rock                            
 CORRECT tests in programs/tests/fixtures/variables
@@ -259,9 +264,9 @@ RUNTIME_ERROR tests in programs/tests/runtime-errors
 ============================================================
 Test results for programs/tests:
 ============================================================
-All tests:    101
+All tests:    102
 Failed tests: 0
-Passed tests: 101
+Passed tests: 102
 Pass ratio:   100.00%
 ============================================================
 

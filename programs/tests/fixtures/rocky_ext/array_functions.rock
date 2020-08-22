@@ -1,0 +1,27 @@
+Let the roses at 0 be "red"
+Let the roses at 1 be "purple"
+Let the roses at 2 be "white"
+While the roses alike my rose
+Say "A " with my rose with " rose for my darling"
+(end while)
+
+(sorting)
+Let a bouquet be the roses sorted
+While a bouquet alike a flower
+Say "A " with a flower with " bouquet"
+(end while)
+
+Let the bouquet be sorted the roses
+While the bouquet alike a flower
+Say "A " with a flower with " bouquet"
+(end while)
+
+Say count of the roses
+Say length of the roses
+Say height of the roses
+
+Say last of the roses
+
+While the roses alike my rose
+Say "A " with my rose with " rose for my darling"
+(end while)
