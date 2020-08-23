@@ -7,9 +7,11 @@ package rockstar.repl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.stream.Collectors;
 import rockstar.Rockstar;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
@@ -18,6 +20,7 @@ import rockstar.parser.StatementFactory;
 import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.Utils;
+import rockstar.statement.AliasStatement;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
 import rockstar.statement.ContinuingBlockStatementI;
@@ -77,10 +80,21 @@ public class RockstarRepl {
                         ctx.getFunctions().forEach((String name, FunctionBlock func) -> {
                             System.out.println(name + " taking " + func.getParameterRefs());
                         });
+                    } else if (l.startsWith("show alias")) {
+                        System.out.println("Aliases:");
+                        Block b = blocks.peek();
+                        while (b != null) {
+                            Iterator<Map.Entry<List<String>, List<List<String>>>> i = b.getAliasesIterator();
+                            i.forEachRemaining(e -> 
+                                    e.getValue().forEach(v -> 
+                                            System.out.println(v.stream().collect(Collectors.joining(" ")) + " means " + e.getKey().stream().collect(Collectors.joining(" ")))));
+                            b = b.getParent();
+                        }
                     } else {
                         System.out.println("Show commands: ");
                         System.out.println("    show var: list global variables and current values");
                         System.out.println("    show func: list functions and parameters");
+                        System.out.println("    show alias: list user-defined aliases");
                     }
                 } else {
                     try {
@@ -91,7 +105,10 @@ public class RockstarRepl {
                         if (stmt == null) {
                             throw new ParseException("Unknown statement", line);
                         }
-
+                        if (stmt instanceof AliasStatement) {
+                            AliasStatement aliasStmt = (AliasStatement) stmt;
+                            blocks.peek().defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
+                        } 
                         // explain if needed
                         if (explain) {
                             System.out.println(stmt.toString());

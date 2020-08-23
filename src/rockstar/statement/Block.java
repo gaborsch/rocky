@@ -7,6 +7,7 @@ package rockstar.statement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,10 @@ public abstract class Block extends Statement {
             aliases.addAll(localAliases);
         }
         return aliases;
+    }
+    
+    public Iterator<Map.Entry<List<String>, List<List<String>>>> getAliasesIterator() {
+         return aliasesFor.entrySet().iterator();
     }
 
     /**
