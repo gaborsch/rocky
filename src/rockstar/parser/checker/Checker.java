@@ -5,8 +5,11 @@
  */
 package rockstar.parser.checker;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import rockstar.parser.Line;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
@@ -29,6 +32,8 @@ public abstract class Checker {
     private boolean hasMatch = false;
     private int matchCounter = 0;
     private Object[] matchedParams;
+    
+    private final Map<String, List<String>> listCache = new HashMap<>();
 
     public List<String>[] getResult() {
         return result;
@@ -78,8 +83,7 @@ public abstract class Checker {
                 if (param instanceof List) {
                     needle = (List<String>) param;
                 } else if (param instanceof String) {
-                    needle = new LinkedList();
-                    needle.add(((String) param).toLowerCase());
+                    needle = listCache.computeIfAbsent((String) param, s -> Arrays.asList(s));
                 }
                 // set nextPosStart and nextPosEnd
                 findNext(needle, lastPos, tokens);

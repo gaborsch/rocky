@@ -54,25 +54,40 @@ public abstract class Block extends Statement {
         return parent;
     }
 
-    public void defineAlias(List<String> alias, List<String> keyword) {
+    public void defineAlias(List<String> alias, List<String> keywords) {
         List<String> lcAlias = alias.stream().map(String::toLowerCase).collect(Collectors.toList());
-        List<String> lcKeywords = keyword.stream().map(String::toLowerCase).collect(Collectors.toList());
+        List<String> lcKeywords = keywords.stream().map(String::toLowerCase).collect(Collectors.toList());
         
-        List<List<String>> aliasList = aliasesFor.computeIfAbsent(lcKeywords, (l) -> new LinkedList<>());
-        if (aliasList.isEmpty()) {
-            aliasList.add(keyword);
-        }
-        aliasList.add(alias);
+//        List<List<String>> aliasList = aliasesFor.computeIfAbsent(lcKeywords, l -> new ArrayList<>());
+//        if (aliasList.isEmpty()) {
+//            aliasList.add(keyword);
+//        }
+//        aliasList.add(alias);
         
         aliasesFor
-            .computeIfAbsent(lcKeywords, (l) -> new LinkedList<>())
+            .computeIfAbsent(lcKeywords, l -> new ArrayList<>())
             .add(lcAlias);
     }
     
-    public List<List<String>> getAliasesFor(List<String> keyword) {
-        List<List<String>> aliases = aliasesFor.getOrDefault(keyword, new ArrayList<>());
+    public List<List<String>> getAliasesFor(List<String> keywords) {
+        List<String> lcKeywords = keywords.stream().map(String::toLowerCase).collect(Collectors.toList());
+        List<List<String>> aliases = getAliasesLC(lcKeywords);
         if (aliases.isEmpty()) {
-            aliases.add(keyword);
+            aliases.add(lcKeywords);
+        }
+        return aliases;
+    }
+    
+    protected List<List<String>> getAliasesLC(List<String> lcKeywords) {
+        List<List<String>> aliases;
+        if (parent != null) {
+            aliases = parent.getAliasesLC(lcKeywords);
+        } else {
+            aliases = new ArrayList<>();
+        }
+        List<List<String>> localAliases = aliasesFor.get(lcKeywords);
+        if (localAliases != null) {
+            aliases.addAll(localAliases);
         }
         return aliases;
     }

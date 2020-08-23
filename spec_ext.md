@@ -15,7 +15,19 @@ Growl means Say
 growl "Hello there!"
 ```
 
-All statement keyword can be aliased. From expressions, it only works for the keyword `taking` currently (but may be extended).
+Aliasing operates on whole keyword lists level only. For example `give back means throw back` works, but `give means throw` does not.
+All keywords in statements can be aliased. From expressions, it only works for the keyword `taking` currently (but may be extended). 
+
+It's possible to define the same alias for different keywords, if their lexical position is different. For example:
+```
+telling means say
+telling means taking
+telling "Hello!" ("say")
+Desire telling my love ("taking")
+```
+
+It is also allowed to redefine keywords (though not recommended), but it's not possible to redefine other aliases.
+
 
 ## Object Oriented Programming extension
 

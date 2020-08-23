@@ -5,14 +5,9 @@
  */
 package rockstar.statement;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.FileContext;
-import rockstar.runtime.PackagePath;
-import rockstar.runtime.ProgramContext;
-import rockstar.runtime.QualifiedClassName;
 
 /**
  *
@@ -20,8 +15,8 @@ import rockstar.runtime.QualifiedClassName;
  */
 public class AliasStatement extends Statement {
 
-    private List<String> alias;
-    private List<String> keyword;
+    private final List<String> alias;
+    private final List<String> keyword;
 
     public AliasStatement(List<String> alias, List<String> keyword) {
         this.alias = alias;
