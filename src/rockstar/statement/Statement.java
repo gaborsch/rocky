@@ -15,6 +15,7 @@ import rockstar.runtime.BlockContext;
 public abstract class Statement {
 
     private Line line;
+    private Block block;
 
     protected Statement() {
     }
@@ -51,4 +52,13 @@ public abstract class Statement {
 
     protected abstract String explain();
 
+    public Block getBlock() {
+        return block;
+    }
+
+    public void setBlock(Block block) {
+        this.block = block;
+    }
+
+    
 }

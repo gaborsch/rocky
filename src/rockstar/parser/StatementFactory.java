@@ -60,6 +60,7 @@ public class StatementFactory {
         
         if (stmt != null) {
             stmt.setDebugInfo(line);
+            stmt.setBlock(currentBlock);
         }
 
         return stmt;

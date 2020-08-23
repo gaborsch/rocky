@@ -6,10 +6,12 @@
 package rockstar.debugger;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.stream.Collectors;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.VariableReference;
@@ -18,6 +20,7 @@ import rockstar.runtime.BlockContext;
 import rockstar.runtime.BlockContextListener;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
+import rockstar.statement.Block;
 import rockstar.statement.Program;
 import rockstar.statement.Statement;
 
@@ -159,6 +162,17 @@ public class DebugListener implements BlockContextListener {
                         } else {
                             System.out.println("Unknown watch");
                         }
+                    } else if (line.equals("a")) {
+                        // show aliases
+                        System.out.println("Aliases:");
+                        Block b = stmt.getBlock();
+                        while (b != null) {
+                            Iterator<Map.Entry<List<String>, List<List<String>>>> i = b.getAliasesIterator();
+                            i.forEachRemaining(e -> 
+                                    e.getValue().forEach(v -> 
+                                            System.out.println(v.stream().collect(Collectors.joining(" ")) + " means " + e.getKey().stream().collect(Collectors.joining(" ")))));
+                            b = b.getParent();
+                        }                        
                     } else if (line.startsWith("br")) {
                         // remove breakpoint
                         String lineStr = line.substring(2).trim();
