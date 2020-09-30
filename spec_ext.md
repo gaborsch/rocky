@@ -15,7 +15,7 @@ Growl means Say
 growl "Hello there!"
 ```
 
-Aliasing operates on whole keyword lists level only. For example `give back means throw back` works, but `give means throw` does not.
+Aliasing operates on whole keyword lists level only. For example `throw back means give back` works, but `throw means give` does not.
 All keywords in statements can be aliased. From expressions, it only works for the keyword `taking` currently (but may be extended). 
 
 It's possible to define the same alias for different keywords, if their lexical position is different. For example:
