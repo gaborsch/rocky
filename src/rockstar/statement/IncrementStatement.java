@@ -42,7 +42,7 @@ public class IncrementStatement extends Statement {
         Value v = ctx.getVariableValue(variable);
 
         // default to numeric 0 value
-        if (v.isMysterious() || v.isNull()) {
+        if (v.isNull()) {
             v = Value.getValue(RockNumber.ZERO());
             // v is set to a numeric value
             ctx.setVariable(variable, v);
@@ -63,7 +63,7 @@ public class IncrementStatement extends Statement {
             ctx.setVariable(variable, v);
             return;
         }
-        throw new RockstarRuntimeException(v.getType() + " ++");
+        throw new RockstarRuntimeException("Cannot increment " + v.getType());
     }
 
     @Override

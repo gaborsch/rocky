@@ -22,7 +22,7 @@ public class FunctionDefChecker extends Checker {
 
     @Override
     public Statement check() {
-        if (match(0, "takes", 1)) {
+        if (match(0, "takes", 1) || match(0, "wants", 1)) {
             // function name is the same as a variable name
             VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line, block);
             if (nameRef != null) {
