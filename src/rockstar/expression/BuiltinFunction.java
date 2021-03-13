@@ -45,7 +45,7 @@ public class BuiltinFunction extends CompoundExpression {
 
     @Override
     public int getPrecedence() {
-        return 75;
+        return 60;
     }
 
     @Override

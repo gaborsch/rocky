@@ -2,6 +2,7 @@
 package rockstar.runtime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -338,12 +339,20 @@ public class Value implements Comparable<Value> {
         // merge arrays
         if (this.isArray() && other.isArray()) {
             Value v = newArrayValue();
-            // assoc arrays
-            v.assocArrayValue.putAll(assocArrayValue);
-            v.assocArrayValue.putAll(other.assocArrayValue);
+            // assoc arrays            
+            if (assocArrayValue != null) {
+                v.assocArrayValue.putAll(assocArrayValue);
+            }
+            if (other.assocArrayValue != null) {
+                v.assocArrayValue.putAll(other.assocArrayValue);
+            }
             // concatenate list values, too
-            v.listArrayValue.addAll(listArrayValue);
-            v.listArrayValue.addAll(other.listArrayValue);
+            if (listArrayValue != null) {
+                v.listArrayValue.addAll(listArrayValue);
+            }
+            if (other.listArrayValue != null) {
+                v.listArrayValue.addAll(other.listArrayValue);
+            }
             return v;
         }
 
@@ -351,7 +360,9 @@ public class Value implements Comparable<Value> {
         if (this.isArray() && (!other.isArray())) {
             Value v = newArrayValue();
             // original value should not be changed
-            v.listArrayValue.addAll(other.listArrayValue);
+            if (other.listArrayValue != null) {
+                v.listArrayValue.addAll(other.listArrayValue);
+            }
             // append value
             v.listArrayValue.add(other);
             // it is not changed, assigned by reference

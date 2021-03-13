@@ -15,12 +15,12 @@ import rockstar.runtime.RockstarRuntimeException;
  *
  * @author Gabor
  */
-public class PullStatement extends Statement {
+public class RollStatement extends Statement {
 
     private final VariableReference variable;
     private final VariableReference targetRef;
 
-    public PullStatement(VariableReference variable, VariableReference targetRef) {
+    public RollStatement(VariableReference variable, VariableReference targetRef) {
         this.variable = variable;
         this.targetRef = targetRef;
     }
@@ -34,22 +34,22 @@ public class PullStatement extends Statement {
                 Value targetValue;
                 List<Value> list = array.asListArray();
                 if (! list.isEmpty()) {
-                    targetValue = list.remove(list.size()-1);
+                    targetValue = list.remove(0);
                 } else {
                     targetValue = Value.MYSTERIOUS;
                 }
                 ctx.setVariable(this.targetRef, targetValue);
             } else {
-                throw new RockstarRuntimeException("Pulling from a non-array type: "+array.getType());
+                throw new RockstarRuntimeException("Rolling from a non-array type: "+array.getType());
             }
         } else {
-            throw new RockstarRuntimeException("Pushing into a nonexistent variable: " + variable);
+            throw new RockstarRuntimeException("Rolling into a nonexistent variable: " + variable);
         }
     }
 
 
     @Override
     protected String explain() {
-        return "pull " + targetRef.format() + " from " + variable.format();
+        return "roll " + targetRef.format() + " from " + variable.format();
     }
 }
