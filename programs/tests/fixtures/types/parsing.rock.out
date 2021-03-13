@@ -1,24 +1,5 @@
 parsing ints with cast
 123456
 579
-parsing double with cast
-579.45
-parsing strings with radix cast
-255
-170
 creating chars with cast
 A
-Conversion types: in-place
-A
-Conversion types: into
-65
-A
-Conversion types: with
-255
-Conversion types: into-with
-ff
-255
-Conversion complex cases
-165
-170
-169

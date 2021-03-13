@@ -13,7 +13,3 @@ Shout the array
 Split "abcde" into tokens
 Join tokens with ";"
 Shout tokens
-
-Split "edcba" into tokens
-unite tokens with "-"
-Shout tokens

@@ -12,30 +12,3 @@ Say digits at 0
 Say digits at 1
 Say digits at 2
 Say digits at 3
-
-Say "CUT"
-Cut "1.2" into numbers with "."
-Say numbers at 0
-Say numbers at 1
-
-Say "SHATTER"
-Shatter "192.168.0.1" into ipaddr with "."
-Say ipaddr at 0
-Say ipaddr at 1
-Say ipaddr at 2
-Say ipaddr at 3
-
-
-Say "BACKSLASH"
-Shatter "\\users\\gaborsch\\rocky" into path with "\\"
-Say path at 0
-Say path at 1
-Say path at 2
-Say path at 3
-
-Say "STAR"
-Shatter "1*2*3*4" into path with "*"
-Say path at 0
-Say path at 1
-Say path at 2
-Say path at 3

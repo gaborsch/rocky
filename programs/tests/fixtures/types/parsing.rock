@@ -8,50 +8,7 @@ Cast Y
 Let Z be X with Y
 Shout Z (579)
 
-Say "parsing double with cast"
-Let X be "123.45"
-Cast X
-Let Z be X with Y
-Shout Z (579.45)
-
-Say "parsing strings with radix cast"
-Let X be "ff"
-Cast X with 16
-Shout X (170)
-Cast "10101010" into Z with 2
-Shout Z (170 - hex aa)
-
 Say "creating chars with cast"
 Let X be 65
 Cast X
 Shout X (A)
-
-Say "Conversion types: in-place"
-Let X be 65
-Cast X
-Shout X (A)
-
-Say "Conversion types: into"
-Let X be 65
-Cast X into Z
-Shout X (65)
-Shout Z (A)
-
-Say "Conversion types: with"
-Let X be "ff"
-Cast X with 16
-Shout X (255)
-
-Say "Conversion types: into-with"
-Let X be "ff"
-Cast X with 16 into Z
-Shout X (ff)
-Shout Z (255)
-
-Say "Conversion complex cases"
-Cast "1010" with (+) "0101" into Z with 2
-Say Z (165)
-Cast "10101010" into Z with 2
-Say Z (170)
-Cast "10101001" with 2 into Z
-Say Z (169)
