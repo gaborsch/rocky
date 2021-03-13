@@ -12,16 +12,16 @@ Rockstar is intended to give the programmer an unprecedented degree of poetic li
 Rockstar programs are [UTF-8](https://en.wikipedia.org/wiki/UTF-8) files with the `.rock` file extension. *(Given that for everything included in the current Rockstar specification, UTF-8 is indistinguishable from 7-bit ASCII, that's a fancy way of saying they're plain text files.)*
 
 ### Comments 
- 
+
 The use of comments in Rockstar programs is strongly discouraged. This is rock'n'roll; it's up to the audience to find their own meaning. If you absolutely insist on commenting your Rockstar programs, comments should be contained in parentheses (). Yes, this means you can't use brackets in arithmetic expressions and may need to decompose complex expressions into multiple evaluations and assignments. 
- 
+
 Rockstar developers are not into that whole [brevity thing](https://www.urbandictionary.com/define.php?term=Brevity%20Thing). 
- 
+
 ``` 
 (Initialise Tommy = 1337)
 Tommy was a big bad brother. 
-``` 
- 
+```
+
 ### Variables
 
 Rockstar supports three kinds of variable names.
@@ -46,7 +46,7 @@ Put my variable plus your variable into the total
 Shout the total
 ```
 
-**Proper variables** are proper nouns - any word that isn't a reserved keyword and starts with an uppercase letter. Proper variable names can contain spaces as long as each space is followed by an uppercase letter. Whilst some developers may use this feature to create variables with names like `Customer ID`, `Tax Rate` or `Distance In KM`, we recommend you favour idiomatic variable names such as `Doctor Feelgood`, `Mister Crowley`,  `Tom Sawyer`, and `Billie Jean`. Proper variables are case-insensitive apart from the first letter of each word, which must be a capital letter.
+**Proper variables** are proper nouns - any word that isn't a reserved keyword and starts with an uppercase letter. Proper variable names can contain spaces as long as each space is followed by an uppercase letter. Whilst some developers may use this feature to create variables with names like `Customer ID`, `Tax Rate` or `Distance In KM`, we recommend you favour idiomatic variable names such as `Doctor Feelgood`, `Mister Crowley`,  `Tom Sawyer`, and `Billie Jean`. 
 
 (Although not strictly idiomatic, `Eleanor Rigby`, `Peggy Sue`, `Black Betty`, and `Johnny B Goode` would also all be valid variable names in Rockstar.)
 
@@ -56,10 +56,19 @@ If a variable is defined outside of a function, it is in global scope. Global sc
 
 While within a function, if you write to a variable that has been defined in global scope, you write to that variable; you do not define a new local variable.
 
+#### A note on case sensitivity in Rockstar
+
+Rockstar keywords and variable names are all case-insensitive, with the exception of proper variables. Proper variables are case-insensitive **apart from the first letter of each word, which must be a capital letter.**
+
+* `TIME`, `time`, `tIMe`, `TIMe` are all equivalent. Simple variables are case-insensitive.
+* `MY HEART`, `my heart`, `My Heart` - are all equivalent; the keyword `my` triggers **common variable** behaviour
+* `Tom Sawyer`, `TOM SAWYER`, `TOm SAWyer` - are all equivalent; the capital `S` on `Sawyer` triggers **proper variable** behaviour
+* `DOCTOR feelgood` is not a valid Rockstar variable; the lowercase `f` on `feelgood` does not match any valid variable naming style and so the variable name is not valid.
+
 #### Pronouns
 
 The keywords `it`, `he`, `she`, `him`, `her`, `they`, `them`, `ze`, `hir`, `zie`, `zir`, `xe`, `xem`, `ve`, and `ver` refer to the last named variable determined by parsing order. 
- 
+
 (Please don't file issues pointing out that 80s rockers were a bunch of misogynists and gender-inclusive pronouns aren't really idiomatic. You're right, we know, and we've all learned a lot since then. Besides, [*Look What The Cat Dragged In*](https://en.wikipedia.org/wiki/Look_What_the_Cat_Dragged_In) was recorded by four cishet guys who spent more money on lipgloss and hairspray than they did on studio time, and it's an absolute classic.)
 
 ### Types
@@ -120,6 +129,92 @@ Let my string be "abcdefg"
 Shout my string at 0 (will print "a")
 Shout my string at 1 (will print "b")
 Let the character be my string at 2
+```
+
+### Stack operations
+
+Rockstar arrays can also be created and manipulated by the stack operations `rock` and `roll`. (The aliases `push` and `pop` are supported for Rockstar developers who are into 80s dance music.)
+
+#### Pushing elements onto an array
+
+To create a new empty array, `rock` the name of the array:
+
+```
+Rock the array (the array is now [])
+```
+
+To push an element onto the front of an array:
+
+```
+Rock the array with the element
+```
+
+This supports list expressions, so you can push multiple elements onto the front of an array:
+
+```
+Rock ints with 1, 2, 3 (ints is now [1, 2, 3])
+Rock the array with the first, the second, and the third
+```
+
+Remember the `with` keyword is context-sensitive, so in this example:
+
+```
+Rock ints with 1, 2 with 3, 4, 5
+          ^         ^
+          |         +-- this 'with' is the binary addition operator
+          |
+          +------------ this 'with' is part of the array push syntax
+          
+(ints is now [ 1, 5, 4, 5 ])
+```
+
+Rockstar supports a special syntax for pushing poetic literals onto a stack:
+
+```rockstar
+Rock the array like the poetic literal (the array is now [ 367 ])
+Rock the array like a wolf (the array is now [ 367, 14 ])
+```
+
+This syntax is very useful for initialising strings without using string literals - see below. It also means that the following line is valid Rockstar:
+
+```
+Rock you like a hurricane (you is now [ 19 ])
+```
+
+#### Popping elements from an array
+
+The `roll` keyword will remove the first element from an array and return the element that was removed.
+
+```
+Rock ints with 1, 2, 3
+Roll ints (returns 1; ints is now [ 2, 3 ])
+Roll ints (returns 2; ints is now [ 3 ])
+Roll ints (returns 3; ints is now [] )
+Roll ints (returns mysterious; ints is now [])
+```
+
+`roll` can be used in assignments:
+
+```
+Rock ints with 1, 2, 3
+Let the first be roll ints
+Let the second be roll ints
+Let the third be roll ints
+Shout the first (outputs 1)
+Shout the second (outputs 2)
+Shout the third (outputs 3)
+```
+
+Rockstar also supports a special `roll x into y` syntax for removing the first element from an array and assigning it to a variable:
+
+```
+Rock the list with 4, 5, 6
+Roll the list into foo
+Roll the list into bar
+Roll the list into baz
+Shout foo (will output 4)
+Shout bar (will output 5)
+Shout baz (will output 6)
 ```
 
 ### Splitting strings and type conversions
@@ -269,7 +364,7 @@ Increment and decrement are supported by the `Build {variable} up` and `Knock {v
 * `Build my world up` will increment the value stored in `my world` by 1.
 * `Knock the walls down` will decrement the value stored in `the walls` by 1
 * `Knock the walls down, down` will decrement the value stored in `the walls` by 2
- 
+
 #### Operators
 
 Rockstar supports the infix arithmetic operators `+`, `-`, `*` and `/`. The language includes aliases for each operator so you can write lyrically pleasing expressions.
@@ -333,7 +428,7 @@ which will print the value 25 (obviously).
 
 #### List Arithmetic
 
-Rockstar operators support a list of expressions on the right-hand side of the operator. (Imagine explaining in English that, say, "the restaurant bill is the food, plus the drinks, the service and the tax" - same idea.)
+Rockstar operators support a list of expressions on the right-hand side of the operator. (Imagine explaining in English that, say, "the restaurant bill is the food, plus the drinks, the service, and the tax" - same idea.)
 
 * `Let X be 1 with 2, 3, 4` - shorthand for `X = 1 + 2 + 3 + 4`
 * `Let X be "foo" with "bar", and "baz"` - X will be `"foo" + "bar" + "baz"`
@@ -384,7 +479,7 @@ A poetic number literal begins with a variable name, followed by the keyword `is
 * `Tommy was without` initialises `Tommy` with the value `7` because `without` is a Reserved Keyword, but not a Literal Word.
  * Note that poetic literals **can** include Reserved Keywords, as with `taking` in this example.
  * The hyphen (`-`) is counted as a letter – so you can use terms like 'all-consuming' (13 letters > 3) and
-  'power-hungry' (12 letters > 2) instead of having to think of 12- and 13-letter words.
+    'power-hungry' (12 letters > 2) instead of having to think of 12- and 13-letter words.
  * The semi-colon, comma, apostrophe and any other non-alphabetical characters are ignored.
 
 ### Comparison
@@ -425,7 +520,7 @@ Use the `Listen` keyword to read one line of input from `STDIN`. Use `Listen to`
 Use the `Say` keyword to write the value of a variable to `STDOUT`.
 
 * `Say Tommy` - will output the value stored in `Tommy` to `STDOUT`
- 
+
 Rockstar defines `Shout`, `Whisper` and `Scream` as aliases for `Say`
 
 The following examples all use c style syntax for explaining what things do.
@@ -473,7 +568,7 @@ Ordering comparisons (`is higher than`, `is lower than`, `is as high as`, and `i
 
 - \<op\> String =\> Error
 - \<op\> Boolean =\> Invert Boolean
-- \<op\> Null =\> Error
+- \<op\> Null =\> coerce to zero (`My world is nothing / build my world up` can be used to initialise a counter loop, for example.)
 - \<op\> Mysterious =\> Error
 
 #### Binary Operators
@@ -485,7 +580,7 @@ Conversions other than those listed are errors.
 - String \<plus\> Null =\> Convert the null to `"null"`
 - String \<plus\> Mysterious =\> Convert the mysterious to `"mysterious"`
 - String \<times\> Number =\> String gets repeated \<Number\> times
- 
+
 ### Flow Control and Block Syntax
 
 #### Conditionals
@@ -523,16 +618,25 @@ Knock it down
 
 ### Functions
 
-Functions are declared with a variable name followed by the `takes` keyword and a list of arguments separated by one of the following: `and` `,` `&` `, and` `'n'`
+Functions are declared with a variable name followed by the `takes` keyword (alias `wants`) and a list of arguments separated by one of the following: `and` `,` `&` `, and` `'n'`
 
 * `Multiply takes X and Y`
 * `Search takes Needle and Haystack`
+* `Polly wants a cracker`
 
-The function body is a list of statements with no separating blank lines. A blank line denotes the end of a function body. Functions in Rockstar always have a return value, indicated by the `Give back` keyword. 
+The function body is a list of statements with no separating blank lines. A blank line denotes the end of a function body. Functions in Rockstar always have a return value, specified by the `return` keyword and its aliases `give` and `send`. For historical reasons, `give back` is also supported as an alias for `return`, and the return statement can be followed by the keyword `back` (which has no effect but can make code more lyrical). 
+
+```
+(This function adds 9 to its input and returns the result)
+Polly wants a cracker
+Cheese is delicious
+Put a cracker with cheese into your mouth
+Give it back
+```
 
 Functions are called using the 'taking' keyword and must have at least one argument. Multiple arguments are separated with one of the following: `,` `&` `, and` `'n'`.
 
-Arguments may only be variables or literals. Compound expressions are not allowed. Functionals are greedy: if they find more symbols that make up valid arguments, they will take them.
+Arguments may be any valid expression, including literals, arithmetic expressions and function calls.
 
 * `Multiply taking 3, 5` is an expression returning (presumably) 15
 * `Search taking "hands", "lay your hands on me"`
