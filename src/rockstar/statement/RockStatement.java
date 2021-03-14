@@ -25,35 +25,41 @@ public class RockStatement extends Statement {
     private final Expression expression;
 
     public RockStatement(VariableReference variable, Expression expression) {
-        this.expression = expression;
         this.variable = variable;
+        this.expression = expression;
+    }
+
+    public RockStatement(VariableReference variable) {
+        this.variable = variable;
+        this.expression = null;
     }
 
     @Override
     public void execute(BlockContext ctx) {
         Value arrayValue = variable.evaluate(ctx);
-        if (arrayValue == null) {
-            throw new RockstarRuntimeException("Rocking into a nonexistent variable: " + variable);
+        if (arrayValue == null || arrayValue.isNull() || arrayValue.isMysterious()) {
+            arrayValue = Value.getValue(Arrays.asList());
         } else if (arrayValue.isNumeric() || arrayValue.isString() || arrayValue.isObject() || arrayValue.isBoolean()) {
             arrayValue = Value.getValue(Arrays.asList(arrayValue));
-        } else if (arrayValue.isNull()) {
-            arrayValue = Value.getValue(Arrays.asList());
+        } else if (! arrayValue.isArray()) {
+            throw new RockstarRuntimeException("Rocking a non-allowed type: " + arrayValue.getType());
         }
-            
-        if (arrayValue.isArray()) {
-            if (expression instanceof ListExpression) {
-                List<Value> exprValues = new LinkedList<>();
-                ListExpression listExpr = (ListExpression) expression;
-                listExpr.getParameters().forEach(expr1 -> {
-                    exprValues.add(expr1.evaluate(ctx));
-                });
-                ctx.setVariable(this.variable, arrayValue.plus(Value.getValue(exprValues)));
-            } else {
-                Value value = expression.evaluate(ctx);
-                ctx.setVariable(this.variable, arrayValue.plus(value));
-            }
+        
+        if (expression == null) {
+            // in-place array conversion
+            ctx.setVariable(this.variable, arrayValue);
+        } else if (expression instanceof ListExpression) {
+            // multiple values
+            List<Value> exprValues = new LinkedList<>();
+            ListExpression listExpr = (ListExpression) expression;
+            listExpr.getParameters().forEach(expr1 -> {
+                exprValues.add(expr1.evaluate(ctx));
+            });
+            ctx.setVariable(this.variable, arrayValue.plus(Value.getValue(exprValues)));
         } else {
-            throw new RockstarRuntimeException("Rocking into a non-array type: " + arrayValue.getType());
+            // single value
+            Value value = expression.evaluate(ctx);
+            ctx.setVariable(this.variable, arrayValue.plus(value));
         }
     }
 

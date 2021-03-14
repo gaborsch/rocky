@@ -187,7 +187,7 @@ public class FunctionCall extends CompoundExpression {
         if (funcBlock != null) {
             List<Expression> params = getParameters();
             List<Value> values = new ArrayList<>(params.size());
-            params.forEach((expr) -> values.add(expr.evaluate(ctx)));
+            params.forEach((expr) -> values.add(expr.evaluate(ctx).asParameter()));
             // call the functon
             retValue = funcBlock.call(callContext, values);
         } else {

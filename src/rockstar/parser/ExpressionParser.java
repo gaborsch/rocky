@@ -28,6 +28,7 @@ import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.PlusExpression;
+import rockstar.expression.RollExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.SliceExpression;
 import rockstar.expression.UnaryMinusExpression;
@@ -46,12 +47,11 @@ public class ExpressionParser {
 
     // tokens of the whole expression
     private final List<String> list;
+    private final Line line;
+    private final Block block;
+
     // next position in the list
     private int idx;
-    // saved position
-    private int savedIdx;
-    private final Line line;
-    private Block block;
 
     ExpressionParser(List<String> list, Line line, Block block) {
         this.list = list;
@@ -95,16 +95,9 @@ public class ExpressionParser {
         return next;
     }
 
-    private void savePos() {
-        savedIdx = idx;
-    }
-
-    private void restorePos() {
-        idx = savedIdx;
-    }
-
     public static final List<String> MYSTERIOUS_KEYWORDS = Arrays.asList(new String[]{"mysterious"});
-    public static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "empty", "gone"});
+    public static final List<String> EMPTY_STRING_KEYWORDS = Arrays.asList(new String[]{"empty", "silent", "silence"});
+    public static final List<String> NULL_KEYWORDS = Arrays.asList(new String[]{"null", "nothing", "nowhere", "nobody", "gone"});
     public static final List<String> EMPTY_ARRAY_KEYWORDS = Arrays.asList(new String[]{"void", "hollow"});
     public static final List<String> BOOLEAN_TRUE_KEYWORDS = Arrays.asList(new String[]{"true", "right", "yes", "ok"});
     public static final List<String> BOOLEAN_FALSE_KEYWORDS = Arrays.asList(new String[]{"false", "wrong", "no", "lies"});
@@ -131,6 +124,10 @@ public class ExpressionParser {
             if (MYSTERIOUS_KEYWORDS.contains(token)) {
                 next();
                 return ConstantExpression.CONST_MYSTERIOUS;
+            }
+            if (EMPTY_STRING_KEYWORDS.contains(token)) {
+                next();
+                return ConstantExpression.CONST_EMPTY_STRING;
             }
             if (NULL_KEYWORDS.contains(token)) {
                 next();
@@ -163,8 +160,9 @@ public class ExpressionParser {
     }
     private static final List<String> COMMON_VARIABLE_KEYWORDS = Arrays.asList(new String[]{
         "a", "an", "the", "my", "your", "A", "An", "The", "My", "Your"});
-   /**
-     * parses a variable name or function name (including "it" backreference)
+
+    /**
+     * parses a variable name or function name (including "it" back-reference)
      *
      * @return VariableReference on success, null otherwise
      */
@@ -448,7 +446,7 @@ public class ExpressionParser {
             next();
             return new PlusExpression();
         }
-        if ("into".equals(token) ) {
+        if ("into".equals(token)) {
             next();
             return new IntoExpression();
         }
@@ -463,6 +461,10 @@ public class ExpressionParser {
         if ("over".equals(token) || "/".equals(token)) {
             next();
             return new DivideExpression();
+        }
+        if ("roll".equals(token) || "pop".equals(token)) {
+            next();
+            return new RollExpression();
         }
         if ("from".equals(token)) {
             next();
@@ -520,7 +522,7 @@ public class ExpressionParser {
 
         return type == null ? null : new BuiltinFunction(type);
     }
-    
+
     private boolean check(String keyword, int offset) {
         if (list.size() >= idx + offset + 1) {
             List<String> keywordList = new ArrayList<>();
@@ -529,13 +531,13 @@ public class ExpressionParser {
             for (List<String> aliasParts : allAliases) {
                 boolean matching = true;
                 for (int i = 0; i < aliasParts.size(); i++) {
-                    if (! aliasParts.get(i).equals(peekNext(i))) {
+                    if (!aliasParts.get(i).equals(peekNext(i))) {
                         matching = false;
                         break;
                     }
                 }
                 if (matching) {
-                    idx += aliasParts.size() -1;
+                    idx += aliasParts.size() - 1;
                     return true;
                 }
             }

@@ -28,7 +28,7 @@ public class RollExpression extends CompoundExpression {
 
     @Override
     public int getParameterCount() {
-        return 2;
+        return 1;
     }
 
     @Override

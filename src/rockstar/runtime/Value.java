@@ -360,8 +360,8 @@ public class Value implements Comparable<Value> {
         if (this.isArray() && (!other.isArray())) {
             Value v = newArrayValue();
             // original value should not be changed
-            if (other.listArrayValue != null) {
-                v.listArrayValue.addAll(other.listArrayValue);
+            if (listArrayValue != null) {
+                v.listArrayValue.addAll(listArrayValue);
             }
             // append value
             v.listArrayValue.add(other);
@@ -711,6 +711,17 @@ public class Value implements Comparable<Value> {
             throw new RockstarRuntimeException("Invalid array index type: " + refValue.getType());
         }
         throw new RockstarRuntimeException("Indexing a non-array type: " + getType());
+    }
+
+    // does the necessary conversion while added as a parameter to a function call
+    public Value asParameter() {
+        if (! isArray()) {
+            return this;
+        }
+        Value cloned = newArrayValue();
+        cloned.listArrayValue.addAll(listArrayValue);
+        cloned.assocArrayValue.putAll(assocArrayValue);
+        return cloned;
     }
 
 }
