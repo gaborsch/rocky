@@ -322,7 +322,7 @@ public class ExpressionParser {
             return builtinFunction;
         }
 
-        String token = this.peekCurrent();
+        String token = this.peekCurrent().toLowerCase();
 
         if (isAfterOperator && "+".equals(token)) {
             // unary plus: skip

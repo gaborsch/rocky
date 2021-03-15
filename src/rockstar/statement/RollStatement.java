@@ -17,19 +17,24 @@ import rockstar.runtime.RockstarRuntimeException;
  */
 public class RollStatement extends Statement {
 
-    private final VariableReference variable;
+    private final VariableReference arrayVariable;
     private final VariableReference targetRef;
 
-    public RollStatement(VariableReference variable, VariableReference targetRef) {
-        this.variable = variable;
+    public RollStatement(VariableReference arrayVariable, VariableReference targetRef) {
+        this.arrayVariable = arrayVariable;
         this.targetRef = targetRef;
+    }
+
+    public RollStatement(VariableReference arrayVariable) {
+        this.arrayVariable = arrayVariable;
+        this.targetRef = null;
     }
 
 
     @Override
     public void execute(BlockContext ctx) {
-        Value array = variable.evaluate(ctx);
-        if (this.targetRef != null) {
+        Value array = arrayVariable.evaluate(ctx);
+        if (array != null) {
             if (array.isArray()) {
                 Value targetValue;
                 List<Value> list = array.asListArray();
@@ -38,18 +43,20 @@ public class RollStatement extends Statement {
                 } else {
                     targetValue = Value.MYSTERIOUS;
                 }
-                ctx.setVariable(this.targetRef, targetValue);
+                if (this.targetRef != null) {
+                    ctx.setVariable(this.targetRef, targetValue);
+                }
             } else {
                 throw new RockstarRuntimeException("Rolling from a non-array type: "+array.getType());
             }
         } else {
-            throw new RockstarRuntimeException("Rolling into a nonexistent variable: " + variable);
+            throw new RockstarRuntimeException("Rolling from a nonexistent variable: " + arrayVariable);
         }
     }
 
 
     @Override
     protected String explain() {
-        return "roll " + targetRef.format() + " from " + variable.format();
+        return "roll " + targetRef.format() + " from " + arrayVariable.format();
     }
 }
