@@ -15,16 +15,16 @@ import rockstar.statement.FunctionBlock;
 public class FunctionCall extends CompoundExpression {
 
     private VariableReference object = null;
-    private String name;
+    private String functionName;
 
     public FunctionCall() {
         super();
     }
 
-    FunctionCall(VariableReference object, String name) {
+    FunctionCall(VariableReference object, String methodName) {
         super();
         this.object = object;
-        this.name = name;
+        this.functionName = methodName;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class FunctionCall extends CompoundExpression {
         if (object != null) {
             sb.append(object).append(".");
         }
-        sb.append(name);
+        sb.append(functionName);
         sb.append("(");
         final List<Expression> parameters = getParameters();
         boolean isFirst = true;
@@ -63,11 +63,11 @@ public class FunctionCall extends CompoundExpression {
     public CompoundExpression setupFinished() {
         Expression expr = getParameters().remove(0);
         if (expr instanceof QualifierExpression) {
-            QualifierExpression oqe = (QualifierExpression) expr;
-            object = (VariableReference) oqe.getObjectRef();
-            name = oqe.getMethodRef().getName();
+            QualifierExpression qe = (QualifierExpression) expr;
+            object = (VariableReference) qe.getObjectRef();
+            functionName = qe.getMethodRef().getName();
         } else if (expr instanceof VariableReference) {
-            name = ((VariableReference) expr).getName();
+            functionName = ((VariableReference) expr).getName();
         } else {
             throw new RockstarRuntimeException("Invalid function name: " + expr);
         }
@@ -100,7 +100,7 @@ public class FunctionCall extends CompoundExpression {
             // method call on an object
             if (VariableReference.isSelfReference(object.getName())) {
                 // self object reference?
-                funcBlock = callContext.retrieveLocalFunction(name);
+                funcBlock = callContext.retrieveLocalFunction(functionName);
                 throw new RockstarRuntimeException("self reference");
 
             } else if (VariableReference.isParentReference(object.getName())) {
@@ -113,13 +113,13 @@ public class FunctionCall extends CompoundExpression {
                 RockObject parentObj = callerObj.getSuperObject();
                 if (parentObj != null) {
                     // find the context that contains the function starting the parent
-                    callContext = parentObj.getContextForFunction(name);
+                    callContext = parentObj.getContextForFunction(functionName);
                     // the call context must be the same object as the caller object
                     if ((callContext != null)
                             && (callContext instanceof RockObject)
                             && (((RockObject) callContext).getObjId() == callerObj.getObjId())) {
                         // get the method from that context
-                        funcBlock = callContext.retrieveLocalFunction(name);
+                        funcBlock = callContext.retrieveLocalFunction(functionName);
                     }
                 } else {
                     throw new RockstarRuntimeException("parent reference in non-inherited class");
@@ -135,52 +135,55 @@ public class FunctionCall extends CompoundExpression {
                     // get the object itself
                     RockObject objContext = objValue.getObject();
                     // find the context that contains the function
-                    callContext = objContext.getContextForFunction(name);
+                    callContext = objContext.getContextForFunction(functionName);
                     if (callContext == null) {
-                        throw new RockstarRuntimeException("Invalid method call " + name + " on a " + objValue.getType().name() + " type variable " + object);
+                        throw new RockstarRuntimeException("Invalid method call " + functionName + " on a " + objValue.getType().name() + " type variable " + object);
                     }
                     // get the method from the object
-                    funcBlock = callContext.retrieveLocalFunction(name);
+                    funcBlock = callContext.retrieveLocalFunction(functionName);
                 } else {
-                    throw new RockstarRuntimeException("Invalid method call " + name + " on a " + objValue.getType().name() + " type variable " + object);
+                    throw new RockstarRuntimeException("Invalid method call " + functionName + " on a " + objValue.getType().name() + " type variable " + object);
                 }
             }
-        } else if (VariableReference.isParentReference(name)) {
-            // unqualified "parent" function: must be a parent constructor reference
-
-            // find the caller object context
-            RockObject callerObj = ctx.getThisObjectCtx()
-                    .orElseThrow(() -> new RockstarRuntimeException("parent constructor call in a non-object context"));
-
-            // get the parent object, if exists
-            RockObject parentObj = callerObj.getSuperObject();
-            // TODO check if it is called in a constructor
-
-            if (parentObj != null) {
-                // context is the parent object
-                callContext = parentObj;
-                // get the constructor from the parent context
-                funcBlock = parentObj.getConstructor();
-            } else {
-                throw new RockstarRuntimeException("parent constructor reference in non-inherited class");
-            }
         } else {
-            // pure function call or unqualified call in an object context?
-            BlockContext funcCtx = ctx.getContextForFunction(name);
-            if (funcCtx == null) {
-                // function not found, or function exists only in subcontexts
-                throw new RockstarRuntimeException("Undefined function: " + name);
-            }
-            // we found the function, now we need to find the overrides, if it is on an object
-            if (funcCtx instanceof RockObject) {
-                // search the function from the top of the object levels
-                funcCtx = ((RockObject) funcCtx).getTopObject().getContextForFunction(name);
+            // simple method call syntax
+            if (VariableReference.isParentReference(functionName) && ctx.getThisObjectCtx().isPresent()) {
+                // unqualified "parent" function: must be a parent constructor reference
+
+                // find the caller object context
+                RockObject callerObj = ctx.getThisObjectCtx()
+                        .orElseThrow(() -> new RockstarRuntimeException("parent constructor call in a non-object context"));
+
+                // get the parent object, if exists
+                RockObject parentObj = callerObj.getSuperObject();
+                // TODO check if it is called in a constructor
+
+                if (parentObj != null) {
+                    // context is the parent object
+                    callContext = parentObj;
+                    // get the constructor from the parent context
+                    funcBlock = parentObj.getConstructor();
+                } else {
+                    throw new RockstarRuntimeException("parent constructor reference in non-inherited class");
+                }
             } else {
-                // find the containing context by name
-                funcCtx = ctx.getContextForFunction(name);
+                // pure function call or unqualified call in an object context?
+                BlockContext funcCtx = ctx.getContextForFunction(functionName);
+                if (funcCtx == null) {
+                    // function not found, or function exists only in subcontexts
+                    throw new RockstarRuntimeException("Undefined function: " + functionName);
+                }
+                // we found the function, now we need to find the overrides, if it is on an object
+                if (funcCtx instanceof RockObject) {
+                    // search the function from the top of the object levels
+                    funcCtx = ((RockObject) funcCtx).getTopObject().getContextForFunction(functionName);
+                } else {
+                    // find the containing context by name
+                    funcCtx = ctx.getContextForFunction(functionName);
+                }
+                // retrieve the function code
+                funcBlock = funcCtx.retrieveLocalFunction(functionName);
             }
-            // retrieve the function code
-            funcBlock = funcCtx.retrieveLocalFunction(name);
         }
 
         Value retValue;
@@ -192,9 +195,9 @@ public class FunctionCall extends CompoundExpression {
             retValue = funcBlock.call(callContext, values);
         } else {
             if (object == null) {
-                throw new RockstarRuntimeException("Undefined function: " + name);
+                throw new RockstarRuntimeException("Undefined function: " + functionName);
             }
-            throw new RockstarRuntimeException("Undefined method: " + name + " on class " + object.getName());
+            throw new RockstarRuntimeException("Undefined method: " + functionName + " on class " + object.getName());
         }
         // return the return value
         return ctx.afterExpression(this, retValue == null ? Value.NULL : retValue);
