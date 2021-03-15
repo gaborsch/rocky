@@ -138,138 +138,146 @@ Also, I included OOP tests and Rocky extension tests that do not pass on other R
 ```
 $ ./rockstar test -v programs/tests/
 PARSE_ERROR tests in programs/tests/failures
-   [ OK ] invalid_comments.rock                   
-CORRECT tests in programs/tests/fixtures/aliases
-   [ OK ] define_alias.rock                       
-   [ OK ] define_changing_alias.rock              
-   [ OK ] define_changing_expr_alias.rock         
-   [ OK ] define_expr_alias.rock                  
+   [ OK ] invalid_comments.rock
 CORRECT tests in programs/tests/fixtures/arrays
-   [ OK ] arrayalike.rock                         
-   [ OK ] arrays.rock                             
-   [ OK ] hash.rock                               
-   [ OK ] join.rock                               
-   [ OK ] split.rock                              
-   [ OK ] split_delimiters.rock                   
+   [ OK ] arrayalike.rock
+   [ OK ] arrays.rock
+   [ OK ] array_functions.rock
+   [ OK ] hash.rock
+   [ OK ] join.rock
+   [ OK ] split.rock
+   [ OK ] split_delimiters.rock
 CORRECT tests in programs/tests/fixtures/assignment
-   [ OK ] compound_assignments.rock               
-   [ OK ] lets.rock                               
+   [ OK ] compound_assignments.rock
+   [ OK ] lets.rock
 CORRECT tests in programs/tests/fixtures/comments
-   [ OK ] complex_comments.rock                   
-   [ OK ] simpleComments.rock                     
-   [ OK ] simple_comment.rock                     
+   [ OK ] complex_comments.rock
+   [ OK ] simpleComments.rock
+   [ OK ] simple_comment.rock
 CORRECT tests in programs/tests/fixtures/conditionals
-   [ OK ] empty_if.rock                           
-   [ OK ] simpleConditionals.rock                 
-   [ OK ] truthinessTest.rock                     
+   [ OK ] empty_if.rock
+   [ OK ] simpleConditionals.rock
+   [ OK ] truthinessTest.rock
 CORRECT tests in programs/tests/fixtures/constants
-   [ OK ] constants.rock                          
+   [ OK ] constants.rock
 CORRECT tests in programs/tests/fixtures/control-flow
-   [ OK ] nested_loops.rock                       
-   [ OK ] simpleLoops.rock                        
+   [ OK ] nested_loops.rock
+   [ OK ] simpleLoops.rock
 CORRECT tests in programs/tests/fixtures/equality
-   [ OK ] booleans.rock                           
-   [ OK ] equalityComparison.rock                 
-   [ OK ] mysterious.rock                         
-   [ OK ] negation.rock                           
-   [ OK ] nothing.rock                            
-   [ OK ] null.rock                               
-   [ OK ] numbers.rock                            
-   [ OK ] strings.rock                            
+   [ OK ] booleans.rock
+   [ OK ] equalityComparison.rock
+   [ OK ] mysterious.rock
+   [ OK ] negation.rock
+   [ OK ] nothing.rock
+   [ OK ] null.rock
+   [ OK ] numbers.rock
+   [ OK ] strings.rock
 CORRECT tests in programs/tests/fixtures/examples
-   [ OK ] 99_beers.rock                           
-   [ OK ] factorial.rock                          
-   [ OK ] fibonacci.rock                          
-   [ OK ] fizzbuzz-idiomatic.rock                 
-   [ OK ] fizzbuzz-minimalist.rock                
+   [ OK ] 99_beers.rock
+   [ OK ] factorial.rock
+   [ OK ] fibonacci.rock
+   [ OK ] fizzbuzz-idiomatic.rock
+   [ OK ] fizzbuzz-minimalist.rock
+   [ OK ] hello-world.rock
 CORRECT tests in programs/tests/fixtures/functions
-   [ OK ] functionCalls.rock                      
-   [ OK ] nested_functions.rock                   
-   [ OK ] nested_function_scopes.rock             
-   [ OK ] recursion.rock                          
-   [ OK ] simpleFunctions.rock                    
+   [ OK ] aliases_for_takes.rock
+   [ OK ] array_arguments.rock
+   [ OK ] functionCalls.rock
+   [ OK ] nested_functions.rock
+   [ OK ] nested_function_scopes.rock
+   [ OK ] recursion.rock
+   [ OK ] simpleFunctions.rock
 CORRECT tests in programs/tests/fixtures/io
-   [ OK ] hello_number.rock                       
-   [ OK ] hello_world.rock                        
-   [ OK ] inputTest.rock                          
-   [ OK ] inputTest2.rock                         
+   [ OK ] hello_number.rock
+   [ OK ] hello_world.rock
+   [ OK ] inputTest.rock
+   [ OK ] inputTest2.rock
 CORRECT tests in programs/tests/fixtures/literals
-   [ OK ] literalAliases.rock                     
-   [ OK ] literalstrings.rock                     
-   [ OK ] poeticLiterals.rock                     
-   [ OK ] poeticLiteralswithHyphen.rock           
-   [ OK ] poeticNumbers.rock                      
+   [ OK ] literalAliases.rock
+   [ OK ] literalstrings.rock
+   [ OK ] poeticLiterals.rock
+   [ OK ] poeticLiteralswithHyphen.rock
+   [ OK ] poeticNumbers.rock
 CORRECT tests in programs/tests/fixtures/math
-   [ OK ] operators.rock                          
-   [ OK ] operator_aliases.rock                   
-   [ OK ] operator_precedence.rock                
-   [ OK ] rounding.rock                           
-   [ OK ] rounding_pronouns.rock                  
-CORRECT tests in programs/tests/fixtures/oop
-   [ OK ] abstract_method.rock                    
-   [ OK ] class_declaration.rock                  
-   [ OK ] constructor.rock                        
-   [ OK ] field_declaration.rock                  
-   [ OK ] field_visibility.rock                   
-   [ OK ] instance_check.rock                     
-   [ OK ] instantiation.rock                      
-   [ OK ] method.rock                             
-   [ OK ] method_override.rock                    
-   [ OK ] parameterless_method.rock               
-   [ OK ] parent_constructor.rock                 
-   [ OK ] parent_ref.rock                         
-   [ OK ] self_reference.rock                     
+   [ OK ] operators.rock
+   [ OK ] operator_aliases.rock
+   [ OK ] operator_precedence.rock
+   [ OK ] rounding.rock
+   [ OK ] rounding_pronouns.rock
 CORRECT tests in programs/tests/fixtures/operators
-   [ OK ] addOperator.rock                        
-   [ OK ] andTest.rock                            
-   [ OK ] booleans.rock                           
-   [ OK ] divisionOperator.rock                   
-   [ OK ] incrementAndDecrement.rock              
-   [ OK ] list_expressions_arithmetic.rock        
-   [ OK ] multiplicationOperator.rock             
-   [ OK ] notTest.rock                            
-   [ OK ] orderingComparison.rock                 
-   [ OK ] orNorTest.rock                          
-   [ OK ] subtractOperator.rock                   
-CORRECT tests in programs/tests/fixtures/rocky_ext
-   [ OK ] array_functions.rock                    
-   [ OK ] while_alike.rock                        
-   [ OK ] while_alike_for.rock                    
+   [ OK ] addOperator.rock
+   [ OK ] andTest.rock
+   [ OK ] booleans.rock
+   [ OK ] divisionOperator.rock
+   [ OK ] incrementAndDecrement.rock
+   [ OK ] list_expressions_arithmetic.rock
+   [ OK ] multiplicationOperator.rock
+   [ OK ] notTest.rock
+   [ OK ] orderingComparison.rock
+   [ OK ] orNorTest.rock
+   [ OK ] subtractOperator.rock
+CORRECT tests in programs/tests/fixtures/Rocky_ext/aliases
+   [ OK ] alias_visibility.rock
+   [ OK ] define_alias.rock
+   [ OK ] define_changing_alias.rock
+   [ OK ] define_changing_expr_alias.rock
+   [ OK ] define_expr_alias.rock
+CORRECT tests in programs/tests/fixtures/Rocky_ext/array_ext
+   [ OK ] array_functions.rock
+   [ OK ] while_alike.rock
+   [ OK ] while_alike_for.rock
+CORRECT tests in programs/tests/fixtures/Rocky_ext/oop
+   [ OK ] abstract_method.rock
+   [ OK ] class_declaration.rock
+   [ OK ] constructor.rock
+   [ OK ] field_declaration.rock
+   [ OK ] field_visibility.rock
+   [ OK ] instance_check.rock
+   [ OK ] instantiation.rock
+   [ OK ] method.rock
+   [ OK ] method_override.rock
+   [ OK ] parameterless_method.rock
+   [ OK ] parent_constructor.rock
+   [ OK ] parent_ref.rock
+   [ OK ] self_reference.rock
+RUNTIME_ERROR tests in programs/tests/fixtures/Rocky_ext/oop/runtime-errors
+   [ OK ] abstract_instantiation.rock
+   [ OK ] field_access_outside.rock
+   [ OK ] undefined_method.rock
+   [ OK ] undefined_method_from_object.rock
+CORRECT tests in programs/tests/fixtures/stacks
+   [ OK ] pop.rock
+   [ OK ] push.rock
+   [ OK ] string_stacks.rock
 CORRECT tests in programs/tests/fixtures/types
-   [ OK ] parsing.rock                            
+   [ OK ] parsing.rock
 CORRECT tests in programs/tests/fixtures/variables
-   [ OK ] common_variables.rock                   
-   [ OK ] globalVariables.rock                    
-   [ OK ] poeticStrings.rock                      
-   [ OK ] pronouns.rock                           
-   [ OK ] proper_variables.rock                   
-   [ OK ] simple_pronouns.rock                    
-   [ OK ] simple_variables.rock                   
-   [ OK ] umlauts.rock                            
-   [ OK ] writeGlobal.rock                        
+   [ OK ] common_variables.rock
+   [ OK ] globalVariables.rock
+   [ OK ] poeticStrings.rock
+   [ OK ] pronouns.rock
+   [ OK ] proper_variables.rock
+   [ OK ] simple_pronouns.rock
+   [ OK ] simple_variables.rock
+   [ OK ] umlauts.rock
+   [ OK ] writeGlobal.rock
 CORRECT tests in programs/tests/fixtures/whitespace
-   [ OK ] apostrophesIgnored.rock                 
-   [ OK ] leading_blank_lines.rock                
-   [ OK ] leading_empty_lines.rock                
-   [ OK ] leading_whitespace.rock                 
-   [ OK ] no_newline_at_eof.rock                  
-   [ OK ] trailing_blank_lines.rock               
-   [ OK ] trailing_empty_lines.rock               
-RUNTIME_ERROR tests in programs/tests/runtime-errors
-   [ OK ] abstract_instantiation.rock             
-   [ OK ] field_access_outside.rock               
-   [ OK ] undefined_method.rock                   
-   [ OK ] undefined_method_from_object.rock       
+   [ OK ] apostrophesIgnored.rock
+   [ OK ] leading_blank_lines.rock
+   [ OK ] leading_empty_lines.rock
+   [ OK ] leading_whitespace.rock
+   [ OK ] no_newline_at_eof.rock
+   [ OK ] trailing_blank_lines.rock
+   [ OK ] trailing_empty_lines.rock
 
 ============================================================
-Test results for programs/tests:
+Test results for programs/tests/:
 ============================================================
-All tests:    102
+All tests:    110
 Failed tests: 0
-Passed tests: 102
+Passed tests: 110
 Pass ratio:   100.00%
 ============================================================
-
 
 ```
 
