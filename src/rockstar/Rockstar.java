@@ -1,6 +1,5 @@
 package rockstar;
 
-import rockstar.statement.Program;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +14,7 @@ import rockstar.runtime.FileContext;
 import rockstar.runtime.LoggerListener;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
+import rockstar.statement.Program;
 import rockstar.test.RockstarTest;
 
 /**
@@ -28,7 +28,7 @@ public class Rockstar {
 
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
-    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 0.99 (with OOP)";
+    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 2.0 (with OOP)";
 
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test", "debug"}));
 
@@ -50,6 +50,10 @@ public class Rockstar {
 //        args = new String[]{"run", "programs/tests/correct/umlauts.rock"};
         List<String> argl = new LinkedList<>(Arrays.asList(args));
 
+        new Rockstar().main(argl);
+    }
+
+    public void main(List<String> argl) {
         List<String> files = new LinkedList<>();
         Map<String, String> options = new HashMap<>();
 
@@ -88,33 +92,41 @@ public class Rockstar {
                 command = "help";
             }
         }
-
+        
         setGlobalOptions(options);
 
-        switch (command) {
-            case "help":
-                doHelp(files.isEmpty() ? null : files.get(0), options);
-                break;
-            case "run":
-                doRun(files, options);
-                break;
-            case "list":
-                doList(files, options);
-                break;
-            case "repl":
-                doRepl(files, options);
-                break;
-            case "debug":
-                doDebug(files, options);
-                break;
-            case "test":
-                doTest(files, options);
-                break;
-            default:
-                System.err.println("Unknown command: " + command);
-                doHelp(files.isEmpty() ? null : files.get(0), options);
-                break;
+        if (command.equals("help")) {
+            doHelp(files.isEmpty() ? null : files.get(0), options);
+        } else {            
+            try {
+                switch (command) {
+                    case "help":
+                        break;
+                    case "run":
+                        run(files, options);
+                        break;
+                    case "list":
+                        list(files, options);
+                        break;
+                    case "repl":
+                        repl(files, options);
+                        break;
+                    case "debug":
+                        debug(files, options);
+                        break;
+                    case "test":
+                        test(files, options);
+                        break;
+                    default:
+                        System.err.println("Unknown command: " + command);
+                        doHelp(files.isEmpty() ? null : files.get(0), options);
+                        break;
+                }
+            } catch (IllegalArgumentException iae) {
+                doHelp(command, options);
+            }
         }
+
     }
 
     private static void doHelp(String cmd, Map<String, String> options) {
@@ -210,11 +222,11 @@ public class Rockstar {
         }
     }
 
-    private static void doRun(List<String> files, Map<String, String> options) {
+    public void run(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
-            doHelp("run", options);
-            return;
+            throw new IllegalArgumentException("Missing files");
         }
+
         LoggerListener logger = new LoggerListener(options);
 
         Environment env = new Environment(System.in, System.out, System.err, options);
@@ -235,10 +247,9 @@ public class Rockstar {
         }
     }
 
-    private static void doList(List<String> files, Map<String, String> options) {
+    public void list(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
-            doHelp("list", options);
-            return;
+            throw new IllegalArgumentException("Missing files");
         }
 
         boolean explainOnly = options.containsKey("-X") || options.containsKey("--explain-only");
@@ -257,28 +268,26 @@ public class Rockstar {
         });
     }
 
-    private static void doTest(List<String> files, Map<String, String> options) {
+    public void test(List<String> files, Map<String, String> options) {
         if (files.isEmpty()) {
-            doHelp("test", options);
-            return;
+            throw new IllegalArgumentException("Missing files");
         }
         files.forEach((path) -> {
             new RockstarTest(options).execute(path);
         });
     }
 
-    private static void doRepl(List<String> files, Map<String, String> options) {
+    public void repl(List<String> files, Map<String, String> options) {
         new RockstarRepl(options).repl(files);
     }
 
-    private static void doDebug(List<String> files, Map<String, String> options) {
+    public void debug(List<String> files, Map<String, String> options) {
         new RockstarDebugger(options).debug(files);
 
     }
 
-    private static void setGlobalOptions(Map<String, String> options) {
+    public static void setGlobalOptions(Map<String, String> options) {
         boolean dec64 = options.containsKey("--dec64");
         RockNumber.setDec64(dec64);
-    }
-
+    }    
 }
