@@ -20,7 +20,10 @@ public class AssignmentChecker extends Checker {
 
     @Override
     public Statement check() {
-        if (match("Let", 2, "be", 1) || match("Put", 1, "into", 2) || match(2, "thinks", 1)) {
+        if (match("Let", 2, "be", 1) 
+                || match("Put", 1, "into", 2)  
+                || match("Put", 1, "in", 2)
+                || match(2, "thinks", 1)) {
             Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[2], line, block);
             Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, varExpr, block);
             if (varExpr != null && valueExpr != null) {

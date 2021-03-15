@@ -6,6 +6,7 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
+import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.statement.RockStatement;
@@ -28,6 +29,22 @@ public class RockChecker extends Checker {
             if (varExpr != null && valueExpr != null) {
                 if (varExpr instanceof VariableReference) {
                     return new RockStatement((VariableReference) varExpr, valueExpr);
+                }
+            }
+        }
+        if (match("Rock", 1) || match("Push", 1)) {
+            Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
+            if (varExpr != null) {
+                if(varExpr instanceof VariableReference) {
+                    // rock <variable>
+                    return new RockStatement((VariableReference) varExpr);
+                } else if (varExpr instanceof ListExpression) {
+                    ListExpression listExpr = (ListExpression) varExpr;
+                    // the first item should be treated as a variable reference, the remaining will be the list
+                    varExpr = listExpr.getParameters().remove(0);
+                    if (varExpr instanceof VariableReference) {
+                    return new RockStatement((VariableReference) varExpr, listExpr);
+                }
                 }
             }
         }

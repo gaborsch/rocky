@@ -239,16 +239,17 @@ public class ExpressionParser {
         boolean isAfterOperator = true;
         while (!isFullyParsed()) {
             CompoundExpression operator = getOperator(isAfterOperator);
-            if (operator != null) {
+            if (operator == null && !isAfterOperator) {
+                // two consequent values are treated as a list
+                operator = new ListExpression();
+            }
+        if (operator != null) {
                 // operator found
                 if (!pushOperator(operator)) {
                     return null;
                 }
                 // after operators a value is required, except FunctionCall that consumers values, too
                 isAfterOperator = true;
-            } else if (!isAfterOperator) {
-                // two values cannot follow
-                return new ExpressionError(list, idx, "Operator required");
             } else {
                 Expression value = parseSimpleExpression();
                 if (value != null) {

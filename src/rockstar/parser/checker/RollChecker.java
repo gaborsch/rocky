@@ -27,6 +27,14 @@ public class RollChecker extends Checker {
                 return new RollStatement(arrayExpr, targetRefExpr);
             }
         }
+        if (match("Roll", 1) 
+                || match("Pop", 1) 
+                || match("Pull","from", 1)) {
+            VariableReference arrayExpr = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
+            if (arrayExpr != null) {
+                return new RollStatement(arrayExpr);
+            }
+        }
         return null;
     }
 

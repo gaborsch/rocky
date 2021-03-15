@@ -1,12 +1,12 @@
 a feline looks like nothing
-  play takes a prey
+  playing takes a prey
   (eom - abstract)
 (eoc)
 a cat looks like a feline
-  play takes a mouse
+  playing takes a mouse
     say "I got you, " + a mouse + "!"
   (eom)
 (eoc)
 Tom wants to be a cat
-play for Tom taking "Jerry"
+playing for Tom taking "Jerry"
 
