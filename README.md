@@ -24,7 +24,7 @@ Rocky requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrap
 
 ### Install
 
-To install and run, you only need the `./rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`, depending on your OS). Everything else is for development.
+To install and run, you only need the `./rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`, depending on your OS). Make sure that `java` is on your path and you can run it immediately. The rest of the files are for development.
 
 There are some Rockstar program in the [programs](https://github.com/gaborsch/rocky/tree/master/programs) folder and its subfolders, you may want to check them, too. They're mostly for test purposes, but you can peek into if you want to get inspired or check some features.
 
