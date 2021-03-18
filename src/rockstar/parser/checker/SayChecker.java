@@ -16,6 +16,10 @@ import rockstar.statement.Statement;
  */
 public class SayChecker extends Checker {
     
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("Say", 1) || match("Shout", 1) || match("Whisper", 1) || match("Scream", 1)) {

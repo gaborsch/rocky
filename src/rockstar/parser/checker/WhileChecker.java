@@ -16,6 +16,10 @@ import rockstar.statement.WhileStatement;
  */
 public class WhileChecker extends Checker {
     
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("While", 1)) {

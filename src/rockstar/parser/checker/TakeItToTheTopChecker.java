@@ -14,6 +14,10 @@ import rockstar.statement.Statement;
  */
 public class TakeItToTheTopChecker extends Checker {
     
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("Take", "it", "to", "the", "top") || match("Continue")) {

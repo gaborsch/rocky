@@ -21,6 +21,10 @@ public class GiveBackChecker extends Checker {
     private static final List<String> GIVE_BACK = Arrays.asList("give", "back");
     private static final List<String> SEND_BACK = Arrays.asList("send", "back");
         
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match(GIVE_BACK, 1) 

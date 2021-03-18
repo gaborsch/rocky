@@ -5,16 +5,8 @@
  */
 package rockstar.parser.checker;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
-import rockstar.expression.ExpressionError;
-import rockstar.expression.ListExpression;
-import rockstar.expression.SimpleExpression;
-import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.runtime.PackagePath;
 import rockstar.statement.PkgDefStatement;
@@ -25,6 +17,10 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class PkgDefChecker extends Checker {
+
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
 
     @Override
     public Statement check() {

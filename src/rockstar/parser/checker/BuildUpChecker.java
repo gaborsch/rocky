@@ -16,6 +16,10 @@ import rockstar.statement.Statement;
  */
 public class BuildUpChecker extends Checker {
     
+     private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("Build", 1, "up", 2)) {

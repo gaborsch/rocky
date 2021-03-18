@@ -17,6 +17,10 @@ import rockstar.statement.IterateStatement;
  */
 public class IterateChecker extends Checker {
     
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("While", 1, "as", 2)

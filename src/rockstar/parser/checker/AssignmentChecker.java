@@ -18,6 +18,10 @@ import rockstar.statement.Statement;
  */
 public class AssignmentChecker extends Checker {
 
+     private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("Let", 2, "be", 1) 

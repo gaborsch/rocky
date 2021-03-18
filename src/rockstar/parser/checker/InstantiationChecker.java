@@ -6,6 +6,7 @@
 package rockstar.parser.checker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
@@ -20,31 +21,16 @@ import rockstar.statement.Statement;
  */
 public class InstantiationChecker extends Checker {
 
-    private static final List<String> WANTS_TO_BE = new ArrayList<String>();
-    private static final List<String> WANT_TO_BE = new ArrayList<String>();
-    private static final List<String> WANNA_BE = new ArrayList<String>();
-    private static final List<String> WILL_BE = new ArrayList<String>();
-    private static final List<String> WOULD_BE = new ArrayList<String>();
+    private static final List<String> WANTS_TO_BE = Arrays.asList("wants", "to", "be");
+    private static final List<String> WANT_TO_BE = Arrays.asList("want", "to", "be");
+    private static final List<String> WANNA_BE = Arrays.asList("wanna", "be");
+    private static final List<String> WILL_BE = Arrays.asList("will", "be");
+    private static final List<String> WOULD_BE = Arrays.asList("would", "be");
     
-    static {
-        WANTS_TO_BE.add("wants");
-        WANTS_TO_BE.add("to");
-        WANTS_TO_BE.add("be");
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
 
-        WANT_TO_BE.add("want");
-        WANT_TO_BE.add("to");
-        WANT_TO_BE.add("be");
-
-        WANNA_BE.add("wanna");
-        WANNA_BE.add("be");
-
-        WILL_BE.add("will");
-        WILL_BE.add("be");
-
-        WOULD_BE.add("would");
-        WOULD_BE.add("be");
-    }    
-    
     @Override
     public Statement check() {
         if (match(0, WANTS_TO_BE, 1, "taking", 2)     || match(0, WANTS_TO_BE, 1)

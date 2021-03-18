@@ -17,6 +17,10 @@ import rockstar.statement.TurnStatement.Direction;
  */
 public class TurnChecker extends Checker {
 
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     private static final Direction[] DIRECTION_LOOKUP = new Direction[]{
         Direction.UP, Direction.UP,
         Direction.DOWN, Direction.DOWN,

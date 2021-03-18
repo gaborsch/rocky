@@ -16,6 +16,10 @@ import rockstar.statement.Statement;
  */
 public class SplitChecker extends Checker {
 
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("split", 1) || match("cut", 1) || match("shatter", 1)) {

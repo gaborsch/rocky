@@ -18,6 +18,14 @@ import rockstar.statement.Statement;
  */
 public class RockChecker extends Checker {
 
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST2
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match("Rock", 1, "with", 2)

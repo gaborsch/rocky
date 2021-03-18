@@ -14,6 +14,10 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class AliasChecker extends Checker {
+    
+     private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
 
     @Override
     public Statement check() {

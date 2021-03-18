@@ -6,6 +6,7 @@
 package rockstar.parser.checker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import rockstar.statement.BreakStatement;
 import rockstar.statement.Statement;
@@ -16,14 +17,12 @@ import rockstar.statement.Statement;
  */
 public class BreakItDownChecker extends Checker {
     
-    private static final List<String> BREAK_IT_DOWN = new ArrayList<String>();
+    private static final List<String> BREAK_IT_DOWN = Arrays.asList("Break", "it", "down");
     
-    static {
-        BREAK_IT_DOWN.add("Break");
-        BREAK_IT_DOWN.add("it");
-        BREAK_IT_DOWN.add("down");
-    }
-    
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match(BREAK_IT_DOWN) || match("Break")) {

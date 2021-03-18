@@ -19,6 +19,10 @@ import rockstar.statement.Statement;
  */
 public class PoeticAssignmentChecker extends Checker {
 
+    private static final ParamList[] PARAM_LIST
+            = new ParamList[]{
+                new ParamList()};
+
     @Override
     public Statement check() {
         if (match(1, "is", 2) || match(1, "was", 2) || match(1, "are", 2) || match(1, "were", 2)) {
