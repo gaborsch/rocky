@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import rockstar.parser.Line;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
@@ -19,7 +20,17 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public abstract class Checker {
-    
+
+    public static class ParamList {
+
+        public Object[] params;
+
+        public ParamList(Object... params) {
+            this.params = params;
+        }
+
+    }
+
     protected Line line;
     protected Block block;
 
@@ -32,17 +43,33 @@ public abstract class Checker {
     private boolean hasMatch = false;
     private int matchCounter = 0;
     private Object[] matchedParams;
-    
+
     private final Map<String, List<String>> listCache = new HashMap<>();
 
     public List<String>[] getResult() {
         return result;
     }
 
+    public List<String> get1() {
+        return result[1];
+    }
+
+    public List<String> get2() {
+        return result[2];
+    }
+
+    public List<String> get3() {
+        return result[3];
+    }
+
+    public List<String> get4() {
+        return result[4];
+    }
+
     public int getMatchCounter() {
         return matchCounter;
     }
-    
+
     public Checker initialize(Line l, Block currentBlock) {
         this.line = l;
         this.block = currentBlock;
@@ -56,10 +83,11 @@ public abstract class Checker {
 
     /**
      * Matches a statement pattern, e.g. [1, "this", 3, "that" "other" 2]
-     * Numbers represent placeholders, result[n] will be set to the matched sub-list
-     * Strings represent string tokens
+     * Numbers represent placeholders, result[n] will be set to the matched
+     * sub-list Strings represent string tokens
+     *
      * @param params
-     * @return 
+     * @return
      */
     public boolean match(Object... params) {
         // do not overwrite existing result
@@ -87,7 +115,7 @@ public abstract class Checker {
                 }
                 // set nextPosStart and nextPosEnd
                 findNext(needle, lastPos, tokens);
-                
+
                 if (nextPosEnd > lastPos) {
                     if (lastNum != null) {
                         // save the sublist as the numbered result
@@ -102,7 +130,7 @@ public abstract class Checker {
                     // wrong order
                     return false;
                 }
-            } 
+            }
         }
         if (lastNum != null) {
             // save the tail as the numbered result
@@ -118,16 +146,16 @@ public abstract class Checker {
 
     private void findNext(List<String> needle, int lastPos, List<String> tokens) {
         List<List<String>> allNeedles = block.getAliasesFor(needle);
-        
+
         int tokenLen = tokens.size();
-        
+
         for (int idx = lastPos + 1; idx < tokenLen; idx++) {
             for (List<String> currentNeedle : allNeedles) {
                 boolean matching = true;
                 int len = currentNeedle.size();
-                for(int i = 0; i<len && idx+i < tokenLen; i++) {
+                for (int i = 0; i < len && idx + i < tokenLen; i++) {
                     String token = tokens.get(idx + i);
-                    if (! token.equalsIgnoreCase(currentNeedle.get(i))) {
+                    if (!token.equalsIgnoreCase(currentNeedle.get(i))) {
                         matching = false;
                         break;
                     }
@@ -141,11 +169,11 @@ public abstract class Checker {
         }
         nextPosEnd = -1;
     }
-    
+
     protected String getMatchedStringObject(int n) {
         int cnt = 0;
         for (Object param : matchedParams) {
-            if(param instanceof String) {
+            if (param instanceof String) {
                 cnt++;
                 if (cnt == n) {
                     return (String) param;
@@ -154,5 +182,17 @@ public abstract class Checker {
         }
         return null;
     }
-    
+
+    protected Statement check(ParamList[] possibleParams, BiFunction<ParamList, Checker, Statement> validator) {
+        Statement stmt;
+        for (ParamList params : possibleParams) {
+            if (match(params.params)) {
+                stmt = validator.apply(params, this);
+                if (stmt != null) {
+                    return stmt;
+                }
+            }
+        }
+        return null;
+    }
 }

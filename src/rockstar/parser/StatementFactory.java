@@ -41,7 +41,7 @@ public class StatementFactory {
         new RockChecker(),
         new RollChecker(),
         new TurnChecker(),
-        new CastChecker(),
+        new CastChecker3(),
         new SplitChecker(),
         new JoinChecker(),
         new ClassBlockChecker(),
