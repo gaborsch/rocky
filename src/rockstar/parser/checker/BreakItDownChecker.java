@@ -16,19 +16,20 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class BreakItDownChecker extends Checker {
-    
+
     private static final List<String> BREAK_IT_DOWN = Arrays.asList("Break", "it", "down");
-    
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList(BREAK_IT_DOWN),
+        new ParamList("Break")};
 
     @Override
     public Statement check() {
-        if (match(BREAK_IT_DOWN) || match("Break")) {
-            return new BreakStatement();
-        }
-        return null;
+        return check(PARAM_LIST, this::validate);
     }
-    
+
+    private Statement validate(ParamList params) {
+        return new BreakStatement();
+    }
+
 }

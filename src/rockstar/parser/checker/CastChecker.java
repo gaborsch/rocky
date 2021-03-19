@@ -16,13 +16,20 @@ import rockstar.statement.Statement;
  */
 public class CastChecker extends Checker {
 
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("cast", 1),
+        new ParamList("burn", 1)
+    };
+
     @Override
     public Statement check() {
-        if (match("cast", 1) || match("burn", 1)) {
-            MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(getResult()[1], line, block);
-            if (expr != null) {
-                return new CastStatement(expr);
-            }
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+        MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(get1(), line, block);
+        if (expr != null) {
+            return new CastStatement(expr);
         }
         return null;
     }

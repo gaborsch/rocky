@@ -26,40 +26,45 @@ public class InstantiationChecker extends Checker {
     private static final List<String> WANNA_BE = Arrays.asList("wanna", "be");
     private static final List<String> WILL_BE = Arrays.asList("will", "be");
     private static final List<String> WOULD_BE = Arrays.asList("would", "be");
-    
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList(1, WANTS_TO_BE, 2, "taking", 3),
+        new ParamList(1, WANTS_TO_BE, 2),
+        new ParamList(1, WANT_TO_BE, 2, "taking", 3),
+        new ParamList(1, WANT_TO_BE, 2),
+        new ParamList(1, WANNA_BE, 2, "taking", 3),
+        new ParamList(1, WANNA_BE, 2),
+        new ParamList(1, WILL_BE, 2, "taking", 3),
+        new ParamList(1, WILL_BE, 2),
+        new ParamList(1, WOULD_BE, 2, "taking", 3),
+        new ParamList(1, WOULD_BE, 2)};
 
     @Override
     public Statement check() {
-        if (match(0, WANTS_TO_BE, 1, "taking", 2)     || match(0, WANTS_TO_BE, 1)
-            || match(0, WANT_TO_BE, 1, "taking", 2)   || match(0, WANT_TO_BE, 1)
-            || match(0, WANNA_BE, 1, "taking", 2)        || match(0, WANNA_BE, 1)
-            || match(0, WILL_BE, 1, "taking", 2)         || match(0, WILL_BE, 1)
-            || match(0, WOULD_BE, 1, "taking", 2)        || match(0, WOULD_BE, 1)) {
+        return check(PARAM_LIST, this::validate);
+    }
 
-            // class  name looks like the same as a variable name
-            VariableReference variableRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line, block);
-            if (variableRef != null) {
-                VariableReference classRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
-                if (classRef != null) {
-                    String className = classRef.getName();
-                    InstantiationStatement stmt = new InstantiationStatement(variableRef, className);
+    private Statement validate(ParamList params) {
+        // class  name looks like the same as a variable name
+        VariableReference variableRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        if (variableRef != null) {
+            VariableReference classRef = ExpressionFactory.tryVariableReferenceFor(get2(), line, block);
+            if (classRef != null) {
+                String className = classRef.getName();
+                InstantiationStatement stmt = new InstantiationStatement(variableRef, className);
 
-                    if (getResult()[2] != null) {
-                        // has constructor parameters
-                        Expression expr = ExpressionFactory.tryExpressionFor(getResult()[2], line, block);
-                        // treats null expression
-                        ListExpression listExpr = ListExpression.asListExpression(expr);
-                        if (listExpr != null) {
-                            for (Expression expression : listExpr.getParameters()) {
-                                    stmt.addParameter(expression);
-                            }
+                if (get3() != null) {
+                    // has constructor parameters
+                    Expression expr = ExpressionFactory.tryExpressionFor(get3(), line, block);
+                    // treats null expression
+                    ListExpression listExpr = ListExpression.asListExpression(expr);
+                    if (listExpr != null) {
+                        for (Expression expression : listExpr.getParameters()) {
+                            stmt.addParameter(expression);
                         }
                     }
-                    return stmt;
                 }
+                return stmt;
             }
         }
         return null;

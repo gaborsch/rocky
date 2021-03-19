@@ -15,20 +15,21 @@ import rockstar.statement.WhileStatement;
  * @author Gabor
  */
 public class WhileChecker extends Checker {
-    
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("While", 1)};
 
     @Override
     public Statement check() {
-        if (match("While", 1)) {
-            Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
-            if (condition != null) {
-                return new WhileStatement(condition);
-            }
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+        Expression condition = ExpressionFactory.getExpressionFor(get1(), line, block);
+        if (condition != null) {
+            return new WhileStatement(condition);
         }
         return null;
     }
-    
+
 }

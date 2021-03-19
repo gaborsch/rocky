@@ -7,10 +7,9 @@ package rockstar.parser.checker;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import rockstar.parser.Line;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
@@ -46,9 +45,9 @@ public abstract class Checker {
 
     private final Map<String, List<String>> listCache = new HashMap<>();
 
-    public List<String>[] getResult() {
-        return result;
-    }
+//    public List<String>[] getResult() {
+//        return result;
+//    }
 
     public List<String> get1() {
         return result[1];
@@ -170,24 +169,24 @@ public abstract class Checker {
         nextPosEnd = -1;
     }
 
-    protected String getMatchedStringObject(int n) {
-        int cnt = 0;
-        for (Object param : matchedParams) {
-            if (param instanceof String) {
-                cnt++;
-                if (cnt == n) {
-                    return (String) param;
-                }
-            }
-        }
-        return null;
-    }
+//    protected String getMatchedStringObject(int n) {
+//        int cnt = 0;
+//        for (Object param : matchedParams) {
+//            if (param instanceof String) {
+//                cnt++;
+//                if (cnt == n) {
+//                    return (String) param;
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
-    protected Statement check(ParamList[] possibleParams, BiFunction<ParamList, Checker, Statement> validator) {
+    protected Statement check(ParamList[] possibleParams, Function<ParamList, Statement> validator) {
         Statement stmt;
         for (ParamList params : possibleParams) {
             if (match(params.params)) {
-                stmt = validator.apply(params, this);
+                stmt = validator.apply(params);
                 if (stmt != null) {
                     return stmt;
                 }

@@ -23,31 +23,33 @@ public class ClassBlockChecker extends Checker {
 
     private static final List<String> LOOK_LIKE = Arrays.asList("look", "like");
     private static final List<String> LOOKS_LIKE = Arrays.asList("looks", "like");
-        
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList(1, LOOK_LIKE, 2),
+        new ParamList(1, LOOKS_LIKE, 2)};
 
     @Override
     public Statement check() {
-        if (match(1, LOOK_LIKE, 2) || match(1, LOOKS_LIKE, 2)) {
-            VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
-            if (nameRef != null) {
-                String name = nameRef.getName();
-                // checking for "nothing" and aliases
-                ConstantExpression literal = ExpressionFactory.tryLiteralFor(getResult()[2], line, block);
-                if (literal != null) {
-                    Value v = literal.getValue();
-                    if (v.isNull()) {
-                        return new ClassBlock(name, null);
-                    }
-                } else {
-                    // checking for class name
-                    VariableReference parentRef = ExpressionFactory.tryVariableReferenceFor(getResult()[2], line, block);
-                    if (parentRef != null) {
-                        // TODO proper classname check: self, parent, it, ...
-                        return new ClassBlock(name, parentRef.getName());
-                    }
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+        VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        if (nameRef != null) {
+            String name = nameRef.getName();
+            // checking for "nothing" and aliases
+            ConstantExpression literal = ExpressionFactory.tryLiteralFor(get2(), line, block);
+            if (literal != null) {
+                Value v = literal.getValue();
+                if (v.isNull()) {
+                    return new ClassBlock(name, null);
+                }
+            } else {
+                // checking for class name
+                VariableReference parentRef = ExpressionFactory.tryVariableReferenceFor(get2(), line, block);
+                if (parentRef != null) {
+                    // TODO proper classname check: self, parent, it, ...
+                    return new ClassBlock(name, parentRef.getName());
                 }
             }
         }

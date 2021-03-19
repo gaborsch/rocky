@@ -20,47 +20,48 @@ import rockstar.statement.Statement;
  */
 public class FunctionDefChecker extends Checker {
 
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList(1, "takes", 2),
+        new ParamList(1, "wants", 2)};
 
     @Override
     public Statement check() {
-        if (match(0, "takes", 1) || match(0, "wants", 1)) {
-            // function name is the same as a variable name
-            VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(getResult()[0], line, block);
-            if (nameRef != null) {
-                FunctionBlock fb = new FunctionBlock(nameRef.getName());
-                // parse the expression, for an expression list
-                Expression expr = ExpressionFactory.tryExpressionFor(getResult()[1], line, block);
-                // treats null expression
-                if (expr instanceof ConstantExpression) {
-                    ConstantExpression constExpr = (ConstantExpression) expr;
-                    if (! constExpr.getValue().getType().equals(ExpressionType.NULL)) {
-                        // only NULL values are allowed
-                        return null;
-                    }
-                    // for NULLs, the parameter list remains empty
-                } else {
-                    ListExpression listExpr = ListExpression.asListExpression(expr);
-                    if (listExpr != null) {
-                        for (Expression expression : listExpr.getParameters()) {
-                            if (expression instanceof VariableReference) {
-                                // it is a variable reference
-                                VariableReference paramRef = (VariableReference) expression;
-                                fb.addParameterName(paramRef);
-                            } else {
-                                return null;
-                            }
-                        }
-                    } else {
-                        return null;
-                    }
-                }
-                return fb;
-            }
-        }
+        return check(PARAM_LIST, this::validate);
+    }
 
+    private Statement validate(ParamList params) {
+        // function name is the same as a variable name
+        VariableReference nameRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        if (nameRef != null) {
+            FunctionBlock fb = new FunctionBlock(nameRef.getName());
+            // parse the expression, for an expression list
+            Expression expr = ExpressionFactory.tryExpressionFor(get2(), line, block);
+            // treats null expression
+            if (expr instanceof ConstantExpression) {
+                ConstantExpression constExpr = (ConstantExpression) expr;
+                if (!constExpr.getValue().getType().equals(ExpressionType.NULL)) {
+                    // only NULL values are allowed
+                    return null;
+                }
+                // for NULLs, the parameter list remains empty
+            } else {
+                ListExpression listExpr = ListExpression.asListExpression(expr);
+                if (listExpr != null) {
+                    for (Expression expression : listExpr.getParameters()) {
+                        if (expression instanceof VariableReference) {
+                            // it is a variable reference
+                            VariableReference paramRef = (VariableReference) expression;
+                            fb.addParameterName(paramRef);
+                        } else {
+                            return null;
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            }
+            return fb;
+        }
         return null;
     }
 

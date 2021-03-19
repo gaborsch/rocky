@@ -5,6 +5,8 @@
  */
 package rockstar.parser.checker;
 
+import java.util.HashMap;
+import java.util.Map;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.statement.Statement;
@@ -17,9 +19,15 @@ import rockstar.statement.TurnStatement.Direction;
  */
 public class TurnChecker extends Checker {
 
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Turn", 1, "up"),
+        new ParamList("Turn", "up", 1),
+        new ParamList("Turn", 1, "down"),
+        new ParamList("Turn", "down", 1),
+        new ParamList("Turn", 1, "round"),
+        new ParamList("Turn", "round", 1),
+        new ParamList("Turn", 1, "around"),
+        new ParamList("Turn", "around", 1)};
 
     private static final Direction[] DIRECTION_LOOKUP = new Direction[]{
         Direction.UP, Direction.UP,
@@ -30,18 +38,16 @@ public class TurnChecker extends Checker {
 
     @Override
     public Statement check() {
-        if (match("Turn", 1, "up") || match("Turn", "up", 1)
-                || match("Turn", 1, "down") || match("Turn", "down", 1)
-                || match("Turn", 1, "round") || match("Turn", "round", 1)
-                || match("Turn", 1, "around") || match("Turn", "around", 1)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
-            if (varRef != null) {
-                // set direction for the match count
-                int matchIdx = getMatchCounter() - 1;
-                Direction dir = DIRECTION_LOOKUP[matchIdx];
+        return check(PARAM_LIST, this::validate);
+    }
 
-                return new TurnStatement(varRef, dir);
-            }
+    private Statement validate(ParamList params) {
+        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        if (varRef != null) {
+            // set direction for the match count
+            int matchIdx = getMatchCounter() - 1;
+            Direction dir = DIRECTION_LOOKUP[matchIdx];
+            return new TurnStatement(varRef, dir);
         }
         return null;
     }

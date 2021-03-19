@@ -13,17 +13,18 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class ElseChecker extends Checker {
-    
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Else"),
+        new ParamList("Otherwise")};
 
     @Override
     public Statement check() {
-        if (match("Else", 1) || match("Otherwise", 1)) {
-            return new ElseStatement();
-        }
-        return null;
+        return check(PARAM_LIST, this::validate);
     }
-    
+
+    private Statement validate(ParamList params) {
+        return new ElseStatement();
+    }
+
 }

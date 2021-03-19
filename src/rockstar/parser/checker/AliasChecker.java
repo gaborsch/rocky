@@ -14,21 +14,21 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class AliasChecker extends Checker {
-    
-     private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("for", "me", 1, "means", 2),
+        new ParamList(1, "means", 2)};
 
     @Override
     public Statement check() {
-        if (match("for", "me", 1, "means", 2)
-            || match(1, "means", 2)) {
+        return check(PARAM_LIST, this::validate);
+    }
 
-            List<String> alias = getResult()[1];
-            List<String> keyword = getResult()[2];
-            if (!alias.isEmpty() && !keyword.isEmpty()) {
-                return new AliasStatement(alias, keyword);
-            }
+    private Statement validate(ParamList params) {
+        List<String> alias = get1();
+        List<String> keyword = get2();
+        if (!alias.isEmpty() && !keyword.isEmpty()) {
+            return new AliasStatement(alias, keyword);
         }
         return null;
     }

@@ -18,24 +18,22 @@ import rockstar.statement.Statement;
  */
 public class PkgDefChecker extends Checker {
 
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Album", 1)};
 
     @Override
     public Statement check() {
-        if (match("Album", 1)) {
-            Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
+        return check(PARAM_LIST, this::validate);
+    }
 
-            Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(expr);
-            if (pathOpt.isPresent()) {
-                return new PkgDefStatement(pathOpt.get());
-            }
-            return null;
+    private Statement validate(ParamList params) {
+        Expression expr = ExpressionFactory.getExpressionFor(get1(), line, block);
+
+        Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(expr);
+        if (pathOpt.isPresent()) {
+            return new PkgDefStatement(pathOpt.get());
         }
         return null;
     }
-
-
 
 }

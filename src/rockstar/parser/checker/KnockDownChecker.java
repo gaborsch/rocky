@@ -15,18 +15,21 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class KnockDownChecker extends Checker {
-    
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Knock", 1, "down", 2)};
 
     @Override
     public Statement check() {
-        if (match("Knock", 1, "down", 2)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        if (varRef != null) {
             int count = 1;
             boolean isAndPossible = true;
-            for (String s : getResult()[2]) {
+            for (String s : get2()) {
                 if ("down".equals(s)) {
                     count++;
                     isAndPossible = true;
@@ -36,11 +39,9 @@ public class KnockDownChecker extends Checker {
                     return null;
                 }
             }
-            if (varRef != null) {
-                return new DecrementStatement(varRef, count);
-            }
+            return new DecrementStatement(varRef, count);
         }
         return null;
     }
-    
+
 }

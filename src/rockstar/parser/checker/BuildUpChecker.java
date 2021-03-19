@@ -15,18 +15,22 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class BuildUpChecker extends Checker {
-    
-     private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Build", 1, "up", 2)};
 
     @Override
     public Statement check() {
-        if (match("Build", 1, "up", 2)) {
-            VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+
+        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        if (varRef != null) {
             int count = 1;
             boolean isAndPossible = true;
-            for (String s : getResult()[2]) {
+            for (String s : get2()) {
                 if ("up".equals(s)) {
                     count++;
                     isAndPossible = true;
@@ -36,11 +40,9 @@ public class BuildUpChecker extends Checker {
                     return null;
                 }
             }
-            if (varRef != null) {
-                return new IncrementStatement(varRef, count);
-            }
+            return new IncrementStatement(varRef, count);
         }
         return null;
     }
-    
+
 }

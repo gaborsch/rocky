@@ -18,41 +18,48 @@ import rockstar.statement.Statement;
  */
 public class RockChecker extends Checker {
 
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Rock", 1, "with", 2),
+        new ParamList("Push", 1, "with", 2),
+        new ParamList("Rock", 2, "into", 1),
+        new ParamList("Push", 2, "into", 1)};
 
-    private static final ParamList[] PARAM_LIST2
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST2 = new ParamList[]{
+        new ParamList("Rock", 1),
+        new ParamList("Push", 1)};
 
     @Override
     public Statement check() {
-        if (match("Rock", 1, "with", 2)
-                || match("Push", 1, "with", 2)
-                || match("Rock", 2, "into", 1)
-                || match("Push", 2, "into", 1)) {
-            Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
-            Expression valueExpr = ExpressionFactory.getExpressionFor(getResult()[2], line, block);
-            if (varExpr != null && valueExpr != null) {
-                if (varExpr instanceof VariableReference) {
-                    return new RockStatement((VariableReference) varExpr, valueExpr);
-                }
+        Statement stmt = check(PARAM_LIST, this::validate);
+        if (stmt == null) {
+            stmt = check(PARAM_LIST2, this::validate2);
+        }
+        return stmt;
+    }
+
+    private Statement validate(ParamList params) {
+        Expression varExpr = ExpressionFactory.getExpressionFor(get1(), line, block);
+        Expression valueExpr = ExpressionFactory.getExpressionFor(get2(), line, block);
+        if (varExpr != null && valueExpr != null) {
+            if (varExpr instanceof VariableReference) {
+                return new RockStatement((VariableReference) varExpr, valueExpr);
             }
         }
-        if (match("Rock", 1) || match("Push", 1)) {
-            Expression varExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
-            if (varExpr != null) {
-                if(varExpr instanceof VariableReference) {
-                    // rock <variable>
-                    return new RockStatement((VariableReference) varExpr);
-                } else if (varExpr instanceof ListExpression) {
-                    ListExpression listExpr = (ListExpression) varExpr;
-                    // the first item should be treated as a variable reference, the remaining will be the list
-                    varExpr = listExpr.getParameters().remove(0);
-                    if (varExpr instanceof VariableReference) {
+        return null;
+    }
+
+    private Statement validate2(ParamList params) {
+        Expression varExpr = ExpressionFactory.getExpressionFor(get1(), line, block);
+        if (varExpr != null) {
+            if (varExpr instanceof VariableReference) {
+                // rock <variable>
+                return new RockStatement((VariableReference) varExpr);
+            } else if (varExpr instanceof ListExpression) {
+                ListExpression listExpr = (ListExpression) varExpr;
+                // the first item should be treated as a variable reference, the remaining will be the list
+                varExpr = listExpr.getParameters().remove(0);
+                if (varExpr instanceof VariableReference) {
                     return new RockStatement((VariableReference) varExpr, listExpr);
-                }
                 }
             }
         }

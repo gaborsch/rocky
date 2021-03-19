@@ -22,53 +22,53 @@ import rockstar.statement.Statement;
  */
 public class ImportChecker extends Checker {
 
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("from", 1, "play", 2),
+        new ParamList("off", 1, "play", 2),
+        new ParamList("play", 2)};
 
     @Override
     public Statement check() {
-        if (match("from", 1, "play", 2)
-                || match("off", 1, "play", 2)
-                || match("play", 2)) {
+        return check(PARAM_LIST, this::validate);
+    }
 
-            // determine package path, if present
-            PackagePath path = null;
-            if (getResult()[1] != null) {
-                Expression pkgExpr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
-                Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(pkgExpr);
-                if (!pathOpt.isPresent()) {
-                    return null;
-                }
-                path = pathOpt.get();
-                
-            }
-            // Process class list expression
-            Expression classesExpr = ExpressionFactory.getExpressionFor(getResult()[2], line, block);
-            List<String> clsList = new LinkedList<>();
-            if(classesExpr instanceof ListExpression) {
-                // if it is a proper list expression
-                for (Expression cls : ((ListExpression) classesExpr).getParameters()) {
-                    if (cls instanceof VariableReference) {
-                        // variable name in a list
-                        clsList.add(((VariableReference) cls).getName());
-                    } else {
-                        // if it's something else, it's not allowed
-                        return null;
-                    }
-                }
-            } else if(classesExpr instanceof VariableReference) {
-                // if it is a single variable epression
-                clsList.add(((VariableReference) classesExpr).getName());
-            } else {
-                // others are not allowed
+    private Statement validate(ParamList params) {
+
+        // determine package path, if present
+        PackagePath path = null;
+        if (get1() != null) {
+            Expression pkgExpr = ExpressionFactory.getExpressionFor(get1(), line, block);
+            Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(pkgExpr);
+            if (!pathOpt.isPresent()) {
                 return null;
             }
-            
-            if (! clsList.isEmpty()) {
-                return new ImportStatement(path, clsList);
-            }
+            path = pathOpt.get();
 
+        }
+        // Process class list expression
+        Expression classesExpr = ExpressionFactory.getExpressionFor(get2(), line, block);
+        List<String> clsList = new LinkedList<>();
+        if (classesExpr instanceof ListExpression) {
+            // if it is a proper list expression
+            for (Expression cls : ((ListExpression) classesExpr).getParameters()) {
+                if (cls instanceof VariableReference) {
+                    // variable name in a list
+                    clsList.add(((VariableReference) cls).getName());
+                } else {
+                    // if it's something else, it's not allowed
+                    return null;
+                }
+            }
+        } else if (classesExpr instanceof VariableReference) {
+            // if it is a single variable epression
+            clsList.add(((VariableReference) classesExpr).getName());
+        } else {
+            // others are not allowed
+            return null;
+        }
+
+        if (!clsList.isEmpty()) {
+            return new ImportStatement(path, clsList);
         }
         return null;
     }

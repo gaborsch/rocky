@@ -15,20 +15,22 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class IfChecker extends Checker {
-    
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("If", 1),
+        new ParamList("When", 1)};
 
     @Override
     public Statement check() {
-        if (match("If", 1) || match("When", 1)) {
-            Expression condition = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
-            if (condition != null) {
-                return new IfStatement(condition);
-            }
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+        Expression condition = ExpressionFactory.getExpressionFor(get1(), line, block);
+        if (condition != null) {
+            return new IfStatement(condition);
         }
         return null;
     }
-    
+
 }

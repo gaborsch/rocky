@@ -16,32 +16,39 @@ import rockstar.statement.Statement;
  */
 public class RollChecker extends Checker {
 
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Roll", 2, "into", 1),
+        new ParamList("Pop", 2, "into", 1),
+        new ParamList("Pull", 1, "from", 2)};
 
-    private static final ParamList[] PARAM_LIST2
-            = new ParamList[]{
-                new ParamList()};
+    private static final ParamList[] PARAM_LIST2 = new ParamList[]{
+        new ParamList("Roll", 1),
+        new ParamList("Pop", 1),
+        new ParamList("Pull", "from", 1)};
 
     @Override
     public Statement check() {
-        if (match("Roll", 2, "into", 1) 
-                || match("Pop", 2, "into", 1) 
-                || match("Pull", 1, "from", 2)) {
-            VariableReference targetRefExpr = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
-            VariableReference arrayExpr = ExpressionFactory.tryVariableReferenceFor(getResult()[2], line, block);
-            if (arrayExpr != null && targetRefExpr != null) {
-                return new RollStatement(arrayExpr, targetRefExpr);
-            }
+        Statement stmt = check(PARAM_LIST, this::validate);
+        if (stmt == null) {
+            stmt = check(PARAM_LIST2, this::validate2);
         }
-        if (match("Roll", 1) 
-                || match("Pop", 1) 
-                || match("Pull","from", 1)) {
-            VariableReference arrayExpr = ExpressionFactory.tryVariableReferenceFor(getResult()[1], line, block);
-            if (arrayExpr != null) {
-                return new RollStatement(arrayExpr);
-            }
+        return stmt;
+    }
+
+    private Statement validate(ParamList params) {
+        VariableReference targetRefExpr = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        VariableReference arrayExpr = ExpressionFactory.tryVariableReferenceFor(get2(), line, block);
+        if (arrayExpr != null && targetRefExpr != null) {
+            return new RollStatement(arrayExpr, targetRefExpr);
+        }
+
+        return null;
+    }
+
+    private Statement validate2(ParamList params) {
+        VariableReference arrayExpr = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
+        if (arrayExpr != null) {
+            return new RollStatement(arrayExpr);
         }
         return null;
     }

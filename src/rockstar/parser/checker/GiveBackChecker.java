@@ -17,26 +17,27 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class GiveBackChecker extends Checker {
-    
+
     private static final List<String> GIVE_BACK = Arrays.asList("give", "back");
     private static final List<String> SEND_BACK = Arrays.asList("send", "back");
-        
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList(GIVE_BACK, 1),
+        new ParamList("give", 1, "back"),
+        new ParamList(SEND_BACK, 1),
+        new ParamList("send", 1, "back")};
 
     @Override
     public Statement check() {
-        if (match(GIVE_BACK, 1) 
-                || match("give", 1, "back")
-                || match(SEND_BACK, 1) 
-                || match("send", 1, "back")) {
-            Expression expression = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
-            if (expression != null) {
-                return new ReturnStatement(expression);
-            }
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+        Expression expression = ExpressionFactory.getExpressionFor(get1(), line, block);
+        if (expression != null) {
+            return new ReturnStatement(expression);
         }
         return null;
     }
-    
+
 }

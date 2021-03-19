@@ -15,20 +15,24 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class SayChecker extends Checker {
-    
-    private static final ParamList[] PARAM_LIST
-            = new ParamList[]{
-                new ParamList()};
+
+    private static final ParamList[] PARAM_LIST = new ParamList[]{
+        new ParamList("Say", 1),
+        new ParamList("Shout", 1),
+        new ParamList("Whisper", 1),
+        new ParamList("Scream", 1)};
 
     @Override
     public Statement check() {
-        if (match("Say", 1) || match("Shout", 1) || match("Whisper", 1) || match("Scream", 1)) {
-            Expression expr = ExpressionFactory.getExpressionFor(getResult()[1], line, block);
-            if (expr != null) {
-                return new OutputStatement(expr);
-            }
+        return check(PARAM_LIST, this::validate);
+    }
+
+    private Statement validate(ParamList params) {
+        Expression expr = ExpressionFactory.getExpressionFor(get1(), line, block);
+        if (expr != null) {
+            return new OutputStatement(expr);
         }
         return null;
     }
-    
+
 }
