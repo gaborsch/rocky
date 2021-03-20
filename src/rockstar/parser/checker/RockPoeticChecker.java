@@ -40,7 +40,7 @@ public class RockPoeticChecker extends Checker {
                 }
             } else {
                 // poetic literals
-                String matched = (String) params.params[2]; // the matched string: "like"
+                String matched = (String) params.getParams()[2]; // the matched string: "like"
                 String orig = line.getOrigLine();
                 int p = orig.indexOf(" " + matched + " ") + matched.length() + 2;
                 String origEnd = orig.substring(p);

@@ -20,16 +20,6 @@ import rockstar.statement.Statement;
  */
 public abstract class Checker {
 
-    public static class ParamList {
-
-        public Object[] params;
-
-        public ParamList(Object... params) {
-            this.params = params;
-        }
-
-    }
-
     protected Line line;
     protected Block block;
 
@@ -39,9 +29,7 @@ public abstract class Checker {
     private int nextPosStart;
     private int nextPosEnd;
 
-    private boolean hasMatch = false;
     private int matchCounter = 0;
-    private Object[] matchedParams;
 
     private final Map<String, List<String>> listCache = new HashMap<>();
 
@@ -72,8 +60,6 @@ public abstract class Checker {
     public Checker initialize(Line l, Block currentBlock) {
         this.line = l;
         this.block = currentBlock;
-        this.hasMatch = false;
-        this.matchedParams = null;
         this.matchCounter = 0;
         return this;
     }
@@ -89,10 +75,6 @@ public abstract class Checker {
      * @return
      */
     public boolean match(Object... params) {
-        // do not overwrite existing result
-        if (this.hasMatch) {
-            return false;
-        }
         matchCounter++;
         List<String> tokens = line.getTokens();
         // clear previous result
@@ -138,8 +120,6 @@ public abstract class Checker {
             // if there are tokens after the last
             return false;
         }
-        this.hasMatch = true;
-        this.matchedParams = params;
         return true;
     }
 
@@ -169,23 +149,10 @@ public abstract class Checker {
         nextPosEnd = -1;
     }
 
-//    protected String getMatchedStringObject(int n) {
-//        int cnt = 0;
-//        for (Object param : matchedParams) {
-//            if (param instanceof String) {
-//                cnt++;
-//                if (cnt == n) {
-//                    return (String) param;
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
     protected Statement check(ParamList[] possibleParams, Function<ParamList, Statement> validator) {
         Statement stmt;
         for (ParamList params : possibleParams) {
-            if (match(params.params)) {
+            if (match(params.getParams())) {
                 stmt = validator.apply(params);
                 if (stmt != null) {
                     return stmt;

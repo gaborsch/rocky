@@ -42,7 +42,7 @@ public class PoeticAssignmentChecker extends Checker {
                 }
             } else {
                 // poetic literals
-                String matched = (String) params.params[1]; // the matched string: "is", "was", ...
+                String matched = (String) params.getParams()[1]; // the matched string: "is", "was", ...
                 String orig = line.getOrigLine();
                 int p1 = orig.indexOf(" " + matched + " ");
                 int p2 = orig.indexOf("'s "); // maybe "'s" was expanded to " is "
