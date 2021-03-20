@@ -89,7 +89,7 @@ public class Program extends Block {
         if (stmt instanceof Block) {
             List<Statement> stmts = ((Block) stmt).getStatements();
             stmts.forEach((stmt2) -> {
-                int indentIncrement = (stmt2 instanceof ElseStatement) ? 0 : 1;
+                int indentIncrement = (stmt2 instanceof ContinuingBlockStatementI) ? 0 : 1;
                 listProgram(indent + indentIncrement, stmt2, listing);
             });
         }
