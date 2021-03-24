@@ -6,7 +6,6 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.MutationExpression;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.SplitStatement;
 import rockstar.statement.Statement;
 
@@ -14,12 +13,12 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class SplitChecker extends Checker {
+public class SplitChecker extends Checker<MutationExpression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("split", 1),
-        new ParamList("cut", 1),
-        new ParamList("shatter", 1)};
+        new ParamList("split", mutationExpressionAt(1)),
+        new ParamList("cut", mutationExpressionAt(1)),
+        new ParamList("shatter", mutationExpressionAt(1))};
 
     @Override
     public Statement check() {
@@ -27,11 +26,8 @@ public class SplitChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(get1(), line, block);
-        if (expr != null) {
-            return new SplitStatement(expr);
-        }
-        return null;
+        MutationExpression expr = getE1();
+        return new SplitStatement(expr);
     }
 
 }

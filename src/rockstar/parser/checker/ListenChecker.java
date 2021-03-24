@@ -5,9 +5,9 @@
  */
 package rockstar.parser.checker;
 
+import java.util.Arrays;
 import java.util.List;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.InputStatement;
 import rockstar.statement.Statement;
 
@@ -15,10 +15,13 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class ListenChecker extends Checker {
+public class ListenChecker extends Checker<VariableReference, Object, Object> {
+
+    public static final List<String> LISTEN_TO = Arrays.asList("Listen", "to");
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Listen", 1)};
+        new ParamList("Listen"),
+        new ParamList(LISTEN_TO, variableAt(1))};
 
     @Override
     public Statement check() {
@@ -26,19 +29,11 @@ public class ListenChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        List<String> rest = get1();
-        if (rest.isEmpty()) {
+        VariableReference varRef = getE1();
+        if (varRef == null) {
             return new InputStatement();
         }
-        if (rest.size() >= 2) {
-            if (rest.get(0).equals("to")) {
-                VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(rest.subList(1, rest.size()), line, block);
-                if (varRef != null) {
-                    return new InputStatement(varRef);
-                }
-            }
-        }
-        return null;
+        return new InputStatement(varRef);
     }
 
 }

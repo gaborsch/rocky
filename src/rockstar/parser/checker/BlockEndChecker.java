@@ -12,8 +12,8 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class BlockEndChecker extends Checker {
-    
+public class BlockEndChecker extends Checker<Object, Object, Object> {
+
     @Override
     public Statement check() {
         if (line.getTokens().isEmpty()) {
@@ -21,5 +21,5 @@ public class BlockEndChecker extends Checker {
         }
         return null;
     }
-    
+
 }

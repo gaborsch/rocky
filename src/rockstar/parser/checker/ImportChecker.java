@@ -11,7 +11,6 @@ import java.util.Optional;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
 import rockstar.runtime.PackagePath;
 import rockstar.statement.ImportStatement;
 import rockstar.statement.Statement;
@@ -20,12 +19,12 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class ImportChecker extends Checker {
+public class ImportChecker extends Checker<Expression, Expression, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("from", 1, "play", 2),
-        new ParamList("off", 1, "play", 2),
-        new ParamList("play", 2)};
+        new ParamList("from", expressionAt(1), "play", expressionAt(2)),
+        new ParamList("off", expressionAt(1), "play", expressionAt(2)),
+        new ParamList("play", expressionAt(2))};
 
     @Override
     public Statement check() {
@@ -33,11 +32,12 @@ public class ImportChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
+        Expression pkgExpr = getE1();
+        Expression classesExpr = getE2();
 
         // determine package path, if present
         PackagePath path = null;
-        if (get1() != null) {
-            Expression pkgExpr = ExpressionFactory.getExpressionFor(get1(), line, block);
+        if (pkgExpr != null) {
             Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(pkgExpr);
             if (!pathOpt.isPresent()) {
                 return null;
@@ -46,7 +46,6 @@ public class ImportChecker extends Checker {
 
         }
         // Process class list expression
-        Expression classesExpr = ExpressionFactory.getExpressionFor(get2(), line, block);
         List<String> clsList = new LinkedList<>();
         if (classesExpr instanceof ListExpression) {
             // if it is a proper list expression

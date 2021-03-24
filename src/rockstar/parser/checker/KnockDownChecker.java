@@ -5,8 +5,8 @@
  */
 package rockstar.parser.checker;
 
+import java.util.List;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.DecrementStatement;
 import rockstar.statement.Statement;
 
@@ -14,10 +14,10 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class KnockDownChecker extends Checker {
+public class KnockDownChecker extends Checker<VariableReference, List<String>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Knock", 1, "down", 2)};
+        new ParamList("Knock", variableAt(1), "down", textAt(2).opt())};
 
     @Override
     public Statement check() {
@@ -25,11 +25,12 @@ public class KnockDownChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
-        if (varRef != null) {
-            int count = 1;
+        VariableReference varRef = getE1();
+        List<String> text = getE2();
+        int count = 1;
+        if (text != null) {
             boolean isAndPossible = true;
-            for (String s : get2()) {
+            for (String s : text) {
                 if ("down".equals(s)) {
                     count++;
                     isAndPossible = true;
@@ -39,9 +40,8 @@ public class KnockDownChecker extends Checker {
                     return null;
                 }
             }
-            return new DecrementStatement(varRef, count);
         }
-        return null;
+        return new DecrementStatement(varRef, count);
     }
 
 }

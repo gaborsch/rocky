@@ -8,7 +8,6 @@ package rockstar.parser.checker;
 import rockstar.expression.Expression;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.QualifierExpression;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.ExpressionStatement;
 import rockstar.statement.Statement;
 
@@ -16,10 +15,10 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class ExpressionStatementChecker extends Checker {
+public class ExpressionStatementChecker extends Checker<Expression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList(1)};
+        new ParamList(expressionAt(1))};
 
     @Override
     public Statement check() {
@@ -27,13 +26,9 @@ public class ExpressionStatementChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        try {
-            Expression expression = ExpressionFactory.getExpressionFor(get1(), line, block);
-            if (((expression != null) && (expression instanceof FunctionCall)) || (expression instanceof QualifierExpression)) {
-                return new ExpressionStatement(expression);
-            }
-        } catch (Exception e) {
-            // if expession is not parsed properly, we must continue
+        Expression expression = getE1();
+        if ((expression instanceof FunctionCall) || (expression instanceof QualifierExpression)) {
+            return new ExpressionStatement(expression);
         }
         return null;
     }

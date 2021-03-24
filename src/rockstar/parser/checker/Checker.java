@@ -6,11 +6,16 @@
 package rockstar.parser.checker;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
+import rockstar.expression.ConstantExpression;
+import rockstar.expression.Expression;
+import rockstar.expression.ListExpression;
+import rockstar.expression.QualifierExpression;
+import rockstar.expression.VariableReference;
+import rockstar.parser.ExpressionFactory;
 import rockstar.parser.Line;
+import static rockstar.parser.checker.Checker.PlaceholderType.*;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
 
@@ -18,12 +23,13 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public abstract class Checker {
+public abstract class Checker<T1, T2, T3> {
 
     protected Line line;
     protected Block block;
 
-    private final List<String>[] result = new List[10];
+    private final List<String>[] result = new List[4];
+    private final Object[] parsedResult = new Object[4];
     private int lastPos;
     private Integer lastNum;
     private int nextPosStart;
@@ -31,26 +37,31 @@ public abstract class Checker {
 
     private int matchCounter = 0;
 
-    private final Map<String, List<String>> listCache = new HashMap<>();
+//    private final Map<String, List<String>> listCache = new HashMap<>();
+    private Object[] extParams;
 
-//    public List<String>[] getResult() {
-//        return result;
+//    public List<String> get1() {
+//        return result[1];
+//    }
+//
+//    public List<String> get2() {
+//        return result[2];
+//    }
+//
+//    public List<String> get3() {
+//        return result[3];
 //    }
 
-    public List<String> get1() {
-        return result[1];
+    public T1 getE1() {
+        return (T1) parsedResult[1];
     }
 
-    public List<String> get2() {
-        return result[2];
+    public T2 getE2() {
+        return (T2) parsedResult[2];
     }
 
-    public List<String> get3() {
-        return result[3];
-    }
-
-    public List<String> get4() {
-        return result[4];
+    public T3 getE3() {
+        return (T3) parsedResult[3];
     }
 
     public int getMatchCounter() {
@@ -80,19 +91,25 @@ public abstract class Checker {
         // clear previous result
         for (int i = 0; i < result.length; i++) {
             result[i] = null;
+            parsedResult[i] = null;
         }
         // match cycle
         lastPos = -1;
         lastNum = null;
+        Placeholder lastPH = null;
         for (Object param : params) {
             if (param instanceof Integer) {
                 lastNum = (Integer) param;
+                lastPH = null;
+            } else if (param instanceof Placeholder) {
+                lastNum = ((Placeholder) param).getPosition();
+                lastPH = ((Placeholder) param);
             } else {
                 List<String> needle = null;
                 if (param instanceof List) {
                     needle = (List<String>) param;
                 } else if (param instanceof String) {
-                    needle = listCache.computeIfAbsent((String) param, s -> Arrays.asList(s));
+                    needle = Arrays.asList((String) param);
                 }
                 // set nextPosStart and nextPosEnd
                 findNext(needle, lastPos, tokens);
@@ -101,6 +118,10 @@ public abstract class Checker {
                     if (lastNum != null) {
                         // save the sublist as the numbered result
                         result[lastNum] = tokens.subList(lastPos + 1, nextPosStart);
+                        boolean success = saveResultPosition(lastNum, lastPH, tokens.subList(lastPos + 1, nextPosStart));
+                        if (!success) {
+                            return false;
+                        }
                         lastNum = null;
                     } else if (nextPosStart != lastPos + 1) {
                         // tokens must follow each other
@@ -115,10 +136,71 @@ public abstract class Checker {
         }
         if (lastNum != null) {
             // save the tail as the numbered result
-            result[lastNum] = tokens.subList(lastPos + 1, tokens.size());
+//            result[lastNum] = tokens.subList(lastPos + 1, tokens.size());
+            boolean success = saveResultPosition(lastNum, lastPH, tokens.subList(lastPos + 1, tokens.size()));
+            if (!success) {
+                return false;
+            }
         } else if (lastPos + 1 < tokens.size()) {
             // if there are tokens after the last
             return false;
+        }
+        return true;
+    }
+
+    private boolean saveResultPosition(int pos, Placeholder ph, List<String> tokens) {
+        result[pos] = tokens;
+        if (ph != null) {
+            // if there are no token
+            if (tokens.isEmpty()) {
+                // we only accept if it is optional
+                return ph.isOptional();
+            }
+            // default expression may be defined - hopefully it has already been parsed
+            Expression defaultExpr = ph.getDefaultExprPos() == null ? null : (Expression) parsedResult[ph.getDefaultExprPos()];
+
+            Expression e = null;
+            if (ph.getType() == MUTATION_EXPRESSION) {
+                e = ExpressionFactory.tryMutationExpressionFor(tokens, line, block);
+            } else if (ph.getType() != POETIC_LITERAL && ph.getType() != TEXT) {
+                e = ExpressionFactory.tryExpressionFor(tokens, line, defaultExpr, block);
+            }
+
+            boolean validExpr = false;
+            boolean validText = false;
+            switch (ph.getType()) {
+                case EXPRESSION:
+                case MUTATION_EXPRESSION:
+                    validExpr = (e != null);
+                    break;
+                case VARIABLE_OR_QUALIFIER:
+                    validExpr = (e != null) && ((e instanceof VariableReference) || (e instanceof QualifierExpression));
+                    break;
+                case VARIABLE:
+                    validExpr = (e != null) && (e instanceof VariableReference);
+                    break;
+                case LITERAL:
+                    validExpr = (e != null) && (e instanceof ConstantExpression);
+                    break;
+                case LITERAL_OR_VARIABLE:
+                    validExpr = (e != null) && ((e instanceof ConstantExpression) || (e instanceof VariableReference));
+                    break;
+                case VARIABLE_OR_LIST:
+                    validExpr = (e != null) && ((e instanceof VariableReference) || (e instanceof ListExpression));
+                    break;
+                case POETIC_LITERAL:
+                case TEXT:
+                    validText = true;
+                    break;
+                default:
+                    throw new RuntimeException("Unhandled expression type:" + ph.getType());
+            }
+            if (validExpr) {
+                parsedResult[ph.getPosition()] = e;
+            } else if (validText) {
+                parsedResult[ph.getPosition()] = tokens;
+            }
+            return validExpr || validText;
         }
         return true;
     }
@@ -161,4 +243,114 @@ public abstract class Checker {
         }
         return null;
     }
+
+    protected Statement check2(ParamList[] possibleParams, Function<ParamList, Statement> validator) {
+        Statement stmt = null;
+        for (ParamList params : possibleParams) {
+            boolean hasMatch = firstMatch(params);
+            while (hasMatch && ((stmt = validator.apply(params)) != null)) {
+                hasMatch = nextMatch();
+            }
+        }
+        return stmt;
+    }
+
+    private boolean firstMatch(ParamList params) {
+        matchCounter++;
+        Object[] origParams = params.getParams();
+        this.extParams = new Object[origParams.length];
+        for (int i = 0; i < origParams.length; i++) {
+            Object param = origParams[i];
+            extParams[i] = (param instanceof List)
+                    ? block.getAliasesFor((List<String>) param)
+                    : param;
+        }
+        return nextMatch();
+    }
+
+    private boolean nextMatch() {
+        return false;
+    }
+
+    public static Placeholder textAt(int pos) {
+        return new Placeholder(PlaceholderType.TEXT, pos);
+    }
+
+    public static Placeholder literalAt(int pos) {
+        return new Placeholder(PlaceholderType.LITERAL, pos);
+    }
+
+    public static Placeholder variableAt(int pos) {
+        return new Placeholder(PlaceholderType.VARIABLE, pos);
+    }
+
+    public static Placeholder expressionAt(int pos) {
+        return new Placeholder(PlaceholderType.EXPRESSION, pos);
+    }
+
+    public static Placeholder mutationExpressionAt(int pos) {
+        return new Placeholder(PlaceholderType.MUTATION_EXPRESSION, pos);
+    }
+
+    public static Placeholder poeticLiteralAt(int pos) {
+        return new Placeholder(PlaceholderType.POETIC_LITERAL, pos);
+    }
+
+    public static Placeholder at(int pos, PlaceholderType type) {
+        return new Placeholder(type, pos);
+    }
+
+    public enum PlaceholderType {
+        TEXT,
+        LITERAL,
+        VARIABLE,
+        LITERAL_OR_VARIABLE,
+        VARIABLE_OR_QUALIFIER,        
+        VARIABLE_OR_LIST,
+        EXPRESSION,
+        MUTATION_EXPRESSION,
+        POETIC_LITERAL;
+    }
+
+    public static class Placeholder {
+
+        private final PlaceholderType type;
+        private final int position;
+
+        private boolean optional;
+        private Integer defaultExprPos;
+
+        public Placeholder(PlaceholderType type, int position) {
+            this.type = type;
+            this.position = position;
+        }
+
+        public Placeholder opt() {
+            this.optional = true;
+            return this;
+        }
+
+        public Placeholder withDefaultExprAt(int pos) {
+            this.defaultExprPos = pos;
+            return this;
+        }
+
+        public PlaceholderType getType() {
+            return type;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public boolean isOptional() {
+            return optional;
+        }
+
+        public Integer getDefaultExprPos() {
+            return defaultExprPos;
+        }
+
+    }
+
 }

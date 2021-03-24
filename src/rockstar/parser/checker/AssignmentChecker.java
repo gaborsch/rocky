@@ -6,9 +6,6 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
-import rockstar.expression.QualifierExpression;
-import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.AssignmentStatement;
 import rockstar.statement.Statement;
 
@@ -16,13 +13,13 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class AssignmentChecker extends Checker {
+public class AssignmentChecker extends Checker<Expression, Expression, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Let", 2, "be", 1),
-        new ParamList("Put", 1, "into", 2),
-        new ParamList("Put", 1, "in", 2),
-        new ParamList(2, "thinks", 1)};
+        new ParamList("Let", at(2, PlaceholderType.VARIABLE_OR_QUALIFIER), "be", expressionAt(1).withDefaultExprAt(2)),
+        new ParamList("Put", expressionAt(1), "into", at(2, PlaceholderType.VARIABLE_OR_QUALIFIER)),
+        new ParamList("Put", expressionAt(1), "in", at(2, PlaceholderType.VARIABLE_OR_QUALIFIER)),
+        new ParamList(at(2, PlaceholderType.VARIABLE_OR_QUALIFIER), "thinks", expressionAt(1))};
 
     @Override
     public Statement check() {
@@ -30,14 +27,9 @@ public class AssignmentChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        Expression varExpr = ExpressionFactory.getExpressionFor(get2(), line, block);
-        Expression valueExpr = ExpressionFactory.getExpressionFor(get1(), line, varExpr, block);
-        if (varExpr != null && valueExpr != null) {
-            if (varExpr instanceof VariableReference || varExpr instanceof QualifierExpression) {
-                return new AssignmentStatement(varExpr, valueExpr);
-            }
-        }
-        return null;
+        Expression varExpr = getE2();
+        Expression valueExpr = getE1();
+        return new AssignmentStatement(varExpr, valueExpr);
     }
 
 }

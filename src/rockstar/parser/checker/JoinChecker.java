@@ -6,7 +6,6 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.MutationExpression;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.JoinStatement;
 import rockstar.statement.Statement;
 
@@ -14,11 +13,11 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class JoinChecker extends Checker {
+public class JoinChecker extends Checker<MutationExpression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("join", 1),
-        new ParamList("unite", 1)};
+        new ParamList("join", mutationExpressionAt(1)),
+        new ParamList("unite", mutationExpressionAt(1))};
 
     @Override
     public Statement check() {
@@ -26,11 +25,8 @@ public class JoinChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(get1(), line, block);
-        if (expr != null) {
-            return new JoinStatement(expr);
-        }
-        return null;
+        MutationExpression expr = getE1();
+        return new JoinStatement(expr);
     }
 
 }

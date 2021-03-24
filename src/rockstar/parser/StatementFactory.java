@@ -55,15 +55,11 @@ public class StatementFactory {
         for (Checker checker : CHECKERS) {
             stmt = checker.initialize(line, currentBlock).check();
             if (stmt != null) {
+                stmt.setDebugInfo(line);
+                stmt.setBlock(currentBlock);
                 break;
             }
         }
-        
-        if (stmt != null) {
-            stmt.setDebugInfo(line);
-            stmt.setBlock(currentBlock);
-        }
-
         return stmt;
     }
 

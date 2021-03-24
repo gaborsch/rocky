@@ -5,7 +5,6 @@
  */
 package rockstar.parser.checker;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import rockstar.statement.BreakStatement;
@@ -15,7 +14,7 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class BreakItDownChecker extends Checker {
+public class BreakItDownChecker extends Checker<Object, Object, Object> {
 
     private static final List<String> BREAK_IT_DOWN = Arrays.asList("Break", "it", "down");
 

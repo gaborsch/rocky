@@ -5,9 +5,9 @@
  */
 package rockstar.parser.checker;
 
+import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.AssignmentStatement;
 import rockstar.statement.Statement;
 
@@ -15,10 +15,10 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class PoeticStringAssignmentChecker extends Checker {
+public class PoeticStringAssignmentChecker extends Checker<VariableReference, List<String>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList(1, "says", 2)};
+        new ParamList(variableAt(1), "says", textAt(2).opt())};
 
     @Override
     public Statement check() {
@@ -26,14 +26,11 @@ public class PoeticStringAssignmentChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
-        if (varRef != null) {
-            // grab original string from line
-            String poeticLiteralString = line.getOrigLine().substring(line.getOrigLine().indexOf("says ") + 5);
-            ConstantExpression value = new ConstantExpression(poeticLiteralString);
-            return new AssignmentStatement(varRef, value);
-        }
-        return null;
+        VariableReference varRef = getE1();
+        // grab original string from line, skip param 2
+        String poeticLiteralString = line.getOrigLine().substring(line.getOrigLine().indexOf("says ") + 5);
+        ConstantExpression value = new ConstantExpression(poeticLiteralString);
+        return new AssignmentStatement(varRef, value);
     }
 
 }

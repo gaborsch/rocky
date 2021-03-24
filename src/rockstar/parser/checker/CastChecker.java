@@ -6,7 +6,6 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.MutationExpression;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.CastStatement;
 import rockstar.statement.Statement;
 
@@ -14,11 +13,11 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class CastChecker extends Checker {
+public class CastChecker extends Checker<MutationExpression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("cast", 1),
-        new ParamList("burn", 1)
+        new ParamList("cast", mutationExpressionAt(1)),
+        new ParamList("burn", mutationExpressionAt(1))
     };
 
     @Override
@@ -27,11 +26,8 @@ public class CastChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        MutationExpression expr = ExpressionFactory.tryMutationExpressionFor(get1(), line, block);
-        if (expr != null) {
-            return new CastStatement(expr);
-        }
-        return null;
+        MutationExpression expr = getE1();
+        return new CastStatement(expr);
     }
 
 }

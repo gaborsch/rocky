@@ -12,7 +12,7 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class ElseChecker extends Checker {
+public class ElseChecker extends Checker<Object, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("Else"),

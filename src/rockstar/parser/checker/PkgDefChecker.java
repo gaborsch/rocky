@@ -7,7 +7,6 @@ package rockstar.parser.checker;
 
 import java.util.Optional;
 import rockstar.expression.Expression;
-import rockstar.parser.ExpressionFactory;
 import rockstar.runtime.PackagePath;
 import rockstar.statement.PkgDefStatement;
 import rockstar.statement.Statement;
@@ -16,10 +15,10 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class PkgDefChecker extends Checker {
+public class PkgDefChecker extends Checker<Expression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Album", 1)};
+        new ParamList("Album", expressionAt(1))};
 
     @Override
     public Statement check() {
@@ -27,8 +26,7 @@ public class PkgDefChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        Expression expr = ExpressionFactory.getExpressionFor(get1(), line, block);
-
+        Expression expr = getE1();
         Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(expr);
         if (pathOpt.isPresent()) {
             return new PkgDefStatement(pathOpt.get());

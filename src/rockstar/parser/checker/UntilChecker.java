@@ -6,7 +6,6 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.Statement;
 import rockstar.statement.WhileStatement;
 
@@ -14,10 +13,10 @@ import rockstar.statement.WhileStatement;
  *
  * @author Gabor
  */
-public class UntilChecker extends Checker {
+public class UntilChecker extends Checker<Expression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Until", 1)};
+        new ParamList("Until", expressionAt(1))};
 
     @Override
     public Statement check() {
@@ -25,11 +24,8 @@ public class UntilChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        Expression condition = ExpressionFactory.getExpressionFor(get1(), line, block);
-        if (condition != null) {
-            return new WhileStatement(condition, true);
-        }
-        return null;
+        Expression condition = getE1();
+        return new WhileStatement(condition, true);
     }
 
 }

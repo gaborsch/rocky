@@ -5,11 +5,19 @@
  */
 package rockstar.parser.checker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author Gabor
  */
 public class ParamList {
+
+    private final static Map<String, List<String>> listCache = new HashMap<>();
 
     /**
      * @return the params
@@ -17,11 +25,17 @@ public class ParamList {
     public Object[] getParams() {
         return params;
     }
-    
+
     private Object[] params;
 
-    public ParamList(Object... params) {
-        this.params = params;
+    public ParamList(Object... orig) {
+        params = new Object[orig.length];
+        for (int i = 0; i < orig.length; i++) {
+            Object value = orig[i];
+            params[i] = (value != null && value instanceof String)
+                    ? listCache.computeIfAbsent((String) value, s -> Arrays.asList(s))
+                    : value;
+        }
     }
-    
+
 }

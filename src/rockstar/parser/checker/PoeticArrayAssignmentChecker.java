@@ -17,21 +17,21 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class PoeticArrayAssignmentChecker extends Checker {
+public class PoeticArrayAssignmentChecker extends Checker<VariableReference, List<String>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList(1, "is", "containing", 2),
-        new ParamList(1, "was", "containing", 2),
-        new ParamList(1, "are", "containing", 2),
-        new ParamList(1, "were", "containing", 2),
-        new ParamList("Within", 1, "is", 2),
-        new ParamList("Within", 1, "was", 2),
-        new ParamList("Within", 1, "are", 2),
-        new ParamList("Within", 1, "were", 2),
-        new ParamList(1, "contain", 2),
-        new ParamList(1, "contains", 2),
-        new ParamList(1, "hold", 2),
-        new ParamList(1, "holds", 2)};
+        new ParamList(variableAt(1), "is", "containing", textAt(2)),
+        new ParamList(variableAt(1), "was", "containing", textAt(2)),
+        new ParamList(variableAt(1), "are", "containing", textAt(2)),
+        new ParamList(variableAt(1), "were", "containing", textAt(2)),
+        new ParamList("Within", variableAt(1), "is", textAt(2)),
+        new ParamList("Within", variableAt(1), "was", textAt(2)),
+        new ParamList("Within", variableAt(1), "are", textAt(2)),
+        new ParamList("Within", variableAt(1), "were", textAt(2)),
+        new ParamList(variableAt(1), "contain", textAt(2)),
+        new ParamList(variableAt(1), "contains", textAt(2)),
+        new ParamList(variableAt(1), "hold", textAt(2)),
+        new ParamList(variableAt(1), "holds", textAt(2))};
 
     @Override
     public Statement check() {
@@ -39,27 +39,24 @@ public class PoeticArrayAssignmentChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
-        if (varRef != null) {
-            ArrayAssignmentStatement stmt = new ArrayAssignmentStatement(varRef);
-            List<String> valueList = get2();
-            int startIdx = 0;
-            while (startIdx < valueList.size()) {
-                int endIdx = Utils.findInList(valueList, "and", startIdx);
-                List<String> exprSubList = valueList.subList(startIdx, endIdx);
-                Expression expr = ExpressionFactory.tryExpressionFor(exprSubList, line, block);
-                if (expr != null) {
-                    // variable reference
-                    stmt.addExpression(expr);
-                } else {
-                    // could not parse expression
-                    return null;
-                }
-                startIdx = endIdx + 1; // skip "and"
+        VariableReference varRef = getE1();
+        ArrayAssignmentStatement stmt = new ArrayAssignmentStatement(varRef);
+        List<String> valueList = getE2();
+        int startIdx = 0;
+        while (startIdx < valueList.size()) {
+            int endIdx = Utils.findInList(valueList, "and", startIdx);
+            List<String> exprSubList = valueList.subList(startIdx, endIdx);
+            Expression expr = ExpressionFactory.tryExpressionFor(exprSubList, line, block);
+            if (expr != null) {
+                // variable reference
+                stmt.addExpression(expr);
+            } else {
+                // could not parse expression
+                return null;
             }
-            return stmt;
+            startIdx = endIdx + 1; // skip "and"
         }
-        return null;
+        return stmt;
     }
 
 }

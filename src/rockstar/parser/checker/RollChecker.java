@@ -6,7 +6,6 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.RollStatement;
 import rockstar.statement.Statement;
 
@@ -14,17 +13,17 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class RollChecker extends Checker {
+public class RollChecker extends Checker<VariableReference, VariableReference, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Roll", 2, "into", 1),
-        new ParamList("Pop", 2, "into", 1),
-        new ParamList("Pull", 1, "from", 2)};
+        new ParamList("Roll", variableAt(2), "into", variableAt(1)),
+        new ParamList("Pop", variableAt(2), "into", variableAt(1)),
+        new ParamList("Pull", variableAt(1), "from", variableAt(2))};
 
     private static final ParamList[] PARAM_LIST2 = new ParamList[]{
-        new ParamList("Roll", 1),
-        new ParamList("Pop", 1),
-        new ParamList("Pull", "from", 1)};
+        new ParamList("Roll", variableAt(2)),
+        new ParamList("Pop", variableAt(2)),
+        new ParamList("Pull", "from", variableAt(2))};
 
     @Override
     public Statement check() {
@@ -36,21 +35,14 @@ public class RollChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        VariableReference targetRefExpr = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
-        VariableReference arrayExpr = ExpressionFactory.tryVariableReferenceFor(get2(), line, block);
-        if (arrayExpr != null && targetRefExpr != null) {
-            return new RollStatement(arrayExpr, targetRefExpr);
-        }
-
-        return null;
+        VariableReference targetRefExpr = getE1();
+        VariableReference arrayExpr = getE2();
+        return new RollStatement(arrayExpr, targetRefExpr);
     }
 
     private Statement validate2(ParamList params) {
-        VariableReference arrayExpr = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
-        if (arrayExpr != null) {
-            return new RollStatement(arrayExpr);
-        }
-        return null;
+        VariableReference arrayExpr = getE2();
+        return new RollStatement(arrayExpr);
     }
 
 }

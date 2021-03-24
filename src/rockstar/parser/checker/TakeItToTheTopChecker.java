@@ -14,7 +14,7 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class TakeItToTheTopChecker extends Checker {
+public class TakeItToTheTopChecker extends Checker<Object, Object, Object> {
 
     private static final List<String> TAKE_IT_TO_THE_TOP = Arrays.asList("Take", "it", "to", "the", "top");
 

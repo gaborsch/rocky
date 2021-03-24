@@ -53,7 +53,7 @@ public class ExpressionFactory {
     }
 
     /**
-     * Parses a simple expression (literal or varable reference)
+     * Parses a simple expression (literal or variable reference)
      *
      * @param list
      * @param line
@@ -61,15 +61,27 @@ public class ExpressionFactory {
      * @return
      */
     public static Expression tryExpressionFor(List<String> list, Line line, Block block) {
+        return tryExpressionFor(list, line, null, block);
+    }
+
+    /**
+     * Parses a simple expression (literal or variable reference)
+     *
+     * @param list
+     * @param line
+     * @param defaultExpr
+     * @param block
+     * @return
+     */
+    public static Expression tryExpressionFor(List<String> list, Line line, Expression defaultExpr, Block block) {
         ExpressionParser parser = new ExpressionParser(list, line, block);
-        Expression expr = parser.parse(null);
+        Expression expr = parser.parse(defaultExpr);
         if (expr != null && parser.isFullyParsed()) {
             // has valid value and parsed through the list
             return expr;
         }
         return null;
-    }
-    
+    }    
     /**
      * Try a variable reference, returns null if failed
      *

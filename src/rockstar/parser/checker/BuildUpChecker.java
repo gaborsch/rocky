@@ -5,8 +5,8 @@
  */
 package rockstar.parser.checker;
 
+import java.util.List;
 import rockstar.expression.VariableReference;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.IncrementStatement;
 import rockstar.statement.Statement;
 
@@ -14,10 +14,10 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class BuildUpChecker extends Checker {
+public class BuildUpChecker extends Checker<VariableReference, List<String>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Build", 1, "up", 2)};
+        new ParamList("Build", variableAt(1), "up", textAt(2).opt())};
 
     @Override
     public Statement check() {
@@ -25,12 +25,12 @@ public class BuildUpChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-
-        VariableReference varRef = ExpressionFactory.tryVariableReferenceFor(get1(), line, block);
-        if (varRef != null) {
-            int count = 1;
+        VariableReference varRef = getE1();
+        List<String> text = getE2();
+        int count = 1;
+        if (text != null) {
             boolean isAndPossible = true;
-            for (String s : get2()) {
+            for (String s : text) {
                 if ("up".equals(s)) {
                     count++;
                     isAndPossible = true;
@@ -40,9 +40,8 @@ public class BuildUpChecker extends Checker {
                     return null;
                 }
             }
-            return new IncrementStatement(varRef, count);
         }
-        return null;
+        return new IncrementStatement(varRef, count);
     }
 
 }

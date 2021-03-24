@@ -13,11 +13,11 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class AliasChecker extends Checker {
+public class AliasChecker extends Checker<List<String>, List<String>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("for", "me", 1, "means", 2),
-        new ParamList(1, "means", 2)};
+        new ParamList("for", "me", textAt(1), "means", textAt(2)),
+        new ParamList(textAt(1), "means", textAt(2))};
 
     @Override
     public Statement check() {
@@ -25,8 +25,8 @@ public class AliasChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        List<String> alias = get1();
-        List<String> keyword = get2();
+        List<String> alias = getE1();
+        List<String> keyword = getE2();
         if (!alias.isEmpty() && !keyword.isEmpty()) {
             return new AliasStatement(alias, keyword);
         }

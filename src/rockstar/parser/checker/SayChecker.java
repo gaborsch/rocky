@@ -6,7 +6,6 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
-import rockstar.parser.ExpressionFactory;
 import rockstar.statement.OutputStatement;
 import rockstar.statement.Statement;
 
@@ -14,13 +13,13 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class SayChecker extends Checker {
+public class SayChecker extends Checker<Expression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Say", 1),
-        new ParamList("Shout", 1),
-        new ParamList("Whisper", 1),
-        new ParamList("Scream", 1)};
+        new ParamList("Say", expressionAt(1)),
+        new ParamList("Shout", expressionAt(1)),
+        new ParamList("Whisper", expressionAt(1)),
+        new ParamList("Scream", expressionAt(1))};
 
     @Override
     public Statement check() {
@@ -28,11 +27,8 @@ public class SayChecker extends Checker {
     }
 
     private Statement validate(ParamList params) {
-        Expression expr = ExpressionFactory.getExpressionFor(get1(), line, block);
-        if (expr != null) {
-            return new OutputStatement(expr);
-        }
-        return null;
+        Expression expr = getE1();
+        return new OutputStatement(expr);
     }
 
 }
