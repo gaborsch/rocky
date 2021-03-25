@@ -19,20 +19,20 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class BlockContext {
-
+    
     private final BlockContext parent;
-
+    
     private final ProgramContext rootCtx;
     private final FileContext fileCtx;
     private final RockObject thisObjectCtx;
-
+    
     private final int level;
-
+    
     protected final Map<String, Value> vars = new HashMap<>();
     protected final Map<String, FunctionBlock> funcs = new HashMap<>();
-
+    
     private final Environment env;
-
+    
     private final String ctxName;
 
     /**
@@ -77,19 +77,19 @@ public class BlockContext {
         this.level = parent.level + (increaseLevel ? 1 : 0);
         this.ctxName = ctxName;
     }
-
+    
     public Environment getEnv() {
         return env;
     }
-
+    
     public Map<String, Value> getVariables() {
         return vars;
     }
-
+    
     public Map<String, FunctionBlock> getFunctions() {
         return funcs;
     }
-
+    
     public String getName() {
         if (this.parent == null) {
             return ctxName;
@@ -108,33 +108,37 @@ public class BlockContext {
     public PackagePath getPackagePath() {
         return fileCtx.getPackagePath();
     }
-
+    
     public BlockContext getParent() {
         return parent;
     }
-
+    
     public ProgramContext getRootCtx() {
         return rootCtx;
     }
-
+    
     public FileContext getFileCtx() {
         return fileCtx;
     }
-
+    
     public Optional<RockObject> getThisObjectCtx() {
         return Optional.ofNullable(thisObjectCtx);
     }
-
+    
     public int getLevel() {
         return level;
     }
 
     // last assigned variable name in this context
     private VariableReference lastVariableRef = null;
-
+    
     public VariableReference getLastVariableRef() {
         BlockContext lastvarCtx = getContextFor(this, ctx -> lastVariableRef != null);
-        return lastvarCtx.lastVariableRef;
+        if (lastvarCtx != null) {
+            return lastvarCtx.lastVariableRef;
+        } else {
+            throw new RockstarRuntimeException("invalid reference to last variable");
+        }
     }
 
     /**
@@ -146,9 +150,9 @@ public class BlockContext {
     public void setVariable(VariableReference vref, Value value) {
         // Find out the effective variable reference
         VariableReference effectiveVref = vref.getEffectiveVref(this);
-
-        doSetVariable(effectiveVref, value);
         
+        doSetVariable(effectiveVref, value);
+
         // last assigned variable name, if wasn't "it" reference
         if (vref == effectiveVref) {
             this.lastVariableRef = vref;
@@ -173,7 +177,7 @@ public class BlockContext {
                     && (ctx.vars.containsKey(vref.getName()))
             );
         }
-
+        
         String variableName = vref.getName();
 
         // we can set either local or global variables
@@ -233,22 +237,22 @@ public class BlockContext {
             v = ctx.vars.get(vname);
             ctx = ctx.getParent();
         }
-
+        
         return v;
     }
-
+    
     public void defineFunction(String name, FunctionBlock function) {
         funcs.put(name, function);
     }
-
+    
     public FunctionBlock retrieveLocalFunction(String name) {
         return funcs.get(name);
     }
-
+    
     public BlockContext getContextForFunction(String name) {
         return getContextFor(this, ctx -> ctx.funcs.containsKey(name));
     }
-
+    
     public QualifiedClassName findClass(String name) {
         // if we have an import, use that
         QualifiedClassName aliasQcn = fileCtx.getQualifiedClassNameByAlias(name);
@@ -259,24 +263,24 @@ public class BlockContext {
         QualifiedClassName defaultQcn = new QualifiedClassName(getPackagePath(), name);
         return defaultQcn;
     }
-
+    
     public void beforeStatement(Statement stmt) {
         if (env.getListener() != null) {
             env.getListener().beforeStatement(this, stmt);
         }
     }
-
+    
     public void beforeExpression(Expression exp) {
         if (env.getListener() != null) {
             env.getListener().beforeExpression(this, exp);
         }
     }
-
+    
     public Value afterExpression(Expression exp, Value v) {
         if (env.getListener() != null) {
             env.getListener().afterExpression(this, exp, v);
         }
         return v;
     }
-
+    
 }
