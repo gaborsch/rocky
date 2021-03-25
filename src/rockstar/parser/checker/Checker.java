@@ -28,10 +28,9 @@ public abstract class Checker<T1, T2, T3> {
     protected Line line;
     protected Block block;
 
-    private final List<String>[] result = new List[4];
     private final Object[] parsedResult = new Object[4];
     private int lastPos;
-    private Integer lastNum;
+    private Placeholder lastPH;
     private int nextPosStart;
     private int nextPosEnd;
 
@@ -39,18 +38,6 @@ public abstract class Checker<T1, T2, T3> {
 
 //    private final Map<String, List<String>> listCache = new HashMap<>();
     private Object[] extParams;
-
-//    public List<String> get1() {
-//        return result[1];
-//    }
-//
-//    public List<String> get2() {
-//        return result[2];
-//    }
-//
-//    public List<String> get3() {
-//        return result[3];
-//    }
 
     public T1 getE1() {
         return (T1) parsedResult[1];
@@ -79,7 +66,7 @@ public abstract class Checker<T1, T2, T3> {
 
     /**
      * Matches a statement pattern, e.g. [1, "this", 3, "that" "other" 2]
-     * Numbers represent placeholders, result[n] will be set to the matched
+     * Numbers represent placeholders, parsedResult[n] will be set to the matched
      * sub-list Strings represent string tokens
      *
      * @param params
@@ -89,20 +76,14 @@ public abstract class Checker<T1, T2, T3> {
         matchCounter++;
         List<String> tokens = line.getTokens();
         // clear previous result
-        for (int i = 0; i < result.length; i++) {
-            result[i] = null;
+        for (int i = 0; i < parsedResult.length; i++) {
             parsedResult[i] = null;
         }
         // match cycle
         lastPos = -1;
-        lastNum = null;
-        Placeholder lastPH = null;
+        lastPH = null;
         for (Object param : params) {
-            if (param instanceof Integer) {
-                lastNum = (Integer) param;
-                lastPH = null;
-            } else if (param instanceof Placeholder) {
-                lastNum = ((Placeholder) param).getPosition();
+            if (param instanceof Placeholder) {
                 lastPH = ((Placeholder) param);
             } else {
                 List<String> needle = null;
@@ -115,14 +96,13 @@ public abstract class Checker<T1, T2, T3> {
                 findNext(needle, lastPos, tokens);
 
                 if (nextPosEnd > lastPos) {
-                    if (lastNum != null) {
+                    if (lastPH != null) {
                         // save the sublist as the numbered result
-                        result[lastNum] = tokens.subList(lastPos + 1, nextPosStart);
-                        boolean success = saveResultPosition(lastNum, lastPH, tokens.subList(lastPos + 1, nextPosStart));
+                        boolean success = saveResultPosition(lastPH, tokens.subList(lastPos + 1, nextPosStart));
                         if (!success) {
                             return false;
                         }
-                        lastNum = null;
+                        lastPH = null;
                     } else if (nextPosStart != lastPos + 1) {
                         // tokens must follow each other
                         return false;
@@ -134,10 +114,9 @@ public abstract class Checker<T1, T2, T3> {
                 }
             }
         }
-        if (lastNum != null) {
+        if (lastPH != null) {
             // save the tail as the numbered result
-//            result[lastNum] = tokens.subList(lastPos + 1, tokens.size());
-            boolean success = saveResultPosition(lastNum, lastPH, tokens.subList(lastPos + 1, tokens.size()));
+            boolean success = saveResultPosition(lastPH, tokens.subList(lastPos + 1, tokens.size()));
             if (!success) {
                 return false;
             }
@@ -148,26 +127,52 @@ public abstract class Checker<T1, T2, T3> {
         return true;
     }
 
-    private boolean saveResultPosition(int pos, Placeholder ph, List<String> tokens) {
-        result[pos] = tokens;
-        if (ph != null) {
-            // if there are no token
-            if (tokens.isEmpty()) {
-                // we only accept if it is optional
-                return ph.isOptional();
+    private boolean saveResultPosition(Placeholder ph, List<String> posTokens) {
+        // if there are no token
+        if (posTokens.isEmpty()) {
+            // we only accept if it is optional
+            return ph.isOptional();
+        }
+
+        boolean validExpr = false;
+        boolean validText = false;
+        Expression e = null;
+        if (ph.getType() == POETIC_LITERAL) {
+            String assignmentToken = line.getTokens().get(lastPos);
+            String orig = line.getOrigLine();
+            int p = orig.indexOf(" " + assignmentToken + " ");
+            if (assignmentToken.equals("is")) {
+                // maybe "'s" was expanded to " is "
+                int p2 = orig.indexOf("'s "); 
+                // find out which one was the first, "is" or "'s"
+                p = (p2 < 0) ? p : ((p < 0) ? p2 : ((p < p2) ? p : p2));
+                if (p >= 0) {
+                   if (p == p2) {
+                        p = p + "'s ".length();
+                    } else {
+                        p = p + assignmentToken.length() + 2;
+                    }
+                }
+            } else {
+                p += assignmentToken.length() + 2;
             }
+            if (p >= 0) {
+                String origEnd = orig.substring(p);
+                e = ExpressionFactory.getPoeticLiteralFor(posTokens, line, origEnd, block);
+                validExpr = true;
+            }
+            
+        } else {
             // default expression may be defined - hopefully it has already been parsed
             Expression defaultExpr = ph.getDefaultExprPos() == null ? null : (Expression) parsedResult[ph.getDefaultExprPos()];
 
-            Expression e = null;
+            
             if (ph.getType() == MUTATION_EXPRESSION) {
-                e = ExpressionFactory.tryMutationExpressionFor(tokens, line, block);
-            } else if (ph.getType() != POETIC_LITERAL && ph.getType() != TEXT) {
-                e = ExpressionFactory.tryExpressionFor(tokens, line, defaultExpr, block);
+                e = ExpressionFactory.tryMutationExpressionFor(posTokens, line, block);
+            } else if (ph.getType() != TEXT) {
+                e = ExpressionFactory.tryExpressionFor(posTokens, line, defaultExpr, block);
             }
 
-            boolean validExpr = false;
-            boolean validText = false;
             switch (ph.getType()) {
                 case EXPRESSION:
                 case MUTATION_EXPRESSION:
@@ -188,21 +193,20 @@ public abstract class Checker<T1, T2, T3> {
                 case VARIABLE_OR_LIST:
                     validExpr = (e != null) && ((e instanceof VariableReference) || (e instanceof ListExpression));
                     break;
-                case POETIC_LITERAL:
                 case TEXT:
                     validText = true;
                     break;
                 default:
                     throw new RuntimeException("Unhandled expression type:" + ph.getType());
             }
-            if (validExpr) {
-                parsedResult[ph.getPosition()] = e;
-            } else if (validText) {
-                parsedResult[ph.getPosition()] = tokens;
-            }
-            return validExpr || validText;
         }
-        return true;
+        if (validExpr && e != null) {
+            parsedResult[ph.getPosition()] = e;
+        } else if (validText) {
+            parsedResult[ph.getPosition()] = posTokens;
+        }
+        return validExpr || validText;
+            
     }
 
     private void findNext(List<String> needle, int lastPos, List<String> tokens) {

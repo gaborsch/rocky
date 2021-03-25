@@ -27,10 +27,7 @@ public class AliasChecker extends Checker<List<String>, List<String>, Object> {
     private Statement validate(ParamList params) {
         List<String> alias = getE1();
         List<String> keyword = getE2();
-        if (!alias.isEmpty() && !keyword.isEmpty()) {
-            return new AliasStatement(alias, keyword);
-        }
-        return null;
+        return new AliasStatement(alias, keyword);
     }
 
 }

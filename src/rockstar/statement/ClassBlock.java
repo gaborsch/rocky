@@ -7,7 +7,6 @@ package rockstar.statement;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import rockstar.runtime.*;
 
 /**
@@ -15,9 +14,10 @@ import rockstar.runtime.*;
  * @author Gabor
  */
 public class ClassBlock extends Block {
+
     private final String name;
     private final String parentName;
-    
+
     private QualifiedClassName qualifiedName;
     private QualifiedClassName qualifiedParentName;
 
@@ -30,7 +30,7 @@ public class ClassBlock extends Block {
         this.name = name;
         this.parentName = parentName;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -54,7 +54,7 @@ public class ClassBlock extends Block {
         if (parentName != null) {
             qualifiedParentName = ctx.findClass(parentName);
             if (qualifiedParentName == null) {
-                throw new RockstarRuntimeException("Can't find parent class "+parentName);
+                throw new RockstarRuntimeException("Can't find parent class " + parentName);
             }
             parentClass = ctx.getRootCtx().retrieveClass(qualifiedParentName);
         }
@@ -69,7 +69,7 @@ public class ClassBlock extends Block {
         }
         getStatements().forEach(statement -> {
             if (statement instanceof FunctionBlock) {
-                FunctionBlock function = (FunctionBlock)statement;
+                FunctionBlock function = (FunctionBlock) statement;
                 if (function.isAbstract()) {
                     abstractMethodNames.add(function.getName());
                 } else {
@@ -78,21 +78,22 @@ public class ClassBlock extends Block {
             }
         });
     }
-    
+
     public boolean isAbstract() {
-        return ! abstractMethodNames.isEmpty();
+        return !abstractMethodNames.isEmpty();
     }
 
     /**
      * Instantiate a class
+     *
      * @param ctorParams
-     * @return 
+     * @return
      */
     public Value instantiate(List<Value> ctorParams) {
         if (isAbstract()) {
             throw new RockstarRuntimeException("Cannot instantiate abstract class " + qualifiedName);
         }
-        
+
         RockObject instance = create(definingContext);
 
         // call the constructor
@@ -106,8 +107,9 @@ public class ClassBlock extends Block {
 
     /**
      * Create and initialize an instance
+     *
      * @param ctx
-     * @return 
+     * @return
      */
     private RockObject create(BlockContext ctx) {
         RockObject instance;
@@ -120,13 +122,12 @@ public class ClassBlock extends Block {
             // then create the next layer
             instance = new RockObject(parentInstance, this);
         }
-        
+
         // initialize the variables
         super.execute(instance);
-        
+
         return instance;
     }
-
 
     @Override
     protected String explain() {
