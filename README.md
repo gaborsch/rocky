@@ -89,7 +89,7 @@ Do you want to get acquainted with Rockstar? Try the REPL (interactive) mode, st
 ```
 $ ./rockstar -
 Rockstar Java by gaborsch, Version 2.0 (with OOP)
----------------------------------------
+-------------------------------------------------
 Type 'exit' to quit, 'show' to get more info.
 > My name is Gabor
 > What's your name?
@@ -105,7 +105,7 @@ There are other possibilities as well, like debug mode (detailed description com
 ```
 $ ./rockstar help
 Rockstar Java by gaborsch, Version 2.0 (with OOP)
----------------------------------------
+-------------------------------------------------
 Usage:
 rockstar <filename> ...
 rockstar run [--options ...] <filename> ...
