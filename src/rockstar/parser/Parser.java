@@ -18,14 +18,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import rockstar.runtime.FileContext;
 import rockstar.runtime.Utils;
 import rockstar.statement.AliasStatement;
 import rockstar.statement.Block;
 import rockstar.statement.BlockEnd;
+import rockstar.statement.ContinuingBlockStatementI;
 import rockstar.statement.Program;
 import rockstar.statement.Statement;
-import rockstar.statement.ContinuingBlockStatementI;
 
 /**
  *
@@ -35,7 +34,7 @@ public class Parser {
 
     private String filename;
     private MultilineReader rdr;
-    
+
     public static Program parseProgram(String programText) {
         InputStream is;
         try {
@@ -80,7 +79,7 @@ public class Parser {
                 if (stmt instanceof AliasStatement) {
                     AliasStatement aliasStmt = (AliasStatement) stmt;
                     currentBlock.defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
-                } 
+                }
                 if (stmt instanceof BlockEnd) {
                     // simple block closing: no need to add it anywhere
                     if (blocks.size() > 1) {
@@ -125,47 +124,4 @@ public class Parser {
         // System.err.println("parse error: " + msg);
         throw new ParseException(msg, l);
     }
-
-    public static class MultilineReader {
-
-        BufferedReader rdr;
-        int lnum;
-        int prevLineCount = 0;
-
-        private MultilineReader(BufferedReader bufferedReader) {
-            rdr = bufferedReader;
-            lnum = 1;
-        }
-
-        public int getLnum() {
-            return lnum;
-        }
-
-        private String readLine() throws IOException {
-            lnum += prevLineCount;
-            prevLineCount = 1;
-            String l = rdr.readLine();
-            if (l == null) {
-                return null;
-            }
-            StringBuilder sb = new StringBuilder(l);
-            int lastOpen = l.lastIndexOf('(');
-            int lastClose = l.lastIndexOf(')');
-            boolean isComment = false;
-            while (lastOpen > lastClose || (isComment && lastClose == -1)) {
-                prevLineCount++;
-                l = rdr.readLine();
-                if (l == null) {
-                    break;
-                }
-                sb.append(l).append(' ');
-                lastOpen = l.lastIndexOf('(');
-                lastClose = l.lastIndexOf(')');
-                isComment = true;
-            }
-            return sb.toString();
-        }
-
-    }
-
 }
