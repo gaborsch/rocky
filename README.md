@@ -26,11 +26,13 @@ Rocky requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrap
 
 To install and run, you only need the `./rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`, depending on your OS). Make sure that `java` is on your path and you can run it immediately. The rest of the files are for development.
 
+If you are on Linux, you can execute `sudo install.sh` - this will create a symlink in `/usr/bin`, so your Rockstar programs could be run like a script with `#!/usr/bin/rockstar` shebang header.
+
 There are some Rockstar program in the [programs](https://github.com/gaborsch/rocky/tree/master/programs) folder and its subfolders, you may want to check them, too. They're mostly for test purposes, but you can peek into if you want to get inspired or check some features.
 
 #### Install for Docker 
 
-If you don't have Java on your machine, you can run Rockstar within a Docker container. We have the `dockstar` command for you, where everything works just like with the `rockstar` command, but the image is run within Docker. The only difference is that you have to replace `\` path separators to `/` unix-style on command line.
+If you don't have Java on your machine, you can run Rockstar within a Docker container. There is a `dockstar` command for you, where everything works just like with the `rockstar` command, but the image is run within Docker. The only difference is that you have to replace `\` path separators to `/` unix-style on command line.
 
 ```
 ./dockstar help
@@ -51,7 +53,7 @@ Once created, you can use the container to run Rocky. Here are some sample comma
 
 ### How to use:
 
-It is very easy to run a program:
+It's very easy to run a program:
 ```
 $ ./rockstar programs/modulus.rock 
 Enter Dividend:
@@ -226,6 +228,10 @@ CORRECT tests in programs/tests/fixtures/Rocky_ext/array_ext
    [ OK ] array_functions.rock
    [ OK ] while_alike.rock
    [ OK ] while_alike_for.rock
+CORRECT tests in programs/tests/fixtures/Rocky_ext/comments
+   [ OK ] hash_comment.rock
+   [ OK ] hash_comment_does_not_break_block.rock
+   [ OK ] shebang.rock
 CORRECT tests in programs/tests/fixtures/Rocky_ext/oop
    [ OK ] abstract_method.rock
    [ OK ] class_declaration.rock
@@ -273,9 +279,9 @@ CORRECT tests in programs/tests/fixtures/whitespace
 ============================================================
 Test results for programs/tests/:
 ============================================================
-All tests:    110
+All tests:    113
 Failed tests: 0
-Passed tests: 110
+Passed tests: 113
 Pass ratio:   100.00%
 ============================================================
 
