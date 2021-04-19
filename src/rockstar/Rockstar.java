@@ -22,13 +22,15 @@ import rockstar.test.RockstarTest;
  * @author Gabor
  */
 public class Rockstar {
+    
+    public static final String VERSION = "2.0.1";
 
     // implementation constants
     public static final int MAX_LOOP_ITERATIONS = 1000;
 
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
-    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version 2.0 (with OOP)";
+    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version "+VERSION+" (with OOP)";
 
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test", "debug"}));
 

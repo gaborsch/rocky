@@ -90,7 +90,7 @@ Do you want to get acquainted with Rockstar? Try the REPL (interactive) mode, st
 
 ```
 $ ./rockstar -
-Rockstar Java by gaborsch, Version 2.0 (with OOP)
+Rockstar Java by gaborsch, Version 2.0.1 (with OOP)
 -------------------------------------------------
 Type 'exit' to quit, 'show' to get more info.
 > My name is Gabor
@@ -106,8 +106,8 @@ my name = 5
 There are other possibilities as well, like debug mode (detailed description coming soon) or help for each command:
 ```
 $ ./rockstar help
-Rockstar Java by gaborsch, Version 2.0 (with OOP)
--------------------------------------------------
+Rockstar Java by gaborsch, Version 2.0.1 (with OOP)
+---------------------------------------------------
 Usage:
 rockstar <filename> ...
 rockstar run [--options ...] <filename> ...
