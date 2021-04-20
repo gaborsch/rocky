@@ -24,15 +24,15 @@ Rocky requires at least Java8 JRE to run. The `rockstar.bat` and `rockstar` wrap
 
 ### Install
 
-To install and run, you only need the `./rocky.jar` file, and one of the wrappers (`rockstar.bat` or `rockstar`, depending on your OS). Make sure that `java` is on your path and you can run it immediately. The rest of the files are for development.
+To install and run, you only need the [`rocky.jar`](https://github.com/gaborsch/rocky/tree/master/rocky.jar)  file, and one of the wrappers ([`rockstar.bat`](https://github.com/gaborsch/rocky/tree/master/rockstar.bat) or [`rockstar`](https://github.com/gaborsch/rocky/tree/master/rockstar), depending on your OS). Make sure that `java` is on your path and you can run it immediately. The rest of the files are for development.
 
-If you are on Linux, you can execute `sudo install.sh` - this will create a symlink in `/usr/bin`, so your Rockstar programs could be run like a script with `#!/usr/bin/rockstar` shebang header.
+If you are on Linux, you can execute [`sudo install.sh`](https://github.com/gaborsch/rocky/tree/master/install.sh) - this will create a symlink in `/usr/bin`, so your Rockstar programs could be run like a script with `#!/usr/bin/rockstar` shebang header.
 
 There are some Rockstar program in the [programs](https://github.com/gaborsch/rocky/tree/master/programs) folder and its subfolders, you may want to check them, too. They're mostly for test purposes, but you can peek into if you want to get inspired or check some features.
 
 #### Install for Docker 
 
-If you don't have Java on your machine, you can run Rockstar within a Docker container. There is a `dockstar` command for you, where everything works just like with the `rockstar` command, but the image is run within Docker. The only difference is that you have to replace `\` path separators to `/` unix-style on command line.
+If you don't have Java on your machine, you can run Rockstar within a Docker container. There is a [`dockstar`](https://github.com/gaborsch/rocky/tree/master/dockstar) command for you, where everything works just like with the `rockstar` command, but the image is run within Docker. The only difference is that you have to replace `\` path separators to `/` unix-style on command line.
 
 ```
 ./dockstar help
