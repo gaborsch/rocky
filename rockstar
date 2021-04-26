@@ -1,2 +1,3 @@
 #!/bin/bash
-java -classpath rocky.jar rockstar.Rockstar $*
+PATH_TO_ROCKY=`dirname $0`
+java -classpath ${PATH_TO_ROCKY}/rocky.jar rockstar.Rockstar $*
