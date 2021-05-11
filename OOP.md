@@ -165,9 +165,9 @@ Not all methods are useful for the user of the class, and it would also increase
 
 # Example code
 
-https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/an_array.rock
-https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chain.rock
-https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chainlink.rock
+* https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/an_array.rock
+* https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chain.rock
+* https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chainlink.rock
 
 
 
