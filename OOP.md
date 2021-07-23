@@ -9,7 +9,7 @@ All these are of course within the Rockstar limitations: no strong typing, no me
 
 This is very much like a traditional OOP, without the interfaces. Of the OOP principles, all encapsulation, inheritance, abstraction and polymorphism are covered (the latter two are partially). 
 
-## Let's get dirty!
+## Let's start!
 
 Let me show you a small example (this uses the "parameterless method" syntax, but only as an object method call). The explanations are on the right side.
 
