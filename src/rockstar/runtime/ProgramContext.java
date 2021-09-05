@@ -66,7 +66,7 @@ public class ProgramContext extends BlockContext {
         // first load from system lib
         try {
             // the system lib can be overriden
-            String libPath = getEnv().getParameter("-libpath");
+            String libPath = getEnv().getOptionValue("-libpath");
             if (libPath == null || libPath.isEmpty()) {
                 // if the libpath is not present, use system classes
                 loadClass(this.getClass().getClassLoader(), qcn);
@@ -101,7 +101,7 @@ public class ProgramContext extends BlockContext {
 
     private void loadClass(InputStream is, String filename) throws FileNotFoundException {
         try {
-            Program prg = new Parser(is, filename).parse();
+            Program prg = new Parser(is, filename, getEnv()).parse();
             FileContext fileCtx = new FileContext(this, filename);
             prg.execute(fileCtx);
         } catch (ParseException pex) {

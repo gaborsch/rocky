@@ -15,9 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import rockstar.runtime.BlockStack;
+import rockstar.runtime.Environment;
 import rockstar.runtime.Utils;
 import rockstar.statement.AliasStatement;
 import rockstar.statement.Block;
@@ -34,23 +35,25 @@ public class Parser {
 
     private String filename;
     private MultilineReader rdr;
+    private Environment env;
 
-    public static Program parseProgram(String programText) {
+    public static Program parseProgram(String programText, Environment env) {
         InputStream is;
         try {
             is = new ByteArrayInputStream(programText.getBytes("UTF-8"));
-            return new Parser(is, "").parse();
+            return new Parser(is, "", env).parse();
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
 
-    public Parser(String filename) throws FileNotFoundException {
-        this(new FileInputStream(new File(filename)), filename);
+    public Parser(String filename, Environment env) throws FileNotFoundException {
+        this(new FileInputStream(new File(filename)), filename, env);
     }
 
-    public Parser(InputStream is, String filename) {
+    public Parser(InputStream is, String filename, Environment env) {
+        this.env = env;
         try {
             this.filename = filename;
             rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)));
@@ -69,7 +72,7 @@ public class Parser {
 
         String line;
         Line l = Line.STARTER_LINE;
-        Stack<Block> blocks = new Stack();
+        BlockStack blocks = new BlockStack(env);
         blocks.push(prg);
         try {
             while ((line = rdr.readLine()) != null) {
@@ -82,9 +85,7 @@ public class Parser {
                 }
                 if (stmt instanceof BlockEnd) {
                     // simple block closing: no need to add it anywhere
-                    if (blocks.size() > 1) {
-                        Block finishedBlock = blocks.pop();
-                    }
+                    stmt = blocks.removeBlock();
                 } else {
                     // meaningful statements
                     if (stmt instanceof ContinuingBlockStatementI) {

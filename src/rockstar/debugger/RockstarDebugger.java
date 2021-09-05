@@ -34,7 +34,7 @@ public class RockstarDebugger {
 
         DebugListener listener = new DebugListener(options);
         env.setListener(listener);
-        
+
         FileContext ctx = new FileContext(env);
 
         System.out.println(Rockstar.CLI_HEADER);
@@ -42,19 +42,19 @@ public class RockstarDebugger {
         System.out.println("Type 'exit' to quit, '?' to get more help on debugger commands. Press enter after each command.");
 
         try {
-        // pre-run any programs defined as parameter
-        files.forEach((filename) -> {
-            try {
-                Program prg = new Parser(filename).parse();
-                listener.setProgram(prg);
-                System.out.println("Debugging " + filename);       
-                prg.execute(ctx);
-            } catch (FileNotFoundException ex) {
-                System.err.println("File not found: " + filename);
-            } catch (ParseException ex) {
-                System.out.println("!!! Could not parse " + filename);       
-            }
-        });
+            // pre-run any programs defined as parameter
+            files.forEach((filename) -> {
+                try {
+                    Program prg = new Parser(filename, env).parse();
+                    listener.setProgram(prg);
+                    System.out.println("Debugging " + filename);
+                    prg.execute(ctx);
+                } catch (FileNotFoundException ex) {
+                    System.err.println("File not found: " + filename);
+                } catch (ParseException ex) {
+                    System.out.println("!!! Could not parse " + filename);
+                }
+            });
         } catch (RockstarRuntimeException rrex) {
             System.out.println("Rockstar Debugger finished by " + rrex.getMessage());
         }

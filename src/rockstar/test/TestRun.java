@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import rockstar.parser.Line;
@@ -37,8 +38,14 @@ public class TestRun {
 
     private final Map<String, String> options;
 
-    TestRun(Map<String, String> options) {
-        this.options = options;
+    TestRun(Map<String, String> options, boolean isStrictMode) {
+        this.options = new HashMap<>(options);
+        if (isStrictMode) {
+            this.options.put("--strict", "--strict");
+        } else {
+            this.options.remove("--strict");
+            this.options.remove("-S");
+        }
     }
 
     public TestResult execute(String filename, RockstarTest.Expected exp) {
@@ -90,7 +97,7 @@ public class TestRun {
             Environment env = new Environment(in, out, err, options);
             FileContext ctx = new FileContext(env);
             try {
-                prg = new Parser(filename).parse();
+                prg = new Parser(filename, env).parse();
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
                 result.setException(ex);

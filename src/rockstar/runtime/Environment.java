@@ -49,8 +49,20 @@ public class Environment {
         return error;
     }
 
-    public String getParameter(String key) {
+    public String getOptionValue(String key) {
         return env.get(key);
+    }
+
+    public boolean hasOption(String shortOpt, String longOpt) {
+        return env.containsKey(shortOpt) || env.containsKey(longOpt);
+    }
+
+    public boolean hasOption(String opt) {
+        return env.containsKey(opt);
+    }
+
+    public boolean isStrictMode() {
+        return hasOption("-S", "--strict");
     }
 
     public void setListener(BlockContextListener listener) {
@@ -60,7 +72,5 @@ public class Environment {
     public BlockContextListener getListener() {
         return listener;
     }
-    
-    
 
 }

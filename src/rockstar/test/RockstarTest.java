@@ -57,7 +57,7 @@ public class RockstarTest {
         isVeryVerbose = options.containsKey("-vv") || options.containsKey("--very-verbose");
         isVerbose = isVeryVerbose || options.containsKey("-v") || options.containsKey("--verbose");
 
-        executeDir(dirname, null);
+        executeDir(dirname, null, true);
 
         String SEPARATOR = Utils.repeat("=", 60);
         System.out.println();
@@ -72,7 +72,7 @@ public class RockstarTest {
         System.out.println();
     }
 
-    private void executeDir(String dirname, Expected exp) {
+    private void executeDir(String dirname, Expected exp, boolean isStrictMode) {
         File dir = new File(dirname);
 
         boolean isFirstFileInDir = true;
@@ -101,17 +101,21 @@ public class RockstarTest {
                 switch (file.getName()) {
                     case "correct":
                     case "fixtures":
-                        executeDir(file.getPath(), Expected.CORRECT);
+                        executeDir(file.getPath(), Expected.CORRECT, isStrictMode);
                         break;
                     case "parse-errors":
                     case "failures":
-                        executeDir(file.getPath(), Expected.PARSE_ERROR);
+                        executeDir(file.getPath(), Expected.PARSE_ERROR, isStrictMode);
                         break;
                     case "runtime-errors":
-                        executeDir(file.getPath(), Expected.RUNTIME_ERROR);
+                        executeDir(file.getPath(), Expected.RUNTIME_ERROR, isStrictMode);
+                        break;
+                    case "_own_":
+                    case "Rocky_ext":
+                        executeDir(file.getPath(), exp, false);
                         break;
                     default:
-                        executeDir(file.getPath(), exp);
+                        executeDir(file.getPath(), exp, isStrictMode);
                         break;
                 }
             }
@@ -123,7 +127,7 @@ public class RockstarTest {
 
 //        System.out.println("--- Processing file " + file.getName() + " for " + exp + " test");
         testCount++;
-        TestResult result = new TestRun(options).execute(file.getAbsolutePath(), exp);
+        TestResult result = new TestRun(options, true).execute(file.getAbsolutePath(), exp);
         String message = result.getMessage();
         Throwable exc = result.getException();
         String debugInfo = result.getDebugInfo();

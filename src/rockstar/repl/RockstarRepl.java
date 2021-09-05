@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import rockstar.Rockstar;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementFactory;
+import rockstar.runtime.BlockStack;
 import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.Utils;
@@ -47,7 +47,7 @@ public class RockstarRepl {
         // pre-run any programs defined as parameter
         files.forEach((String filename) -> {
             try {
-                Program prg = new Parser(filename).parse();
+                Program prg = new Parser(filename, env).parse();
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
@@ -59,7 +59,7 @@ public class RockstarRepl {
         System.out.println(Utils.repeat("-", Rockstar.CLI_HEADER.length()));
         System.out.println("Type 'exit' to quit, 'show' to get more info.");
 
-        Stack<Block> blocks = new Stack();
+        BlockStack blocks = new BlockStack(env);
         blocks.push(new Program("-"));
         try {
             while (true) {
@@ -85,9 +85,9 @@ public class RockstarRepl {
                         Block b = blocks.peek();
                         while (b != null) {
                             Iterator<Map.Entry<List<String>, List<List<String>>>> i = b.getAliasesIterator();
-                            i.forEachRemaining(e -> 
-                                    e.getValue().forEach(v -> 
-                                            System.out.println(v.stream().collect(Collectors.joining(" ")) + " means " + e.getKey().stream().collect(Collectors.joining(" ")))));
+                            i.forEachRemaining(
+                                    e -> e.getValue().forEach(
+                                            v -> System.out.println(v.stream().collect(Collectors.joining(" ")) + " means " + e.getKey().stream().collect(Collectors.joining(" ")))));
                             b = b.getParent();
                         }
                     } else {
@@ -108,16 +108,14 @@ public class RockstarRepl {
                         if (stmt instanceof AliasStatement) {
                             AliasStatement aliasStmt = (AliasStatement) stmt;
                             blocks.peek().defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
-                        } 
+                        }
                         // explain if needed
                         if (explain) {
                             System.out.println(stmt.toString());
                         }
                         if (stmt instanceof BlockEnd) {
                             // simple block closing: no need to add it anywhere
-                            if (blocks.size() > 1) {
-                                stmt = blocks.pop();
-                            }
+                            stmt = blocks.removeBlock();
                         } else {
                             // meaningful statements
                             if (stmt instanceof ContinuingBlockStatementI) {

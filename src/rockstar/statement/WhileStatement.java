@@ -19,7 +19,6 @@ import rockstar.runtime.Value;
  */
 public class WhileStatement extends Block {
 
-
     private final Expression condition;
     private boolean negateCondition = false;
 
@@ -39,7 +38,7 @@ public class WhileStatement extends Block {
     @Override
     public void execute(BlockContext ctx) {
         int loopCount = 0;
-        boolean isInfiniteLoopsAllowed = (ctx.getEnv().getParameter("--infinite-loops") != null);
+        boolean isInfiniteLoopsAllowed = ctx.getEnv().hasOption("--infinite-loops");
         Value v = condition.evaluate(ctx);
         boolean lastCondition = v.asBoolean().getBool() ^ negateCondition;
         while (lastCondition && (isInfiniteLoopsAllowed || loopCount <= Rockstar.MAX_LOOP_ITERATIONS)) {
@@ -55,7 +54,7 @@ public class WhileStatement extends Block {
             // other exceptions like ReturnException are falling thru
 
             loopCount++;
-            
+
             // breakpoint before the next evaluation
             ctx.beforeStatement(this);
             v = condition.evaluate(ctx);

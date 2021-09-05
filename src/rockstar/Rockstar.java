@@ -150,6 +150,8 @@ public class Rockstar {
                 System.out.println("        Log the execution path and expression evaluations to the stdout");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+                System.out.println("    -S --strict");
+                System.out.println("        Strictly follow the syntax of the reference specification");
             }
         }
         if (cmd == null || cmd.equals("debug")) {
@@ -161,6 +163,8 @@ public class Rockstar {
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+                System.out.println("    -S --strict");
+                System.out.println("        Strictly follow the syntax of the reference specification");
                 RockstarDebugger.printDebuggerHelp("");
             }
         }
@@ -175,6 +179,8 @@ public class Rockstar {
                 System.out.println("        Only explained statements and expressions are listed.");
                 System.out.println("    -l --line-number");
                 System.out.println("        Print line numbers.");
+                System.out.println("    -S --strict");
+                System.out.println("        Strictly follow the syntax of the reference specification");
             }
         }
         if (cmd == null || cmd.equals("repl")) {
@@ -188,6 +194,8 @@ public class Rockstar {
                 System.out.println("        Explain all statements and expressions parsed from input.");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
+                System.out.println("    -S --strict");
+                System.out.println("        Strictly follow the syntax of the reference specification");
             }
         }
         if (cmd == null || cmd.equals("test")) {
@@ -238,7 +246,7 @@ public class Rockstar {
         FileContext ctx;
         for (String filename : files) {
             try {
-                Program prg = new Parser(filename).parse();
+                Program prg = new Parser(filename, env).parse();
                 ctx = new FileContext(prgCtx, filename);
                 prg.execute(ctx);
             } catch (FileNotFoundException ex) {
@@ -254,13 +262,14 @@ public class Rockstar {
             throw new IllegalArgumentException("Missing files");
         }
 
-        boolean explainOnly = options.containsKey("-X") || options.containsKey("--explain-only");
-        boolean explain = options.containsKey("-x") || options.containsKey("--explain");
-        boolean lineNums = options.containsKey("-l") || options.containsKey("--line-number");
+        Environment env = new Environment(System.in, System.out, System.err, options);
+        boolean explainOnly = env.hasOption("-X", "--explain-only");
+        boolean explain = env.hasOption("-x", "--explain");
+        boolean lineNums = env.hasOption("-l", "--line-number");
 
         files.forEach((filename) -> {
             try {
-                Program prg = new Parser(filename).parse();
+                Program prg = new Parser(filename, env).parse();
                 System.out.println(prg.listProgram(lineNums, !explainOnly, explain || explainOnly));
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);

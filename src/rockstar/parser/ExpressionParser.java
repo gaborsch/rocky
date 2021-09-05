@@ -15,8 +15,8 @@ import rockstar.expression.ComparisonExpression.ComparisonType;
 import rockstar.expression.CompoundExpression;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.DivideExpression;
-import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
+import rockstar.expression.ExpressionError;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.InstanceCheckExpression;
 import rockstar.expression.IntoExpression;
@@ -26,8 +26,8 @@ import rockstar.expression.LogicalExpression.LogicalType;
 import rockstar.expression.MinusExpression;
 import rockstar.expression.MultiplyExpression;
 import rockstar.expression.NotExpression;
-import rockstar.expression.QualifierExpression;
 import rockstar.expression.PlusExpression;
+import rockstar.expression.QualifierExpression;
 import rockstar.expression.RollExpression;
 import rockstar.expression.SimpleExpression;
 import rockstar.expression.SliceExpression;
@@ -152,14 +152,20 @@ public class ExpressionParser {
             }
             if (RESERVED_KEYWORDS.contains(token)) {
                 // reserved keywords are skipped
-                next();
+                while (RESERVED_KEYWORDS.contains(token)) {
+                    next();
+                    if (isFullyParsed()) {
+                        return null;
+                    }
+                    token = peekCurrent().toLowerCase();
+                }
                 return null;
             }
         }
         return null;
     }
     private static final List<String> COMMON_VARIABLE_KEYWORDS = Arrays.asList(new String[]{
-        "a", "an", "the", "my", "your", "A", "An", "The", "My", "Your"});
+        "a", "an", "the", "my", "your"});
 
     /**
      * parses a variable name or function name (including "it" back-reference)
@@ -172,15 +178,14 @@ public class ExpressionParser {
             return null;
         }
         String token0 = peekCurrent();
+        String token0LC = token0.toLowerCase();
         // "my" "dream"
-        if (COMMON_VARIABLE_KEYWORDS.contains(token0) && containsAtLeast(2)) {
+        if (COMMON_VARIABLE_KEYWORDS.contains(token0LC) && containsAtLeast(2)) {
             // common variable
             String token1 = peekNext();
-            if (token1.toLowerCase().equals(token1)) {
-                // common variables are lowercased, not to conflict with uppercased proper variables
-                name = token0.toLowerCase() + " " + token1.toLowerCase();
-                next(2);
-            }
+            // common variables are lowercased, not to conflict with uppercased proper variables
+            name = token0LC + " " + token1.toLowerCase();
+            next(2);
         }
         // "Eric" "Cooper"
         if (name == null && token0.length() > 0 && Character.isUpperCase(token0.charAt(0))) {
@@ -204,7 +209,7 @@ public class ExpressionParser {
         // "something" (or "it" or "self" etc)
         if (name == null) {
             // simple variables are single-word identifiers
-            name = token0;
+            name = token0LC;
             next(); // first part processed
         }
         if (name != null) {
@@ -243,7 +248,7 @@ public class ExpressionParser {
                 // two consequent values are treated as a list
                 operator = new ListExpression();
             }
-        if (operator != null) {
+            if (operator != null) {
                 // operator found
                 if (!pushOperator(operator)) {
                     return null;
