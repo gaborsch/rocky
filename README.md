@@ -141,6 +141,8 @@ Also, I included OOP tests and Rocky extension tests that do not pass on other R
 $ ./rockstar test -v programs/tests/
 PARSE_ERROR tests in programs/tests/failures
    [ OK ] invalid_comments.rock
+   [ OK ] reserved_definitely_maybe.rock
+   [ OK ] reserved_maybe.rock
 CORRECT tests in programs/tests/fixtures/arrays
    [ OK ] arrayalike.rock
    [ OK ] arrays.rock
@@ -279,9 +281,9 @@ CORRECT tests in programs/tests/fixtures/whitespace
 ============================================================
 Test results for programs/tests/:
 ============================================================
-All tests:    113
+All tests:    115
 Failed tests: 0
-Passed tests: 113
+Passed tests: 115
 Pass ratio:   100.00%
 ============================================================
 
