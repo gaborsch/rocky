@@ -32,6 +32,23 @@ public class ComparisonExpression extends CompoundExpression {
             return sign;
         }
 
+        public ComparisonType negated() {
+            switch (this) {
+                case EQUALS:
+                    return NOT_EQUALS;
+                case NOT_EQUALS:
+                    return EQUALS;
+                case GREATER_THAN:
+                    return LESS_OR_EQUALS;
+                case LESS_OR_EQUALS:
+                    return GREATER_THAN;
+                case LESS_THAN:
+                    return GREATER_OR_EQUALS;
+                case GREATER_OR_EQUALS:
+                    return LESS_THAN;
+            }
+            return null;
+        }
     }
 
     private ComparisonType type;
@@ -91,7 +108,5 @@ public class ComparisonExpression extends CompoundExpression {
         }
         return false;
     }
-    
-    
 
 }

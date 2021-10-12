@@ -123,12 +123,17 @@ public class Line {
                             char c = line.charAt(limit);
                             String right = line.substring(limit);
                             if (c == '\'') {
-                                if (right.matches("'s\\b.*")) {
+                                if (right.matches("'[sS]\\b.*")) {
                                     // "'s" becomes " is "
                                     endOfToken = true;
                                     nextToken = "is";
                                     limit += 2;
-                                } else if (right.startsWith("'n'")) {
+                                } else if (right.matches("'[rR][eE]\\b.*")) {
+                                    // "'re" becomes " are "
+                                    endOfToken = true;
+                                    nextToken = "are";
+                                    limit += 3;
+                                } else if (right.matches("'[nN]'.*")) {
                                     // "'n'" becomes " and "
                                     endOfToken = true;
                                     nextToken = "and";

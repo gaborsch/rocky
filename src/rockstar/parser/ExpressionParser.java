@@ -362,8 +362,16 @@ public class ExpressionParser {
             next();
             return new LogicalExpression(LogicalType.NOR);
         }
-        if ("is".equals(token)) {
+        boolean isIs = "is".equals(token) || "are".equals(token) || "was".equals(token) || "were".equals(token);
+        boolean isIsnt = "isnt".equals(token) || "arent".equals(token) || "aint".equals(token) || "wasnt".equals(token) || "werent".equals(token);
+        if (isIs || isIsnt) {
             next();
+            boolean isNegated = isIsnt;
+            while (containsAtLeast(2) && "not".equals(peekCurrent())) {
+                // "is not ..."
+                next();
+                isNegated = !isNegated;
+            }
             if (containsAtLeast(3)) {
                 if ("than".equals(peekNext())) {
                     // "is ... than"
@@ -385,7 +393,7 @@ public class ExpressionParser {
                     }
                     if (type != null) {
                         next(2);
-                        return new ComparisonExpression(type);
+                        return new ComparisonExpression(isNegated ? type.negated() : type);
                     }
                 }
             }
@@ -410,31 +418,26 @@ public class ExpressionParser {
                     }
                     if (type != null) {
                         next(3);
-                        return new ComparisonExpression(type);
+                        return new ComparisonExpression(isNegated ? type.negated() : type);
                     }
                 }
             }
-            if (containsAtLeast(2) && "not".equals(peekCurrent())) {
-                // "is not"
-                next();
-                return new ComparisonExpression(ComparisonType.NOT_EQUALS);
-            }
             if (containsAtLeast(2) && "like".equals(peekCurrent())) {
-                // "is like"
+                // "is [not] like"
                 next();
-                return new InstanceCheckExpression();
+                return isNegated
+                        ? new NotExpression(new InstanceCheckExpression())
+                        : new InstanceCheckExpression();
             }
             if (containsAtLeast(4) && "a".equals(peekCurrent()) && "kind".equals(peekNext()) && "of".equals(peekNext(2))) {
-                // "is a kind of"
+                // "is [not] a kind of"
                 next(3);
-                return new InstanceCheckExpression();
+                return isNegated
+                        ? new NotExpression(new InstanceCheckExpression())
+                        : new InstanceCheckExpression();
             }
-            // simple "is" 
-            return new ComparisonExpression(ComparisonType.EQUALS);
-        }
-        if ("isnt".equals(token) || "aint".equals(token)) {
-            next();
-            return new ComparisonExpression(ComparisonType.NOT_EQUALS);
+            // simple "is" or "is not"
+            return new ComparisonExpression(isNegated ? ComparisonType.NOT_EQUALS : ComparisonType.EQUALS);
         }
 
         // arithmetical operators

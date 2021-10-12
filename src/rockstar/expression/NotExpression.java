@@ -14,6 +14,10 @@ import rockstar.runtime.Value;
  */
 public class NotExpression extends CompoundExpression {
 
+    public NotExpression(Expression... params) {
+        super(params);
+    }
+
     @Override
     public String getFormat() {
         return "NOT (%s)";
