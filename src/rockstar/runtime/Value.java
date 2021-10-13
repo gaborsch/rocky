@@ -2,7 +2,6 @@
 package rockstar.runtime;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import rockstar.parser.ExpressionParser;
 import rockstar.expression.ExpressionType;
+import rockstar.parser.ExpressionParser;
 import rockstar.statement.FunctionBlock;
 
 /**
@@ -72,20 +71,31 @@ public class Value implements Comparable<Value> {
         return new Value(instance);
     }
 
-    public static Value parse(String s) {
-        if (ExpressionParser.MYSTERIOUS_KEYWORDS.contains(s)) {
-            return MYSTERIOUS;
-        } else if (ExpressionParser.NULL_KEYWORDS.contains(s)) {
-            return NULL;
-        } else if (ExpressionParser.BOOLEAN_TRUE_KEYWORDS.contains(s)) {
-            return BOOLEAN_TRUE;
-        } else if (ExpressionParser.BOOLEAN_FALSE_KEYWORDS.contains(s)) {
-            return BOOLEAN_FALSE;
-        } else {
-            RockNumber numericValue = RockNumber.parse(s);
-            if (numericValue != null) {
-                return getValue(numericValue);
+    private static boolean checkKeywords(String s, String[] keywords) {
+        for (String keyword : keywords) {
+            if(s.equalsIgnoreCase(keyword)) {
+                return true;
             }
+        }
+        return false;
+    }
+    
+    public static Value parse(String s) {
+        if (checkKeywords(s, ExpressionParser.MYSTERIOUS_KEYWORDS)) {
+            return MYSTERIOUS;
+        }
+        if (checkKeywords(s, ExpressionParser.NULL_KEYWORDS)) {
+            return NULL;
+        }
+        if (checkKeywords(s, ExpressionParser.BOOLEAN_TRUE_KEYWORDS)) {
+            return BOOLEAN_TRUE;
+        }
+        if (checkKeywords(s, ExpressionParser.BOOLEAN_FALSE_KEYWORDS)) {
+            return BOOLEAN_FALSE;
+        } 
+        RockNumber numericValue = RockNumber.parse(s);
+        if (numericValue != null) {
+            return getValue(numericValue);
         }
         if (s.length() >= 2 && s.matches("\".*\"")) {
             s = s.substring(1, s.length() - 1);

@@ -5,11 +5,10 @@
  */
 package rockstar.expression;
 
-import rockstar.runtime.BlockContext;
-import rockstar.runtime.Value;
-
 import java.util.List;
+import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -17,13 +16,11 @@ import rockstar.runtime.RockstarRuntimeException;
  */
 public class QualifierExpression extends CompoundExpression {
 
-    private final String token;
     private final boolean isArrayIndexing;
 
-    public QualifierExpression(String token) {
+    public QualifierExpression(boolean isArrayIndexing) {
         super();
-        this.token = token;
-        this.isArrayIndexing = "at".equals(token);
+        this.isArrayIndexing = isArrayIndexing;
     }
 
     public boolean isArrayIndexing() {
@@ -87,7 +84,7 @@ public class QualifierExpression extends CompoundExpression {
                         String str = baseValue.getString();
                         Value referencedValue = Value.MYSTERIOUS;
                         if ((index >= 0) && (index < str.length())) {
-                            String substr = str.substring(index, index+1);
+                            String substr = str.substring(index, index + 1);
                             referencedValue = Value.getValue(substr);
                         }
                         return ctx.afterExpression(this, referencedValue);
