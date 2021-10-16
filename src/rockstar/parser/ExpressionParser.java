@@ -5,7 +5,6 @@
  */
 package rockstar.parser;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import rockstar.expression.BuiltinFunction;
@@ -72,6 +71,10 @@ public class ExpressionParser {
         return list.size() >= idx + count;
     }
 
+    private boolean checkCurrent(Keyword kw) {
+        return kw.matches(list.get(idx));
+    }
+
     private boolean checkCurrent(String... aliases) {
         String value = list.get(idx);
         for (String s : aliases) {
@@ -94,32 +97,22 @@ public class ExpressionParser {
         return list.get(idx + 1).equalsIgnoreCase(s);
     }
 
-    private boolean checkNext(String... aliases) {
-        String value = list.get(idx + 1);
-        for (String s : aliases) {
-            if (value.equalsIgnoreCase(s)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean checkNext(Keyword kw) {
+        return kw.matches(list.get(idx + 1));
     }
 
     private boolean checkNext(int offset, String s) {
         return list.get(idx + offset).equalsIgnoreCase(s);
     }
 
+    private boolean checkNext(int offset, Keyword kw) {
+        return kw.matches(list.get(idx + offset));
+    }
+
     private String peekAhead(int offset) {
         String next = list.get(idx + offset);
         return next;
     }
-
-    public static final String[] MYSTERIOUS_KEYWORDS = new String[]{"mysterious"};
-    public static final String[] EMPTY_STRING_KEYWORDS = new String[]{"empty", "silent", "silence"};
-    public static final String[] NULL_KEYWORDS = new String[]{"null", "nothing", "nowhere", "nobody", "gone"};
-    public static final String[] EMPTY_ARRAY_KEYWORDS = new String[]{"void", "hollow"};
-    public static final String[] BOOLEAN_TRUE_KEYWORDS = new String[]{"true", "right", "yes", "ok"};
-    public static final String[] BOOLEAN_FALSE_KEYWORDS = new String[]{"false", "wrong", "no", "lies"};
-    public static final String[] RESERVED_KEYWORDS = new String[]{"definitely", "maybe"};
 
     /**
      * Parses a String, numeric, bool, null or mysterious literal
@@ -138,27 +131,27 @@ public class ExpressionParser {
                 literal = literal.replace("(?<!\\)\\t", "\t").replace("(?<!\\)\\r", "\r").replace("(?<!\\)\\n", "\n").replace("\\\\", "\\");
                 return new ConstantExpression(literal);
             }
-            if (checkCurrent(MYSTERIOUS_KEYWORDS)) {
+            if (checkCurrent(Keyword.MYSTERIOUS)) {
                 next();
                 return ConstantExpression.CONST_MYSTERIOUS;
             }
-            if (checkCurrent(EMPTY_STRING_KEYWORDS)) {
+            if (checkCurrent(Keyword.EMPTY_STRING)) {
                 next();
                 return ConstantExpression.CONST_EMPTY_STRING;
             }
-            if (checkCurrent(NULL_KEYWORDS)) {
+            if (checkCurrent(Keyword.NULL)) {
                 next();
                 return ConstantExpression.CONST_NULL;
             }
-            if (checkCurrent(EMPTY_ARRAY_KEYWORDS)) {
+            if (checkCurrent(Keyword.EMPTY_ARRAY)) {
                 next();
                 return ConstantExpression.CONST_EMPTY_ARRAY;
             }
-            if (checkCurrent(BOOLEAN_TRUE_KEYWORDS)) {
+            if (checkCurrent(Keyword.BOOLEAN_TRUE)) {
                 next();
                 return ConstantExpression.CONST_TRUE;
             }
-            if (checkCurrent(BOOLEAN_FALSE_KEYWORDS)) {
+            if (checkCurrent(Keyword.BOOLEAN_FALSE)) {
                 next();
                 return ConstantExpression.CONST_FALSE;
             }
@@ -168,7 +161,7 @@ public class ExpressionParser {
                 return new ConstantExpression(nv);
             }
             // reserved keywords are skipped
-            while (checkCurrent(RESERVED_KEYWORDS)) {
+            while (checkCurrent(Keyword.RESERVED)) {
                 next();
                 if (isFullyParsed()) {
                     return null;
@@ -177,8 +170,6 @@ public class ExpressionParser {
         }
         return null;
     }
-    private static final String[] COMMON_VARIABLE_KEYWORDS = new String[]{
-        "a", "an", "the", "my", "your"};
 
     /**
      * parses a variable name or function name (including "it" back-reference)
@@ -193,7 +184,7 @@ public class ExpressionParser {
         String token0 = peekAhead(0);
         String token0LC = token0.toLowerCase();
         // "my" "dream"
-        if (checkCurrent(COMMON_VARIABLE_KEYWORDS) && containsAtLeast(2)) {
+        if (checkCurrent(Keyword.COMMON_VARIABLE_PREFIX) && containsAtLeast(2)) {
             // common variable
             String token1 = peekAhead(1);
             // common variables are lowercased, not to conflict with uppercased proper variables
@@ -208,9 +199,12 @@ public class ExpressionParser {
             while (!isFullyParsed()) {
                 String token = peekAhead(0);
                 // all parts of a Proper Name must start with capital letter
-                if (token.length() > 0 && Character.isUpperCase(token.charAt(0))) {
+                // and must not contain keywords
+                if (token.length() > 0
+                        && Character.isUpperCase(token.charAt(0))
+                        && !checkCurrent(Keyword._STARTER_KEYWORD)) {
                     next(); // next part processed
-                    // proper variables are uppercased, not to conflict with common variables
+                    // proper variables are stored lowercased
                     sb.append(" ").append(token.toLowerCase());
                 } else {
                     break;
@@ -346,49 +340,49 @@ public class ExpressionParser {
             next();
         }
         // qualifiers
-        if (checkCurrent("on", "by", "in", "to", "for", "from", "near")) {
+        if (checkCurrent(Keyword.ON)) {
             next();
             return new QualifierExpression(false);
         }
         // array index
-        if (checkCurrent("at")) {
+        if (checkCurrent(Keyword.AT)) {
             next();
             return new QualifierExpression(true);
         }
         // logical operators
-        if (checkCurrent("not")) {
+        if (checkCurrent(Keyword.NOT)) {
             next();
             return new NotExpression();
         }
-        if (checkCurrent("and")) {
+        if (checkCurrent(Keyword.AND)) {
             next();
             return new LogicalExpression(LogicalType.AND);
         }
-        if (checkCurrent("or")) {
+        if (checkCurrent(Keyword.OR)) {
             next();
             return new LogicalExpression(LogicalType.OR);
         }
-        if (checkCurrent("nor")) {
+        if (checkCurrent(Keyword.NOR)) {
             next();
             return new LogicalExpression(LogicalType.NOR);
         }
-        boolean isIs = checkCurrent("is", "are", "was", "were");
-        boolean isIsnt = checkCurrent("isnt", "arent", "aint", "wasnt", "werent");
+        boolean isIs = checkCurrent(Keyword.IS);
+        boolean isIsnt = checkCurrent(Keyword.ISNT);
         if (isIs || isIsnt) {
             next();
             boolean isNegated = isIsnt;
-            while (containsAtLeast(2) && checkCurrent("not")) {
+            while (containsAtLeast(2) && checkCurrent(Keyword.NOT)) {
                 // "is not ..."
                 next();
                 isNegated = !isNegated;
             }
             if (containsAtLeast(3)) {
-                if (checkNext("than")) {
+                if (checkNext(Keyword.THAN)) {
                     // "is ... than"
                     ComparisonType type = null;
-                    if (checkCurrent("higher", "greater", "bigger", "stronger")) {
+                    if (checkCurrent(Keyword.HIGHER)) {
                         type = ComparisonType.GREATER_THAN;
-                    } else if (checkCurrent("lower", "less", "smaller", "weaker")) {
+                    } else if (checkCurrent(Keyword.LOWER)) {
                         type = ComparisonType.LESS_THAN;
                     }
                     if (type != null) {
@@ -398,12 +392,12 @@ public class ExpressionParser {
                 }
             }
             if (containsAtLeast(4)) {
-                if (checkCurrent("as") && checkNext(2, "as")) {
+                if (checkCurrent(Keyword.AS) && checkNext(2, Keyword.AS)) {
                     // "is as ... as"
                     ComparisonType type = null;
-                    if (checkNext("high", "great", "big", "strong")) {
+                    if (checkNext(Keyword.HIGH)) {
                         type = ComparisonType.GREATER_OR_EQUALS;
-                    } else if (checkNext("low", "little", "small", "weak")) {
+                    } else if (checkNext(Keyword.LOW)) {
                         type = ComparisonType.LESS_OR_EQUALS;
                     }
                     if (type != null) {
@@ -437,40 +431,40 @@ public class ExpressionParser {
             return new UnaryMinusExpression();
         }
 
-        if (checkCurrent("with")) {
+        if (checkCurrent(Keyword.WITH)) {
             next();
             return new WithExpression();
         }
-        if (checkCurrent("plus", "+")) {
+        if (checkCurrent(Keyword.PLUS)) {
             next();
             return new PlusExpression();
         }
-        if (checkCurrent("into")) {
+        if (checkCurrent(Keyword.INTO)) {
             next();
             return new IntoExpression();
         }
-        if (checkCurrent("minus", "without", "-")) {
+        if (checkCurrent(Keyword.MINUS)) {
             next();
             return new MinusExpression();
         }
-        if (checkCurrent("times", "of", "*")) {
+        if (checkCurrent(Keyword.TIMES)) {
             next();
             return new MultiplyExpression();
         }
-        if (checkCurrent("over", "/")) {
+        if (checkCurrent(Keyword.OVER)) {
             next();
             return new DivideExpression();
         }
-        if (checkCurrent("roll", "pop")) {
+        if (checkCurrent(Keyword.ROLL)) {
             next();
             return new RollExpression();
         }
-        if (checkCurrent("from")) {
+        if (checkCurrent(Keyword.FROM)) {
             next();
             return new SliceExpression(SliceExpression.Type.SLICE_FROM);
         }
 
-        if (checkCurrent("till")) {
+        if (checkCurrent(Keyword.TILL)) {
             next();
             return new SliceExpression(SliceExpression.Type.SLICE_TO);
         }
@@ -481,7 +475,7 @@ public class ExpressionParser {
         }
 
         // function call
-        if (check("taking", 0)) {
+        if (checkCurrent(Keyword.TAKING) || checkAlias(Keyword.TAKING, 0)) {
             next();
             return new FunctionCall();
         }
@@ -492,26 +486,26 @@ public class ExpressionParser {
     private CompoundExpression getBuiltinFunction() {
         BuiltinFunction.Type type = null;
         // sorted
-        if (checkCurrent("sorted")) {
+        if (checkCurrent(Keyword.SORTED)) {
             type = BuiltinFunction.Type.SORT;
             next();
         } // count of, length of, height of
         // last of
-        else if (containsAtLeast(2) && checkNext("of")) {
-            if (checkCurrent("count", "length", "height")) {
+        else if (containsAtLeast(2) && checkNext(Keyword.OF)) {
+            if (checkCurrent(Keyword.COUNT)) {
                 type = BuiltinFunction.Type.SIZEOF;
                 next(2);
-            } else if (checkCurrent("last")) {
+            } else if (checkCurrent(Keyword.LAST)) {
                 type = BuiltinFunction.Type.PEEK;
                 next(2);
             }
         } // all keys of
         // all values of
-        else if (containsAtLeast(3) && checkCurrent("all") && checkNext("of")) {
-            if (checkNext(2, "keys")) {
+        else if (containsAtLeast(3) && checkCurrent(Keyword.ALL) && checkNext(Keyword.OF)) {
+            if (checkNext(2, Keyword.KEYS)) {
                 type = BuiltinFunction.Type.KEYS;
                 next(3);
-            } else if (checkNext(2, "values")) {
+            } else if (checkNext(2, Keyword.VALUES)) {
                 type = BuiltinFunction.Type.VALUES;
                 next(3);
             }
@@ -520,11 +514,9 @@ public class ExpressionParser {
         return type == null ? null : new BuiltinFunction(type);
     }
 
-    private boolean check(String keyword, int offset) {
+    private boolean checkAlias(Keyword kw, int offset) {
         if (list.size() >= idx + offset + 1) {
-            List<String> keywordList = new ArrayList<>();
-            keywordList.add(keyword);
-            List<List<String>> allAliases = block.getAliasesFor(keywordList);
+            List<List<String>> allAliases = block.getAliasesFor(kw);
             for (List<String> aliasParts : allAliases) {
                 boolean matching = true;
                 for (int i = 0; i < aliasParts.size(); i++) {

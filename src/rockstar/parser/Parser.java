@@ -38,6 +38,7 @@ public class Parser {
     private Environment env;
 
     public static Program parseProgram(String programText, Environment env) {
+        Keyword.setStrictMode(env.isStrictMode());
         InputStream is;
         try {
             is = new ByteArrayInputStream(programText.getBytes("UTF-8"));

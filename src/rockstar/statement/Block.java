@@ -6,12 +6,13 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import rockstar.parser.Keyword;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.runtime.BlockContext;
@@ -58,18 +59,21 @@ public abstract class Block extends Statement {
     public void defineAlias(List<String> alias, List<String> keywords) {
         List<String> lcAlias = alias.stream().map(String::toLowerCase).collect(Collectors.toList());
         List<String> lcKeywords = keywords.stream().map(String::toLowerCase).collect(Collectors.toList());
-        
+
 //        List<List<String>> aliasList = aliasesFor.computeIfAbsent(lcKeywords, l -> new ArrayList<>());
 //        if (aliasList.isEmpty()) {
 //            aliasList.add(keyword);
 //        }
 //        aliasList.add(alias);
-        
         aliasesFor
-            .computeIfAbsent(lcKeywords, l -> new ArrayList<>())
-            .add(lcAlias);
+                .computeIfAbsent(lcKeywords, l -> new ArrayList<>())
+                .add(lcAlias);
     }
-    
+
+    public List<List<String>> getAliasesFor(Keyword kw) {
+        return getAliasesFor(Arrays.asList(kw.getKeywordsVariations()));
+    }
+
     public List<List<String>> getAliasesFor(List<String> keywords) {
         List<String> lcKeywords = keywords.stream().map(String::toLowerCase).collect(Collectors.toList());
         List<List<String>> aliases = getAliasesLC(lcKeywords);
@@ -78,7 +82,7 @@ public abstract class Block extends Statement {
         }
         return aliases;
     }
-    
+
     protected List<List<String>> getAliasesLC(List<String> lcKeywords) {
         List<List<String>> aliases;
         if (parent != null) {
@@ -92,9 +96,9 @@ public abstract class Block extends Statement {
         }
         return aliases;
     }
-    
+
     public Iterator<Map.Entry<List<String>, List<List<String>>>> getAliasesIterator() {
-         return aliasesFor.entrySet().iterator();
+        return aliasesFor.entrySet().iterator();
     }
 
     /**
@@ -112,7 +116,7 @@ public abstract class Block extends Statement {
                 Line l = statement.getLine();
                 rre.addStacktraceLine(l, ctx);
                 throw rre;
-            }            
+            }
         }
     }
 
