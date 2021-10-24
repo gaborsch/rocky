@@ -8,6 +8,7 @@ package rockstar.parser.checker;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
@@ -15,6 +16,7 @@ import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.parser.Line;
+import rockstar.parser.Token;
 import static rockstar.parser.checker.Checker.PlaceholderType.*;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
@@ -22,6 +24,9 @@ import rockstar.statement.Statement;
 /**
  *
  * @author Gabor
+ * @param <T1>
+ * @param <T2>
+ * @param <T3>
  */
 public abstract class Checker<T1, T2, T3> {
 
@@ -74,7 +79,8 @@ public abstract class Checker<T1, T2, T3> {
      */
     public boolean match(Object... params) {
         matchCounter++;
-        List<String> tokens = line.getTokens();
+        List<Token> tokenList = line.getTokens();
+        List<String> tokens = tokenList.stream().map(Token::getValue).collect(Collectors.toList());
         // clear previous result
         for (int i = 0; i < parsedResult.length; i++) {
             parsedResult[i] = null;
@@ -138,7 +144,7 @@ public abstract class Checker<T1, T2, T3> {
         boolean validText = false;
         Expression e = null;
         if (ph.getType() == POETIC_LITERAL) {
-            String assignmentToken = line.getTokens().get(lastPos);
+            String assignmentToken = line.getTokens().get(lastPos).getValue();
             String orig = line.getOrigLine();
             int p = orig.indexOf(" " + assignmentToken + " ");
             if (assignmentToken.equals("is")) {

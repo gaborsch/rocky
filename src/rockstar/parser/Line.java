@@ -14,22 +14,20 @@ import java.util.Objects;
  * @author Gabor
  */
 public class Line {
-    
-    public static Line STARTER_LINE = new Line("", "-", 0);
 
-    private String line;
+    public static Line STARTER_LINE = new Line("", "-", 0, new ArrayList());
+    private final String line;
     private final String origLine;
     private final String fileName;
     private final int lnum;
+    private final List<Token> tokens;
 
-    private final List<String> tokens = new ArrayList<>();
-
-    public Line(String line, String fileName, int lnum) {
+    public Line(String line, String fileName, int lnum, List<Token> tokens) {
         this.line = line;
         this.origLine = line;
         this.fileName = fileName;
         this.lnum = lnum;
-        tokenize();
+        this.tokens = tokens;
     }
 
     public String getLine() {
@@ -48,147 +46,146 @@ public class Line {
         return lnum;
     }
 
-    public List<String> getTokens() {
+    public List<Token> getTokens() {
         return tokens;
     }
 
-    private void tokenize() {
-
-        // trim trailing extra chars
-        line = line.replaceAll("[ ,;:]+$", "");
-
-        int len = line.length();
-        int pos = 0;
-        String nextToken = null;
-
-        while (pos < len) {
-            switch (line.charAt(pos)) {
-                case ' ':
-                    pos++;
-                    break;
-                case '"':
-                    int nextQM = line.indexOf('"', pos + 1);
-                    if (nextQM < 0) {
-                        nextQM = len;
-                    }
-                    tokens.add(line.substring(pos, nextQM + 1));
-                    pos = nextQM + 1;
-                    break;
-                case '(':
-                    int nextCB = line.indexOf(')', pos + 1);
-                    if (nextCB < 0) {
-                        nextCB = len;
-                    }
-                    pos = nextCB + 1;
-                    break;
-                default:
-                    int limit = pos;
-                    StringBuilder tokenBuilder = new StringBuilder();
-                    boolean endOfToken = false;
-                    while (!endOfToken) {
-                        char cl = (limit < len) ? line.charAt(limit) : '\0';
-                        if ("0123456789.".indexOf(cl) >= 0 //                                || (cl == '-' && limit < len - 1 && "0123456789.".indexOf(line.charAt(limit + 1)) >= 0)
-                                ) {
-                            // regular decimal number (integral or fraction)
-                            while (limit < len
-                                    && (Character.isDigit(cl) || cl == '.' || cl == 'e' || cl == 'E')) {
-                                limit++;
-                                if (limit < len) {
-                                    cl = line.charAt(limit);
-                                }
-                            }
-                            nextToken = line.substring(pos, limit);
-                            pos = limit;
-                            endOfToken = true;
-                        } else if ("+*/-".indexOf(cl) >= 0) {
-                            // single operators are single char
-                            limit++;
-                            nextToken = line.substring(pos, limit);
-                            pos = limit;
-                            endOfToken = true;
-                        } else {
-                            // identifier
-                            while (limit < len && Character.isLetterOrDigit(cl)) {
-                                limit++;
-                                if (limit < len) {
-                                    cl = line.charAt(limit);
-                                }
-
-                            }
-                        }
-                        tokenBuilder.append(line.substring(pos, limit));
-                        if (limit >= len) {
-                            endOfToken = true;
-                        } else if (!endOfToken) {
-                            char c = line.charAt(limit);
-                            String right = line.substring(limit);
-                            if (c == '\'') {
-                                if (right.matches("'[sS]\\b.*")) {
-                                    // "'s" becomes " is "
-                                    endOfToken = true;
-                                    nextToken = "is";
-                                    limit += 2;
-                                } else if (right.matches("'[rR][eE]\\b.*")) {
-                                    // "'re" becomes " are "
-                                    endOfToken = true;
-                                    nextToken = "are";
-                                    limit += 3;
-                                } else if (right.matches("'[nN]'.*")) {
-                                    // "'n'" becomes " and "
-                                    endOfToken = true;
-                                    nextToken = "and";
-                                    limit += 3;
-                                } else {
-                                    // skip single quote within word
-                                    limit++;
-                                    pos = limit;
-                                }
-                            } else if (right.startsWith(", and")) {
-                                // double and: skip the first
-                                nextToken = ",";
-                                endOfToken = true;
-                                limit += 5;
-                            } else if (c == '&' || c == ',') {
-                                // "&" and "," becomes " and "
-                                endOfToken = true;
-                                nextToken = ",";
-                                limit++;
-                            } else {
-                                // skip character, end token if word separator
-                                if (c != '+' && c != '-' && c != '/' && c != '*') {
-                                    limit++;
-                                } 
-                                pos = limit;
-                                endOfToken = true;
-                            }
-                        }
-                    }
-                    if (tokenBuilder.length() > 0) {
-                        tokens.add(tokenBuilder.toString());
-                    }
-                    pos = limit;
-                    break;
-            }
-            if (nextToken != null) {
-                // add second token, if detected
-                tokens.add(nextToken);
-                nextToken = null;
-            }
-        }
-    }
-
-    public String getOrigLineAfter(String token) {
-        int pos = origLine.indexOf(token);
-        pos += token.length();
-        while (pos < origLine.length() && origLine.charAt(pos) == ' ') {
-            pos++;
-        }
-        if (pos < origLine.length()) {
-            return origLine.substring(pos);
-        }
-        return "";
-    }
-
+//    private void tokenize() {
+//
+//        // trim trailing extra chars
+//        line = line.replaceAll("[ ,;:]+$", "");
+//
+//        int len = line.length();
+//        int pos = 0;
+//        String nextToken = null;
+//
+//        while (pos < len) {
+//            switch (line.charAt(pos)) {
+//                case ' ':
+//                    pos++;
+//                    break;
+//                case '"':
+//                    int nextQM = line.indexOf('"', pos + 1);
+//                    if (nextQM < 0) {
+//                        nextQM = len;
+//                    }
+//                    tokens.add(new Token(this, pos, line.substring(pos, nextQM + 1)));
+//                    pos = nextQM + 1;
+//                    break;
+//                case '(':
+//                    int nextCB = line.indexOf(')', pos + 1);
+//                    if (nextCB < 0) {
+//                        nextCB = len;
+//                    }
+//                    pos = nextCB + 1;
+//                    break;
+//                default:
+//                    int limit = pos;
+//                    StringBuilder tokenBuilder = new StringBuilder();
+//                    boolean endOfToken = false;
+//                    while (!endOfToken) {
+//                        char cl = (limit < len) ? line.charAt(limit) : '\0';
+//                        if ("0123456789.".indexOf(cl) >= 0 // || (cl == '-' && limit < len - 1 && "0123456789.".indexOf(line.charAt(limit + 1)) >= 0)
+//                                ) {
+//                            // regular decimal number (integral or fraction)
+//                            while (limit < len
+//                                    && (Character.isDigit(cl) || cl == '.' || cl == 'e' || cl == 'E')) {
+//                                limit++;
+//                                if (limit < len) {
+//                                    cl = line.charAt(limit);
+//                                }
+//                            }
+//                            nextToken = line.substring(pos, limit);
+//                            pos = limit;
+//                            endOfToken = true;
+//                        } else if ("+*/-".indexOf(cl) >= 0) {
+//                            // single operators are single char
+//                            limit++;
+//                            nextToken = line.substring(pos, limit);
+//                            pos = limit;
+//                            endOfToken = true;
+//                        } else {
+//                            // identifier
+//                            while (limit < len && Character.isLetterOrDigit(cl)) {
+//                                limit++;
+//                                if (limit < len) {
+//                                    cl = line.charAt(limit);
+//                                }
+//
+//                            }
+//                        }
+//                        tokenBuilder.append(line.substring(pos, limit));
+//                        if (limit >= len) {
+//                            endOfToken = true;
+//                        } else if (!endOfToken) {
+//                            char c = line.charAt(limit);
+//                            String right = line.substring(limit);
+//                            if (c == '\'') {
+//                                if (right.matches("'[sS]\\b.*")) {
+//                                    // "'s" becomes " is "
+//                                    endOfToken = true;
+//                                    nextToken = "is";
+//                                    limit += 2;
+//                                } else if (right.matches("'[rR][eE]\\b.*")) {
+//                                    // "'re" becomes " are "
+//                                    endOfToken = true;
+//                                    nextToken = "are";
+//                                    limit += 3;
+//                                } else if (right.matches("'[nN]'.*")) {
+//                                    // "'n'" becomes " and "
+//                                    endOfToken = true;
+//                                    nextToken = "and";
+//                                    limit += 3;
+//                                } else {
+//                                    // skip single quote within word
+//                                    limit++;
+//                                    pos = limit;
+//                                }
+//                            } else if (right.startsWith(", and")) {
+//                                // double and: skip the first
+//                                nextToken = ",";
+//                                endOfToken = true;
+//                                limit += 5;
+//                            } else if (c == '&' || c == ',') {
+//                                // "&" and "," becomes " and "
+//                                endOfToken = true;
+//                                nextToken = ",";
+//                                limit++;
+//                            } else {
+//                                // skip character, end token if word separator
+//                                if (c != '+' && c != '-' && c != '/' && c != '*') {
+//                                    limit++;
+//                                } 
+//                                pos = limit;
+//                                endOfToken = true;
+//                            }
+//                        }
+//                    }
+//                    if (tokenBuilder.length() > 0) {
+//                        tokens.add(new Token(this, pos, tokenBuilder.toString()));
+//                    }
+//                    pos = limit;
+//                    break;
+//            }
+//            if (nextToken != null) {
+//                // add second token, if detected
+//                tokens.add(new Token(this, pos, nextToken));
+//                nextToken = null;
+//            }
+//        }
+//    }
+//
+//    public String getOrigLineAfter(String token) {
+//        int pos = origLine.indexOf(token);
+//        pos += token.length();
+//        while (pos < origLine.length() && origLine.charAt(pos) == ' ') {
+//            pos++;
+//        }
+//        if (pos < origLine.length()) {
+//            return origLine.substring(pos);
+//        }
+//        return "";
+//    }
     @Override
     public String toString() {
         return this.origLine;
@@ -221,8 +218,5 @@ public class Line {
         }
         return true;
     }
-
-    
-    
 
 }

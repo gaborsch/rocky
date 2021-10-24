@@ -5,14 +5,17 @@
  */
 package rockstar.repl;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import rockstar.Rockstar;
 import rockstar.parser.Line;
+import rockstar.parser.MultilineReader;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
 import rockstar.parser.StatementFactory;
@@ -98,7 +101,9 @@ public class RockstarRepl {
                     }
                 } else {
                     try {
-                        final Line line = new Line(l, "<input>", 1);
+                        MultilineReader rdr = new MultilineReader(new BufferedReader(new StringReader(l)), "-");
+                        final Line line = rdr.readLine();
+
                         // parse the statement
                         Statement stmt = StatementFactory.getStatementFor(line, blocks.peek());
 
