@@ -29,6 +29,7 @@ public class MultilineReader {
 
     boolean isInComment = false;
     boolean isInQuote = false;
+    boolean isInNumber = false;
     boolean wasApos = false;
     boolean isCommentToEOL = false;
 
@@ -42,6 +43,7 @@ public class MultilineReader {
         tokens = new ArrayList<>();
         isInComment = false;
         isInQuote = false;
+        isInNumber = false;
         wasApos = false;
         isCommentToEOL = false;
         origLine = new StringBuilder();
@@ -53,11 +55,7 @@ public class MultilineReader {
             for (pos = 0; pos < l.length(); pos++) {
                 processChar(l.charAt(pos));
             }
-            if (isInQuote) {
-                // adding unclosed quote as a token
-                addToken(0);
-                readBuffer();
-            } else if (isInComment) {
+            if (isInComment) {
                 readBuffer();
             } else {
                 addToken(0);
@@ -73,6 +71,7 @@ public class MultilineReader {
         if (l != null) {
             origLine.append(l);
             lnum++;
+            l = l.replaceAll("[ ,;:]+$", "");
         }
         return l;
     }
@@ -83,17 +82,24 @@ public class MultilineReader {
             if (c == ')') {
                 isInComment = false;
             }
-        } else if (isInQuote) {
+            return;
+        } 
+        if (isInQuote) {
             if (c == '"') {
                 isInQuote = false;
                 addToken(1);
             }
-        } else if (tokenStartPos >= 0) {
-            if (" \t\r\n".indexOf(c) >= 0) {
-                // terminal char
-                addToken(0);
+            return;
+        } 
+        if (isInNumber) {
+            if (Character.isDigit(c) || c == '.' || c == 'e' || c == 'E') {
+                return;
             }
-        } else if (tokenStartPos < 0) {
+            // number fully detected, now starts something else, falling through
+            addToken(0);
+            isInNumber = false;
+        } 
+        if (tokenStartPos < 0) {
             if (!isCommentToEOL) {
                 // normal code text
                 switch (c) {
@@ -113,10 +119,24 @@ public class MultilineReader {
                     case '\t':
                     case '\n':
                     case '\r':
-                        break;                    
+                        break;
                     default:
-                       startToken();
+                        if(",+-*/&".indexOf(c) >= 0) {
+                            startToken();
+                            addToken(1);
+                        } else {
+                            isInNumber = Character.isDigit(c) || c == '.';
+                            startToken();
+                        }
                 }
+            }
+        } else {
+            if (" \t\r\n".indexOf(c) >= 0) {
+                // terminal char
+                addToken(0);
+            } else if(",+-*/&".indexOf(c) >= 0) {
+                startToken();
+                addToken(1);
             }
         } 
 
@@ -130,13 +150,48 @@ public class MultilineReader {
     }
 
     private void addToken(int offset) {
-        if (tokenStartPos >= 0) {
+        if (tokenStartPos >= 0) {                        
             String token = l.substring(tokenStartPos, pos + offset);
-            tokens.add(new Token(lnum, tokenStartPos, token));
+            int len = token.length();
+            if (len >=2) {
+                if (token.substring(len-2).equalsIgnoreCase("'s")) {
+                    tokens.add(new Token(lnum, tokenStartPos, len-2, token.substring(0, len-2)));
+                    token = "is";
+                    tokenStartPos = pos-2;
+                    len = token.length();
+                } else if (len >=3) {
+                    if (token.substring(len-3).equalsIgnoreCase("'re")) {
+                        tokens.add(new Token(lnum, tokenStartPos, len-3, token.substring(0, len-3)));
+                        token = "are";
+                        tokenStartPos = pos-3;
+                        len = token.length();
+                    }
+                    int nIdx = token.indexOf("'n'");
+                    while (nIdx >= 0) {
+                        tokens.add(new Token(lnum, tokenStartPos, nIdx, token.substring(0, nIdx)));
+                        tokens.add(new Token(lnum, tokenStartPos+nIdx, 3, "and"));
+                        tokenStartPos += nIdx + 3;
+                        token = token.substring(nIdx+3);
+                        len = token.length();
+                        nIdx = token.indexOf("'n'");
+                    }
+                }
+            }
+            if (! token.startsWith("\"")) {
+                token = token.replaceAll("[']*", "");
+            }
+            if (token.equalsIgnoreCase("and") 
+                    && !tokens.isEmpty()
+                    && ",".equals(tokens.get(tokens.size()-1).getValue())) {
+                tokens.remove(tokens.size()-1);                
+            }
+            tokens.add(new Token(lnum, tokenStartPos, len, token));
             tokenStartPos = -1;
         }
     }
+    
 
+    
     int prevLineCount = 0;
 
     public String readLineOrig() throws IOException {
