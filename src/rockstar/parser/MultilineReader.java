@@ -55,8 +55,9 @@ public class MultilineReader {
             for (pos = 0; pos < l.length(); pos++) {
                 processChar(l.charAt(pos));
             }
-            if (isInComment) {
+            if (isInComment || isCommentToEOL) {
                 readBuffer();
+                isCommentToEOL = false;
             } else {
                 addToken(0);
                 break;
