@@ -170,8 +170,10 @@ public class MultilineReader {
                     }
                     int nIdx = token.indexOf("'n'");
                     while (nIdx >= 0) {
-                        tokens.add(new Token(lnum, tokenStartPos, nIdx, token.substring(0, nIdx)));
-                        tokens.add(new Token(lnum, tokenStartPos+nIdx, 3, "and"));
+                        if (nIdx > 0) {
+                            tokens.add(new Token(lnum, tokenStartPos, nIdx, token.substring(0, nIdx)));
+                        }
+                        tokens.add(new Token(lnum, tokenStartPos+nIdx, 3, ","));
                         tokenStartPos += nIdx + 3;
                         token = token.substring(nIdx+3);
                         len = token.length();
