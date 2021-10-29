@@ -151,7 +151,8 @@ public class MultilineReader {
     }
 
     private void addToken(int offset) {
-        if (tokenStartPos >= 0) {                        
+        if (tokenStartPos >= 0) {
+            boolean skipThisToken = false;
             String token = l.substring(tokenStartPos, pos + offset);
             int len = token.length();
             if (len >=2) {
@@ -184,14 +185,17 @@ public class MultilineReader {
             if (token.equalsIgnoreCase("and") 
                     && !tokens.isEmpty()
                     && ",".equals(tokens.get(tokens.size()-1).getValue())) {
-                tokens.remove(tokens.size()-1);                
+                skipThisToken = true;
             }
-            tokens.add(new Token(lnum, tokenStartPos, len, token));
+            if (! skipThisToken) {
+                tokens.add(new Token(lnum, tokenStartPos, len, token));
+            }
             tokenStartPos = -1;
         }
     }
     
 
+    // TODO: remove below
     
     int prevLineCount = 0;
 
