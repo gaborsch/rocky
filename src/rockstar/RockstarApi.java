@@ -8,9 +8,7 @@ package rockstar;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import rockstar.parser.Parser;
-import rockstar.parser.ParserError;
 import rockstar.runtime.BlockContextListener;
 import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
@@ -67,14 +65,9 @@ public class RockstarApi {
         }
     }
 
-    public void parse(String filename, InputStream fileContent, Function<ParserError, Void> errorHandler) {
+    public Program parse(String filename, InputStream fileContent) {
         Rockstar.setGlobalOptions(env.getOptions());
-        Program prg = new Parser(fileContent, filename, env).parse();
-        if (errorHandler != null) {
-            for (ParserError error : prg.getErrors()) {
-                errorHandler.apply(error);
-            }
-        }
+        return new Parser(fileContent, filename, env).parse();
     }
 
     public static void main(String[] args) {
