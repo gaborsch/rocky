@@ -5,8 +5,10 @@
  */
 package rockstar.statement;
 
+import java.util.ArrayList;
 import java.util.List;
 import rockstar.parser.Line;
+import rockstar.parser.ParserError;
 import rockstar.runtime.Utils;
 
 /**
@@ -16,6 +18,7 @@ import rockstar.runtime.Utils;
 public class Program extends Block {
 
     private final String name;
+    private List<ParserError> errors = null;
 
     public String getName() {
         return name;
@@ -23,6 +26,21 @@ public class Program extends Block {
 
     public Program(String name) {
         this.name = name;
+    }
+
+    public List<ParserError> getErrors() {
+        return errors;
+    }
+
+    public void addError(ParserError e) {
+        if (errors == null) {
+            errors = new ArrayList<>();
+        }
+        errors.add(e);
+    }
+
+    public boolean hasNoError() {
+        return errors == null;
     }
 
     @Override
@@ -53,10 +71,10 @@ public class Program extends Block {
             Line line = stmt.getLine();
             int lnum = (line != null) ? line.getLnum() : 0;
             while (lastLnum < lnum - 1) {
-                lastLnum++; 
+                lastLnum++;
                 if (lineNums) {
                     sb.append(String.format("(%d)", lastLnum));
-                } 
+                }
                 sb.append("\n");
             }
             lastLnum = lnum;

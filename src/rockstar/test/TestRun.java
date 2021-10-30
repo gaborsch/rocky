@@ -20,11 +20,13 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
 import rockstar.parser.Parser;
+import rockstar.parser.ParserError;
 import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.Utils;
@@ -98,7 +100,18 @@ public class TestRun {
             FileContext ctx = new FileContext(env);
             try {
                 prg = new Parser(filename, env).parse();
-                prg.execute(ctx);
+                if (prg.hasNoError()) {
+                    prg.execute(ctx);
+                } else {
+                    List<ParserError> errors = prg.getErrors();
+                    for (ParserError e : errors) {
+                        result.setMessage(result.getMessage() + "Parse error:" + e.getMsg() + "\n");
+                        Line line = e.getLine();
+                        if (line != null) {
+                            result.setDebugInfo(result.getDebugInfo() + line.getOrigLine() + "\n");
+                        }
+                    }
+                }
             } catch (FileNotFoundException ex) {
                 result.setException(ex);
             }

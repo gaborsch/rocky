@@ -81,8 +81,7 @@ public class Parser {
                 if (stmt instanceof AliasStatement) {
                     AliasStatement aliasStmt = (AliasStatement) stmt;
                     currentBlock.defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
-                }
-                if (stmt instanceof BlockEnd) {
+                } else if (stmt instanceof BlockEnd) {
                     // simple block closing: no need to add it anywhere
                     stmt = blocks.removeBlock();
                 } else {

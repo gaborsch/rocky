@@ -8,6 +8,7 @@ package rockstar.parser;
 import rockstar.parser.checker.*;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
+import rockstar.statement.StatementError;
 
 /**
  *
@@ -67,7 +68,8 @@ public class StatementFactory {
 
         @Override
         public Statement check() {
-            throw new ParseException("Invalid statement: " + line.getLine(), line);
+            // basic implementation
+            return new StatementError(0, "Invalid statement");
         }
     }
 
