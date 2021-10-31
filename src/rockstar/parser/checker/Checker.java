@@ -87,7 +87,8 @@ public abstract class Checker<T1, T2, T3> {
         // match cycle
         lastPos = -1;
         lastPH = null;
-        for (Object param : params) {
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
             if (param instanceof Placeholder) {
                 lastPH = ((Placeholder) param);
             } else {
