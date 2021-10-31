@@ -32,6 +32,16 @@ public class Program extends Block {
         return errors;
     }
 
+    public ParserError getErrorOnLine(int lnum) {
+        return errors == null
+                ? null
+                : errors
+                        .stream()
+                        .filter(e -> e.getLine().getLnum() == lnum)
+                        .findFirst()
+                        .orElse(null);
+    }
+
     public void addError(ParserError e) {
         if (errors == null) {
             errors = new ArrayList<>();
@@ -48,7 +58,7 @@ public class Program extends Block {
         return "PROGRAM " + name;
     }
 
-    public static class Listing {
+    public class Listing {
 
         private final boolean lineNums;
         private final boolean normal;
@@ -91,6 +101,16 @@ public class Program extends Block {
                 }
                 sb.append(Utils.repeat("  ", indent));
                 sb.append(stmt.explain()).append("\n");
+            } else {
+                ParserError error = Program.this.getErrorOnLine(lnum);
+                if (error != null) {
+                    if (lineNums) {
+                        sb.append(line == null ? "" : Utils.repeat(" ", String.format("(%d)", lnum).length())).append(" ");
+                    }
+                    sb.append(Utils.repeat("  ", indent + error.getPos()));
+                    sb.append("^--- Error: ");
+                    sb.append(error.getMsg());
+                }
             }
         }
     }
