@@ -50,7 +50,7 @@ public class StatementFactory {
         new ClassBlockChecker(),
         new InstantiationChecker(),
         new ExpressionStatementChecker(),
-        new NoOpChecker()
+        new RaiseError()
     };
 
     public static Statement getStatementFor(Line line, Block currentBlock) {
@@ -66,7 +66,7 @@ public class StatementFactory {
         return stmt;
     }
 
-    private static class NoOpChecker extends Checker {
+    private static class RaiseError extends Checker {
 
         @Override
         public Statement check() {

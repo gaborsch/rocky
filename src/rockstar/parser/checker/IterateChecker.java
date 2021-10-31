@@ -6,6 +6,7 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
+import static rockstar.parser.checker.Checker.PlaceholderType.VARIABLE_OR_QUALIFIER;
 import rockstar.statement.IterateStatement;
 import rockstar.statement.Statement;
 
@@ -16,8 +17,8 @@ import rockstar.statement.Statement;
 public class IterateChecker extends Checker<Expression, Expression, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("While", expressionAt(1), "as", at(2, PlaceholderType.VARIABLE_OR_QUALIFIER)),
-        new ParamList("While", expressionAt(1), "alike", at(2, PlaceholderType.VARIABLE_OR_QUALIFIER))};
+        new ParamList("While", expressionAt(1), "as", VARIABLE_OR_QUALIFIER.at(2)),
+        new ParamList("While", expressionAt(1), "alike", VARIABLE_OR_QUALIFIER.at(2))};
 
     @Override
     public Statement check() {

@@ -10,6 +10,7 @@ import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
+import static rockstar.parser.checker.Checker.PlaceholderType.LITERAL_OR_VARIABLE;
 import rockstar.runtime.Value;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.Statement;
@@ -24,8 +25,8 @@ public class ClassBlockChecker extends Checker<VariableReference, Expression, Ob
     private static final List<String> LOOKS_LIKE = Arrays.asList("looks", "like");
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList(variableAt(1), LOOK_LIKE, at(2, PlaceholderType.LITERAL_OR_VARIABLE)),
-        new ParamList(variableAt(1), LOOKS_LIKE, at(2, PlaceholderType.LITERAL_OR_VARIABLE))};
+        new ParamList(variableAt(1), LOOK_LIKE, LITERAL_OR_VARIABLE.at(2)),
+        new ParamList(variableAt(1), LOOKS_LIKE, LITERAL_OR_VARIABLE.at(2))};
 
     @Override
     public Statement check() {
