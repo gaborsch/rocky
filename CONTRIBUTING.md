@@ -26,7 +26,7 @@ For every filed issue, open a branch for the fix. When the fix is done,
 * make sure tha all the tests are running (execute `./rockstar test -v programs/tests/`)
 * if everything passes, open a PR to merge to `master` branch
 
-Should you have any questions, please contact `gaborsch` on Rockstar Discord.
+Should you have any questions, please contact `gaborsch` on [Rockstar Discord](https://discord.com/invite/xsQK7UU).
 
 
 
