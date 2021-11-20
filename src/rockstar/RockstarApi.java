@@ -5,7 +5,7 @@
  */
 package rockstar;
 
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import rockstar.parser.Parser;
@@ -20,23 +20,25 @@ import rockstar.statement.Program;
  * @author Gabor
  */
 public class RockstarApi {
-    
-    private Map<String,String> options;
+
+    private BlockContextListener logger;
     private Environment env;
 
     public RockstarApi() {
-        options = new HashMap<>();
-        BlockContextListener logger = new LoggerListener(options);
+        Map<String, String> options = new HashMap<>();
         env = new Environment(System.in, System.out, System.err, options);
+        logger = new LoggerListener(env.getOptions());
         env.setListener(logger);
     }
 
     public Map<String, String> getOptions() {
-        return options;
+        return env.getOptions();
     }
 
     public void setOptions(Map<String, String> options) {
-        this.options = options;
+        env.getOptions().putAll(options);
+        logger = new LoggerListener(env.getOptions());
+        env.setListener(logger);
     }
 
     public Environment getEnv() {
@@ -45,11 +47,12 @@ public class RockstarApi {
 
     public void setEnv(Environment env) {
         this.env = env;
+        logger = new LoggerListener(env.getOptions());
+        env.setListener(logger);
     }
 
-    
     public void run(String filename, String fileContent) {
-        Rockstar.setGlobalOptions(options);
+        Rockstar.setGlobalOptions(env.getOptions());
 
         FileContext prgCtx = new FileContext(env);
         FileContext ctx;
@@ -61,10 +64,15 @@ public class RockstarApi {
             System.err.println("Error: " + re.getMessage());
         }
     }
-    
+
+    public Program parse(String filename, InputStream fileContent) {
+        Rockstar.setGlobalOptions(env.getOptions());
+        return new Parser(fileContent, filename, env).parse();
+    }
+
     public static void main(String[] args) {
         String program = "Say \"hello world!\"";
-        new RockstarApi().run("RockstarApi", program);        
+        new RockstarApi().run("RockstarApi", program);
     }
-    
+
 }

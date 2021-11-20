@@ -5,8 +5,10 @@
  */
 package rockstar.statement;
 
+import java.util.ArrayList;
 import java.util.List;
 import rockstar.parser.Line;
+import rockstar.parser.ParserError;
 import rockstar.runtime.Utils;
 
 /**
@@ -16,6 +18,7 @@ import rockstar.runtime.Utils;
 public class Program extends Block {
 
     private final String name;
+    private List<ParserError> errors = null;
 
     public String getName() {
         return name;
@@ -25,12 +28,37 @@ public class Program extends Block {
         this.name = name;
     }
 
+    public List<ParserError> getErrors() {
+        return errors;
+    }
+
+    public ParserError getErrorOnLine(int lnum) {
+        return errors == null
+                ? null
+                : errors
+                        .stream()
+                        .filter(e -> e.getLine().getLnum() == lnum)
+                        .findFirst()
+                        .orElse(null);
+    }
+
+    public void addError(ParserError e) {
+        if (errors == null) {
+            errors = new ArrayList<>();
+        }
+        errors.add(e);
+    }
+
+    public boolean hasNoError() {
+        return errors == null;
+    }
+
     @Override
     protected String explain() {
         return "PROGRAM " + name;
     }
 
-    public static class Listing {
+    public class Listing {
 
         private final boolean lineNums;
         private final boolean normal;
@@ -53,10 +81,10 @@ public class Program extends Block {
             Line line = stmt.getLine();
             int lnum = (line != null) ? line.getLnum() : 0;
             while (lastLnum < lnum - 1) {
-                lastLnum++; 
+                lastLnum++;
                 if (lineNums) {
                     sb.append(String.format("(%d)", lastLnum));
-                } 
+                }
                 sb.append("\n");
             }
             lastLnum = lnum;
@@ -73,6 +101,16 @@ public class Program extends Block {
                 }
                 sb.append(Utils.repeat("  ", indent));
                 sb.append(stmt.explain()).append("\n");
+            } else {
+                ParserError error = Program.this.getErrorOnLine(lnum);
+                if (error != null) {
+                    if (lineNums) {
+                        sb.append(line == null ? "" : Utils.repeat(" ", String.format("(%d)", lnum).length())).append(" ");
+                    }
+                    sb.append(Utils.repeat("  ", indent + error.getPos()));
+                    sb.append("^--- Error: ");
+                    sb.append(error.getMsg());
+                }
             }
         }
     }

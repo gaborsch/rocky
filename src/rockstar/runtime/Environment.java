@@ -49,6 +49,10 @@ public class Environment {
         return error;
     }
 
+    public Map<String, String> getOptions() {
+        return env;
+    }
+
     public String getOptionValue(String key) {
         return env.get(key);
     }

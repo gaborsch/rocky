@@ -469,7 +469,7 @@ public class ExpressionParser {
             return new SliceExpression(SliceExpression.Type.SLICE_TO);
         }
 
-        if (checkCurrent(",")) {
+        if (checkCurrent(",", "&")) {
             next();
             return new ListExpression();
         }

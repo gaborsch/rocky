@@ -13,12 +13,12 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class RollChecker extends Checker<VariableReference, VariableReference, Object> {
+public class RollChecker2 extends Checker<VariableReference, VariableReference, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Roll", variableAt(2), "into", variableAt(1)),
-        new ParamList("Pop", variableAt(2), "into", variableAt(1)),
-        new ParamList("Pull", variableAt(1), "from", variableAt(2))};
+        new ParamList("Roll", variableAt(2)),
+        new ParamList("Pop", variableAt(2)),
+        new ParamList("Pull", "from", variableAt(2))};
 
     @Override
     public Statement check() {
@@ -26,8 +26,8 @@ public class RollChecker extends Checker<VariableReference, VariableReference, O
     }
 
     private Statement validate(ParamList params) {
-        VariableReference targetRefExpr = getE1();
         VariableReference arrayExpr = getE2();
-        return new RollStatement(arrayExpr, targetRefExpr);
+        return new RollStatement(arrayExpr);
     }
+
 }

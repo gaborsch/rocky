@@ -8,6 +8,7 @@ package rockstar.parser;
 import rockstar.parser.checker.*;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
+import rockstar.statement.StatementError;
 
 /**
  *
@@ -39,7 +40,9 @@ public class StatementFactory {
         new PoeticStringAssignmentChecker(),
         new RockPoeticChecker(),
         new RockChecker(),
+        new RockChecker2(),
         new RollChecker(),
+        new RollChecker2(),
         new TurnChecker(),
         new CastChecker(),
         new SplitChecker(),
@@ -47,7 +50,7 @@ public class StatementFactory {
         new ClassBlockChecker(),
         new InstantiationChecker(),
         new ExpressionStatementChecker(),
-        new NoOpChecker()
+        new RaiseError()
     };
 
     public static Statement getStatementFor(Line line, Block currentBlock) {
@@ -63,11 +66,12 @@ public class StatementFactory {
         return stmt;
     }
 
-    private static class NoOpChecker extends Checker {
+    private static class RaiseError extends Checker {
 
         @Override
         public Statement check() {
-            throw new ParseException("Invalid statement: " + line.getLine(), line);
+            // basic implementation
+            return new StatementError(0, "Invalid statement");
         }
     }
 

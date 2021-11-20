@@ -20,13 +20,14 @@ public class MutationExpression extends CompoundExpression {
     private final Expression baseExpr;
     private final Expression withExpr;
     private final VariableReference intoExpr;
-    
+
     /**
      * Standalone usage: "mutate `variable`"
      *
      * @param vref
      */
     public MutationExpression(VariableReference vref) {
+        super(vref);
         this.baseExpr = vref;
         this.withExpr = null;
         this.intoExpr = vref;
@@ -38,6 +39,7 @@ public class MutationExpression extends CompoundExpression {
      * @param withExpression
      */
     public MutationExpression(WithExpression withExpression) {
+        super();
         // With usage
         List<Expression> withParams = ((WithExpression) withExpression).getParameters();
         Expression withParam0 = withParams.get(0);
@@ -45,21 +47,24 @@ public class MutationExpression extends CompoundExpression {
             this.baseExpr = (VariableReference) withParam0;
             this.withExpr = withParams.get(1);
             this.intoExpr = (VariableReference) withParam0;
+            addParameter(this.baseExpr);
+            addParameter(this.withExpr);
         } else {
             throw new RockstarRuntimeException("Cannot use " + withParam0 + " as target for 'into'");
         }
     }
 
     /**
-     * Into usage: "Mutate `expression` into `variable`" 
-     * 
+     * Into usage: "Mutate `expression` into `variable`"
+     *
      * Into-with usage: "Mutate `expression` into `variable` with `expression`"
-
+     *
      * With-Into usage: "Mutate `expression` with `expression`into `variable`"
      *
      * @param intoExpression
      */
     public MutationExpression(IntoExpression intoExpression) {
+        super();
         List<Expression> intoParams = intoExpression.getParameters();
         Expression intoParam0 = intoParams.get(0);
         Expression intoParam1 = intoParams.get(1);
@@ -71,6 +76,9 @@ public class MutationExpression extends CompoundExpression {
                 this.baseExpr = intoParam0;
                 this.intoExpr = (VariableReference) withParam0;
                 this.withExpr = withParams.get(1);
+                addParameter(this.baseExpr);
+                addParameter(this.intoExpr);
+                addParameter(this.withExpr);
             } else {
                 throw new RockstarRuntimeException("Cannot use " + withParam0 + " as target for 'into'");
             }
@@ -81,6 +89,9 @@ public class MutationExpression extends CompoundExpression {
                 this.baseExpr = withParams.get(0);
                 this.withExpr = withParams.get(1);
                 this.intoExpr = (VariableReference) intoParam1;
+                addParameter(this.baseExpr);
+                addParameter(this.intoExpr);
+                addParameter(this.withExpr);
             } else {
                 throw new RockstarRuntimeException("Cannot use " + intoParam1 + " as target for 'into'");
             }
@@ -89,6 +100,8 @@ public class MutationExpression extends CompoundExpression {
             this.baseExpr = intoParam0;
             this.withExpr = null;
             this.intoExpr = (VariableReference) intoParam1;
+            addParameter(this.baseExpr);
+            addParameter(this.intoExpr);
         } else {
             throw new RockstarRuntimeException("Cannot use " + intoParam1 + " as target for 'into'");
         }
@@ -142,8 +155,7 @@ public class MutationExpression extends CompoundExpression {
         }
         return params;
     }
-    
-    
+
     @Override
     public Value evaluate(BlockContext ctx) {
         // by default we evaluate the base expression

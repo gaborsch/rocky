@@ -8,6 +8,7 @@ package rockstar.parser.checker;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
@@ -15,6 +16,7 @@ import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.parser.Line;
+import rockstar.parser.Token;
 import static rockstar.parser.checker.Checker.PlaceholderType.*;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
@@ -22,6 +24,9 @@ import rockstar.statement.Statement;
 /**
  *
  * @author Gabor
+ * @param <T1>
+ * @param <T2>
+ * @param <T3>
  */
 public abstract class Checker<T1, T2, T3> {
 
@@ -36,7 +41,6 @@ public abstract class Checker<T1, T2, T3> {
 
     private int matchCounter = 0;
 
-//    private final Map<String, List<String>> listCache = new HashMap<>();
     private Object[] extParams;
 
     public T1 getE1() {
@@ -65,16 +69,17 @@ public abstract class Checker<T1, T2, T3> {
     public abstract Statement check();
 
     /**
-     * Matches a statement pattern, e.g. [1, "this", 3, "that" "other" 2]
+     * Matches a statement pattern, e.g. [1, ["this"], 3, ["that" "other"], 2]
      * Numbers represent placeholders, parsedResult[n] will be set to the matched
      * sub-list Strings represent string tokens
      *
      * @param params
      * @return
      */
-    public boolean match(Object... params) {
+    private boolean match(Object... params) {
         matchCounter++;
-        List<String> tokens = line.getTokens();
+        List<Token> tokenList = line.getTokens();
+        List<String> tokens = tokenList.stream().map(Token::getValue).collect(Collectors.toList());
         // clear previous result
         for (int i = 0; i < parsedResult.length; i++) {
             parsedResult[i] = null;
@@ -82,7 +87,8 @@ public abstract class Checker<T1, T2, T3> {
         // match cycle
         lastPos = -1;
         lastPH = null;
-        for (Object param : params) {
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
             if (param instanceof Placeholder) {
                 lastPH = ((Placeholder) param);
             } else {
@@ -138,7 +144,7 @@ public abstract class Checker<T1, T2, T3> {
         boolean validText = false;
         Expression e = null;
         if (ph.getType() == POETIC_LITERAL) {
-            String assignmentToken = line.getTokens().get(lastPos);
+            String assignmentToken = line.getTokens().get(lastPos).getValue();
             String orig = line.getOrigLine();
             int p = orig.indexOf(" " + assignmentToken + " ");
             if (assignmentToken.equals("is")) {
@@ -248,34 +254,6 @@ public abstract class Checker<T1, T2, T3> {
         return null;
     }
 
-    protected Statement check2(ParamList[] possibleParams, Function<ParamList, Statement> validator) {
-        Statement stmt = null;
-        for (ParamList params : possibleParams) {
-            boolean hasMatch = firstMatch(params);
-            while (hasMatch && ((stmt = validator.apply(params)) != null)) {
-                hasMatch = nextMatch();
-            }
-        }
-        return stmt;
-    }
-
-    private boolean firstMatch(ParamList params) {
-        matchCounter++;
-        Object[] origParams = params.getParams();
-        this.extParams = new Object[origParams.length];
-        for (int i = 0; i < origParams.length; i++) {
-            Object param = origParams[i];
-            extParams[i] = (param instanceof List)
-                    ? block.getAliasesFor((List<String>) param)
-                    : param;
-        }
-        return nextMatch();
-    }
-
-    private boolean nextMatch() {
-        return false;
-    }
-
     public static Placeholder textAt(int pos) {
         return new Placeholder(PlaceholderType.TEXT, pos);
     }
@@ -300,9 +278,9 @@ public abstract class Checker<T1, T2, T3> {
         return new Placeholder(PlaceholderType.POETIC_LITERAL, pos);
     }
 
-    public static Placeholder at(int pos, PlaceholderType type) {
-        return new Placeholder(type, pos);
-    }
+//    public static Placeholder at(int pos, PlaceholderType type) {
+//        return new Placeholder(type, pos);
+//    }
 
     public enum PlaceholderType {
         TEXT,
@@ -314,6 +292,10 @@ public abstract class Checker<T1, T2, T3> {
         EXPRESSION,
         MUTATION_EXPRESSION,
         POETIC_LITERAL;
+        
+        Placeholder at(int pos) {
+            return new Placeholder(this, pos);
+        }
     }
 
     public static class Placeholder {

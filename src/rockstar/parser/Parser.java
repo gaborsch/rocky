@@ -57,7 +57,7 @@ public class Parser {
         this.env = env;
         try {
             this.filename = filename;
-            rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)));
+            rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)), filename);
         } catch (UnsupportedEncodingException ex) {
             System.err.println(Utils.UTF8 + " charset is not supported");
         }
@@ -65,26 +65,23 @@ public class Parser {
 
     public Parser(String content, String filename) {
         this.filename = filename;
-        rdr = new MultilineReader(new BufferedReader(new StringReader(content)));
+        rdr = new MultilineReader(new BufferedReader(new StringReader(content)), filename);
     }
 
     public Program parse() {
         Program prg = new Program(filename);
 
-        String line;
         Line l = Line.STARTER_LINE;
         BlockStack blocks = new BlockStack(env);
         blocks.push(prg);
         try {
-            while ((line = rdr.readLine()) != null) {
-                l = new Line(line, filename, rdr.getLnum());
+            while ((l = rdr.readLine()) != null) {
                 Block currentBlock = blocks.peek();
                 Statement stmt = StatementFactory.getStatementFor(l, currentBlock);
                 if (stmt instanceof AliasStatement) {
                     AliasStatement aliasStmt = (AliasStatement) stmt;
                     currentBlock.defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
-                }
-                if (stmt instanceof BlockEnd) {
+                } else if (stmt instanceof BlockEnd) {
                     // simple block closing: no need to add it anywhere
                     stmt = blocks.removeBlock();
                 } else {
