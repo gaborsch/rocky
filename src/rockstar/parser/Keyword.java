@@ -36,7 +36,7 @@ public enum Keyword {
     PLUS(true, true, "plus", "+"),
     MINUS(true, true, "minus", "without", "-"),
     TIMES(true, true, "times", "of", "*"),
-    OVER(true, true, "over", "/"),
+    OVER(true, true, "over", "between", "/"),
     ROCK(false, false),
     ROLL(true, true, "roll", "pop"),
     INTO(true, true, "into"),
