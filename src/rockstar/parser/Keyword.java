@@ -39,7 +39,7 @@ public enum Keyword {
     OVER(true, true, "over", "between", "/"),
     ROCK(false, false),
     ROLL(true, true, "roll", "pop"),
-    INTO(true, true, "into"),
+    INTO(true, true, "into", "in"),
     FROM(false, true, "from"),
     TILL(false, true, "till"),
     TAKING(true, true, "taking"),

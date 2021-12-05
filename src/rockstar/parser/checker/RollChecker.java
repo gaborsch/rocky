@@ -17,7 +17,9 @@ public class RollChecker extends Checker<VariableReference, VariableReference, O
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("Roll", variableAt(2), "into", variableAt(1)),
+        new ParamList("Roll", variableAt(2), "in", variableAt(1)),
         new ParamList("Pop", variableAt(2), "into", variableAt(1)),
+        new ParamList("Pop", variableAt(2), "in", variableAt(1)),
         new ParamList("Pull", variableAt(1), "from", variableAt(2))};
 
     @Override
