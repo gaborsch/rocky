@@ -40,7 +40,7 @@ public class TestRun {
 
     private final Map<String, String> options;
 
-    TestRun(Map<String, String> options, boolean isStrictMode) {
+    TestRun(Map<String, String> options, Boolean isStrictMode) {
         this.options = new HashMap<>(options);
         if (isStrictMode) {
             this.options.put("--strict", "--strict");
@@ -96,7 +96,7 @@ public class TestRun {
             ByteArrayOutputStream errs = new ByteArrayOutputStream();
             PrintStream err = new PrintStream(errs, true, Utils.UTF8);
 
-            Environment env = new Environment(in, out, err, options);
+            Environment env = Environment.create(in, out, err, options);
             FileContext ctx = new FileContext(env);
             try {
                 prg = new Parser(filename, env).parse();

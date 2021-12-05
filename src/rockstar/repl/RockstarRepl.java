@@ -44,7 +44,7 @@ public class RockstarRepl {
     }
 
     public void repl(List<String> files) {
-        Environment env = new Environment(System.in, System.out, System.err, options);
+        Environment env = Environment.create(System.in, System.out, System.err, options);
         FileContext ctx = new FileContext(env);
 
         // pre-run any programs defined as parameter

@@ -26,7 +26,7 @@ public class RockstarApi {
 
     public RockstarApi() {
         Map<String, String> options = new HashMap<>();
-        env = new Environment(System.in, System.out, System.err, options);
+        env = Environment.create(System.in, System.out, System.err, options);
         logger = new LoggerListener(env.getOptions());
         env.setListener(logger);
     }

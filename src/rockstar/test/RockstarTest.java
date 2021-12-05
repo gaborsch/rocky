@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import rockstar.runtime.Environment;
 import rockstar.runtime.Utils;
 
 /**
@@ -17,15 +18,14 @@ import rockstar.runtime.Utils;
  */
 public class RockstarTest {
 
-    private final Map<String, String> options;
-
     private boolean allDirectories;
     private boolean isQuiet;
     private boolean isVerbose;
     private boolean isVeryVerbose;
+    private final Environment defaultEnv;
 
     public RockstarTest(Map<String, String> options) {
-        this.options = options;
+        this.defaultEnv = Environment.forOptions(options);
     }
 
     public enum Expected {
@@ -35,29 +35,32 @@ public class RockstarTest {
     }
 
     public void execute(String path) {
+        boolean defaultStrictMode = defaultEnv.isStrictMode();
         File f = new File(path);
         if(f.exists()) {
             if (f.isDirectory()) {
-                executeDir(path);
+                if (path.endsWith("tests")) {
+                    defaultStrictMode = true;
+                }
+                executeDir(path, defaultStrictMode);
             } else {
-                executeFile(f, Expected.CORRECT);
+                executeFile(f, Expected.CORRECT, defaultStrictMode);
             }
         }
     }
-
 
     private int testCount = 0;
     private int passed = 0;
     private int failed = 0;
 
-    private void executeDir(String dirname) {
+    private void executeDir(String dirname, boolean defaultStrictMode) {
 
-        allDirectories = options.containsKey("-a") || options.containsKey("--all-directories");
-        isQuiet = options.containsKey("-q") || options.containsKey("--quiet");
-        isVeryVerbose = options.containsKey("-vv") || options.containsKey("--very-verbose");
-        isVerbose = isVeryVerbose || options.containsKey("-v") || options.containsKey("--verbose");
+        allDirectories = defaultEnv.hasOption("-a", "--all-directories");
+        isQuiet = defaultEnv.hasOption("-q","--quiet");
+        isVeryVerbose = defaultEnv.hasOption("-vv","--very-verbose");
+        isVerbose = isVeryVerbose || defaultEnv.hasOption("-v", "--verbose");
 
-        executeDir(dirname, null, true);
+        executeDir(dirname, null, defaultStrictMode);
 
         String SEPARATOR = Utils.repeat("=", 60);
         System.out.println();
@@ -89,7 +92,7 @@ public class RockstarTest {
                         }
                         isFirstFileInDir = false;
                     }
-                    executeFile(file, exp == null ? Expected.CORRECT : exp);
+                    executeFile(file, exp == null ? Expected.CORRECT : exp, isStrictMode);
                 } else if (file.isDirectory()) {
                     if (allDirectories || !file.getName().matches("^[._].*")) {
                         // skip directories starting with "." or "_"
@@ -123,11 +126,11 @@ public class RockstarTest {
 
     }
 
-    private void executeFile(File file, Expected exp) {
+    private void executeFile(File file, Expected exp, boolean isStrictMode) {
 
 //        System.out.println("--- Processing file " + file.getName() + " for " + exp + " test");
         testCount++;
-        TestResult result = new TestRun(options, true).execute(file.getAbsolutePath(), exp);
+        TestResult result = new TestRun(defaultEnv.getOptions(), isStrictMode).execute(file.getAbsolutePath(), exp);
         String message = result.getMessage();
         Throwable exc = result.getException();
         String debugInfo = result.getDebugInfo();
@@ -163,5 +166,4 @@ public class RockstarTest {
             }
         }
     }
-
 }

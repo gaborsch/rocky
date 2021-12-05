@@ -30,7 +30,7 @@ public class RockstarDebugger {
     }
 
     public void debug(List<String> files) {
-        Environment env = new Environment(System.in, System.out, System.err, options);
+        Environment env = Environment.create(System.in, System.out, System.err, options);
 
         DebugListener listener = new DebugListener(options);
         env.setListener(listener);

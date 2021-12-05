@@ -239,7 +239,7 @@ public class Rockstar {
 
         LoggerListener logger = new LoggerListener(options);
 
-        Environment env = new Environment(System.in, System.out, System.err, options);
+        Environment env = Environment.create(System.in, System.out, System.err, options);
         env.setListener(logger);
 
         FileContext prgCtx = new FileContext(env);
@@ -262,7 +262,7 @@ public class Rockstar {
             throw new IllegalArgumentException("Missing files");
         }
 
-        Environment env = new Environment(System.in, System.out, System.err, options);
+        Environment env = Environment.create(System.in, System.out, System.err, options);
         boolean explainOnly = env.hasOption("-X", "--explain-only");
         boolean explain = env.hasOption("-x", "--explain");
         boolean lineNums = env.hasOption("-l", "--line-number");

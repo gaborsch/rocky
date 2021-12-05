@@ -33,6 +33,7 @@ import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.expression.WithExpression;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Environment;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Value;
 import rockstar.statement.Block;
@@ -42,6 +43,8 @@ import rockstar.statement.Block;
  * @author Gabor
  */
 public class ExpressionParser {
+
+    private Environment env;
 
     // tokens of the whole expression
     private final List<String> list;
@@ -56,6 +59,7 @@ public class ExpressionParser {
         this.line = line;
         this.block = block;
         idx = 0;
+        env = Environment.get();
     }
 
     /**
@@ -340,7 +344,7 @@ public class ExpressionParser {
             next();
         }
         // qualifiers
-        if (checkCurrent(Keyword.ON)) {
+        if (!env.isStrictMode() && checkCurrent(Keyword.ON)) {
             next();
             return new QualifierExpression(false);
         }

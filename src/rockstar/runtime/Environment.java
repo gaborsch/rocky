@@ -21,20 +21,37 @@ public class Environment {
     private final BufferedReader input;
     private final PrintStream output;
     private final PrintStream error;
-    private final Map<String, String> env;
+    private final Map<String, String> options;
 
     private BlockContextListener listener = null;
 
-    public Environment(InputStream input, PrintStream output, PrintStream error, Map<String, String> env) {
+    private static Environment instance = null;
+
+    private Environment(InputStream input, PrintStream output, PrintStream error, Map<String, String> options) {
         this.output = output;
         this.error = error;
-        this.env = env;
+        this.options = options;
         InputStreamReader rdr = null;
         try {
-            rdr = new InputStreamReader(input, Utils.UTF8);
+            rdr = (input == null)
+                    ? null
+                    : new InputStreamReader(input, Utils.UTF8);
         } catch (UnsupportedEncodingException ex) {
         }
         this.input = (rdr == null) ? null : new BufferedReader(rdr);
+    }
+
+    public static synchronized Environment get() {
+        return instance;
+    }
+
+    public static synchronized Environment create(InputStream input, PrintStream output, PrintStream error, Map<String, String> options) {
+        instance = new Environment(input, output, error, options);
+        return instance;
+    }
+
+    public static synchronized Environment forOptions(Map<String, String> options) {
+        return new Environment(null, null, null, options);
     }
 
     public BufferedReader getInput() {
@@ -50,19 +67,19 @@ public class Environment {
     }
 
     public Map<String, String> getOptions() {
-        return env;
+        return options;
     }
 
     public String getOptionValue(String key) {
-        return env.get(key);
+        return options.get(key);
     }
 
     public boolean hasOption(String shortOpt, String longOpt) {
-        return env.containsKey(shortOpt) || env.containsKey(longOpt);
+        return options.containsKey(shortOpt) || options.containsKey(longOpt);
     }
 
     public boolean hasOption(String opt) {
-        return env.containsKey(opt);
+        return options.containsKey(opt);
     }
 
     public boolean isStrictMode() {
