@@ -144,30 +144,9 @@ public abstract class Checker<T1, T2, T3> {
         boolean validText = false;
         Expression e = null;
         if (ph.getType() == POETIC_LITERAL) {
-            String assignmentToken = line.getTokens().get(lastPos).getValue();
-            String orig = line.getOrigLine();
-            int p = orig.indexOf(" " + assignmentToken + " ");
-            if (assignmentToken.equals("is")) {
-                // maybe "'s" was expanded to " is "
-                int p2 = orig.indexOf("'s "); 
-                // find out which one was the first, "is" or "'s"
-                p = (p2 < 0) ? p : ((p < 0) ? p2 : ((p < p2) ? p : p2));
-                if (p >= 0) {
-                   if (p == p2) {
-                        p = p + "'s ".length();
-                    } else {
-                        p = p + assignmentToken.length() + 2;
-                    }
-                }
-            } else {
-                p += assignmentToken.length() + 2;
-            }
-            if (p >= 0) {
-                String origEnd = orig.substring(p);
-                e = ExpressionFactory.getPoeticLiteralFor(posTokens, line, origEnd, block);
-                validExpr = true;
-            }
-            
+            String origTail = line.getOrigLine().substring(line.getTokens().get(lastPos+1).getPos());
+            e = ExpressionFactory.getPoeticLiteralFor(posTokens, line, origTail, block);
+            validExpr = true;
         } else {
             // default expression may be defined - hopefully it has already been parsed
             Expression defaultExpr = ph.getDefaultExprPos() == null ? null : (Expression) parsedResult[ph.getDefaultExprPos()];
