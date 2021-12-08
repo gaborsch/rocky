@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import rockstar.expression.ExpressionType;
-import rockstar.parser.Keyword;
 import rockstar.statement.FunctionBlock;
 
 /**
@@ -81,25 +80,6 @@ public class Value implements Comparable<Value> {
     }
     
     public static Value parse(String s) {
-        if (Keyword.MYSTERIOUS.matches(s)) {
-            return MYSTERIOUS;
-        }
-        if (Keyword.NULL.matches(s)) {
-            return NULL;
-        }
-        if (Keyword.BOOLEAN_TRUE.matches(s)) {
-            return BOOLEAN_TRUE;
-        }
-        if (Keyword.BOOLEAN_FALSE.matches(s)) {
-            return BOOLEAN_FALSE;
-        } 
-        RockNumber numericValue = RockNumber.parse(s);
-        if (numericValue != null) {
-            return getValue(numericValue);
-        }
-        if (s.length() >= 2 && s.matches("\".*\"")) {
-            s = s.substring(1, s.length() - 1);
-        }
         return getValue(s);
     }
 
