@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -it -v ${pwd}:/local -w="/local" java:8-jdk-alpine java -classpath rocky.jar rockstar.Rockstar $*
+docker run -it -v "$(pwd):/local" -w="/local" java:8-jdk-alpine java -classpath rocky.jar rockstar.Rockstar $*
