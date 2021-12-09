@@ -61,7 +61,7 @@ public class WhileStatement extends Block {
             lastCondition = canContinue && (v.asBoolean().getBool() ^ negateCondition);
         }
         if (!isInfiniteLoopsAllowed && loopCount > Rockstar.MAX_LOOP_ITERATIONS) {
-            throw new RockstarRuntimeException("Loop exceeded " + Rockstar.MAX_LOOP_ITERATIONS + " iterations");
+            throw new RockstarRuntimeException("Loop exceeded " + Rockstar.MAX_LOOP_ITERATIONS + " iterations, use --infinite-loops to bypass this limit");
         }
     }
 
