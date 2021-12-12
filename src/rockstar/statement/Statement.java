@@ -27,7 +27,7 @@ public abstract class Statement implements ASTAware {
 
     @Override
     public String toString() {
-        return explain();
+        return line.getOrigLine();
     }
 
     public void setDebugInfo(Line line) {
@@ -50,8 +50,6 @@ public abstract class Statement implements ASTAware {
      * @param ctx
      */
     public abstract void execute(BlockContext ctx);
-
-    protected abstract String explain();
 
     public Block getBlock() {
         return block;

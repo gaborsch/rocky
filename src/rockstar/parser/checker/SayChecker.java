@@ -6,7 +6,7 @@
 package rockstar.parser.checker;
 
 import rockstar.expression.Expression;
-import rockstar.statement.OutputStatement;
+import rockstar.statement.SayStatement;
 import rockstar.statement.Statement;
 
 /**
@@ -28,7 +28,7 @@ public class SayChecker extends Checker<Expression, Object, Object> {
 
     private Statement validate(ParamList params) {
         Expression expr = getE1();
-        return new OutputStatement(expr);
+        return new SayStatement(expr);
     }
 
 }

@@ -55,11 +55,6 @@ public class RollStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "roll " + targetRef.format() + " from " + arrayVariable.format();
-    }
-
-    @Override
 
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(targetRef, arrayVariable);

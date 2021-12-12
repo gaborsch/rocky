@@ -71,11 +71,6 @@ public class CastStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return expr.getTargetReference().format() + " = cast " + expr.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expr);
     }

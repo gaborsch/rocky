@@ -35,11 +35,6 @@ public class ContinueStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "continue";
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return null;
     }

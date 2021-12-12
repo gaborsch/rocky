@@ -20,11 +20,6 @@ public class BlockEnd extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "";
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return null;
     }

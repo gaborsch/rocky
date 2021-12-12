@@ -6,7 +6,6 @@
 package rockstar.statement;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 
@@ -35,13 +34,6 @@ public class AliasStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         // alias definition executed immediately by the Parser
-    }
-
-    @Override
-    protected String explain() {
-        return alias.stream().collect(Collectors.joining(" "))
-                + " means "
-                + keyword.stream().collect(Collectors.joining(" "));
     }
 
     @Override

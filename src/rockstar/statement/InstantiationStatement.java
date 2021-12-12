@@ -56,12 +56,6 @@ public class InstantiationStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        String paramsList = ctorParameterExprs.toString();
-        return variable.format() + " := new " + className + "(" + paramsList.substring(1, paramsList.length() - 1) + ")";
-    }
-
-    @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + " of class " + className;
     }

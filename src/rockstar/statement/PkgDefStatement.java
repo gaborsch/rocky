@@ -35,11 +35,6 @@ public class PkgDefStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "print " + path;
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(path.toString());
     }

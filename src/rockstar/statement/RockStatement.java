@@ -65,11 +65,6 @@ public class RockStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "rock " + expression.format() + " into " + variable.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variable, expression);
     }

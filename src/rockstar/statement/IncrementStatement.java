@@ -69,11 +69,6 @@ public class IncrementStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return variable.format() + " += " + count;
-    }
-
-    @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + (count != 1 ? (" by " + count) : "");
     }

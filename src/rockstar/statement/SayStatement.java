@@ -15,11 +15,11 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public class OutputStatement extends Statement {
+public class SayStatement extends Statement {
 
     private final Expression expression;
 
-    public OutputStatement(Expression expression) {
+    public SayStatement(Expression expression) {
         this.expression = expression;
     }
 
@@ -27,11 +27,6 @@ public class OutputStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
         ctx.getEnv().getOutput().println(v.asScalar().getString());
-    }
-
-    @Override
-    protected String explain() {
-        return "print " + expression.format();
     }
 
     @Override

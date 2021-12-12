@@ -43,11 +43,6 @@ public class IfStatement extends Block {
     }
 
     @Override
-    protected String explain() {
-        return "if " + condition.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         List<ASTAware> astValues = ASTValues.of(condition);
         astValues.addAll(super.getASTChildren());

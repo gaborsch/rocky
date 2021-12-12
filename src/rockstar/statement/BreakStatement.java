@@ -34,11 +34,6 @@ public class BreakStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "break";
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return null;
     }

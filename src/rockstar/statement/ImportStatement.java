@@ -46,28 +46,6 @@ public class ImportStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        StringBuilder sb = new StringBuilder();
-        if (path != null) {
-            sb.append("from ")
-                    .append(path)
-                    .append(" ");
-        }
-        sb.append(" import ");
-        boolean isFirst = true;
-        for (String name : names) {
-            if (!isFirst) {
-                sb.append(", ");
-                isFirst = false;
-            }
-            sb.append(name);
-        }
-
-// TODO classes        
-        return sb.toString();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         List<ASTAware> astValues = ASTValues.of(path.toString());
         astValues.addAll(ASTValues.of((String[]) names.toArray()));

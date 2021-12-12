@@ -34,11 +34,6 @@ public class ExpressionStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return expression.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expression);
     }

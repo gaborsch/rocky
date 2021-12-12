@@ -85,12 +85,6 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    protected String explain() {
-        String paramsList = parameterRefs.toString();
-        return "function " + name + "(" + paramsList.substring(1, paramsList.length() - 1) + ")";
-    }
-
-    @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + " " + name;
     }

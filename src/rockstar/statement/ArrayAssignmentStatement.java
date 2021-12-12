@@ -53,21 +53,6 @@ public class ArrayAssignmentStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        StringBuilder sb = new StringBuilder(variable.format());
-        sb.append(" := ");
-        boolean isFirst = true;
-        for (Expression expr : expressionList) {
-            if (!isFirst) {
-                sb.append(", ");
-            }
-            sb.append(expr);
-            isFirst = false;
-        }
-        return sb.toString();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         List<ASTAware> astParams = new LinkedList<>();
         astParams.add(variable);

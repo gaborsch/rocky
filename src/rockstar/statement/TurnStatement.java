@@ -73,11 +73,6 @@ public class TurnStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return variable.format() + " = " + direction + " " + variable.format();
-    }
-
-    @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + " " + direction;
     }

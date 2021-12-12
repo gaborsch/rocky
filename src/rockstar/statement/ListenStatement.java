@@ -45,11 +45,6 @@ public class ListenStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "input " + (variable == null ? "<line>" : variable.format());
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variable);
     }

@@ -69,11 +69,6 @@ public class AssignmentStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return variableExpression.format() + " := " + valueExpression.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variableExpression, valueExpression);
     }

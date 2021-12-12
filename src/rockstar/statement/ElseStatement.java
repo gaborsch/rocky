@@ -47,9 +47,4 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
         super.execute(ctx);
     }
 
-    @Override
-    protected String explain() {
-        return "else";
-    }
-
 }

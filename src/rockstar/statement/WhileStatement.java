@@ -68,15 +68,6 @@ public class WhileStatement extends Block {
     }
 
     @Override
-    protected String explain() {
-        if (negateCondition) {
-            return "until " + condition.format();
-        } else {
-            return "while " + condition.format();
-        }
-    }
-
-    @Override
     public String getASTNodeText() {
         return negateCondition ? "Until" : "While";
     }

@@ -44,11 +44,6 @@ public class JoinStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return expr.getTargetReference().format() + " = join " + expr.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expr);
     }

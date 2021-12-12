@@ -70,11 +70,6 @@ public class SplitStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return expr.getTargetReference().format() + " = split " + expr.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expr);
     }

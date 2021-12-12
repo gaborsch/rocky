@@ -144,11 +144,6 @@ public class IterateStatement extends Block {
     }
 
     @Override
-    protected String explain() {
-        return "until " + arrayExpr.format() + " as " + asExpr.format();
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(arrayExpr, asExpr);
     }

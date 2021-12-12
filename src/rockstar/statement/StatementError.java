@@ -31,11 +31,6 @@ public class StatementError extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "!!! Error on position " + (pos + 1) + ": " + msg;
-    }
-
-    @Override
     boolean applyTo(Block block) {
         while (block != null && !(block instanceof Program)) {
             block = block.getParent();
@@ -49,6 +44,7 @@ public class StatementError extends Statement {
 
     @Override
     public List<ASTAware> getASTChildren() {
-        return ASTValues.of(getLine().getOrigLine());
+        // indentation is to match the error marker positioning
+        return ASTValues.of("   " + getLine().getOrigLine());
     }
 }

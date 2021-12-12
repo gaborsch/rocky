@@ -28,11 +28,6 @@ public class InvalidStatement extends Statement {
     }
 
     @Override
-    protected String explain() {
-        return "!!!INVALID!!!";
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(getLine().getOrigLine());
     }
