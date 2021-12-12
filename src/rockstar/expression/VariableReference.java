@@ -120,4 +120,9 @@ public class VariableReference extends SimpleExpression {
         return this;
     }
 
+    @Override
+    public String getASTNodeText() {
+        return super.getASTNodeText() + " " + name;
+    }
+
 }

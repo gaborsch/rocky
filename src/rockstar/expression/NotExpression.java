@@ -41,4 +41,9 @@ public class NotExpression extends CompoundExpression {
         return ctx.afterExpression(this, v.negate());
     }
 
+    @Override
+    public String getASTNodeText() {
+        return "NOT";
+    }
+
 }

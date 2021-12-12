@@ -2,10 +2,12 @@ package rockstar.expression;
 
 import java.util.ArrayList;
 import java.util.List;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockObject;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
+import rockstar.statement.ASTValues;
 import rockstar.statement.FunctionBlock;
 
 /**
@@ -201,6 +203,18 @@ public class FunctionCall extends CompoundExpression {
         }
         // return the return value
         return ctx.afterExpression(this, retValue == null ? Value.NULL : retValue);
+    }
+
+    @Override
+    public String getASTNodeText() {
+        return super.getASTNodeText() + (object != null ? " on object" : "") + " " + functionName;
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        List<ASTAware> astParams = ASTValues.of(object);
+        astParams.addAll(super.getASTChildren());
+        return astParams;
     }
 
 }

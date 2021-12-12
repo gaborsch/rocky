@@ -5,11 +5,12 @@
  */
 package rockstar.statement;
 
-import rockstar.runtime.RockstarReturnException;
 import java.util.ArrayList;
 import java.util.List;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarReturnException;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
@@ -37,7 +38,7 @@ public class FunctionBlock extends Block {
     public List<VariableReference> getParameterRefs() {
         return parameterRefs;
     }
-    
+
     public boolean isAbstract() {
         return getStatements().isEmpty();
     }
@@ -76,7 +77,7 @@ public class FunctionBlock extends Block {
             // execute the function body
             super.execute(funcCtx);
         } catch (RockstarReturnException retExp) {
-             // return value is set by the return statement
+            // return value is set by the return statement
             return retExp.getReturnValue();
         }
         // no explicite return value was set
@@ -86,8 +87,20 @@ public class FunctionBlock extends Block {
     @Override
     protected String explain() {
         String paramsList = parameterRefs.toString();
-        return "function " + name + "(" + paramsList.substring(1, paramsList.length()-1 )+")";
+        return "function " + name + "(" + paramsList.substring(1, paramsList.length() - 1) + ")";
     }
 
-    
+    @Override
+    public String getASTNodeText() {
+        return super.getASTNodeText() + " " + name;
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        List<ASTAware> astChildren = new ArrayList<>();
+        astChildren.addAll(parameterRefs);
+        astChildren.addAll(super.getASTChildren());
+        return astChildren;
+    }
+
 }

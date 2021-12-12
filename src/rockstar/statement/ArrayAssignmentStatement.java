@@ -10,8 +10,8 @@ import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockNumber;
 import rockstar.runtime.Value;
 
 /**
@@ -66,4 +66,13 @@ public class ArrayAssignmentStatement extends Statement {
         }
         return sb.toString();
     }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        List<ASTAware> astParams = new LinkedList<>();
+        astParams.add(variable);
+        astParams.addAll(expressionList);
+        return astParams;
+    }
+
 }

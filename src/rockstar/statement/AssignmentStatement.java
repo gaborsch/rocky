@@ -5,9 +5,11 @@
  */
 package rockstar.statement;
 
+import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -24,7 +26,7 @@ public class AssignmentStatement extends Statement {
     public AssignmentStatement(Expression variableExpression, Expression valueExpression) {
         this.valueExpression = valueExpression;
         this.variableExpression = variableExpression;
-        if (! (variableExpression instanceof VariableReference || variableExpression instanceof QualifierExpression)) {
+        if (!(variableExpression instanceof VariableReference || variableExpression instanceof QualifierExpression)) {
             throw new RockstarRuntimeException("Cannot assign to " + variableExpression.format());
         }
     }
@@ -34,15 +36,16 @@ public class AssignmentStatement extends Statement {
         Value value = valueExpression.evaluate(ctx);
         assign(variableExpression, value, ctx);
     }
-    
+
     /**
      * Public method to handle array assignments
+     *
      * @param variableExpr
      * @param value
-     * @param ctx 
+     * @param ctx
      */
     public static void assign(Expression variableExpr, Value value, BlockContext ctx) {
-         if (variableExpr instanceof VariableReference) {
+        if (variableExpr instanceof VariableReference) {
             ctx.setVariable((VariableReference) variableExpr, value);
         } else if (variableExpr instanceof QualifierExpression) {
             QualifierExpression ref = (QualifierExpression) variableExpr;
@@ -68,5 +71,10 @@ public class AssignmentStatement extends Statement {
     @Override
     protected String explain() {
         return variableExpression.format() + " := " + valueExpression.format();
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(variableExpression, valueExpression);
     }
 }

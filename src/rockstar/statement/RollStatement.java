@@ -5,11 +5,12 @@
  */
 package rockstar.statement;
 
-import rockstar.expression.VariableReference;
-import rockstar.runtime.BlockContext;
-import rockstar.runtime.Value;
 import java.util.List;
+import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
+import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -30,7 +31,6 @@ public class RollStatement extends Statement {
         this.targetRef = null;
     }
 
-
     @Override
     public void execute(BlockContext ctx) {
         Value array = arrayVariable.evaluate(ctx);
@@ -38,7 +38,7 @@ public class RollStatement extends Statement {
             if (array.isArray()) {
                 Value targetValue;
                 List<Value> list = array.asListArray();
-                if (! list.isEmpty()) {
+                if (!list.isEmpty()) {
                     targetValue = list.remove(0);
                 } else {
                     targetValue = Value.MYSTERIOUS;
@@ -47,16 +47,21 @@ public class RollStatement extends Statement {
                     ctx.setVariable(this.targetRef, targetValue);
                 }
             } else {
-                throw new RockstarRuntimeException("Rolling from a non-array type: "+array.getType());
+                throw new RockstarRuntimeException("Rolling from a non-array type: " + array.getType());
             }
         } else {
             throw new RockstarRuntimeException("Rolling from a nonexistent variable: " + arrayVariable);
         }
     }
 
-
     @Override
     protected String explain() {
         return "roll " + targetRef.format() + " from " + arrayVariable.format();
+    }
+
+    @Override
+
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(targetRef, arrayVariable);
     }
 }

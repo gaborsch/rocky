@@ -6,13 +6,14 @@
 package rockstar.statement;
 
 import rockstar.parser.Line;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 
 /**
  *
  * @author Gabor
  */
-public abstract class Statement {
+public abstract class Statement implements ASTAware {
 
     private Line line;
     private Block block;
@@ -60,5 +61,14 @@ public abstract class Statement {
         this.block = block;
     }
 
-    
+    @Override
+    public String getASTNodeText() {
+        return this.getClass().getSimpleName().replace("Statement", "");
+    }
+
+    @Override
+    public Integer getASTLineNum() {
+        return line != null ? line.getLnum() : null;
+    }
+
 }

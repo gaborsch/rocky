@@ -6,7 +6,9 @@
 package rockstar.statement;
 
 import java.io.IOException;
+import java.util.List;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -14,15 +16,15 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public class InputStatement extends Statement {
+public class ListenStatement extends Statement {
 
     private final VariableReference variable;
 
-    public InputStatement(VariableReference variable) {
+    public ListenStatement(VariableReference variable) {
         this.variable = variable;
     }
 
-    public InputStatement() {
+    public ListenStatement() {
         this.variable = null;
     }
 
@@ -45,5 +47,10 @@ public class InputStatement extends Statement {
     @Override
     protected String explain() {
         return "input " + (variable == null ? "<line>" : variable.format());
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(variable);
     }
 }

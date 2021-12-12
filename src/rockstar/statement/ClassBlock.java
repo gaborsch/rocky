@@ -134,4 +134,9 @@ public class ClassBlock extends Block {
         return "class " + name + (parentName == null ? "" : " extends " + parentName);
     }
 
+    @Override
+    public String getASTNodeText() {
+        return "Class " + name + (parentName == null ? "" : " extends " + parentName);
+    }
+
 }

@@ -221,9 +221,8 @@ public class DebugListener implements BlockContextListener {
                     } else if (line.startsWith("list")) {
                         // list the program
                         String optionStr = line.substring(4).trim();
-                        boolean explain = false; // "-x".equals(optionStr);
-                        boolean explainOnly = false; //"-X".equals(optionStr);
-                        System.out.println(this.program.listProgram(true, !explainOnly, explain || explainOnly));
+                        boolean explain = "-x".equals(optionStr);
+                        System.out.println(this.program.listProgram(true, !explain, explain));
                     } else if (line.equals(".")) {
                         // print the current line again
                         System.out.format("Line %d: %s\n", l.getLnum(), l.getOrigLine());

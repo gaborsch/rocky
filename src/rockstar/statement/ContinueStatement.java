@@ -5,6 +5,8 @@
  */
 package rockstar.statement;
 
+import java.util.List;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarContinueException;
 
@@ -31,9 +33,15 @@ public class ContinueStatement extends Statement {
     public void execute(BlockContext ctx) {
         throw new RockstarContinueException();
     }
-    
+
     @Override
     protected String explain() {
         return "continue";
     }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return null;
+    }
+
 }

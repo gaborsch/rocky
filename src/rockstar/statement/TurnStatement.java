@@ -5,7 +5,9 @@
  */
 package rockstar.statement;
 
+import java.util.List;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarRuntimeException;
@@ -16,13 +18,14 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public class TurnStatement extends Statement {
-    
+
     public enum Direction {
         UP("ceil"),
         DOWN("floor"),
         ROUND("round");
 
         String desc;
+
         private Direction(String desc) {
             this.desc = desc;
         }
@@ -52,25 +55,35 @@ public class TurnStatement extends Statement {
         if (v.isNumeric()) {
             // round it according to the direction
             RockNumber num = v.getNumeric();
-            switch(direction) {
-                case UP: 
+            switch (direction) {
+                case UP:
                     num = num.ceil();
                     break;
-                case DOWN: 
+                case DOWN:
                     num = num.floor();
                     break;
-                case ROUND: 
+                case ROUND:
                     num = num.round();
                     break;
             }
             ctx.setVariable(variable, Value.getValue(num));
             return;
-        } 
+        }
         throw new RockstarRuntimeException("turn " + v.getType() + " " + direction);
     }
-    
+
     @Override
     protected String explain() {
         return variable.format() + " = " + direction + " " + variable.format();
+    }
+
+    @Override
+    public String getASTNodeText() {
+        return super.getASTNodeText() + " " + direction;
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(variable);
     }
 }

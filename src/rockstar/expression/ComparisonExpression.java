@@ -109,4 +109,9 @@ public class ComparisonExpression extends CompoundExpression {
         return false;
     }
 
+    @Override
+    public String getASTNodeText() {
+        return type.toString();
+    }
+
 }

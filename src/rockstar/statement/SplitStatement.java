@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import rockstar.expression.MutationExpression;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -39,14 +40,15 @@ public class SplitStatement extends Statement {
         Value arrayValue = Value.getValue(list);
         // assign the value to the variable
         AssignmentStatement.assign(expr.getTargetReference(), arrayValue, ctx);
-        
+
     }
-    
+
     /**
      * Split a string with a given separator
+     *
      * @param orig
      * @param sep
-     * @return 
+     * @return
      */
     private List<String> split(String orig, String sep) {
         List<String> parts = new LinkedList<>();
@@ -54,9 +56,9 @@ public class SplitStatement extends Statement {
         int sepLen = sep.length();
         int start = 0;
         int len = orig.length();
-        
-        while(start < len) {
-            int end = (emptySep ? start+1 : orig.indexOf(sep, start));
+
+        while (start < len) {
+            int end = (emptySep ? start + 1 : orig.indexOf(sep, start));
             if (end < 0) {
                 end = len;
             }
@@ -70,5 +72,10 @@ public class SplitStatement extends Statement {
     @Override
     protected String explain() {
         return expr.getTargetReference().format() + " = split " + expr.format();
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(expr);
     }
 }

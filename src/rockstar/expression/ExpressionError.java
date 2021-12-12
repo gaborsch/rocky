@@ -8,10 +8,12 @@ package rockstar.expression;
 import java.util.ArrayList;
 import java.util.List;
 import rockstar.parser.Line;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Utils;
 import rockstar.runtime.Value;
+import rockstar.statement.ASTValues;
 
 /**
  *
@@ -90,7 +92,10 @@ public class ExpressionError extends Expression {
         }
         return false;
     }
-    
-    
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(String.join(" ", tokens));
+    }
 
 }

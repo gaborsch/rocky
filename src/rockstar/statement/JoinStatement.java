@@ -7,6 +7,7 @@ package rockstar.statement;
 
 import java.util.List;
 import rockstar.expression.MutationExpression;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -45,5 +46,10 @@ public class JoinStatement extends Statement {
     @Override
     protected String explain() {
         return expr.getTargetReference().format() + " = join " + expr.format();
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(expr);
     }
 }

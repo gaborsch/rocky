@@ -4,10 +4,12 @@
  * and open the template in the editor.
  */
 package rockstar.statement;
-    
+
+import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.MutationExpression;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarRuntimeException;
@@ -29,31 +31,30 @@ public class CastStatement extends Statement {
     public void execute(BlockContext ctx) {
         // Value for the base expression
         Value v = expr.evaluate(ctx);
-        
+
         // target variable reference
         VariableReference targetRef = expr.getTargetReference();
-        
+
         // radix parameter
         Expression paramExpr = expr.getParameterExpr();
         RockNumber radixNumber = null;
         if (paramExpr != null) {
             Value paramValue = paramExpr.evaluate(ctx);
-            if (! paramValue.isNumeric()) {
+            if (!paramValue.isNumeric()) {
                 throw new RockstarRuntimeException("Invalid radix value for conversion: " + paramValue);
             }
             radixNumber = paramValue.getNumeric();
         }
-        
+
         // numeric to string conversion
         if (v.isNumeric()) {
             // create a string with the given char code
             RockNumber num = v.getNumeric();
             int code = num.asInt();
-            String s = new String(new char[] {(char)code });
+            String s = new String(new char[]{(char) code});
             ctx.setVariable(targetRef, Value.getValue(s));
             return;
-        } 
-        // string to numeric conversion
+        } // string to numeric conversion
         else if (v.isString()) {
             RockNumber num;
             if (radixNumber != null) {
@@ -65,12 +66,17 @@ public class CastStatement extends Statement {
             }
             ctx.setVariable(targetRef, Value.getValue(num));
             return;
-        } 
+        }
         throw new RockstarRuntimeException("casted " + v.getType());
     }
-    
+
     @Override
     protected String explain() {
         return expr.getTargetReference().format() + " = cast " + expr.format();
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(expr);
     }
 }

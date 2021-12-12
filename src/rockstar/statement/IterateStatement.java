@@ -5,19 +5,16 @@
  */
 package rockstar.statement;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import rockstar.expression.Expression;
 import rockstar.expression.ExpressionType;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarBreakException;
 import rockstar.runtime.RockstarContinueException;
 import rockstar.runtime.RockstarRuntimeException;
@@ -76,7 +73,7 @@ public class IterateStatement extends Block {
         if (type != ExpressionType.ARRAY) {
             throw new RockstarRuntimeException("Attempt to iterate through " + type);
         }
-        
+
         // in case of assoc array we are iterating through the elements
         List<Value> list = arrayValue.asListArray();
         iterateList(list, keyVar, ctx, valueVar);
@@ -92,9 +89,9 @@ public class IterateStatement extends Block {
         boolean canContinue = true;
         Value currKey;
         Value currValue;
-        if (!list.isEmpty() ) {
+        if (!list.isEmpty()) {
             Iterator<Value> listIter = list.iterator();
-            for(int i=0; canContinue && listIter.hasNext(); i++) {
+            for (int i = 0; canContinue && listIter.hasNext(); i++) {
                 // initialize local loop variables
                 if (keyVar != null) {
                     currKey = Value.getValue(i);
@@ -102,7 +99,7 @@ public class IterateStatement extends Block {
                 }
                 currValue = listIter.next();
                 ctx.setVariable(valueVar, currValue);
-                
+
                 try {
                     super.execute(ctx);
                 } catch (RockstarContinueException rce) {
@@ -125,8 +122,8 @@ public class IterateStatement extends Block {
             valueVar = null;
         }
         Value[] keys = new Value[map.size()];
-        Arrays.sort(map.keySet().toArray(keys));        
-        for(int i=0; canContinue && i < keys.length; i++) {
+        Arrays.sort(map.keySet().toArray(keys));
+        for (int i = 0; canContinue && i < keys.length; i++) {
             // initialize local loop variables
             currKey = keys[i];
             ctx.setVariable(keyVar, currKey);
@@ -134,7 +131,7 @@ public class IterateStatement extends Block {
                 currValue = map.get(currKey);
                 ctx.setVariable(valueVar, currValue);
             }
-            
+
             try {
                 super.execute(ctx);
             } catch (RockstarContinueException rce) {
@@ -149,6 +146,11 @@ public class IterateStatement extends Block {
     @Override
     protected String explain() {
         return "until " + arrayExpr.format() + " as " + asExpr.format();
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(arrayExpr, asExpr);
     }
 
 }

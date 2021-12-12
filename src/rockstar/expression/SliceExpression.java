@@ -5,10 +5,10 @@
  */
 package rockstar.expression;
 
-import rockstar.runtime.BlockContext;
-import rockstar.runtime.Value;
-import rockstar.runtime.RockstarRuntimeException;
 import java.util.List;
+import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarRuntimeException;
+import rockstar.runtime.Value;
 
 /**
  *
@@ -19,7 +19,7 @@ public class SliceExpression extends CompoundExpression {
     public enum Type {
         SLICE_FROM,
         SLICE_TO,
-        SLICE_BOTH
+        SLICE_FROM_TO
     }
 
     private Type type;
@@ -30,7 +30,7 @@ public class SliceExpression extends CompoundExpression {
 
     @Override
     public String getFormat() {
-        return "(%s"+ (type != Type.SLICE_TO ? " from %s":"") + (type != Type.SLICE_FROM ? " till %s":"") + ")";
+        return "(%s" + (type != Type.SLICE_TO ? " from %s" : "") + (type != Type.SLICE_FROM ? " till %s" : "") + ")";
     }
 
     @Override
@@ -40,26 +40,25 @@ public class SliceExpression extends CompoundExpression {
 
     @Override
     public int getParameterCount() {
-        return type == Type.SLICE_BOTH ? 3 : 2;
+        return type == Type.SLICE_FROM_TO ? 3 : 2;
     }
 
     @Override
     public CompoundExpression setupFinished() {
         if (this.type == Type.SLICE_TO && this.getParameters().size() == 2) {
-            if(this.getParameters().get(0) instanceof SliceExpression) {
+            if (this.getParameters().get(0) instanceof SliceExpression) {
                 SliceExpression fromExpr = (SliceExpression) this.getParameters().remove(0);
                 if (fromExpr.type == Type.SLICE_FROM) {
                     addParameterReverse(fromExpr.getParameters().get(1));
                     addParameterReverse(fromExpr.getParameters().get(0));
-                    this.type = Type.SLICE_BOTH;
+                    this.type = Type.SLICE_FROM_TO;
                 } else {
                     addParameterReverse(fromExpr);
                 }
-            } 
+            }
         }
         return this;
     }
-
 
     @Override
     public Value evaluate(BlockContext ctx) {
@@ -86,6 +85,11 @@ public class SliceExpression extends CompoundExpression {
         }
 
         return ctx.afterExpression(this, retValue);
+    }
+
+    @Override
+    public String getASTNodeText() {
+        return super.getASTNodeText() + type.name();
     }
 
 }

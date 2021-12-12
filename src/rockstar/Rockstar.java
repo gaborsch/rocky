@@ -175,8 +175,6 @@ public class Rockstar {
                 System.out.println("Options:");
 //                System.out.println("    -x --explain");
 //                System.out.println("        Explain all statements and expressions parsed from input.");
-//                System.out.println("    -X --explain-only");
-//                System.out.println("        Only explained statements and expressions are listed.");
                 System.out.println("    -l --line-number");
                 System.out.println("        Print line numbers.");
                 System.out.println("    -X --rocky");
@@ -263,14 +261,13 @@ public class Rockstar {
         }
 
         Environment env = Environment.create(System.in, System.out, System.err, options);
-        boolean explainOnly = false; // env.hasOption("-X", "--explain-only");
-        boolean explain = false; // env.hasOption("-x", "--explain");
+        boolean explain = env.hasOption("-x", "--explain");
         boolean lineNums = env.hasOption("-l", "--line-number");
 
         files.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename, env).parse();
-                System.out.println(prg.listProgram(lineNums, !explainOnly, explain || explainOnly));
+                System.out.println(prg.listProgram(lineNums, !explain, explain));
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
             } catch (RuntimeException re) {

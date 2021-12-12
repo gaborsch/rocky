@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import rockstar.parser.Keyword;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 
@@ -118,6 +119,13 @@ public abstract class Block extends Statement {
                 throw rre;
             }
         }
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        List<ASTAware> astValues = new ArrayList<>(statements.size());
+        astValues.addAll(statements);
+        return astValues;
     }
 
 }

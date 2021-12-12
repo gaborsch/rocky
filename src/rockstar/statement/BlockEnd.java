@@ -5,8 +5,9 @@
  */
 package rockstar.statement;
 
+import java.util.List;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.RockstarRuntimeException;
 
 /**
  *
@@ -22,6 +23,10 @@ public class BlockEnd extends Statement {
     protected String explain() {
         return "";
     }
-    
-    
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return null;
+    }
+
 }

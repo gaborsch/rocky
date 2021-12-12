@@ -5,6 +5,8 @@
  */
 package rockstar.statement;
 
+import java.util.List;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarBreakException;
 
@@ -35,4 +37,10 @@ public class BreakStatement extends Statement {
     protected String explain() {
         return "break";
     }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return null;
+    }
+
 }

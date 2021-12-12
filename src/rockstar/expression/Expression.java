@@ -5,6 +5,7 @@
  */
 package rockstar.expression;
 
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -12,11 +13,20 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public abstract class Expression {
-  
-    public abstract Value evaluate(BlockContext ctx); 
+public abstract class Expression implements ASTAware {
+
+    public abstract Value evaluate(BlockContext ctx);
 
     public abstract String format();
 
-}
+    @Override
+    public String getASTNodeText() {
+        return this.getClass().getSimpleName().replace("Expression", "");
+    }
 
+    @Override
+    public Integer getASTLineNum() {
+        return null;
+    }
+
+}

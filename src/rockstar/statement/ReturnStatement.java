@@ -5,9 +5,11 @@
  */
 package rockstar.statement;
 
+import java.util.List;
 import rockstar.expression.Expression;
-import rockstar.runtime.RockstarReturnException;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.RockstarReturnException;
 import rockstar.runtime.Value;
 
 /**
@@ -43,6 +45,11 @@ public class ReturnStatement extends Statement {
     @Override
     protected String explain() {
         return "return " + expression.format();
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(expression);
     }
 
 }

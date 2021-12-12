@@ -8,7 +8,7 @@ package rockstar.parser.checker;
 import java.util.Arrays;
 import java.util.List;
 import rockstar.expression.VariableReference;
-import rockstar.statement.InputStatement;
+import rockstar.statement.ListenStatement;
 import rockstar.statement.Statement;
 
 /**
@@ -31,9 +31,9 @@ public class ListenChecker extends Checker<VariableReference, Object, Object> {
     private Statement validate(ParamList params) {
         VariableReference varRef = getE1();
         if (varRef == null) {
-            return new InputStatement();
+            return new ListenStatement();
         }
-        return new InputStatement(varRef);
+        return new ListenStatement(varRef);
     }
 
 }

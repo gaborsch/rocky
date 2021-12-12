@@ -72,4 +72,10 @@ public class LogicalExpression extends CompoundExpression {
         }
         return ctx.afterExpression(this, null);
     }
+
+    @Override
+    public String getASTNodeText() {
+        return type.name();
+    }
+
 }

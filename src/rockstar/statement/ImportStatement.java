@@ -7,6 +7,7 @@ package rockstar.statement;
 
 import java.util.LinkedList;
 import java.util.List;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.PackagePath;
@@ -64,6 +65,13 @@ public class ImportStatement extends Statement {
 
 // TODO classes        
         return sb.toString();
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        List<ASTAware> astValues = ASTValues.of(path.toString());
+        astValues.addAll(ASTValues.of((String[]) names.toArray()));
+        return astValues;
     }
 
 }

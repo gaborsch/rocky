@@ -5,7 +5,9 @@
  */
 package rockstar.statement;
 
+import java.util.List;
 import rockstar.parser.ParserError;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 
@@ -45,4 +47,8 @@ public class StatementError extends Statement {
         return true;
     }
 
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(getLine().getOrigLine());
+    }
 }

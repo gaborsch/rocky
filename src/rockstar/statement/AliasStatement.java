@@ -7,6 +7,7 @@ package rockstar.statement;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 
 /**
@@ -37,10 +38,15 @@ public class AliasStatement extends Statement {
     }
 
     @Override
-    protected String explain() {        
+    protected String explain() {
         return alias.stream().collect(Collectors.joining(" "))
-            + " means "
-            + keyword.stream().collect(Collectors.joining(" "));
+                + " means "
+                + keyword.stream().collect(Collectors.joining(" "));
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(String.join(" ", alias), String.join(" ", keyword));
     }
 
 }

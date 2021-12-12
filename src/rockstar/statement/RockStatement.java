@@ -11,6 +11,7 @@ import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -41,10 +42,10 @@ public class RockStatement extends Statement {
             arrayValue = Value.getValue(Arrays.asList());
         } else if (arrayValue.isNumeric() || arrayValue.isString() || arrayValue.isObject() || arrayValue.isBoolean()) {
             arrayValue = Value.getValue(Arrays.asList(arrayValue));
-        } else if (! arrayValue.isArray()) {
+        } else if (!arrayValue.isArray()) {
             throw new RockstarRuntimeException("Rocking a non-allowed type: " + arrayValue.getType());
         }
-        
+
         if (expression == null) {
             // in-place array conversion
             ctx.setVariable(this.variable, arrayValue);
@@ -67,4 +68,10 @@ public class RockStatement extends Statement {
     protected String explain() {
         return "rock " + expression.format() + " into " + variable.format();
     }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(variable, expression);
+    }
+
 }

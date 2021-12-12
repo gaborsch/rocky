@@ -5,7 +5,9 @@
  */
 package rockstar.statement;
 
+import java.util.List;
 import rockstar.expression.Expression;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -14,7 +16,7 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public class OutputStatement extends Statement {
-    
+
     private final Expression expression;
 
     public OutputStatement(Expression expression) {
@@ -31,5 +33,9 @@ public class OutputStatement extends Statement {
     protected String explain() {
         return "print " + expression.format();
     }
-    
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(expression);
+    }
 }

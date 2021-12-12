@@ -7,9 +7,11 @@ package rockstar.expression;
 
 import java.util.LinkedList;
 import java.util.List;
+import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
+import rockstar.statement.ASTValues;
 
 /**
  *
@@ -160,6 +162,16 @@ public class MutationExpression extends CompoundExpression {
     public Value evaluate(BlockContext ctx) {
         // by default we evaluate the base expression
         return baseExpr.evaluate(ctx);
+    }
+
+    @Override
+    public String getASTNodeText() {
+        return super.getASTNodeText() + (withExpr != null ? " WITH" : "") + (intoExpr != null ? " INTO" : "");
+    }
+
+    @Override
+    public List<ASTAware> getASTChildren() {
+        return ASTValues.of(baseExpr, withExpr, intoExpr);
     }
 
 }
