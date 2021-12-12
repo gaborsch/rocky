@@ -3,6 +3,8 @@
 
 Rockstars need freedom. Sometimes for necessities, sometimes just for fun, but a rocker always revolting against the rules or at least breaking some boundaries. So, Rocky offers some features that are not available in [the supported Rockstar specification](spec.md).
 
+To enable Rocky features, add `-X` or `--rocky` as a parameter to any invocation.
+
 ## DEC64 Arithmetics
 
 As per the original Rockstar specification, Rocky fully supports DEC64 arithmetic with the `--dec64` command line option (including rounding functions).
