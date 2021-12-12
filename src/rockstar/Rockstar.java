@@ -26,7 +26,7 @@ public class Rockstar {
     public static final String VERSION = "2.0.1";
 
     // implementation constants
-    public static final int MAX_LOOP_ITERATIONS = 1000;
+    public static final int MAX_LOOP_ITERATIONS = 10000;
 
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
