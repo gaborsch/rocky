@@ -168,11 +168,11 @@ public class DebugListener implements BlockContextListener {
                         Block b = stmt.getBlock();
                         while (b != null) {
                             Iterator<Map.Entry<List<String>, List<List<String>>>> i = b.getAliasesIterator();
-                            i.forEachRemaining(e -> 
-                                    e.getValue().forEach(v -> 
-                                            System.out.println(v.stream().collect(Collectors.joining(" ")) + " means " + e.getKey().stream().collect(Collectors.joining(" ")))));
+                            i.forEachRemaining(e
+                                    -> e.getValue().forEach(v
+                                            -> System.out.println(v.stream().collect(Collectors.joining(" ")) + " means " + e.getKey().stream().collect(Collectors.joining(" ")))));
                             b = b.getParent();
-                        }                        
+                        }
                     } else if (line.startsWith("br")) {
                         // remove breakpoint
                         String lineStr = line.substring(2).trim();
@@ -221,8 +221,8 @@ public class DebugListener implements BlockContextListener {
                     } else if (line.startsWith("list")) {
                         // list the program
                         String optionStr = line.substring(4).trim();
-                        boolean explain = "-x".equals(optionStr);
-                        boolean explainOnly = "-X".equals(optionStr);
+                        boolean explain = false; // "-x".equals(optionStr);
+                        boolean explainOnly = false; //"-X".equals(optionStr);
                         System.out.println(this.program.listProgram(true, !explainOnly, explain || explainOnly));
                     } else if (line.equals(".")) {
                         // print the current line again

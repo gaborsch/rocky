@@ -39,8 +39,8 @@ public class RockstarTest {
         File f = new File(path);
         if(f.exists()) {
             if (f.isDirectory()) {
-                if (path.endsWith("tests")) {
-                    defaultStrictMode = true;
+                if (path.contains("Rocky_ext") || path.contains("_own_")) {
+                    defaultStrictMode = false;
                 }
                 executeDir(path, defaultStrictMode);
             } else {
@@ -85,9 +85,12 @@ public class RockstarTest {
             for (File file : files) {
                 if (file.getName().endsWith(".rock")) {
                     if (isFirstFileInDir) {
+                        String mode = isVeryVerbose 
+                                ? " (" + (isStrictMode ? "Strict" : "Extended") + " mode)"
+                                : "";
                         if (exp != null) {
                             if (isVerbose) {
-                                System.out.println(exp + " tests in " + dirname.replace("\\", "/"));
+                                System.out.println(exp + " tests in " + dirname.replace("\\", "/") + mode);
                             }
                         }
                         isFirstFileInDir = false;

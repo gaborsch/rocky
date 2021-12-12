@@ -23,7 +23,7 @@ import rockstar.test.RockstarTest;
  */
 public class Rockstar {
     
-    public static final String VERSION = "2.0.1";
+    public static final String VERSION = "2.0.2";
 
     // implementation constants
     public static final int MAX_LOOP_ITERATIONS = 10000;
@@ -150,8 +150,8 @@ public class Rockstar {
                 System.out.println("        Log the execution path and expression evaluations to the stdout");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
-                System.out.println("    -S --strict");
-                System.out.println("        Strictly follow the syntax of the reference specification");
+                System.out.println("    -X --rocky");
+                System.out.println("        Use Rocky extensions (default: strict mode)");
             }
         }
         if (cmd == null || cmd.equals("debug")) {
@@ -163,8 +163,8 @@ public class Rockstar {
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
-                System.out.println("    -S --strict");
-                System.out.println("        Strictly follow the syntax of the reference specification");
+                System.out.println("    -X --rocky");
+                System.out.println("        Use Rocky extensions (default: strict mode)");
                 RockstarDebugger.printDebuggerHelp("");
             }
         }
@@ -173,14 +173,14 @@ public class Rockstar {
             System.out.println("    Parse and list a program. Useful for syntax checking.");
             if (cmd != null) {
                 System.out.println("Options:");
-                System.out.println("    -x --explain");
-                System.out.println("        Explain all statements and expressions parsed from input.");
-                System.out.println("    -X --explain-only");
-                System.out.println("        Only explained statements and expressions are listed.");
+//                System.out.println("    -x --explain");
+//                System.out.println("        Explain all statements and expressions parsed from input.");
+//                System.out.println("    -X --explain-only");
+//                System.out.println("        Only explained statements and expressions are listed.");
                 System.out.println("    -l --line-number");
                 System.out.println("        Print line numbers.");
-                System.out.println("    -S --strict");
-                System.out.println("        Strictly follow the syntax of the reference specification");
+                System.out.println("    -X --rocky");
+                System.out.println("        Use Rocky extensions (default: strict mode)");
             }
         }
         if (cmd == null || cmd.equals("repl")) {
@@ -190,12 +190,12 @@ public class Rockstar {
             System.out.println("    The specified programs are pre-run (e.g. defining functions, etc). Special commands are available.");
             if (cmd != null) {
                 System.out.println("Options:");
-                System.out.println("    -x --explain");
-                System.out.println("        Explain all statements and expressions parsed from input.");
+//                System.out.println("    -x --explain");
+//                System.out.println("        Explain all statements and expressions parsed from input.");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
-                System.out.println("    -S --strict");
-                System.out.println("        Strictly follow the syntax of the reference specification");
+                System.out.println("    -X --rocky");
+                System.out.println("        Use Rocky extensions (default: strict mode)");
             }
         }
         if (cmd == null || cmd.equals("test")) {
@@ -263,8 +263,8 @@ public class Rockstar {
         }
 
         Environment env = Environment.create(System.in, System.out, System.err, options);
-        boolean explainOnly = env.hasOption("-X", "--explain-only");
-        boolean explain = env.hasOption("-x", "--explain");
+        boolean explainOnly = false; // env.hasOption("-X", "--explain-only");
+        boolean explain = false; // env.hasOption("-x", "--explain");
         boolean lineNums = env.hasOption("-l", "--line-number");
 
         files.forEach((filename) -> {

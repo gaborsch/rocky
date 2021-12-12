@@ -83,7 +83,7 @@ public class Environment {
     }
 
     public boolean isStrictMode() {
-        return hasOption("-S", "--strict");
+        return !hasOption("-X", "--rocky");
     }
 
     public void setListener(BlockContextListener listener) {

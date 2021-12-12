@@ -42,11 +42,11 @@ public class TestRun {
 
     TestRun(Map<String, String> options, Boolean isStrictMode) {
         this.options = new HashMap<>(options);
-        if (isStrictMode) {
-            this.options.put("--strict", "--strict");
+        if (!isStrictMode) {
+            this.options.put("-X", "-X");
         } else {
-            this.options.remove("--strict");
-            this.options.remove("-S");
+            this.options.remove("--rocky");
+            this.options.remove("-X");
         }
     }
 

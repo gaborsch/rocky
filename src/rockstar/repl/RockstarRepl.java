@@ -56,7 +56,7 @@ public class RockstarRepl {
                 System.err.println("File not found: " + filename);
             }
         });
-        boolean explain = options.containsKey("-x") || options.containsKey("--explain");
+        boolean explain = false; // options.containsKey("-x") || options.containsKey("--explain");
 
         System.out.println(Rockstar.CLI_HEADER);
         System.out.println(Utils.repeat("-", Rockstar.CLI_HEADER.length()));
