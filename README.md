@@ -8,7 +8,7 @@ Rocky supports all Rockstar language features announced on 2021.10.12 and before
 * Fully compliant Rockstar implementation to date (all of the tests are OK, except the reported bugs)
 * Advanced Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable, trace expression evaluation!)
 * Interactive terminal mode (REPL - Read - Eval - Print Loop)
-* List command (parse a file without running it)
+* List command (parse a file without running it) (`-x` option prints the AST)
 * Detailed help with options explanation
 * IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
 
