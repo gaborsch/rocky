@@ -6,7 +6,6 @@
 package rockstar.statement;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
@@ -38,9 +37,9 @@ public class RockStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         Value arrayValue = variable.evaluate(ctx);
-        if (arrayValue == null || arrayValue.isNull() || arrayValue.isMysterious()) {
+        if (arrayValue == null) {
             arrayValue = Value.getValue(Arrays.asList());
-        } else if (arrayValue.isNumeric() || arrayValue.isString() || arrayValue.isObject() || arrayValue.isBoolean()) {
+        } else if (arrayValue.isNumeric() || arrayValue.isString() || arrayValue.isObject() || arrayValue.isBoolean() || arrayValue.isNull() || arrayValue.isMysterious()) {
             arrayValue = Value.getValue(Arrays.asList(arrayValue));
         } else if (!arrayValue.isArray()) {
             throw new RockstarRuntimeException("Rocking a non-allowed type: " + arrayValue.getType());
@@ -50,17 +49,16 @@ public class RockStatement extends Statement {
             // in-place array conversion
             ctx.setVariable(this.variable, arrayValue);
         } else if (expression instanceof ListExpression) {
-            // multiple values
-            List<Value> exprValues = new LinkedList<>();
+            // multiple values: add them one by one
             ListExpression listExpr = (ListExpression) expression;
-            listExpr.getParameters().forEach(expr1 -> {
-                exprValues.add(expr1.evaluate(ctx));
-            });
-            ctx.setVariable(this.variable, arrayValue.plus(Value.getValue(exprValues)));
+            for (Expression expr1 : listExpr.getParameters()) {
+                arrayValue = arrayValue.push(expr1.evaluate(ctx));
+            }
+            ctx.setVariable(this.variable, arrayValue);
         } else {
             // single value
             Value value = expression.evaluate(ctx);
-            ctx.setVariable(this.variable, arrayValue.plus(value));
+            ctx.setVariable(this.variable, arrayValue.push(value));
         }
     }
 

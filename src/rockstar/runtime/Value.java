@@ -326,50 +326,52 @@ public class Value implements Comparable<Value> {
 
     public Value plus(Value other) {
 
-        // merge arrays
-        if (this.isArray() && other.isArray()) {
-            Value v = newArrayValue();
-            // assoc arrays            
-            if (assocArrayValue != null) {
-                v.assocArrayValue.putAll(assocArrayValue);
+        if(! Environment.get().isStrictMode()) {
+            if (this.isArray() && other.isArray()) {
+                // merge arrays
+                Value v = newArrayValue();
+                // assoc arrays            
+                if (assocArrayValue != null) {
+                    v.assocArrayValue.putAll(assocArrayValue);
+                }
+                if (other.assocArrayValue != null) {
+                    v.assocArrayValue.putAll(other.assocArrayValue);
+                }
+                // concatenate list values, too
+                if (listArrayValue != null) {
+                    v.listArrayValue.addAll(listArrayValue);
+                }
+                if (other.listArrayValue != null) {
+                    v.listArrayValue.addAll(other.listArrayValue);
+                }
+                return v;
             }
-            if (other.assocArrayValue != null) {
-                v.assocArrayValue.putAll(other.assocArrayValue);
+
+            if (this.isArray() && (!other.isArray())) {
+                // append to list or concatenate
+                Value v = newArrayValue();
+                // original value should not be changed
+                if (listArrayValue != null) {
+                    v.listArrayValue.addAll(listArrayValue);
+                }
+                // append value
+                v.listArrayValue.add(other);
+                // it is not changed, assigned by reference
+                v.assocArrayValue = assocArrayValue;
+                return v;
             }
-            // concatenate list values, too
-            if (listArrayValue != null) {
-                v.listArrayValue.addAll(listArrayValue);
-            }
-            if (other.listArrayValue != null) {
+
+            // prepend to list or concatenate
+            if (other.isArray() && (!this.isArray())) {
+                Value v = newArrayValue();
+                // prepend value
+                v.listArrayValue.add(this);
+                // original value should not be changed
                 v.listArrayValue.addAll(other.listArrayValue);
+                // it is not changed, assigned by reference
+                v.assocArrayValue = other.assocArrayValue;
+                return v;
             }
-            return v;
-        }
-
-        // append to list or concatenate
-        if (this.isArray() && (!other.isArray())) {
-            Value v = newArrayValue();
-            // original value should not be changed
-            if (listArrayValue != null) {
-                v.listArrayValue.addAll(listArrayValue);
-            }
-            // append value
-            v.listArrayValue.add(other);
-            // it is not changed, assigned by reference
-            v.assocArrayValue = assocArrayValue;
-            return v;
-        }
-
-        // prepend to list or concatenate
-        if (other.isArray() && (!this.isArray())) {
-            Value v = newArrayValue();
-            // prepend value
-            v.listArrayValue.add(this);
-            // original value should not be changed
-            v.listArrayValue.addAll(other.listArrayValue);
-            // it is not changed, assigned by reference
-            v.assocArrayValue = other.assocArrayValue;
-            return v;
         }
 
         // mysterious remains mysterious
@@ -383,6 +385,11 @@ public class Value implements Comparable<Value> {
         }
 
         if (isString() || other.isString()) {
+            if(this.isArray()) {
+                return Value.getValue(getNumeric() + other.getString());
+            } else if (other.isArray()) {
+                return Value.getValue(getString() + other.getNumeric());
+            }
             // String concatenation
             return Value.getValue(getString() + other.getString());
         } else {
@@ -397,32 +404,34 @@ public class Value implements Comparable<Value> {
     }
 
     public Value minus(Value other) {
-        if (this.isArray()) {
-            // remove subset of assoc arrays
-            if (other.isString()) {
-                // remove element from hash by key
-                Value v = newArrayValue();
-                // hash is modified
-                v.assocArrayValue.putAll(this.assocArrayValue);
-                // remove by key
-                v.assocArrayValue.remove(other);
-                // list is not changed
-                v.listArrayValue = this.listArrayValue;
-                return v;
+        if(! Environment.get().isStrictMode()) {
+            if (this.isArray()) {
+                // remove subset of assoc arrays
+                if (other.isString()) {
+                    // remove element from hash by key
+                    Value v = newArrayValue();
+                    // hash is modified
+                    v.assocArrayValue.putAll(this.assocArrayValue);
+                    // remove by key
+                    v.assocArrayValue.remove(other);
+                    // list is not changed
+                    v.listArrayValue = this.listArrayValue;
+                    return v;
+                }
+                if (other.isNumeric()) {
+                    // remove element from list by index
+                    Value v = newArrayValue();
+                    // hash is not changed
+                    v.assocArrayValue = this.assocArrayValue;
+                    // list is modified
+                    v.listArrayValue.addAll(asListArray());
+                    // remove by index
+                    int idx = other.getNumeric().asInt();
+                    v.listArrayValue.remove(idx);
+                    return v;
+                }
+                throw new RockstarRuntimeException("Invalid subtraction from array: type " + other.getType());
             }
-            if (other.isNumeric()) {
-                // remove element from list by index
-                Value v = newArrayValue();
-                // hash is not changed
-                v.assocArrayValue = this.assocArrayValue;
-                // list is modified
-                v.listArrayValue.addAll(asListArray());
-                // remove by index
-                int idx = other.getNumeric().asInt();
-                v.listArrayValue.remove(idx);
-                return v;
-            }
-            throw new RockstarRuntimeException("Invalid subtraction from array: type " + other.getType());
         }
 
         RockNumber v1 = getNumeric();
@@ -468,6 +477,22 @@ public class Value implements Comparable<Value> {
             return Value.getValue(v1.divide(v2));
         }
         throw new RockstarRuntimeException(getType() + " over " + other.getType());
+    }
+
+    public Value push(Value other) {
+        if (isArray()) {
+            // original value should not be changed
+            Value v = newArrayValue();
+            if (listArrayValue != null) {
+                v.listArrayValue.addAll(listArrayValue);
+            }
+            // append value
+            v.listArrayValue.add(other);
+            // it is not changed, assigned by reference
+            v.assocArrayValue = assocArrayValue;
+            return v;
+        }
+        throw new RockstarRuntimeException("Push into a non-allowed type: " + other.getType());
     }
 
     public Value and(Value other) {
