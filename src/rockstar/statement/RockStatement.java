@@ -36,7 +36,7 @@ public class RockStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        Value arrayValue = variable.evaluate(ctx);
+        Value arrayValue = ctx.getVariableValue(variable);
         if (arrayValue == null) {
             arrayValue = Value.getValue(Arrays.asList());
         } else if (arrayValue.isNumeric() || arrayValue.isString() || arrayValue.isObject() || arrayValue.isBoolean() || arrayValue.isNull() || arrayValue.isMysterious()) {

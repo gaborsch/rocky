@@ -20,6 +20,7 @@ public class AssignmentChecker extends Checker<Expression, Expression, Object> {
         new ParamList("Let", VARIABLE_OR_QUALIFIER.at(2), "be", expressionAt(1).withDefaultExprAt(2)),
         new ParamList("Put", expressionAt(1), "into", VARIABLE_OR_QUALIFIER.at(2)),
         new ParamList("Put", expressionAt(1), "in", VARIABLE_OR_QUALIFIER.at(2)),
+        new ParamList(VARIABLE_OR_QUALIFIER.at(2), "=", expressionAt(1)),
         new ParamList(VARIABLE_OR_QUALIFIER.at(2), "thinks", expressionAt(1))};
 
     @Override
