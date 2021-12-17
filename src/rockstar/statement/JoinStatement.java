@@ -32,11 +32,16 @@ public class JoinStatement extends Statement {
         String sep = (expr.getParameterExpr() == null) ? "" : expr.getParameterExpr().evaluate(ctx).getString();
         // JOIN the array into a string
         StringBuilder sb = new StringBuilder();
-        arrayValue.forEach(
-                v -> sb.append(v.getString()).append(sep));
+        arrayValue.stream()
+                .filter(v -> (!v.isNull() && !v.isMysterious()))
+                .forEachOrdered(v -> {
+                    if (sb.length() > 0) {
+                        sb.append(sep);
+                    }
+                    sb.append(v.getString());
+                });
         // get string vale
-        String s = sb.substring(0, sb.length() - sep.length());
-        Value stringValue = Value.getValue(s);
+        Value stringValue = Value.getValue(sb.toString());
 
         // assign the value to the variable
         AssignmentStatement.assign(expr.getTargetReference(), stringValue, ctx);
