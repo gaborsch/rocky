@@ -5,8 +5,7 @@
  */
 package rockstar.expression;
 
-import java.util.Arrays;
-import java.util.List;
+import rockstar.parser.Keyword;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -17,31 +16,15 @@ import rockstar.runtime.Value;
 public class VariableReference extends SimpleExpression {
 
     public static boolean isSelfReference(String ref) {
-        return "self".equals(ref)
-                || "myself".equals(ref)
-                || "yourself".equals(ref)
-                || "himself".equals(ref)
-                || "herself".equals(ref)
-                || "itself".equals(ref)
-                || "ourselves".equals(ref)
-                || "yourselves".equals(ref)
-                || "themselves".equals(ref);
+        return Keyword.SELF.matches(ref);
     }
 
     public static boolean isParentReference(String ref) {
-        return "parent".equals(ref)
-                || "father".equals(ref)
-                || "mother".equals(ref)
-                || "papa".equals(ref)
-                || "mama".equals(ref);
+        return Keyword.PARENT.matches(ref);
     }
 
-    private static final List<String> LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS = Arrays.asList(new String[]{
-        "it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver",
-        "It", "He", "She", "Him", "Her", "They", "Them", "Ze", "Hir", "Zie", "Zir", "Xe", "Xem", "Ve", "Ver"});
-
-    public static boolean isLastVariableReference(String ref) {
-        return (LAST_NAMED_VARIABLE_REFERENCE_KEYWORDS.contains(ref));
+    private static boolean isLastVariableReference(String ref) {
+        return Keyword.IT.matches(ref);
     }
 
     public static VariableReference getInstance(String name) {

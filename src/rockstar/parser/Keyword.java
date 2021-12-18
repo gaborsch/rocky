@@ -54,12 +54,18 @@ public enum Keyword {
     ALL("+all"),
     KEYS("+keys"),
     VALUES("+values"),
+    IT("it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver"),
+    SELF("+self", "+myself", "+yourself", "+himself", "+herself", "+itself", "+ourselves", "+yourselves", "+themselves"),
+    PARENT("+parent", "+father", "+mother", "+papa", "+mama"),
     _ANY_KEYWORD();
 
     private final List<String> strictKeywords = new LinkedList<>();
     private final List<String> extKeywords = new LinkedList<>();
 
     private Keyword(String... keywords) {
+        if (name().startsWith("_")) {
+            return;
+        }
         for (String keyword : keywords) {
             int len = keyword.length();
             if (len > 1 && keyword.startsWith("+")) {

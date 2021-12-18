@@ -8,7 +8,7 @@ package rockstar.parser.checker;
 import rockstar.expression.VariableReference;
 import rockstar.statement.Statement;
 import rockstar.statement.TurnStatement;
-import rockstar.statement.TurnStatement.Direction;
+import rockstar.statement.TurnStatement.TurnDirection;
 
 /**
  *
@@ -26,11 +26,11 @@ public class TurnChecker extends Checker<VariableReference, Object, Object> {
         new ParamList("Turn", variableAt(1), "around"),
         new ParamList("Turn", "around", variableAt(1))};
 
-    private static final Direction[] DIRECTION_LOOKUP = new Direction[]{
-        Direction.UP, Direction.UP,
-        Direction.DOWN, Direction.DOWN,
-        Direction.ROUND, Direction.ROUND,
-        Direction.ROUND, Direction.ROUND
+    private static final TurnDirection[] DIRECTION_LOOKUP = new TurnDirection[]{
+        TurnDirection.UP, TurnDirection.UP,
+        TurnDirection.DOWN, TurnDirection.DOWN,
+        TurnDirection.ROUND, TurnDirection.ROUND,
+        TurnDirection.ROUND, TurnDirection.ROUND
     };
 
     @Override
@@ -42,7 +42,7 @@ public class TurnChecker extends Checker<VariableReference, Object, Object> {
         VariableReference varRef = getE1();
         // set direction for the match count
         int matchIdx = getMatchCounter() - 1;
-        Direction dir = DIRECTION_LOOKUP[matchIdx];
+        TurnDirection dir = DIRECTION_LOOKUP[matchIdx];
         return new TurnStatement(varRef, dir);
     }
 

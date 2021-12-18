@@ -19,14 +19,14 @@ import rockstar.runtime.Value;
  */
 public class TurnStatement extends Statement {
 
-    public enum Direction {
+    public enum TurnDirection {
         UP("ceil"),
         DOWN("floor"),
         ROUND("round");
 
         String desc;
 
-        private Direction(String desc) {
+        private TurnDirection(String desc) {
             this.desc = desc;
         }
 
@@ -37,9 +37,9 @@ public class TurnStatement extends Statement {
     };
 
     private final VariableReference variable;
-    private final Direction direction;
+    private final TurnDirection direction;
 
-    public TurnStatement(VariableReference variable, Direction direction) {
+    public TurnStatement(VariableReference variable, TurnDirection direction) {
         this.variable = variable;
         this.direction = direction;
     }
