@@ -112,7 +112,7 @@ public class RockstarRepl {
                         }
                         if (stmt instanceof AliasStatement) {
                             AliasStatement aliasStmt = (AliasStatement) stmt;
-                            blocks.peek().defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
+                            blocks.peek().defineAlias(aliasStmt.getKeyword(), aliasStmt.getAlias());
                         }
                         // explain if needed
                         if (explain) {

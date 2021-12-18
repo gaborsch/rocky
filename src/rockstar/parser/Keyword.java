@@ -1,8 +1,10 @@
 package rockstar.parser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.function.Predicate;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -10,123 +12,106 @@ import java.util.function.Predicate;
  */
 public enum Keyword {
 
-    MYSTERIOUS(true, true, "mysterious"),
-    EMPTY_STRING(true, true, "empty", "silent", "silence"),
-    NULL(true, true, "null", "nothing", "nowhere", "nobody", "gone"),
-    EMPTY_ARRAY(true, true, "void", "hollow"),
-    BOOLEAN_TRUE(true, true, "true", "right", "yes", "ok"),
-    BOOLEAN_FALSE(true, true, "false", "wrong", "no", "lies"),
-    RESERVED(true, true, "definitely", "maybe"),
-    COMMON_VARIABLE_PREFIX(true, true, "a", "an", "the", "my", "your", "our"),
-    ON(false, true, "on", "by", "in", "to", "for", "from", "near"),
-    AT(true, true, "at"),
-    NOT(true, true, "not"),
-    AND(true, true, "and"),
-    OR(true, true, "or"),
-    NOR(true, true, "nor"),
-    IS(true, true, "is", "are", "was", "were"),
-    ISNT(true, true, "isnt", "arent", "aint", "wasnt", "werent"),
-    THAN(false, false, "than"),
-    AS(false, false, "as"),
-    HIGHER(false, false, "higher", "greater", "bigger", "stronger"),
-    LOWER(false, false, "lower", "less", "smaller", "weaker"),
-    HIGH(false, false, "high", "great", "big", "strong"),
-    LOW(false, false, "low", "little", "small", "weak"),
-    WITH(true, true, "with"),
-    PLUS(true, true, "plus", "+"),
-    MINUS(true, true, "minus", "without", "-"),
-    TIMES(true, true, "times", "of", "*"),
-    OVER(true, true, "over", "between", "/"),
-    ROCK(false, false),
-    ROLL(true, true, "roll", "pop"),
-    INTO(true, true, "into", "in"),
-    FROM(false, true, "from"),
-    TILL(false, true, "till"),
-    TAKING(true, true, "taking"),
-    SORTED(false, true, "sorted"),
-    COUNT(false, true, "count", "length", "height"),
-    OF(false, false, "of"),
-    LAST(false, true, "last"),
-    ALL(false, true, "all"),
-    KEYS(false, true, "keys"),
-    VALUES(false, true, "values"),
-    _STARTER_KEYWORD(false, false),
-    _ANY_KEYWORD(false, false);
+    // keywords starting with "+" are Rocky extensions, ignored in strict mode
+    // keywords starting with "-" are ignored in Rocky extended mode for that keyword    
+    MYSTERIOUS("mysterious"),
+    EMPTY_STRING("empty", "silent", "silence"),
+    NULL("null", "nothing", "nowhere", "nobody", "gone"),
+    EMPTY_ARRAY("void", "hollow"),
+    BOOLEAN_TRUE("true", "right", "yes", "ok"),
+    BOOLEAN_FALSE("false", "wrong", "no", "lies"),
+    RESERVED("definitely", "maybe"),
+    COMMON_VARIABLE_PREFIX("a", "an", "the", "my", "your", "our"),
+    ON("+on", "+by", "+in", "+to", "+for", "+from", "+near"),
+    AT("at"),
+    NOT("not"),
+    AND("and"),
+    OR("or"),
+    NOR("nor"),
+    IS("is", "are", "was", "were"),
+    ISNT("isnt", "arent", "aint", "wasnt", "werent"),
+    THAN("than"),
+    AS("as"),
+    HIGHER("higher", "greater", "bigger", "stronger"),
+    LOWER("lower", "less", "smaller", "weaker"),
+    HIGH("high", "great", "big", "strong"),
+    LOW("low", "little", "small", "weak"),
+    WITH("with"),
+    PLUS("plus", "+"),
+    MINUS("minus", "without", "-"),
+    TIMES("times", "of", "*"),
+    OVER("over", "between", "/"),
+    ROCK(),
+    ROLL("roll", "pop"),
+    INTO("into", "in"),
+    FROM("+from"),
+    TILL("+till"),
+    TAKING("taking"),
+    SORTED("+sorted"),
+    COUNT("+count", "+length", "+height"),
+    OF("+of"),
+    LAST("+last"),
+    ALL("+all"),
+    KEYS("+keys"),
+    VALUES("+values"),
+    _ANY_KEYWORD();
 
-    private final String[] keywordsVariations;
-    private final boolean starter;
-    private final boolean extStarter;
+    private final List<String> strictKeywords = new LinkedList<>();
+    private final List<String> extKeywords = new LinkedList<>();
 
-    private Keyword(boolean starter, boolean extStarter, String... keywords) {
-        this.keywordsVariations = keywords;
-        this.starter = starter;
-        this.extStarter = extStarter;
-    }
-
-    public String[] getKeywordsVariations() {
-        return keywordsVariations;
-    }
-
-    private boolean isStarter() {
-        return starter;
-    }
-
-    private boolean isExtStarter() {
-        return extStarter;
+    private Keyword(String... keywords) {
+        for (String keyword : keywords) {
+            int len = keyword.length();
+            if (len > 1 && keyword.startsWith("+")) {
+                extKeywords.add(keyword.substring(1));
+            } else if (len > 1 && keyword.startsWith("-")) {
+                strictKeywords.add(keyword.substring(1));
+            } else {
+                strictKeywords.add(keyword);
+                extKeywords.add(keyword);
+            }
+        }
     }
 
     private static boolean strictMode = true;
-    private static String[] allKeywords = null;
-    private static String[] starterKeywords = null;
-    private static String[] extStarterKeywords = null;
+    private static Set<String> allKeywordsStrict = null;
+    private static Set<String> allKeywordsExt = null;
 
     public static void setStrictMode(boolean strictMode) {
         Keyword.strictMode = strictMode;
     }
 
-    private static String[] getAllKeywords() {
-        if (allKeywords == null) {
-            allKeywords = getFilteredKeywords(kw -> true);
-        }
-        return allKeywords;
-    }
-
-    private static String[] getStarterKeywords() {
-        if (starterKeywords == null) {
-            starterKeywords = getFilteredKeywords(Keyword::isStarter);
-        }
-        return starterKeywords;
-    }
-
-    private static String[] getExtStarterKeywords() {
-        if (extStarterKeywords == null) {
-            extStarterKeywords = getFilteredKeywords(Keyword::isExtStarter);
-        }
-        return extStarterKeywords;
-    }
-
-    private static String[] getFilteredKeywords(Predicate<Keyword> filter) {
-        ArrayList<String> filteredList = new ArrayList<>();
-        for (Keyword value : values()) {
-            if (filter.test(value) && !value.name().startsWith("_")) {
-                filteredList.addAll(Arrays.asList(value.keywordsVariations));
+    private static Set<String> getAllKeywords() {
+        if (strictMode) {
+            if (allKeywordsStrict == null) {
+                allKeywordsStrict = new HashSet<>();
+                for (Keyword kw : values()) {
+                    allKeywordsStrict.addAll(kw.strictKeywords);
+                }
             }
+            return allKeywordsStrict;
+        } else {
+            if (allKeywordsExt == null) {
+                allKeywordsExt = new HashSet<>();
+                for (Keyword kw : values()) {
+                    allKeywordsExt.addAll(kw.extKeywords);
+                }
+            }
+            return allKeywordsExt;
         }
-        return filteredList.toArray(new String[filteredList.size()]);
+    }
+
+    public List<String> getKeywordVariations() {
+        return strictMode
+                ? strictKeywords
+                : extKeywords;
     }
 
     public boolean matches(String needle) {
-        String[] haystack = _ANY_KEYWORD.equals(this)
+        Collection<String> haystack = _ANY_KEYWORD.equals(this)
                 ? getAllKeywords()
-                : _STARTER_KEYWORD.equals(this)
-                ? (strictMode ? getStarterKeywords() : getExtStarterKeywords())
-                : keywordsVariations;
+                : getKeywordVariations();
         String needleLC = needle.toLowerCase();
-        for (String s : haystack) {
-            if (needleLC.equals(s)) {
-                return true;
-            }
-        }
-        return false;
+        return haystack.contains(needleLC);
     }
 }

@@ -55,6 +55,7 @@ public class Parser {
 
     public Parser(InputStream is, String filename, Environment env) {
         this.env = env;
+        Keyword.setStrictMode(env.isStrictMode());
         try {
             this.filename = filename;
             rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)), filename);
@@ -80,7 +81,7 @@ public class Parser {
                 Statement stmt = StatementFactory.getStatementFor(l, currentBlock);
                 if (stmt instanceof AliasStatement) {
                     AliasStatement aliasStmt = (AliasStatement) stmt;
-                    currentBlock.defineAlias(aliasStmt.getAlias(), aliasStmt.getKeyword());
+                    currentBlock.defineAlias(aliasStmt.getKeyword(), aliasStmt.getAlias());
                 } else if (stmt instanceof BlockEnd) {
                     // simple block closing: no need to add it anywhere
                     stmt = blocks.removeBlock();

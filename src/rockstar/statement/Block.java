@@ -57,22 +57,23 @@ public abstract class Block extends Statement {
         return parent;
     }
 
-    public void defineAlias(List<String> alias, List<String> keywords) {
+    protected void defineAlias(String keywords, String alias) {
+        aliasesFor
+                .computeIfAbsent(Arrays.asList(keywords.split(" ")), l -> new ArrayList<>())
+                .add(Arrays.asList(alias.split(" ")));
+    }
+
+    public void defineAlias(List<String> keywords, List<String> alias) {
         List<String> lcAlias = alias.stream().map(String::toLowerCase).collect(Collectors.toList());
         List<String> lcKeywords = keywords.stream().map(String::toLowerCase).collect(Collectors.toList());
 
-//        List<List<String>> aliasList = aliasesFor.computeIfAbsent(lcKeywords, l -> new ArrayList<>());
-//        if (aliasList.isEmpty()) {
-//            aliasList.add(keyword);
-//        }
-//        aliasList.add(alias);
         aliasesFor
                 .computeIfAbsent(lcKeywords, l -> new ArrayList<>())
                 .add(lcAlias);
     }
 
     public List<List<String>> getAliasesFor(Keyword kw) {
-        return getAliasesFor(Arrays.asList(kw.getKeywordsVariations()));
+        return getAliasesFor(kw.getKeywordVariations());
     }
 
     public List<List<String>> getAliasesFor(List<String> keywords) {

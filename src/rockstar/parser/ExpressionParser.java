@@ -206,7 +206,7 @@ public class ExpressionParser {
                 // and must not contain keywords
                 if (token.length() > 0
                         && Character.isUpperCase(token.charAt(0))
-                        && !checkCurrent(Keyword._STARTER_KEYWORD)) {
+                        && !checkCurrent(Keyword._ANY_KEYWORD)) {
                     next(); // next part processed
                     // proper variables are stored lowercased
                     sb.append(" ").append(token.toLowerCase());
@@ -344,7 +344,7 @@ public class ExpressionParser {
             next();
         }
         // qualifiers
-        if (!env.isStrictMode() && checkCurrent(Keyword.ON)) {
+        if (checkCurrent(Keyword.ON)) {
             next();
             return new QualifierExpression(false);
         }
