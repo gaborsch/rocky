@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public abstract class Block extends Statement {
     private final List<Statement> statements = new ArrayList<>();
 
     private final Map<List<String>, List<List<String>>> aliasesFor = new HashMap<>();
+    private final Map<String, List<String>> listCache = new HashMap<>();
 
     public List<Statement> getStatements() {
         return statements;
@@ -72,8 +74,17 @@ public abstract class Block extends Statement {
                 .add(lcAlias);
     }
 
+    private List<String> listOf(String s) {
+        return listCache.computeIfAbsent(s, v -> Arrays.asList(v));
+    }
+
     public List<List<String>> getAliasesFor(Keyword kw) {
-        return getAliasesFor(kw.getKeywordVariations());
+        List<List<String>> aliases = new LinkedList<>();
+        for (String variation : kw.getKeywordVariations()) {
+            aliases.add(listOf(variation));
+            aliases.addAll(getAliasesLC(listOf(variation)));
+        }
+        return aliases;
     }
 
     public List<List<String>> getAliasesFor(List<String> keywords) {

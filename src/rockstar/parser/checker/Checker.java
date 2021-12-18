@@ -15,6 +15,7 @@ import rockstar.expression.ListExpression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
+import rockstar.parser.Keyword;
 import rockstar.parser.Line;
 import rockstar.parser.Token;
 import static rockstar.parser.checker.Checker.PlaceholderType.*;
@@ -93,13 +94,16 @@ public abstract class Checker<T1, T2, T3> {
                 lastPH = ((Placeholder) param);
             } else {
                 List<String> needle = null;
+                Keyword keyword = null;
                 if (param instanceof List) {
                     needle = (List<String>) param;
                 } else if (param instanceof String) {
                     needle = Arrays.asList((String) param);
-                }
+                } else if (param instanceof Keyword) {
+                    keyword = (Keyword) param;
+                }                    
                 // set nextPosStart and nextPosEnd
-                findNext(needle, lastPos, tokens);
+                findNext(needle, keyword, lastPos, tokens);
 
                 if (nextPosEnd > lastPos) {
                     if (lastPH != null) {
@@ -194,8 +198,13 @@ public abstract class Checker<T1, T2, T3> {
             
     }
 
-    private void findNext(List<String> needle, int lastPos, List<String> tokens) {
-        List<List<String>> allNeedles = block.getAliasesFor(needle);
+    private void findNext(List<String> needle, Keyword kw, int lastPos, List<String> tokens) {        
+        List<List<String>> allNeedles;
+        if (kw != null) {
+            allNeedles = block.getAliasesFor(kw);
+        } else {
+            allNeedles = block.getAliasesFor(needle);
+        }
 
         int tokenLen = tokens.size();
 
