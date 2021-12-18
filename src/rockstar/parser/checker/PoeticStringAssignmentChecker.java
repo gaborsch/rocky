@@ -8,6 +8,7 @@ package rockstar.parser.checker;
 import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.VariableReference;
+import rockstar.parser.Token;
 import rockstar.statement.AssignmentStatement;
 import rockstar.statement.Statement;
 
@@ -30,8 +31,13 @@ public class PoeticStringAssignmentChecker extends Checker<VariableReference, Li
     private Statement validate(ParamList params) {
         VariableReference varRef = getE1();
         String verb = ((List<String>) params.getParams()[1]).get(0);
-        // grab original string from line, skip param 2
-        String poeticLiteralString = line.getOrigLine().substring(line.getOrigLine().indexOf(verb + " ") + verb.length() + 1);
+        String poeticLiteralString = "";
+        for (Token token : line.getTokens()) {
+            if (token.getValue().toLowerCase().equals(verb)) {
+                poeticLiteralString = line.getOrigLine().substring(token.getPos() + token.getLen() + 1);
+                break;
+            }
+        }
         ConstantExpression value = new ConstantExpression(poeticLiteralString);
         return new AssignmentStatement(varRef, value);
     }
