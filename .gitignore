@@ -1,7 +1,9 @@
 /dist/
+/target
 /**/*.rock.current
 /build/
 /nbproject/private/
+
 /nbproject
 
 

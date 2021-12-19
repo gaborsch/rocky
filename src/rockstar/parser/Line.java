@@ -15,12 +15,17 @@ import java.util.Objects;
  */
 public class Line {
 
-    public static Line STARTER_LINE = new Line("", "-", 0, new ArrayList());
     private final String line;
     private final String origLine;
     private final String fileName;
     private final int lnum;
     private final List<Token> tokens;
+
+    public static Line STARTER_LINE;
+
+    static {
+        STARTER_LINE = new Line("", "-", 0, new ArrayList<>());
+    }
 
     public Line(String line, String fileName, int lnum, List<Token> tokens) {
         this.line = line;
@@ -77,10 +82,7 @@ public class Line {
         if (this.lnum != other.lnum) {
             return false;
         }
-        if (!Objects.equals(this.fileName, other.fileName)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.fileName, other.fileName);
     }
 
 }

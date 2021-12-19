@@ -30,6 +30,7 @@ public class PoeticStringAssignmentChecker extends Checker<VariableReference, Li
 
     private Statement validate(ParamList params) {
         VariableReference varRef = getE1();
+        @SuppressWarnings("unchecked")
         String verb = ((List<String>) params.getParams()[1]).get(0);
         String poeticLiteralString = "";
         for (Token token : line.getTokens()) {

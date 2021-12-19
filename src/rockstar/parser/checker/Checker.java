@@ -41,16 +41,17 @@ public abstract class Checker<T1, T2, T3> {
 
     private int matchCounter = 0;
 
-    private Object[] extParams;
-
+    @SuppressWarnings("unchecked")
     public T1 getE1() {
         return (T1) parsedResult[1];
     }
 
+    @SuppressWarnings("unchecked")
     public T2 getE2() {
         return (T2) parsedResult[2];
     }
 
+    @SuppressWarnings("unchecked")
     public T3 getE3() {
         return (T3) parsedResult[3];
     }
@@ -94,7 +95,9 @@ public abstract class Checker<T1, T2, T3> {
             } else {
                 List<String> needle = null;
                 if (param instanceof List) {
-                    needle = (List<String>) param;
+                    @SuppressWarnings("unchecked")
+                    List<String> needle1 = (List<String>) param;
+                    needle = needle1;
                 } else if (param instanceof String) {
                     needle = Arrays.asList((String) param);
                 }

@@ -147,7 +147,7 @@ public class MutationExpression extends CompoundExpression {
 
     @Override
     public List<Expression> getParameters() {
-        List params = new LinkedList();
+        List<Expression> params = new LinkedList<>();
         params.add(baseExpr);
         if (intoExpr != null) {
             params.add(intoExpr);
