@@ -70,9 +70,4 @@ public class RockstarApi {
         return new Parser(fileContent, filename, env).parse();
     }
 
-    public static void main(String[] args) {
-        String program = "Say \"hello world!\"";
-        new RockstarApi().run("RockstarApi", program);
-    }
-
 }

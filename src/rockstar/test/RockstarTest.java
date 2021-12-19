@@ -34,7 +34,7 @@ public class RockstarTest {
         RUNTIME_ERROR
     }
 
-    public void execute(String path) {
+    public boolean execute(String path) {
         boolean defaultStrictMode = defaultEnv.isStrictMode();
         File f = new File(path);
         if(f.exists()) {
@@ -47,6 +47,8 @@ public class RockstarTest {
                 executeFile(f, Expected.CORRECT, defaultStrictMode);
             }
         }
+
+        return failed == 0;
     }
 
     private int testCount = 0;
@@ -72,7 +74,7 @@ public class RockstarTest {
         System.out.format("Passed tests: %d\n", passed);
         System.out.format("Pass ratio:   %3.2f%%\n", (testCount > 0) ? 100f * passed / testCount : 0.0d);
         System.out.println(SEPARATOR);
-        System.out.println();
+        System.out.println();        
     }
 
     private void executeDir(String dirname, Expected exp, boolean isStrictMode) {
