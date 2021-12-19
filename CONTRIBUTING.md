@@ -21,9 +21,16 @@ If you find an undesired feature or a bug:
 
 # Contributing
 
-For every filed issue, open a branch for the fix. When the fix is done, 
-* run `ant jar` to prepare `rocky.jar` file
-* make sure tha all the tests are running (execute `./rockstar test -v programs/tests/`)
+## Requirements
+
+* JAVA JDKm at least Java8
+* Maven ([Download here](https://maven.apache.org/download.cgi))
+
+## Way of contribution
+
+For every filed issue, open a branch for the fix. When the fix is done
+* run `mvn clean install` to prepare `rocky.jar` file
+* make sure that all the tests are running (execute `./rockstar test -v programs/tests/`)
 * if everything passes, open a PR to merge to `master` branch
 
 Should you have any questions, please contact `gaborsch` on [Rockstar Discord](https://discord.com/invite/xsQK7UU).
