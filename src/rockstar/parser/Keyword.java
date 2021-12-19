@@ -12,8 +12,9 @@ import java.util.Set;
  */
 public enum Keyword {
 
-    // keywords starting with "+" are Rocky extensions, ignored in strict mode
-    // keywords starting with "-" are ignored in Rocky extended mode for that keyword    
+    // Keywords starting with "+" are Rocky extensions, ignored in strict mode
+    // Keywords starting with "-" are ignored in Rocky extended mode for that keyword  
+    // Keywords can be combined to create a more generic group
     MYSTERIOUS("mysterious"),
     EMPTY_STRING("empty", "silent", "silence"),
     NULL("null", "nothing", "nowhere", "nobody", "gone"),
@@ -41,7 +42,7 @@ public enum Keyword {
     MINUS("minus", "without", "-"),
     TIMES("times", "of", "*"),
     OVER("over", "between", "/"),
-    ROCK(),
+    ROCK("rock"),
     ROLL("roll", "pop"),
     INTO("into", "in"),
     FROM("+from"),
@@ -57,7 +58,11 @@ public enum Keyword {
     IT("it", "he", "she", "him", "her", "they", "them", "ze", "hir", "zie", "zir", "xe", "xem", "ve", "ver"),
     SELF("+self", "+myself", "+yourself", "+himself", "+herself", "+itself", "+ourselves", "+yourselves", "+themselves"),
     PARENT("+parent", "+father", "+mother", "+papa", "+mama"),
-    _ANY_KEYWORD();
+    _ANY_KEYWORD("");
+
+    private static boolean strictMode = true;
+    private static Set<String> allKeywordsStrict = null;
+    private static Set<String> allKeywordsExt = null;
 
     private final List<String> strictKeywords = new LinkedList<>();
     private final List<String> extKeywords = new LinkedList<>();
@@ -79,9 +84,12 @@ public enum Keyword {
         }
     }
 
-    private static boolean strictMode = true;
-    private static Set<String> allKeywordsStrict = null;
-    private static Set<String> allKeywordsExt = null;
+    private Keyword(Keyword... keywords) {
+        for (Keyword keyword : keywords) {
+            extKeywords.addAll(keyword.extKeywords);
+            strictKeywords.addAll(keyword.strictKeywords);
+        }
+    }
 
     public static void setStrictMode(boolean strictMode) {
         Keyword.strictMode = strictMode;
