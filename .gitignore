@@ -1,9 +1,10 @@
 /dist/
 /target
-/**/*.rock.current
 /build/
-/nbproject/private/
-
+/**/*.rock.current
 /nbproject
+.classpath
+.project
+.settings
 
 
