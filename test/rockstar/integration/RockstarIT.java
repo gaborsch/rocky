@@ -20,8 +20,6 @@ public class RockstarIT {
         Map<String, String> options = new HashMap<>();
         options.put("-v", "-v");
 
-        System.out.println("IT testttt!");
-
         // when
         boolean success = new RockstarTest(options).execute(TEST_PATH);
 
