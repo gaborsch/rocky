@@ -23,7 +23,7 @@ import rockstar.test.RockstarTest;
  */
 public class Rockstar {
     
-    public static final String VERSION = "2.0.2";
+    public static final String VERSION = "2.0.3";
 
     // implementation constants
     public static final int MAX_LOOP_ITERATIONS = 10000;
@@ -51,7 +51,6 @@ public class Rockstar {
 //        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
 //        args = new String[]{"help", "run"};
 //        args = new String[]{"-", "-x"};
-//        args = new String[]{"run", "programs/tests/correct/umlauts.rock"};
         }
 
         List<String> argl = new LinkedList<>(Arrays.asList(args));
