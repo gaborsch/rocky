@@ -21,7 +21,7 @@ public abstract class Expression implements ASTAware {
 
     @Override
     public String getASTNodeText() {
-        return this.getClass().getSimpleName().replace("Expression", "");
+        return this.getClass().getSimpleName().replace("Expression", "") + " " + format();
     }
 
     @Override

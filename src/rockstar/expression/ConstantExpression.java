@@ -74,7 +74,7 @@ public class ConstantExpression extends SimpleExpression {
 
     @Override
     public String getASTNodeText() {
-        return super.getASTNodeText() + " " + value + " (" + value.getType() + ")";
+        return super.getASTNodeText() + " (" + value.getType() + ")";
     }
 
 }

@@ -16,13 +16,13 @@ import rockstar.statement.Statement;
  */
 public class RockChecker extends Checker<VariableReference, Expression, Object> {
 
-    private static final ParamList[] PARAM_LIST = new ParamList[]{
-        new ParamList("Rock", variableAt(1), "with", expressionAt(2)),
-        new ParamList("Push", variableAt(1), "with", expressionAt(2)),
-        new ParamList("Rock", expressionAt(2), "into", variableAt(1)),
-        new ParamList("Rock", expressionAt(2), "in", variableAt(1)),
-        new ParamList("Push", expressionAt(2), "into", variableAt(1)),
-        new ParamList("Push", expressionAt(2), "in", variableAt(1))};
+    private static final ParamList[] PARAM_LIST = new ParamList[] {
+            new ParamList("Rock", expressionAt(2), "into", variableAt(1)),
+            new ParamList("Rock", expressionAt(2), "in", variableAt(1)),
+            new ParamList("Rock", variableAt(1), "with", expressionAt(2)),
+            new ParamList("Push", variableAt(1), "with", expressionAt(2)),
+            new ParamList("Push", expressionAt(2), "into", variableAt(1)),
+            new ParamList("Push", expressionAt(2), "in", variableAt(1)) };
 
     @Override
     public Statement check() {

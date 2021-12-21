@@ -36,6 +36,8 @@ public class Rockstar {
 
     public static void main(String[] args) {
 
+        if (args.length == 0) {
+//    		args = new String[]{"list", "-x", "a.rock"};
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "-w", "programs/tests/correct/fibonacci.rock"};
 //        args = new String[]{"explain", "-s", "programs/tests/correct/nested_function_scopes.rock"};
@@ -50,6 +52,8 @@ public class Rockstar {
 //        args = new String[]{"help", "run"};
 //        args = new String[]{"-", "-x"};
 //        args = new String[]{"run", "programs/tests/correct/umlauts.rock"};
+        }
+
         List<String> argl = new LinkedList<>(Arrays.asList(args));
 
         new Rockstar().main(argl);

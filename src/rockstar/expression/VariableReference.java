@@ -78,9 +78,6 @@ public class VariableReference extends SimpleExpression {
         return ctx.afterExpression(vref, value);
     }
 
-    private boolean isSelfReference() {
-        return false;
-    }
 
     @Override
     public String format() {
@@ -101,11 +98,6 @@ public class VariableReference extends SimpleExpression {
 
     public VariableReference getEffectiveVref(BlockContext ctx) {
         return this;
-    }
-
-    @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + " " + name;
     }
 
 }
