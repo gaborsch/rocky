@@ -133,7 +133,7 @@ Each command has a more detailed help with options, so try `rockstar help run`, 
 
 ### Test results
 
-*100%* of the tests have passed! With some buggy test cases fixed locally ( https://github.com/RockstarLang/rockstar/issues/202 and https://github.com/RockstarLang/rockstar/issues/203 ), everything works!
+*100%* of the tests have passed! With a buggy test case fixed locally ( https://github.com/RockstarLang/rockstar/issues/203 ), everything works!
 
 Also, I included OOP tests and Rocky extension tests that do not pass on other Rockstar implementations.
 
