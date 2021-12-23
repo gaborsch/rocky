@@ -23,8 +23,10 @@ public class GiveBackChecker extends Checker<Expression, Object, Object> {
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList(GIVE_BACK, expressionAt(1)),
         new ParamList("give", expressionAt(1), "back"),
+        new ParamList("give", expressionAt(1)),
         new ParamList(SEND_BACK, expressionAt(1)),
-        new ParamList("send", expressionAt(1), "back")};
+        new ParamList("send", expressionAt(1), "back"),
+        new ParamList("send", expressionAt(1))};
 
     @Override
     public Statement check() {
