@@ -280,6 +280,11 @@ public class RockNumberDec64 extends RockNumber {
         return (int) transformM(this, 0);
     }
 
+	@Override
+	public double asDouble() {
+		return Double.valueOf(asString());
+	}
+
     public String asString() {
         int e = normalE(this);
         long m = transformM(this, e);

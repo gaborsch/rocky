@@ -97,7 +97,7 @@ public class ClassBlock extends Block {
         RockObject instance = create(definingContext);
 
         // call the constructor
-        FunctionBlock constructor = instance.getConstructor();
+        FunctionBlock constructor = instance.getConstructor(ctorParams);
         if (constructor != null) {
             constructor.call(instance, ctorParams);
         }

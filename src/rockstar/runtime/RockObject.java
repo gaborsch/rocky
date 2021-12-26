@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import java.util.List;
 import java.util.Map;
 import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
@@ -94,7 +95,7 @@ public class RockObject extends BlockContext {
         return super.getParent();
     }
 
-    public FunctionBlock getConstructor() {
+    public FunctionBlock getConstructor(List<Value> ctorParams) {
         return constructor;
     }
 

@@ -56,6 +56,7 @@ public abstract class RockNumber {
 
     public abstract int asInt();
     public abstract long asLong();
+    public abstract double asDouble();
 
     public abstract RockNumber ceil();
     public abstract RockNumber floor();

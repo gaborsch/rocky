@@ -41,6 +41,7 @@ public class Value implements Comparable<Value> {
     private RockNumber numericValue;
     private Boolean boolValue;
     private RockObject objectValue;
+    private NativeObject nativeObject;
     private List<Value> listArrayValue;
     private Map<Value, Value> assocArrayValue;
 
@@ -70,15 +71,10 @@ public class Value implements Comparable<Value> {
         return new Value(instance);
     }
 
-    private static boolean checkKeywords(String s, String[] keywords) {
-        for (String keyword : keywords) {
-            if(s.equalsIgnoreCase(keyword)) {
-                return true;
-            }
-        }
-        return false;
+    public static Value getValue(NativeObject instance) {
+        return new Value(instance);
     }
-    
+
     public static Value parse(String s) {
         return getValue(s);
     }
@@ -115,6 +111,11 @@ public class Value implements Comparable<Value> {
         this.type = ExpressionType.OBJECT;
     }
 
+    private Value(NativeObject nativeObject) {
+        this.nativeObject = nativeObject;
+        this.type = ExpressionType.NATIVE;
+    }
+    
     public ExpressionType getType() {
         return type;
     }
@@ -143,6 +144,10 @@ public class Value implements Comparable<Value> {
         return type == ExpressionType.OBJECT;
     }
 
+    public boolean isNative() {
+        return type == ExpressionType.NATIVE;
+    }
+
     public boolean isArray() {
         return type == ExpressionType.ARRAY;
     }
@@ -165,6 +170,8 @@ public class Value implements Comparable<Value> {
             case BOOLEAN:
                 return boolValue ? RockNumber.ONE() : RockNumber.ZERO();
             case OBJECT:
+                return RockNumber.ZERO();
+            case NATIVE:
                 return RockNumber.ZERO();
             case MYSTERIOUS:
                 return RockNumber.ZERO();
@@ -201,10 +208,12 @@ public class Value implements Comparable<Value> {
                     return "object " + objectValue.getName();
                 }
             }
+            case NATIVE:
+            	return nativeObject.describe();
             case MYSTERIOUS:
                 return "mysterious";
             case NULL:
-                return "null";
+                return null;
             case ARRAY: {
                 StringBuilder sb = new StringBuilder();
                 listArrayValue.forEach(v -> {
@@ -234,6 +243,8 @@ public class Value implements Comparable<Value> {
                 return this.stringValue.length() > 0;
             case OBJECT:
                 return true;
+            case NATIVE:
+            	return nativeObject.getBool();
             case MYSTERIOUS:
                 return false;
             case NULL:
@@ -249,6 +260,13 @@ public class Value implements Comparable<Value> {
             return objectValue;
         }
         throw new RockstarRuntimeException("unknown object value");
+    }
+
+    public NativeObject getNative() {
+        if (getType() == ExpressionType.NATIVE) {
+            return nativeObject;
+        }
+        throw new RockstarRuntimeException("unknown native object value");
     }
 
     public Value asBoolean() {
@@ -267,6 +285,8 @@ public class Value implements Comparable<Value> {
                 return getValue(this.listArrayValue.size());
             case OBJECT:
                 return getValue(RockNumber.ONE());
+            case NATIVE:
+            	return  getValue(nativeObject.getBool() ? RockNumber.ONE() : RockNumber.ZERO());
         }
         return null;
     }
@@ -299,8 +319,11 @@ public class Value implements Comparable<Value> {
                         + (assocArrayValue.size() > 0 ? (assocArrayValue.toString()) : "");
             case OBJECT:
                 return "Object(" + objectValue + ")";
+            case NATIVE:
+            	return "Native(" + nativeObject + ")";
+            default:
+            	return this.type.toString();
         }
-        return this.type.toString();
     }
 
     public String describe() {
@@ -315,8 +338,11 @@ public class Value implements Comparable<Value> {
                 return toString();
             case OBJECT:
                 return "Object(" + objectValue + ")\n" + objectValue.describe();
+            case NATIVE:
+            	return nativeObject.describe();
+            default:
+            	return this.type.toString();
         }
-        return this.type.toString();
     }
 
     public Value negate() {
@@ -528,6 +554,8 @@ public class Value implements Comparable<Value> {
                     return (Objects.equals(boolValue, other.boolValue)) ? 0 : 1;
                 case OBJECT:
                     return Integer.compare(objectValue.getObjId(), other.objectValue.getObjId());
+                case NATIVE:
+                	return  (Objects.equals(nativeObject, other.nativeObject)) ? 0 : 1;
                 case ARRAY:
                     return Integer.compare(assocArrayValue.size() + listArrayValue.size(),
                             other.assocArrayValue.size() + other.listArrayValue.size());
@@ -536,10 +564,15 @@ public class Value implements Comparable<Value> {
                     return 0;
             }
         }
-
+        
         // nothing values are equal
         if (isNothing() && other.isNothing()) {
             return 0;
+        }
+
+        // Native object is not equal to anything else
+        if (isNative() || other.isNative()) {
+            return 1;
         }
 
         // mysterious is not equal to anything else
@@ -565,7 +598,7 @@ public class Value implements Comparable<Value> {
                 case NUMBER:
                     RockNumber v1 = getNumeric();
                     return (v1 == null) ? 1 : v1.compareTo(other.getNumeric());
-
+                default:
             }
         }
         if (other.isString()) {
@@ -579,6 +612,7 @@ public class Value implements Comparable<Value> {
                 case NUMBER:
                     RockNumber v2 = other.getNumeric();
                     return (v2 == null) ? -1 : getNumeric().compareTo(v2);
+                default:
             }
         }
         // booleans compare as truthiness values with number and null
@@ -603,6 +637,8 @@ public class Value implements Comparable<Value> {
                 return stringValue.isEmpty();
             case OBJECT:
                 return false;
+            case NATIVE:
+            	return !nativeObject.getBool();
             case ARRAY:
                 return assocArrayValue.size() + listArrayValue.size() == 0;
         }
@@ -657,6 +693,9 @@ public class Value implements Comparable<Value> {
                 case ARRAY:
                     return Utils.isListEquals(listArrayValue, o.listArrayValue)
                             && Utils.isMapEquals(asAssocArray(), o.asAssocArray());
+                case NATIVE:
+                	return nativeObject.equals(o.nativeObject);
+                default:
             }
         }
         return false;
@@ -737,6 +776,5 @@ public class Value implements Comparable<Value> {
         cloned.listArrayValue.addAll(listArrayValue);
         cloned.assocArrayValue.putAll(assocArrayValue);
         return cloned;
-    }
-
+    }   
 }
