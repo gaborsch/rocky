@@ -37,12 +37,23 @@ public class Rockstar {
     public static void main(String[] args) {
 
         if (args.length == 0) {
-//    		args = new String[]{"list", "-x", "a.rock"};
+//          args = new String[]{};															// print help
+//          args = new String[]{"help"};													// print help
+//          args = new String[]{"help", "run"};												// print help on a topic
+//          args = new String[]{"a.rock"};													// run file
+//          args = new String[]{"run", "a.rock"};											// run file
+//          args = new String[]{"list", "a.rock"};											// list file
+//          args = new String[]{"-"};  														// interactive: REPL, reset, run <file>, debug <file>, list <file>, option, ?, (help, help <topic>) 
+//          args = new String[]{"-i"};  													// interactive
+//          args = new String[]{"-i", "a.rock"};											// interactive, starting with debugging a file
+//          args = new String[]{"-i", "a.rock", "b.rock"};									// interactive, starting with debugging multiple files
+//          args = new String[]{"test", "-w", "programs/tests/correct/fibonacci.rock"};		// test a test file
+//          args = new String[]{"test", "programs/tests"};									// test a test folder
+
+        	
+        args = new String[]{"debug", "a.rock"};
 //        args = new String[]{"run","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "-w", "programs/tests/correct/fibonacci.rock"};
-//        args = new String[]{"explain", "-s", "programs/tests/correct/nested_function_scopes.rock"};
-//        args = new String[]{"explain", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
-//        args = new String[]{"explain", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"list", "-s", "programs/tests/correct/nested_function_scopes.rock"};
 //        args = new String[]{"list", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
 //        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
@@ -176,8 +187,6 @@ public class Rockstar {
             System.out.println("    Parse and list a program. Useful for syntax checking.");
             if (cmd != null) {
                 System.out.println("Options:");
-//                System.out.println("    -x --explain");
-//                System.out.println("        Explain all statements and expressions parsed from input.");
                 System.out.println("    -l --line-number");
                 System.out.println("        Print line numbers.");
                 System.out.println("    -X --rocky");
@@ -191,8 +200,6 @@ public class Rockstar {
             System.out.println("    The specified programs are pre-run (e.g. defining functions, etc). Special commands are available.");
             if (cmd != null) {
                 System.out.println("Options:");
-//                System.out.println("    -x --explain");
-//                System.out.println("        Explain all statements and expressions parsed from input.");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    -X --rocky");
