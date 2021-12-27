@@ -6,6 +6,9 @@
 package rockstar.parser.checker;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import rockstar.parser.Token;
 import rockstar.statement.AliasStatement;
 import rockstar.statement.Statement;
 
@@ -13,7 +16,7 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class AliasChecker extends Checker<List<String>, List<String>, Object> {
+public class AliasChecker extends Checker<List<Token>, List<Token>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("for", "me", textAt(1), "means", textAt(2)),
@@ -25,8 +28,8 @@ public class AliasChecker extends Checker<List<String>, List<String>, Object> {
     }
 
     private Statement validate(ParamList params) {
-        List<String> alias = getE1();
-        List<String> keyword = getE2();
+        List<String> alias = getE1().stream().map(Token::getValue).collect(Collectors.toList());
+        List<String> keyword = getE2().stream().map(Token::getValue).collect(Collectors.toList());
         return new AliasStatement(alias, keyword);
     }
 

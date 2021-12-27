@@ -10,8 +10,10 @@ package rockstar.runtime;
  * @author Gabor
  */
 public class RockstarReturnException extends RuntimeException {
-    
-    private final Value returnValue;
+
+	private static final long serialVersionUID = 3606054173951699829L;
+	
+	private final Value returnValue;
 
     public RockstarReturnException(Value returnValue) {
         this.returnValue = returnValue;

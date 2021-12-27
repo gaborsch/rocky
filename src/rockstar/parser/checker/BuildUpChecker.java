@@ -7,6 +7,7 @@ package rockstar.parser.checker;
 
 import java.util.List;
 import rockstar.expression.VariableReference;
+import rockstar.parser.Token;
 import rockstar.statement.IncrementStatement;
 import rockstar.statement.Statement;
 
@@ -14,7 +15,7 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class BuildUpChecker extends Checker<VariableReference, List<String>, Object> {
+public class BuildUpChecker extends Checker<VariableReference, List<Token>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("Build", variableAt(1), "up", textAt(2).opt())};
@@ -26,15 +27,15 @@ public class BuildUpChecker extends Checker<VariableReference, List<String>, Obj
 
     private Statement validate(ParamList params) {
         VariableReference varRef = getE1();
-        List<String> text = getE2();
+        List<Token> text = getE2();
         int count = 1;
         if (text != null) {
             boolean isAndPossible = true;
-            for (String s : text) {
-                if ("up".equals(s)) {
+            for (Token t : text) {
+                if ("up".equals(t.getValue())) {
                     count++;
                     isAndPossible = true;
-                } else if (isAndPossible && s.equals(",")) {
+                } else if (isAndPossible && t.getValue().equals(",")) {
                     isAndPossible = false;
                 } else {
                     return null;

@@ -10,8 +10,10 @@ package rockstar.runtime;
  * @author Gabor
  */
 public class RockstarContinueException extends RuntimeException {
-   
-    public RockstarContinueException() {
+
+	private static final long serialVersionUID = -2798831334195505034L;
+
+	public RockstarContinueException() {
     }
     
 }

@@ -16,7 +16,7 @@ import rockstar.statement.StatementError;
  */
 public class StatementFactory {
 
-    private static final Checker CHECKERS[] = new Checker[]{
+    private static final Checker<?, ?, ?> CHECKERS[] = new Checker[]{
         new AliasChecker(),
         new PkgDefChecker(),
         new ImportChecker(),
@@ -55,7 +55,7 @@ public class StatementFactory {
 
     public static Statement getStatementFor(Line line, Block currentBlock) {
         Statement stmt = null;
-        for (Checker checker : CHECKERS) {
+        for (Checker<?, ?, ?> checker : CHECKERS) {
             stmt = checker.initialize(line, currentBlock).check();
             if (stmt != null) {
                 stmt.setDebugInfo(line);
@@ -66,7 +66,7 @@ public class StatementFactory {
         return stmt;
     }
 
-    private static class RaiseError extends Checker {
+    private static class RaiseError extends Checker<Object, Object, Object> {
 
         @Override
         public Statement check() {

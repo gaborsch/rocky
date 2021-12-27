@@ -7,6 +7,7 @@ package rockstar.parser.checker;
 
 import java.util.List;
 import rockstar.expression.VariableReference;
+import rockstar.parser.Token;
 import rockstar.statement.DecrementStatement;
 import rockstar.statement.Statement;
 
@@ -14,7 +15,7 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class KnockDownChecker extends Checker<VariableReference, List<String>, Object> {
+public class KnockDownChecker extends Checker<VariableReference, List<Token>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("Knock", variableAt(1), "down", textAt(2).opt())};
@@ -26,15 +27,15 @@ public class KnockDownChecker extends Checker<VariableReference, List<String>, O
 
     private Statement validate(ParamList params) {
         VariableReference varRef = getE1();
-        List<String> text = getE2();
+        List<Token> text = getE2();
         int count = 1;
         if (text != null) {
             boolean isAndPossible = true;
-            for (String s : text) {
-                if ("down".equals(s)) {
+            for (Token t : text) {
+                if ("down".equals(t.getValue())) {
                     count++;
                     isAndPossible = true;
-                } else if (isAndPossible && s.equals(",")) {
+                } else if (isAndPossible && t.getValue().equals(",")) {
                     isAndPossible = false;
                 } else {
                     return null;

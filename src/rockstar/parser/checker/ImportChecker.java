@@ -11,6 +11,7 @@ import java.util.Optional;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
+import rockstar.parser.Token;
 import rockstar.runtime.PackagePath;
 import rockstar.statement.ImportStatement;
 import rockstar.statement.Statement;
@@ -46,13 +47,13 @@ public class ImportChecker extends Checker<Expression, Expression, Object> {
 
         }
         // Process class list expression
-        List<String> clsList = new LinkedList<>();
+        List<List<Token>> clsList = new LinkedList<>();
         if (classesExpr instanceof ListExpression) {
             // if it is a proper list expression
             for (Expression cls : ((ListExpression) classesExpr).getParameters()) {
                 if (cls instanceof VariableReference) {
                     // variable name in a list
-                    clsList.add(((VariableReference) cls).getName());
+                    clsList.add(((VariableReference) cls).getTokens());
                 } else {
                     // if it's something else, it's not allowed
                     return null;
@@ -60,7 +61,7 @@ public class ImportChecker extends Checker<Expression, Expression, Object> {
             }
         } else if (classesExpr instanceof VariableReference) {
             // if it is a single variable epression
-            clsList.add(((VariableReference) classesExpr).getName());
+            clsList.add(((VariableReference) classesExpr).getTokens());
         } else {
             // others are not allowed
             return null;

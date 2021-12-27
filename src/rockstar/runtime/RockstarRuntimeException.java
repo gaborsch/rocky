@@ -17,7 +17,9 @@ import rockstar.parser.Line;
  */
 public class RockstarRuntimeException extends RuntimeException {
 
-    private final List<RockstarStacktraceLine> stacktrace = new LinkedList<>();
+	private static final long serialVersionUID = 1312636143538274940L;
+	
+	private final List<RockstarStacktraceLine> stacktrace = new LinkedList<>();
 
     public RockstarRuntimeException(String message) {
         super(message);

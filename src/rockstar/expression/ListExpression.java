@@ -95,7 +95,7 @@ public class ListExpression extends CompoundExpression {
     @Override
     public CompoundExpression setupFinished() {
         if (hasCompound) {
-            ListExpression newExpr = expandTo(this, new ListExpression());
+            ListExpression newExpr = expandTo(this, (ListExpression) new ListExpression().withTokens(getTokens(), 0, getTokens().size()));
             return newExpr;
         }
         return this;

@@ -7,6 +7,9 @@ package rockstar.statement;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import rockstar.parser.Token;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.FileContext;
@@ -21,9 +24,9 @@ import rockstar.runtime.QualifiedClassName;
 public class ImportStatement extends Statement {
 
     private final PackagePath path;
-    private final List<String> names;
+    private final List<List<Token>> names;
 
-    public ImportStatement(PackagePath path, List<String> names) {
+    public ImportStatement(PackagePath path, List<List<Token>> names) {
         this.path = path;
         this.names = new LinkedList<>(names);
     }
@@ -37,7 +40,8 @@ public class ImportStatement extends Statement {
         p = (p == null) ? fileCtx.getPackagePath() : p;
         p = (p == null) ? PackagePath.DEFAULT : p;
 
-        for (String name : names) {
+        for (List<Token> nameTokens : names) {
+        	String name = nameTokens.stream().map(Token::getValue).collect(Collectors.joining(" "));
             QualifiedClassName qcn = new QualifiedClassName(p, name);
             fileCtx.defineImport(name, qcn);
             root.importClass(qcn);

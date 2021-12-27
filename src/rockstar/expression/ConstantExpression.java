@@ -15,15 +15,33 @@ import rockstar.runtime.Value;
  */
 public class ConstantExpression extends SimpleExpression {
 
-    public static ConstantExpression CONST_MYSTERIOUS = new ConstantExpression(Value.MYSTERIOUS);
-    public static ConstantExpression CONST_NULL = new ConstantExpression(Value.NULL);
-    public static ConstantExpression CONST_EMPTY_STRING = new ConstantExpression(Value.getValue(""));
-    public static ConstantExpression CONST_EMPTY_ARRAY = new ConstantExpression(Value.EMPTY_ARRAY);
-    public static ConstantExpression CONST_TRUE = new ConstantExpression(Value.BOOLEAN_TRUE);
-    public static ConstantExpression CONST_FALSE = new ConstantExpression(Value.BOOLEAN_FALSE);
-
     private final Value value;
 
+	public static ConstantExpression CONST_MYSTERIOUS() {
+		return new ConstantExpression(Value.MYSTERIOUS);
+	};
+
+	public static ConstantExpression CONST_NULL() {
+		return new ConstantExpression(Value.NULL);
+	};
+
+	public static ConstantExpression CONST_EMPTY_STRING() {
+		return new ConstantExpression(Value.getValue(""));
+	};
+
+	public static ConstantExpression CONST_EMPTY_ARRAY() {
+		return new ConstantExpression(Value.EMPTY_ARRAY);
+	};
+
+	public static ConstantExpression CONST_TRUE() {
+		return new ConstantExpression(Value.BOOLEAN_TRUE);
+	};
+
+	public static ConstantExpression CONST_FALSE() {
+		return new ConstantExpression(Value.BOOLEAN_FALSE);
+	};
+
+    
     public ConstantExpression(String s) {
         this.value = Value.getValue(s);
     }

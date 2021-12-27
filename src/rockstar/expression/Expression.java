@@ -5,6 +5,9 @@
  */
 package rockstar.expression;
 
+import java.util.List;
+
+import rockstar.parser.Token;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
@@ -14,7 +17,18 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public abstract class Expression implements ASTAware {
-
+	
+	private List<Token> tokens;
+	
+	public List<Token> getTokens() {
+		return tokens;
+	}
+	
+	public Expression withTokens(List<Token> tokens, int start, int end) {
+		this.tokens = tokens.subList(start, end);
+		return this;
+	}
+	
     public abstract Value evaluate(BlockContext ctx);
 
     public abstract String format();
@@ -28,5 +42,5 @@ public abstract class Expression implements ASTAware {
     public Integer getASTLineNum() {
         return null;
     }
-
+    
 }

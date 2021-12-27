@@ -9,6 +9,7 @@ import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
+import rockstar.parser.Token;
 import rockstar.runtime.Utils;
 import rockstar.statement.ArrayAssignmentStatement;
 import rockstar.statement.Statement;
@@ -17,7 +18,7 @@ import rockstar.statement.Statement;
  *
  * @author Gabor
  */
-public class PoeticArrayAssignmentChecker extends Checker<VariableReference, List<String>, Object> {
+public class PoeticArrayAssignmentChecker extends Checker<VariableReference, List<Token>, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList(variableAt(1), "is", "containing", textAt(2)),
@@ -41,11 +42,11 @@ public class PoeticArrayAssignmentChecker extends Checker<VariableReference, Lis
     private Statement validate(ParamList params) {
         VariableReference varRef = getE1();
         ArrayAssignmentStatement stmt = new ArrayAssignmentStatement(varRef);
-        List<String> valueList = getE2();
+        List<Token> valueList = getE2();
         int startIdx = 0;
         while (startIdx < valueList.size()) {
             int endIdx = Utils.findInList(valueList, "and", startIdx);
-            List<String> exprSubList = valueList.subList(startIdx, endIdx);
+            List<Token> exprSubList = valueList.subList(startIdx, endIdx);
             Expression expr = ExpressionFactory.tryExpressionFor(exprSubList, line, block);
             if (expr != null) {
                 // variable reference

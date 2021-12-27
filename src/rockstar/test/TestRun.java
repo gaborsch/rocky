@@ -165,6 +165,8 @@ public class TestRun {
             result.setDebugInfo(act.next());
             writeCurrentOutput(filename, output);
         }
+        exp.close();
+        act.close();
 
     }
 
