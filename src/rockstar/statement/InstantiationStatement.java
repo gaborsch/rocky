@@ -13,6 +13,7 @@ import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.NativeObject;
 import rockstar.runtime.QualifiedClassName;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -24,12 +25,12 @@ import rockstar.runtime.Value;
 public class InstantiationStatement extends Statement {
 
     private final VariableReference variable;
-    private final String className;
+    private final VariableReference classRef;
     private final List<Expression> ctorParameterExprs = new ArrayList<>();
 
-    public InstantiationStatement(VariableReference variable, String className) {
+    public InstantiationStatement(VariableReference variable, VariableReference classRef) {
         this.variable = variable;
-        this.className = className;
+        this.classRef = classRef;
     }
 
     public void addParameter(Expression expr) {
@@ -38,26 +39,42 @@ public class InstantiationStatement extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-        // get the class
-        QualifiedClassName qcn = ctx.findClass(className);
-        ClassBlock classBlock = ctx.getRootCtx().retrieveClass(qcn);
-        if (classBlock != null) {
-            // evaluate constructor expressions
-            List<Value> paramValues = ctorParameterExprs.stream()
-                    .map(expr -> expr.evaluate(ctx))
-                    .collect(Collectors.toList());
-            // instantiate the class
-            Value instance = classBlock.instantiate(paramValues);
+    	Value instance = null;
+
+        // evaluate constructor expressions
+        List<Value> paramValues = ctorParameterExprs.stream()
+                .map(expr -> expr.evaluate(ctx))
+                .collect(Collectors.toList());
+
+        // Check if native class defined
+    	Value nativeClassValue = ctx.getFileCtx().getVariableValue(classRef);
+    	if (nativeClassValue != null && nativeClassValue.isNative()) {
+    		// get the class representation
+    		NativeObject nativeClass = nativeClassValue.getNative();
+    		// instantiate
+    		instance = Value.getValue(nativeClass.newInstance(paramValues));
+    	}
+    	if (instance == null) {    	
+	        // check if Rockstar class is defined
+	        QualifiedClassName qcn = ctx.findClass(classRef.getName());
+	        ClassBlock classBlock = ctx.getRootCtx().retrieveClass(qcn);
+	        if (classBlock != null) {
+	            // instantiate the class
+	            instance = classBlock.instantiate(paramValues);
+	        }
+    	}
+        
+        if (instance != null) {
             // assign the instance to the variable
             ctx.setVariable(this.variable, instance);
         } else {
-            throw new RockstarRuntimeException("Undefined class: " + className);
+        	throw new RockstarRuntimeException("Undefined class: " + classRef.geTokensAsString());
         }
     }
 
     @Override
     public String getASTNodeText() {
-        return super.getASTNodeText() + " of class " + className;
+        return super.getASTNodeText() + " of class " + classRef.geTokensAsString();
     }
 
     @Override

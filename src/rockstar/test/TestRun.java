@@ -142,32 +142,30 @@ public class TestRun {
 
     private void compareOutput(String filename, String expectedOutput, String output, TestResult result) {
         int lineNum = 1;
-        Scanner exp = new Scanner(expectedOutput).useDelimiter("\\r?\\n");
-        Scanner act = new Scanner(output).useDelimiter("\\r?\\n");
+        try(Scanner exp = new Scanner(expectedOutput).useDelimiter("\\r?\\n");
+        		Scanner act = new Scanner(output).useDelimiter("\\r?\\n")) {
 
-        while (exp.hasNext() && act.hasNext()) {
-            String expLine = exp.next();
-            String actLine = act.next();
-            if (!expLine.equals(actLine)) {
-                String msg = "OUTPUT MISMATCH at line " + lineNum + ": expected '" + expLine + "', got '" + actLine + "'";
-                result.setMessage(msg);
-                writeCurrentOutput(filename, output);
-                return;
-            }
-            lineNum++;
-        }
-        if (exp.hasNext()) {
-            result.setMessage("MORE OUTPUT EXPECTED at line " + lineNum);
-            result.setDebugInfo(exp.next());
-            writeCurrentOutput(filename, output);
-        } else if (act.hasNext()) {
-            result.setMessage("SURPLUS OUTPUT at line " + lineNum);
-            result.setDebugInfo(act.next());
-            writeCurrentOutput(filename, output);
-        }
-        exp.close();
-        act.close();
-
+	        while (exp.hasNext() && act.hasNext()) {
+	            String expLine = exp.next();
+	            String actLine = act.next();
+	            if (!expLine.equals(actLine)) {
+	                String msg = "OUTPUT MISMATCH at line " + lineNum + ": expected '" + expLine + "', got '" + actLine + "'";
+	                result.setMessage(msg);
+	                writeCurrentOutput(filename, output);
+	                return;
+	            }
+	            lineNum++;
+	        }
+	        if (exp.hasNext()) {
+	            result.setMessage("MORE OUTPUT EXPECTED at line " + lineNum);
+	            result.setDebugInfo(exp.next());
+	            writeCurrentOutput(filename, output);
+	        } else if (act.hasNext()) {
+	            result.setMessage("SURPLUS OUTPUT at line " + lineNum);
+	            result.setDebugInfo(act.next());
+	            writeCurrentOutput(filename, output);
+	        }
+		}
     }
 
     private void writeCurrentOutput(String rockFilename, String output) {

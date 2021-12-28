@@ -83,11 +83,13 @@ public enum Keyword {
     private static Set<String> allKeywordsStrict = null;
     private static Set<String> allKeywordsExt = null;
 
-    public static void setStrictMode(boolean strictMode) {
-        Keyword.strictMode = strictMode;
-        allKeywordsStrict = null;
-        allKeywordsExt = null;
-    }
+	public static void setStrictMode(boolean strictMode) {
+		if (Keyword.strictMode != strictMode) {
+			allKeywordsStrict = null;
+			allKeywordsExt = null;
+		}
+		Keyword.strictMode = strictMode;
+	}
 
     private static Set<String> getAllKeywords() {
         if (strictMode) {

@@ -48,9 +48,7 @@ public class InstantiationChecker extends Checker<VariableReference, VariableRef
         VariableReference classRef = getE2();
         Expression constructorParamList = getE3();
 
-        String className = classRef.getName();
-
-        InstantiationStatement stmt = new InstantiationStatement(variableRef, className);
+        InstantiationStatement stmt = new InstantiationStatement(variableRef, classRef);
 
         if (constructorParamList != null) {
             // has constructor parameters

@@ -38,8 +38,8 @@ public class Rockstar {
 
         if (args.length == 0) {
 //    		args = new String[]{"list", "-x", "a.rock"};
-//        args = new String[]{"run", "-X", "a.rock"};
-        args = new String[]{"test", "programs/tests"};
+        args = new String[]{"run", "-X", "a.rock"};
+//        args = new String[]{"test", "programs/tests"};
 //        args = new String[]{"explain", "-s", "programs/tests/correct/nested_function_scopes.rock"};
 //        args = new String[]{"explain", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
 //        args = new String[]{"explain", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};

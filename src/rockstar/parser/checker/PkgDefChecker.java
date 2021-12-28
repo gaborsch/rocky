@@ -7,6 +7,7 @@ package rockstar.parser.checker;
 
 import java.util.Optional;
 import rockstar.expression.Expression;
+import rockstar.parser.Keyword;
 import rockstar.runtime.PackagePath;
 import rockstar.statement.PkgDefStatement;
 import rockstar.statement.Statement;
@@ -17,6 +18,7 @@ import rockstar.statement.Statement;
  */
 public class PkgDefChecker extends Checker<Expression, Object, Object> {
 
+	// Package definition keywords must be parsed in strict mode, too, to be able to trigger extended mode
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("Album", expressionAt(1))};
 
@@ -29,6 +31,9 @@ public class PkgDefChecker extends Checker<Expression, Object, Object> {
         Expression expr = getE1();
         Optional<PackagePath> pathOpt = PackagePath.getPackagetPathFromExpr(expr);
         if (pathOpt.isPresent()) {
+        	// PackageDef statement triggers extended mode
+        	Keyword.setStrictMode(false);
+
             return new PkgDefStatement(pathOpt.get());
         }
         return null;

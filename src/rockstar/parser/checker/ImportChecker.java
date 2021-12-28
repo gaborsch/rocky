@@ -11,6 +11,7 @@ import java.util.Optional;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
+import rockstar.parser.Keyword;
 import rockstar.parser.Token;
 import rockstar.runtime.PackagePath;
 import rockstar.statement.ImportStatement;
@@ -21,7 +22,8 @@ import rockstar.statement.Statement;
  * @author Gabor
  */
 public class ImportChecker extends Checker<Expression, Expression, Object> {
-
+	
+	// Import keywords must be parsed in strict mode, too, to be able to trigger extended mode
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("from", expressionAt(1), "play", expressionAt(2)),
         new ParamList("off", expressionAt(1), "play", expressionAt(2)),
@@ -47,13 +49,15 @@ public class ImportChecker extends Checker<Expression, Expression, Object> {
 
         }
         // Process class list expression
-        List<List<Token>> clsList = new LinkedList<>();
+        List<String> aliases = new LinkedList<>();
+        List<List<Token>> classes = new LinkedList<>();
         if (classesExpr instanceof ListExpression) {
             // if it is a proper list expression
             for (Expression cls : ((ListExpression) classesExpr).getParameters()) {
                 if (cls instanceof VariableReference) {
                     // variable name in a list
-                    clsList.add(((VariableReference) cls).getTokens());
+                	aliases.add(((VariableReference) cls).getName());
+                    classes.add(((VariableReference) cls).getTokens());
                 } else {
                     // if it's something else, it's not allowed
                     return null;
@@ -61,14 +65,18 @@ public class ImportChecker extends Checker<Expression, Expression, Object> {
             }
         } else if (classesExpr instanceof VariableReference) {
             // if it is a single variable epression
-            clsList.add(((VariableReference) classesExpr).getTokens());
+        	aliases.add(((VariableReference) classesExpr).getName());
+            classes.add(((VariableReference) classesExpr).getTokens());
         } else {
             // others are not allowed
             return null;
         }
 
-        if (!clsList.isEmpty()) {
-            return new ImportStatement(path, clsList);
+        if (!classes.isEmpty()) {
+        	// Import statement triggers extended mode
+        	Keyword.setStrictMode(false);
+        	
+            return new ImportStatement(path, aliases, classes);
         }
         return null;
     }

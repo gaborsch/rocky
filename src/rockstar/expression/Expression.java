@@ -6,6 +6,7 @@
 package rockstar.expression;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 import rockstar.parser.Token;
 import rockstar.runtime.ASTAware;
@@ -22,6 +23,12 @@ public abstract class Expression implements ASTAware {
 	
 	public List<Token> getTokens() {
 		return tokens;
+	}
+	
+	public String geTokensAsString() {
+		StringJoiner sj = new StringJoiner(" ");
+		tokens.forEach(t -> sj.add(t.getValue()));
+		return sj.toString();
 	}
 	
 	public Expression withTokens(List<Token> tokens, int start, int end) {

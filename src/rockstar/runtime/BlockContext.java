@@ -236,8 +236,7 @@ public class BlockContext {
         while (v == null && ctx != null) {
             v = ctx.vars.get(vname);
             ctx = ctx.getParent();
-        }
-        
+        }        
         return v;
     }
     
