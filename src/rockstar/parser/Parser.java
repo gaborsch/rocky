@@ -37,18 +37,6 @@ public class Parser {
     private MultilineReader rdr;
     private Environment env;
 
-    public static Program parseProgram(String programText, Environment env) {
-        Keyword.setStrictMode(env.isStrictMode());
-        InputStream is;
-        try {
-            is = new ByteArrayInputStream(programText.getBytes("UTF-8"));
-            return new Parser(is, "", env).parse();
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
     public Parser(String filename, Environment env) throws FileNotFoundException {
         this(new FileInputStream(new File(filename)), filename, env);
     }

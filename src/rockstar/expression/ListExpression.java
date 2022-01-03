@@ -54,7 +54,7 @@ public class ListExpression extends CompoundExpression {
 
     @Override
     public int getPrecedence() {
-        return 80;
+        return 100;
     }
 
     @Override
@@ -139,7 +139,7 @@ public class ListExpression extends CompoundExpression {
             if (lexpr.getType() == LogicalExpression.LogicalType.AND) {
                 lexpr.getParameters().forEach(expr2 -> expandTo(expr2, newExpr));
             }
-        } else if (expr instanceof SimpleExpression) {
+        } else if (expr instanceof SimpleExpression || expr instanceof UnaryMinusExpression) {
             newExpr.addParameter(expr);
         } else {
             return null;

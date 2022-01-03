@@ -1,0 +1,24 @@
+from java, util play ArrayList
+
+rock X with 1, 2
+
+ArrList2 will be ArrayList
+addAll on ArrList2 taking X
+add on ArrList2 taking 3
+addAll on ArrList2 taking X
+
+say tostring on ArrList2
+
+cast ArrList2 into Y
+
+say length of Y
+
+
+say Y at 0
+say Y at 1
+say Y at 2
+say Y at 3
+say Y at 4
+say Y at 5
+
+

@@ -1,0 +1,14 @@
+Instantiation OK
+direct method call OK
+3.0
+parameterless method call OK
+3
+inherited method call OK
+0.010
+10
+1.0E+4
+static method OK
+0.10
+static method on instance OK
+1
+property access OK

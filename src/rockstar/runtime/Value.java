@@ -67,6 +67,12 @@ public class Value implements Comparable<Value> {
         return v;
     }
 
+    public static Value getValue(Map<Value, Value> map) {
+        Value v = newArrayValue();
+        v.assocArrayValue.putAll(map);
+        return v;
+    }
+
     public static Value getValue(RockObject instance) {
         return new Value(instance);
     }
@@ -178,7 +184,7 @@ public class Value implements Comparable<Value> {
             case NULL:
                 return RockNumber.ZERO();
             case ARRAY:
-                return RockNumber.getValueFromLong(listArrayValue.size());
+                return RockNumber.getValueFromLong(listArrayValue.size() + assocArrayValue.size());
         }
         throw new RockstarRuntimeException("unknown numeric value");
     }

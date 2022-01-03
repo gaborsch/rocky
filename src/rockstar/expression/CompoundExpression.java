@@ -42,6 +42,7 @@ public abstract class CompoundExpression extends Expression {
         return parameters;
     }
 
+    // OLD:
     /* Precedences
     999: $ (expression end)
     800: and, or, nor
@@ -54,6 +55,25 @@ public abstract class CompoundExpression extends Expression {
     200: unary minus
     100: function call
      80: , (list operator)
+     75: roll <array>
+     60: built-in functions
+     50: on:, by, in, at, to, for, from, near
+     40: is like
+     */
+    
+    // NEW:
+    /* Precedences
+    999: $ (expression end)
+    800: and, or, nor
+    700: is, isn't, >, <, >=, <=
+    600: not
+    550: into (mutation modifier)
+    500: +, -
+    400: *, /
+    300: ^ (power)
+    200: function call
+    100: , (list operator)
+     80: unary minus
      75: roll <array>
      60: built-in functions
      50: on:, by, in, at, to, for, from, near

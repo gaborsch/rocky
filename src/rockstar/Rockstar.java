@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import rockstar.debugger.RockstarDebugger;
 import rockstar.parser.Parser;
 import rockstar.repl.RockstarRepl;
@@ -38,7 +40,8 @@ public class Rockstar {
 
         if (args.length == 0) {
 //    		args = new String[]{"list", "-x", "a.rock"};
-        args = new String[]{"run", "-X", "a.rock"};
+//            args = new String[]{"list", "-x", "programs/tests/fixtures/Rocky_ext/native/arraylist.rock"};
+//        args = new String[]{"run", "programs/tests/fixtures/Rocky_ext/native/arraylist.rock"};
 //        args = new String[]{"test", "programs/tests"};
 //        args = new String[]{"explain", "-s", "programs/tests/correct/nested_function_scopes.rock"};
 //        args = new String[]{"explain", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
@@ -46,6 +49,7 @@ public class Rockstar {
 //        args = new String[]{"list", "-s", "programs/tests/correct/nested_function_scopes.rock"};
 //        args = new String[]{"list", "programs/tests/correct/factorial.rock", "programs/tests/correct/operators/andTest.rock"};
 //        args = new String[]{"list", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
+//        args = new String[]{"test","-v", "programs/tests"};
 //        args = new String[]{"test","C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\correct\\operators\\equalityComparison.rock"};
 //        args = new String[]{"test", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests"};
 //        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
@@ -234,7 +238,8 @@ public class Rockstar {
     }
 
     public void run(List<String> files, Map<String, String> options) {
-        if (files.isEmpty()) {
+    	List<String> rockFiles = files.stream().filter(fn -> fn.endsWith(".rock")).collect(Collectors.toList());
+        if (rockFiles.isEmpty()) {
             throw new IllegalArgumentException("Missing files");
         }
 
@@ -245,7 +250,7 @@ public class Rockstar {
 
         FileContext prgCtx = new FileContext(env);
         FileContext ctx;
-        for (String filename : files) {
+        for (String filename : rockFiles) {
             try {
                 Program prg = new Parser(filename, env).parse();
                 ctx = new FileContext(prgCtx, filename);
@@ -259,7 +264,8 @@ public class Rockstar {
     }
 
     public void list(List<String> files, Map<String, String> options) {
-        if (files.isEmpty()) {
+		List<String> rockFiles = files.stream().filter(fn -> fn.endsWith(".rock")).collect(Collectors.toList());   	
+        if (rockFiles.isEmpty()) {
             throw new IllegalArgumentException("Missing files");
         }
 
@@ -267,7 +273,7 @@ public class Rockstar {
         boolean explain = env.hasOption("-x", "--explain");
         boolean lineNums = env.hasOption("-l", "--line-number");
 
-        files.forEach((filename) -> {
+        rockFiles.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename, env).parse();
                 System.out.println(prg.listProgram(lineNums, !explain, explain));

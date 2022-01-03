@@ -299,7 +299,7 @@ public class ExpressionParser {
                 break;
             }
 
-            if ((topPrec == 600 && newPrec == 600) || (topPrec == 80 && newPrec == 80)) {
+            if ((topPrec == 600 && newPrec == 600) || (topPrec == 100 && newPrec == 100)) {
                 // Logical NOT  || ListOperator (right-associative)
                 break;
             }
@@ -447,8 +447,7 @@ public class ExpressionParser {
         }
 
         // arithmetical operators
-        if (isAfterOperator && checkCurrent("-")) {
-            // unary minus
+        if (isAfterOperator && checkCurrent("-")) { 
             next();
             return (CompoundExpression) new UnaryMinusExpression().withTokens(list, startIdx, idx);
         }

@@ -86,6 +86,15 @@ public class Environment {
         return !hasOption("-X", "--rocky");
     }
 
+    public void setStrictMode(boolean strictMode) {
+    	if (strictMode) {
+    		options.put("-X", "-X");
+    	} else {
+    		options.remove("-X");
+    		options.remove("--rocky");    		
+    	}
+    }
+
     public void setListener(BlockContextListener listener) {
         this.listener = listener;
     }

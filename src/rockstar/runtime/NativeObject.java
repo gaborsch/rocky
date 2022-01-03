@@ -2,13 +2,16 @@ package rockstar.runtime;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 public class NativeObject {
@@ -34,7 +37,7 @@ public class NativeObject {
 
 	public NativeObject newInstance(List<Value> ctorParams) {
 		Constructor<?> ctor = getConstructor(nativeClass, ctorParams);
-		Object[] initArgs = convertValues(ctor, ctorParams);
+		Object[] initArgs = convertValues(ctor.getParameterTypes(), ctorParams);
 		try {
 			Object nativeObject = ctor.newInstance(initArgs);
 			return new NativeObject(nativeClass, false, nativeObject);
@@ -99,9 +102,7 @@ public class NativeObject {
 	}
 
 	private static Constructor<?> getConstructor(Class<?> nativeClass, List<Value> ctorParams) {
-		Constructor<?>[] ctors = nativeClass.getConstructors();
-		for (int i = 0; i < ctors.length; i++) {
-			Constructor<?> constructor = ctors[i];
+		for (Constructor<?> constructor : nativeClass.getConstructors()) {
 			if (matchParameterTypes(constructor.getParameterTypes(), ctorParams)) {
 				return constructor;
 			}
@@ -170,12 +171,12 @@ public class NativeObject {
 		}
 	}
 	
-	private static Object[] convertValues(Constructor<?> ctor, List<Value> values) {
-		Class<?>[] ctorTypes = ctor.getParameterTypes();
+	private static Object[] convertValues(Class<?>[] types, List<Value> values) {
 		Object[] args = new Object[values.size()];
 		int i = 0;
 		for (Value value : values) {
-			args[i++] = convertValue(ctorTypes[i], value); 
+			args[i] = convertValue(types[i], value);
+			i++;
 		}
 		return args;
 	}
@@ -185,7 +186,15 @@ public class NativeObject {
 			case NATIVE:
 				return value.getNative().getNativeObject();
 			case NUMBER:
-				if (isAssignableFrom(cls, LONG_CLASSES)) {
+				if (isAssignableFrom(cls, BigDecimal.class)) {
+					return BigDecimal.valueOf(value.getNumeric().asDouble());
+				} else if (isAssignableFrom(cls, BigInteger.class)) {
+					return BigInteger.valueOf(value.getNumeric().asLong());
+				} else if (isAssignableFrom(cls, DOUBLE_CLASSES)) {
+					return value.getNumeric().asDouble();
+				} else if (isAssignableFrom(cls, FLOAT_CLASSES)) {
+					return (float)value.getNumeric().asDouble();
+				} else if (isAssignableFrom(cls, LONG_CLASSES)) {
 					return (Long) value.getNumeric().asLong();
 				} else if (isAssignableFrom(cls, INT_CLASSES)) {
 					return value.getNumeric().asInt();
@@ -195,15 +204,7 @@ public class NativeObject {
 					return (byte)value.getNumeric().asInt();
 				} else if (isAssignableFrom(cls, CHAR_CLASSES)) {
 					return (char)value.getNumeric().asInt();
-				} else if (isAssignableFrom(cls, DOUBLE_CLASSES)) {
-					return value.getNumeric().asDouble();
-				} else if (isAssignableFrom(cls, FLOAT_CLASSES)) {
-					return (float)value.getNumeric().asDouble();
-				} else if (isAssignableFrom(cls, BigDecimal.class)) {
-					return BigDecimal.valueOf(value.getNumeric().asDouble());
-				} else if (isAssignableFrom(cls, BigInteger.class)) {
-					return BigInteger.valueOf(value.getNumeric().asLong());
-				}
+				}  
 				return null;
 			case STRING:
 				return value.getString();
@@ -211,7 +212,6 @@ public class NativeObject {
 				if (cls.isArray()) {
 					List<Value> valueList = value.asListArray();
 					Class<?> compType = cls.getComponentType();
-					@SuppressWarnings("unchecked")
 					Object[] arr = (Object[]) Array.newInstance(compType, valueList.size());
 					int i = 0;
 					for (Value v : valueList) {
@@ -240,31 +240,140 @@ public class NativeObject {
 	}
 
 	private static boolean isAssignableFrom(Class<?> cls, Class<?>... classes) {
-// TODO: validate
 		for (int i = 0; i < classes.length; i++) {
-			if (classes[i].isAssignableFrom(cls)) {
+			if (cls.isAssignableFrom(classes[i])) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public Value callMethod(String functionName, List<Value> values) {
-		// try function name
+	public Value callMethod(String functionName, List<Value> methodParams) {
+		// get method name
+		Method method = getMethod(functionName, methodParams);		
+		if (method == null && methodParams.size() == 0) {
+			// maybe a property name?
+			Field field = getField(functionName);
+			if (field != null) {
+				try {
+					Object rawValue = field.get(nativeObject);
+					return convertBack(rawValue, field.getType());
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					throw new RockstarRuntimeException("Error accessing native field "+functionName+" on class "+nativeClass.getCanonicalName() + ": "+e.getMessage());
+				}
+			}
+		}
+		if (method == null) {
+			throw new RockstarRuntimeException("Unknown native method "+functionName+" on class "+nativeClass.getCanonicalName());
+		}
+		// convert values
+		Object[] methodArgs = convertValues(method.getParameterTypes(), methodParams);
 		
-		// try property name
-		
-		// convert returned value, 
-		// convert Void to MYSTEROIUS
+		// call method
+		try {
+			Object rawValue = method.invoke(nativeObject, methodArgs);
+			return convertBack(rawValue, method.getReturnType());
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			throw new RockstarRuntimeException("Cannot call native method "+functionName+" on class: "+ nativeClass.getCanonicalName() + " with params " + methodArgs);
+		}		
+	}
+	
+	
+	private Value convertBack(Object rawValue, Class<?> returnClass) {
 		// only primitive values (Long,  Double, String, null) are converted, 
-		// other objects (BigDecimal, List, array, Map, etc) are wrapped into NativeObject (also general objects) 
-		
+		// other objects (BigDecimal, List, array, Map, etc) are wrapped into NativeObject (also general objects)
+		// convert Void to MYSTEROIUS
+		if (returnClass.equals(Void.class)) {
+			return Value.MYSTERIOUS;
+		} else if (rawValue == null) {
+			return Value.NULL;
+		} else if (rawValue instanceof String) {
+			return Value.getValue(rawValue.toString());
+		} else if (rawValue instanceof Double) {
+			return Value.getValue(RockNumber.fromDouble((Double) rawValue));
+		} else if (rawValue instanceof Float) {
+			return Value.getValue(RockNumber.fromDouble((Float) rawValue));
+		} else if (rawValue instanceof Long) {
+			return Value.getValue(RockNumber.fromLong((Long) rawValue));
+		} else if (rawValue instanceof Integer) {
+			return Value.getValue(RockNumber.fromLong((Integer) rawValue));
+		} else if (rawValue instanceof Short) {
+			return Value.getValue(RockNumber.fromLong((Short) rawValue));
+		} else if (rawValue instanceof Byte) {
+			return Value.getValue(RockNumber.fromLong((Byte) rawValue));
+		} else if (rawValue instanceof Character) {
+			return Value.getValue(RockNumber.fromLong((Character) rawValue));
+		} else if (rawValue instanceof Boolean) {
+			return Value.getValue((Boolean) rawValue);
+		}
+		return Value.getValue(new NativeObject(rawValue.getClass(), false, rawValue));
+	}
+
+	private Method getMethod(String functionName, List<Value> methodParams) {
+		Class<?> cls = nativeClass;
+		while (cls != null) {
+			for (Method method : cls.getMethods()) {
+				if (method.getName().equalsIgnoreCase(functionName)
+						&& matchParameterTypes(method.getParameterTypes(), methodParams)) {
+					return method;
+				}
+			}
+			cls = cls.getSuperclass();
+		}
+		return null;
+	}
+	
+	private Field getField(String functionName) {
+		Class<?> cls = nativeClass;
+		while (cls != null) {
+			for (Field field : nativeClass.getFields()) {
+				if (field.getName().equalsIgnoreCase(functionName)) {
+					return field;
+				}		
+			}
+			cls = cls.getSuperclass();
+		}
 		return null;
 	}
 	
 	public Value unwrap() {
-		// with cast method, NativeObjects can be converted to Rockstar representations (BigDecimal, List, array, Map) 
+    	if (nativeObject instanceof BigDecimal) {
+    		return Value.getValue(RockNumber.fromDouble(((BigDecimal)nativeObject).doubleValue()));
+    	} else if (nativeObject instanceof BigInteger) {
+    		return Value.getValue(RockNumber.fromLong(((BigInteger)nativeObject).longValue()));
+    	} else if (nativeObject instanceof List) {
+    		List<Value> newList = new ArrayList<>();
+    		for(Object o : (List<?>) nativeObject) {
+    			newList.add(convertBack(o, Object.class));
+    		}
+    		return Value.getValue(newList);
+    	} else if (nativeObject instanceof Map) {
+    		Map<Value, Value> newMap = new HashMap<>();
+    		for(Entry<?, ?> e: ((Map<?,?>) nativeObject).entrySet()) {
+    			newMap.put(convertBack(e.getKey(), Object.class), convertBack(e.getValue(), Object.class));
+    		}
+    		return Value.getValue(newMap);
+    	} else if (nativeClass.isArray()) {
+    		Object[] arr = (Object[]) nativeObject;
+    		List<Value> newList = new ArrayList<>(arr.length);
+    		Class<?> componentType = nativeClass.getComponentType();
+    		for (int i = 0; i < arr.length; i++) {
+				newList.add(convertBack(arr[i], componentType));
+			}
+    		return Value.getValue(newList);
+    	}
+
 		return null;
+	}
+
+	
+	public static void main(String[] args) {
+		Class<?> c1 = Long.class;
+		Class<?> c2 = Double.class;
+		
+		System.out.println(c1.getCanonicalName() + " -> "+c2.getCanonicalName() +": " + (c2.isAssignableFrom(c1)));
+		System.out.println(c2.getCanonicalName() + " -> "+c1.getCanonicalName() +": " + (c1.isAssignableFrom(c2)));
 	}
 
 }

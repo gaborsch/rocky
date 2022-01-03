@@ -6,11 +6,13 @@
 package rockstar.statement;
 
 import java.util.List;
+
 import rockstar.expression.Expression;
 import rockstar.expression.MutationExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.NativeObject;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -35,8 +37,22 @@ public class CastStatement extends Statement {
         // target variable reference
         VariableReference targetRef = expr.getTargetReference();
 
-        // radix parameter
+        // parameter
         Expression paramExpr = expr.getParameterExpr();
+        
+        // Non-primitive Native object conversion (Array, List, Map, BigDecimal, BigInteger)
+        if (v.isNative()) {
+        	NativeObject nativeObj = v.getNative();
+        	Value newValue = nativeObj.unwrap();
+        	if (newValue != null) {
+                ctx.setVariable(targetRef, newValue);
+                return;
+            } else {
+            	 throw new RockstarRuntimeException("Cannot cast native " + v.getNative().getNativeClass().getCanonicalName());
+            }
+        }        
+        
+        // radix for numeric conversions
         RockNumber radixNumber = null;
         if (paramExpr != null) {
             Value paramValue = paramExpr.evaluate(ctx);
@@ -54,7 +70,8 @@ public class CastStatement extends Statement {
             String s = new String(new char[]{(char) code});
             ctx.setVariable(targetRef, Value.getValue(s));
             return;
-        } // string to numeric conversion
+        } 
+        // string to numeric conversion
         else if (v.isString()) {
             RockNumber num;
             if (radixNumber != null) {
@@ -67,7 +84,8 @@ public class CastStatement extends Statement {
             ctx.setVariable(targetRef, Value.getValue(num));
             return;
         }
-        throw new RockstarRuntimeException("casted " + v.getType());
+
+        throw new RockstarRuntimeException("Cannot cast " + v.getType());
     }
 
     @Override

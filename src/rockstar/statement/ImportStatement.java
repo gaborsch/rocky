@@ -6,7 +6,6 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +18,6 @@ import rockstar.runtime.NativeObject;
 import rockstar.runtime.PackagePath;
 import rockstar.runtime.ProgramContext;
 import rockstar.runtime.QualifiedClassName;
-import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 
 /**
@@ -29,13 +27,13 @@ import rockstar.runtime.Value;
 public class ImportStatement extends Statement {
 
     private final PackagePath path;
-    private final List<String> aliases;
-    private final List<List<Token>> names;
+    private final List<String> names;
+    private final List<List<Token>> tokens;
 
     public ImportStatement(PackagePath path, List<String> aliases, List<List<Token>> names) {
         this.path = path;
-        this.aliases = aliases;
-        this.names = new ArrayList<>(names);
+        this.names = aliases;
+        this.tokens = new ArrayList<>(names);
     }
 
     @Override
@@ -47,9 +45,9 @@ public class ImportStatement extends Statement {
         p = (p == null) ? fileCtx.getPackagePath() : p;
         p = (p == null) ? PackagePath.DEFAULT : p;
 
-        for (int i = 0; i < aliases.size(); i++) {
-        	List<Token> nameTokens = names.get(i);
-        	String alias = aliases.get(i++);
+        for (int i = 0; i < names.size(); i++) {
+        	List<Token> nameTokens = tokens.get(i);
+        	String alias = names.get(i++);
         	String name = nameTokens.stream().map(Token::getValue).collect(Collectors.joining(" "));
             QualifiedClassName qcn = new QualifiedClassName(p, name);
 
@@ -71,7 +69,7 @@ public class ImportStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         List<ASTAware> astValues = ASTValues.of(path.toString());
-        astValues.addAll(ASTValues.of((String[]) names.toArray()));
+        astValues.addAll(ASTValues.of((String[]) names.toArray(new String[names.size()])));
         return astValues;
     }
 
