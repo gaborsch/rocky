@@ -47,7 +47,7 @@ public class ImportStatement extends Statement {
 
         for (int i = 0; i < names.size(); i++) {
         	List<Token> nameTokens = tokens.get(i);
-        	String alias = names.get(i++);
+        	String alias = names.get(i);
         	String name = nameTokens.stream().map(Token::getValue).collect(Collectors.joining(" "));
             QualifiedClassName qcn = new QualifiedClassName(p, name);
 

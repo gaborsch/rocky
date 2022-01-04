@@ -428,17 +428,13 @@ public class ExpressionParser {
             if (containsAtLeast(2) && checkCurrent("like")) {
                 // "is (not*) like"
                 next();
-                return (CompoundExpression) (isNegated
-                        ? new NotExpression(new InstanceCheckExpression())
-                        : new InstanceCheckExpression())
+                return (CompoundExpression) new InstanceCheckExpression(isNegated)
                 		.withTokens(list, startIdx, idx);
             }
             if (containsAtLeast(4) && checkCurrent("a") && checkNext("kind") && checkNext(2, "of")) {
                 // "is (not*) a kind of"
                 next(3);
-                return (CompoundExpression) (isNegated
-                        ? new NotExpression(new InstanceCheckExpression())
-                        : new InstanceCheckExpression())
+                return (CompoundExpression) new InstanceCheckExpression(isNegated)
                 		.withTokens(list, startIdx, idx);
             }
             // simple "is" or "is not"

@@ -1,4 +1,5 @@
 from java, math play BigDecimal, BigInteger
+from java, io play Serializable
 say "Import OK"
 
 Rock my array with "Import", "Turns", "On", "Extension", "Mode"
@@ -6,4 +7,6 @@ say my array sorted
 say "Import turned on extension mode"
 
 say "BigDecimal is " + BigDecimal
+say "BigInteger is " + BigInteger
+say "Serializable is " + Serializable
 say "Static instance created"

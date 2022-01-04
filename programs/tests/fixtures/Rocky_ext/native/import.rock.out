@@ -2,4 +2,6 @@ Import OK
 5
 Import turned on extension mode
 BigDecimal is java.math.BigDecimal
+BigInteger is java.math.BigInteger
+Serializable is java.io.Serializable
 Static instance created

@@ -1,0 +1,8 @@
+BigDeciml (runtime class) OK
+Number (parent class) OK
+Comparable (interface) OK
+Serializable (parent's interface) OK
+Y (another instance) OK
+BigDecimal-Number (class type) OK
+Number-BigDecimal (inverse) OK
+BigDecimal-Number (negated) OK

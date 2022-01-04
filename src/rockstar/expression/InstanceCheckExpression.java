@@ -6,6 +6,7 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.NativeObject;
 import rockstar.runtime.RockObject;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -15,6 +16,12 @@ import rockstar.runtime.Value;
  * @author Gabor
  */
 public class InstanceCheckExpression extends CompoundExpression {
+	
+	boolean negated = false;
+	
+	public InstanceCheckExpression(boolean negated) {
+		this.negated = negated;
+	}
 
     public VariableReference getObjectRef() {
         return (VariableReference) this.getParameters().get(0);
@@ -36,7 +43,7 @@ public class InstanceCheckExpression extends CompoundExpression {
 
     @Override
     public String getFormat() {
-        return String.format("%s instanceof %s", getObjectRef(), getClassRef());
+        return String.format("%s %sinstanceof %s", negated ? "not " : "", getObjectRef(), getClassRef());
     }
 
     @Override
@@ -44,15 +51,22 @@ public class InstanceCheckExpression extends CompoundExpression {
         ctx.beforeExpression(this);
 
         Value objVal = getObjectRef().evaluate(ctx);
-        if (!objVal.isObject()) {
-            throw new RockstarRuntimeException("Instance check on a non-object value");
+        if (objVal.isObject()) {
+		    RockObject obj = objVal.getObject();
+		    // treat the classname as a literal, check instanceof
+		    boolean isInstanceOf = obj.checkInstanceof(getClassRef().getName());
+		    return ctx.afterExpression(this, Value.getValue(negated ^ isInstanceOf));
+        } else if (objVal.isNative()) {
+        	// checking native classes 
+		    Value classValue = ctx.getVariableValue(getClassRef());
+		    if (classValue.isNative()) {
+		    	Class<?> objCls = objVal.getNative().getNativeClass();
+		    	Class<?> cls = classValue.getNative().getNativeClass();
+		    	boolean isInstanceOf = cls.isAssignableFrom(objCls);
+		    	return ctx.afterExpression(this, Value.getValue(negated ^ isInstanceOf));
+		    }
         }
-        RockObject obj = objVal.getObject();
-        
-        // treat the classname as a literal, check instanceof
-        boolean isInstanceOf = obj.checkInstanceof(getClassRef().getName());
-
-        return ctx.afterExpression(this, Value.getValue(isInstanceOf));
+        throw new RockstarRuntimeException("Instance check on a non-object value");
     }
 
 }

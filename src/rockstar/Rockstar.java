@@ -299,7 +299,8 @@ public class Rockstar {
     }
 
     public void debug(List<String> files, Map<String, String> options) {
-        new RockstarDebugger(options).debug(files);
+    	List<String> rockFiles = files.stream().filter(fn -> fn.endsWith(".rock")).collect(Collectors.toList());
+    	new RockstarDebugger(options).debug(rockFiles);
 
     }
 
