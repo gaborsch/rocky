@@ -2,7 +2,7 @@
 
 Rockstars need freedom. Sometimes for necessities, sometimes just for fun, but a rocker always revolting against the rules or at least breaking some boundaries. So, Rocky offers some features that are not available in [the supported Rockstar specification](spec.md).
 
-By default, Rocky recognises whether strict or extension mode should be allowed (from the presence of `import` `album` statements). To explicitly enable Rocky features, add `-X` or `--rocky` as a command-line parameter. 
+By default, Rocky recognises whether strict or extension mode should be allowed (from the presence of `import` or `album` statements). To explicitly enable Rocky features, add `-X` or `--rocky` as a command-line parameter. 
 
 ## Object Oriented Programming extension
 
@@ -18,11 +18,11 @@ Importing (`from java, util play ArrayList`) creates a new global variable with 
 
 Instantiation (`l will be ArrayList [taking Parameter]`) creates a new variable (`l`) using a previously imported class (`ArrayList`), the constructor parameters (if any) should follow the `taking` keyword. 
 
-Method calling and property access uses similar syntax: `method on object [taking parameter, ...]` and `property on object`. If there are multiple method signatures, the first matching method is used. Method and property names are not case sensitive.
+Method calling and property access uses similar syntax: `method on object [taking parameter, ...]` and `property on object` respectively. If there are multiple method signatures, the first matching method is used. Method and property names are not case sensitive.
 
 Return values are retained as-is (and wrapped into a Rockstar NATIVE), unless a primitive value is returned (number, String, null). `Void` is converted to `mysterious`. 
 
-Type check (`l is like List`) is possible, including super classes and implemented interfaces. Even two classes instances can be checked against each other (`Linkedlist is like List` or `l is like l2`). Negation also allowed (`l is not like l2`).
+Type check (`l is like List`) is possible, including super classes and implemented interfaces. Even two classes or two instances can be checked against each other (`Linkedlist is like List` or `l is like l2`). Negation is also allowed (`l is not like l2`).
 
 ### Conversion of types
 
