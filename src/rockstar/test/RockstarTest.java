@@ -6,6 +6,7 @@
 package rockstar.test;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -171,4 +172,11 @@ public class RockstarTest {
             }
         }
     }
+    
+    public static void main(String[] args) {
+		HashMap<String, String> options = new HashMap<>();
+//		options.put("-v", "-v");
+		new RockstarTest(options)
+		.execute("programs/tests/");
+	}
 }

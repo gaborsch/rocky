@@ -165,11 +165,6 @@ public class MutationExpression extends CompoundExpression {
     }
 
     @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + (withExpr != null ? " WITH" : "") + (intoExpr != null ? " INTO" : "");
-    }
-
-    @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(baseExpr, withExpr, intoExpr);
     }

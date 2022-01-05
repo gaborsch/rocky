@@ -1,0 +1,48 @@
+from java, math play BigDecimal
+from java, lang play Number, Comparable
+from java, io play Serializable  
+
+X will be BigDecimal taking "1.23"
+
+if X is like BigDecimal
+  Say "BigDeciml (runtime class) OK"
+else
+  Say "BigDeciml (runtime class) Failed"
+
+if X is like Number
+  Say "Number (parent class) OK"
+else
+  Say "Number (parent class) Failed"
+
+if X is like Comparable
+  Say "Comparable (interface) OK"
+else
+  Say "Comparable (interface) Failed"
+  
+if X is like Serializable
+  Say "Serializable (parent's interface) OK"
+else
+  Say "Serializable (parent's interface) Failed"
+  
+Y will be BigDecimal taking 1.23
+if X is like Y
+  Say "Y (another instance) OK"
+else
+  Say "Y (another instance) Failed"
+
+if BigDecimal is like Number
+  Say "BigDecimal-Number (class type) OK"
+else
+  Say "BigDecimal-Number (class type) Failed"
+
+if Number is like BigDecimal
+  Say "Number-BigDecimal (inverse) Failed"
+else
+  Say "Number-BigDecimal (inverse) OK"
+
+
+if BigDecimal is not like Number
+  Say "BigDecimal-Number (negated) Failed"
+else
+  Say "BigDecimal-Number (negated) OK"
+

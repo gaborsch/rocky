@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.NativeObject;
 import rockstar.runtime.RockObject;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -31,7 +32,7 @@ public class FunctionCall extends CompoundExpression {
 
     @Override
     public int getPrecedence() {
-        return 100;
+        return 200;
     }
 
     @Override
@@ -80,9 +81,9 @@ public class FunctionCall extends CompoundExpression {
             return null;
         }
         for (Expression paramExpr : paramsListExpr.getParameters()) {
-            if (paramExpr instanceof ConstantExpression) {
-                addParameter(paramExpr);
-            } else if (paramExpr instanceof VariableReference) {
+            if (paramExpr instanceof ConstantExpression ||
+            		paramExpr instanceof VariableReference ||
+            		paramExpr instanceof UnaryMinusExpression) {
                 addParameter(paramExpr);
             } else {
                 return null;
@@ -96,8 +97,14 @@ public class FunctionCall extends CompoundExpression {
     public Value evaluate(BlockContext ctx) {
         ctx.beforeExpression(this);
         FunctionBlock funcBlock = null;
+        Value retValue = null;
         BlockContext callContext = ctx;
 
+        // parameters
+        List<Expression> params = getParameters();
+        List<Value> values = new ArrayList<>(params.size());
+        params.forEach((expr) -> values.add(expr.evaluate(ctx).asParameter()));
+        
         if (object != null) {
             // method call on an object
             if (VariableReference.isSelfReference(object.getName())) {
@@ -143,6 +150,9 @@ public class FunctionCall extends CompoundExpression {
                     }
                     // get the method from the object
                     funcBlock = callContext.retrieveLocalFunction(functionName);
+                } else if (objValue.isNative()) {
+                	NativeObject nativeObject = objValue.getNative();
+                	retValue = nativeObject.callMethod(functionName, values);
                 } else {
                     throw new RockstarRuntimeException("Invalid method call " + functionName + " on a " + objValue.getType().name() + " type variable " + object);
                 }
@@ -164,7 +174,7 @@ public class FunctionCall extends CompoundExpression {
                     // context is the parent object
                     callContext = parentObj;
                     // get the constructor from the parent context
-                    funcBlock = parentObj.getConstructor();
+                    funcBlock = parentObj.getConstructor(values);
                 } else {
                     throw new RockstarRuntimeException("parent constructor reference in non-inherited class");
                 }
@@ -188,26 +198,17 @@ public class FunctionCall extends CompoundExpression {
             }
         }
 
-        Value retValue;
         if (funcBlock != null) {
-            List<Expression> params = getParameters();
-            List<Value> values = new ArrayList<>(params.size());
-            params.forEach((expr) -> values.add(expr.evaluate(ctx).asParameter()));
             // call the functon
             retValue = funcBlock.call(callContext, values);
-        } else {
+        } else if (retValue == null) {
             if (object == null) {
                 throw new RockstarRuntimeException("Undefined function: " + functionName);
-            }
-            throw new RockstarRuntimeException("Undefined method: " + functionName + " on class " + object.getName());
+            } 
+            throw new RockstarRuntimeException("Undefined method: " + functionName + " on instance/class " + object.getName());
         }
         // return the return value
         return ctx.afterExpression(this, retValue == null ? Value.NULL : retValue);
-    }
-
-    @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + (object != null ? " on object" : "") + " " + functionName;
     }
 
     @Override

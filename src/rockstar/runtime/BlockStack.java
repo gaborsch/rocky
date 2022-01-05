@@ -15,8 +15,9 @@ import rockstar.statement.FunctionBlock;
  * @author Gabor
  */
 public class BlockStack extends Stack<Block> {
+	private static final long serialVersionUID = -2826489946713232467L;
 
-    private final boolean isStrictMode;
+	private final boolean isStrictMode;
 
     public BlockStack(Environment env) {
         this.isStrictMode = env.isStrictMode();
@@ -33,18 +34,6 @@ public class BlockStack extends Stack<Block> {
             }
         }
         return stmt;
-    }
-
-//    public void removeFunctionBlocksIfNeeded() {
-//        if (false && isStrictMode) {
-//            Block b = peek();
-//            if (b instanceof FunctionBlock) {
-//                pop();
-//            }
-//        }
-//    }
-    private boolean containsFunctionBlock() {
-        return this.stream().anyMatch(b -> (b instanceof FunctionBlock));
     }
 
 }

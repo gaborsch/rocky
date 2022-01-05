@@ -98,6 +98,11 @@ public class RockNumberDouble extends RockNumber {
     public long asLong() {
         return dblValue.longValue();
     }
+    
+    @Override
+    public double asDouble() {
+    	return dblValue;
+    }
 
     @Override
     public String toString() {

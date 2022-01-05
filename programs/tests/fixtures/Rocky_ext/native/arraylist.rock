@@ -1,0 +1,42 @@
+from java, util play List, ArrayList, Arrays, Map
+from java, lang play String, Long
+
+rock X with 1, 2
+let M at "one" be 1
+let M at "two" be 2
+
+say "Explicit array conversion to List<Long>"
+
+(explicit conversion to List<Long>)
+cast X into ArrList with List, Long
+say toString on ArrList
+
+cast ArrList into Y
+say length of Y
+say Y at 0
+say Y at 1
+say Y at 2
+
+
+say "Implicit array conversion"
+ArrList2 will be ArrayList
+addAll on ArrList2 taking X
+add on ArrList2 taking 3
+say tostring on ArrList2
+
+cast ArrList2 into Y2
+say length of Y2
+say Y2 at 0
+say Y2 at 1
+say Y2 at 2
+say Y2 at 3
+
+
+say "Explicit conversion to Map<String, Long>"
+cast M into MyMap with Map, String, Long
+if containsKey on MyMap taking "one"
+  say "Map conversion and method call OK"
+else 
+  say "Map conversion and method call FAILED"
+
+

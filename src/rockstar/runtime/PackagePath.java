@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
+
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
@@ -102,11 +104,11 @@ public class PackagePath {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+    	StringJoiner sj = new StringJoiner("/");
         for (String part : path) {
-            sb.append(sb.length() > 0 ? "/" : "").append(part);
+        	sj.add(part);
         }
-        return sb.toString();
+        return sj.toString();
     }
 
     @Override

@@ -1,0 +1,15 @@
+Explicit array conversion to List<Long>
+[1, 2]
+2
+1
+2
+mysterious
+Implicit array conversion
+[1.0, 2.0, 3.0]
+3
+1
+1
+1
+mysterious
+Explicit conversion to Map<String, Long>
+Map conversion and method call OK

@@ -1,0 +1,8 @@
+from java, math play BigDecimal, BigInteger
+
+X will be BigDecimal taking "1.0"
+Y will be BigDecimal taking 2
+say "Instantiation OK"
+
+say "X is " + X
+say "Y is " + Y

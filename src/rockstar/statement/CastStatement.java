@@ -5,12 +5,16 @@
  */
 package rockstar.statement;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import rockstar.expression.Expression;
+import rockstar.expression.ListExpression;
 import rockstar.expression.MutationExpression;
 import rockstar.expression.VariableReference;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.NativeObject;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -35,15 +39,34 @@ public class CastStatement extends Statement {
         // target variable reference
         VariableReference targetRef = expr.getTargetReference();
 
-        // radix parameter
+        // parameter
         Expression paramExpr = expr.getParameterExpr();
-        RockNumber radixNumber = null;
-        if (paramExpr != null) {
-            Value paramValue = paramExpr.evaluate(ctx);
-            if (!paramValue.isNumeric()) {
-                throw new RockstarRuntimeException("Invalid radix value for conversion: " + paramValue);
+        
+        // Non-primitive Native object conversion (Array, List, Map, BigDecimal, BigInteger)
+        if (v.isNative()) {
+        	NativeObject nativeObj = v.getNative();
+        	Value newValue = nativeObj.unwrap();
+        	if (newValue != null) {
+                ctx.setVariable(targetRef, newValue);
+                return;
+            } else {
+            	 throw new RockstarRuntimeException("Cannot cast native " + v.getNative().getNativeClass().getCanonicalName());
             }
-            radixNumber = paramValue.getNumeric();
+        }        
+        
+        // radix for numeric conversions
+        RockNumber radixNumber = null;
+        List<Expression> typeParameters = null;
+        if (paramExpr != null) {
+        	if (paramExpr instanceof ListExpression) {
+        		typeParameters = ((ListExpression)paramExpr).getParameters();
+        	} else {
+	            Value paramValue = paramExpr.evaluate(ctx);
+	            if (!paramValue.isNumeric()) {
+	                throw new RockstarRuntimeException("Invalid radix value for conversion: " + paramValue);
+	            }
+	            radixNumber = paramValue.getNumeric();
+        	}
         }
 
         // numeric to string conversion
@@ -54,7 +77,8 @@ public class CastStatement extends Statement {
             String s = new String(new char[]{(char) code});
             ctx.setVariable(targetRef, Value.getValue(s));
             return;
-        } // string to numeric conversion
+        } 
+        // string to numeric conversion
         else if (v.isString()) {
             RockNumber num;
             if (radixNumber != null) {
@@ -67,10 +91,34 @@ public class CastStatement extends Statement {
             ctx.setVariable(targetRef, Value.getValue(num));
             return;
         }
-        throw new RockstarRuntimeException("casted " + v.getType());
+        // array to native array/list/map
+        else if (v.isArray() && typeParameters != null) {
+            ctx.setVariable(targetRef, convertToNative(v, typeParameters, ctx));
+            return;
+        }
+
+        throw new RockstarRuntimeException("Cannot cast " + v.getType());
     }
 
-    @Override
+    private Value convertToNative(Value v, List<Expression> typeParameters, BlockContext ctx) {
+		List<Class<?>> typeClasses = new ArrayList<>(typeParameters.size());
+		// get parameter type classes
+		for (Expression typeExpr : typeParameters) {
+			if (typeExpr instanceof VariableReference) {
+				Value typeValue = ctx.getVariableValue((VariableReference) typeExpr);
+				if (typeValue != null && typeValue.isNative()) {
+					typeClasses.add(typeValue.getNative().getNativeClass());
+				} else {
+					throw new RockstarRuntimeException("Invalid cast type: " + typeExpr.format());
+				}
+			} else {
+				throw new RockstarRuntimeException("Invalid type parameter: " + typeExpr.format());
+			}
+		}
+		return Value.getValue(NativeObject.convertValueWithTypes(v, typeClasses));
+	}
+
+	@Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expr);
     }

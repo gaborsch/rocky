@@ -6,8 +6,8 @@
 package rockstar.parser;
 
 import java.util.List;
+
 import rockstar.expression.ConstantExpression;
-import rockstar.expression.ExpressionError;
 import rockstar.expression.Expression;
 import rockstar.expression.IntoExpression;
 import rockstar.expression.MutationExpression;
@@ -23,36 +23,6 @@ import rockstar.statement.Block;
 public class ExpressionFactory {
 
     /**
-     * Parse an expression, throw exception if failed
-     *
-     * @param tokens the tokens to parse
-     * @param line the Line
-     * @param block
-     * @return
-     */
-    public static Expression getExpressionFor(List<String> tokens, Line line, Block block) {
-        return getExpressionFor(tokens, line, null, block);
-    }
-
-    /**
-     * Parse an expression, throw exception if failed
-     *
-     * @param tokens the tokens to parse
-     * @param line the Line
-     * @param defaultExpr
-     * @param block
-     * @return
-     */
-    public static Expression getExpressionFor(List<String> tokens, Line line, Expression defaultExpr, Block block) {
-        Expression parsed = new ExpressionParser(tokens, line, block)
-                .parse(defaultExpr);
-        if (parsed != null) {
-            return parsed;
-        }
-        return new ExpressionError(tokens, line);
-    }
-
-    /**
      * Parses a simple expression (literal or variable reference)
      *
      * @param list
@@ -60,7 +30,7 @@ public class ExpressionFactory {
      * @param block
      * @return
      */
-    public static Expression tryExpressionFor(List<String> list, Line line, Block block) {
+    public static Expression tryExpressionFor(List<Token> list, Line line, Block block) {
         return tryExpressionFor(list, line, null, block);
     }
 
@@ -73,7 +43,7 @@ public class ExpressionFactory {
      * @param block
      * @return
      */
-    public static Expression tryExpressionFor(List<String> list, Line line, Expression defaultExpr, Block block) {
+    public static Expression tryExpressionFor(List<Token> list, Line line, Expression defaultExpr, Block block) {
         ExpressionParser parser = new ExpressionParser(list, line, block);
         Expression expr = parser.parse(defaultExpr);
         if (expr != null && parser.isFullyParsed()) {
@@ -90,7 +60,7 @@ public class ExpressionFactory {
      * @param block
      * @return
      */
-    public static VariableReference tryVariableReferenceFor(List<String> list, Line line, Block block) {
+    public static VariableReference tryVariableReferenceFor(List<Token> list, Line line, Block block) {
         ExpressionParser parser = new ExpressionParser(list, line, block);
         VariableReference varRef = parser.parseVariableReference();
         if (varRef != null && parser.isFullyParsed()) {
@@ -108,7 +78,7 @@ public class ExpressionFactory {
      * @param block
      * @return
      */
-    public static ConstantExpression tryLiteralFor(List<String> list, Line line, Block block) {
+    public static ConstantExpression tryLiteralFor(List<Token> list, Line line, Block block) {
         ExpressionParser parser = new ExpressionParser(list, line, block);
         ConstantExpression literal = parser.parseLiteral();
         if (literal != null && parser.isFullyParsed()) {
@@ -125,7 +95,7 @@ public class ExpressionFactory {
      * @param block
      * @return 
      */
-    public static MutationExpression tryMutationExpressionFor(List<String> list, Line line, Block block) {
+    public static MutationExpression tryMutationExpressionFor(List<Token> list, Line line, Block block) {
         ExpressionParser parser = new ExpressionParser(list, line, block);
         Expression expr = parser.parse(null);
         if (expr != null && parser.isFullyParsed()) {
@@ -151,7 +121,7 @@ public class ExpressionFactory {
      * @param block
      * @return
      */
-    public static ConstantExpression getPoeticLiteralFor(List<String> list, Line line, String orig, Block block) {
+    public static ConstantExpression getPoeticLiteralFor(List<Token> list, Line line, String orig, Block block) {
         // if a literal word like "nothing", then use that
         ConstantExpression literal = tryLiteralFor(list, line, block);
         if (literal != null) {

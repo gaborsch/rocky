@@ -7,7 +7,10 @@ package rockstar.expression;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import rockstar.parser.Line;
+import rockstar.parser.Token;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
@@ -21,33 +24,20 @@ import rockstar.statement.ASTValues;
  */
 public class ExpressionError extends Expression {
 
-    private final List<String> tokens;
+    private final List<Token> tokens;
     private String errorMsg;
     private Line line;
 
-    public ExpressionError(List<String> tokens, Line line) {
-        this.tokens = new ArrayList<>(tokens);
-        this.line = line;
-        setErrorIndex(0);
-
-        StringBuilder sb = new StringBuilder("Parse error near ");
-
-        tokens.forEach((token) -> {
-            sb.append(token).append(" ");
-        });
-
-        errorMsg = sb.toString();
-    }
-
-    public ExpressionError(List<String> tokens, int errorIdx, String errorMsg) {
+    public ExpressionError(Line line, List<Token> tokens, int errorIdx, String errorMsg) {
+    	this.line = line;
         this.tokens = new ArrayList<>(tokens);
         setErrorIndex(errorIdx);
 
         StringBuilder sb = new StringBuilder();
         int idx = 0;
-        for (String token : tokens) {
+        for (Token token : tokens) {
             if (idx == errorIdx) {
-                sb.append(">>>").append(token).append("<<<");
+                sb.append(">>>").append(token.getValue()).append("<<<");
             } else {
                 sb.append(token);
             }
@@ -57,11 +47,14 @@ public class ExpressionError extends Expression {
         this.errorMsg = errorMsg + " at " + sb.toString();
     }
 
-    final void setErrorIndex(int errorIdx) {
+    final void setErrorIndex(int errorIdx) {    	
         if (errorIdx < tokens.size()) {
-            tokens.set(errorIdx, ">>>" + tokens.get(errorIdx) + "<<<");
+        	Token t = tokens.get(errorIdx);
+        	t.setValue(">>>" + tokens.get(errorIdx) + "<<<");
+            tokens.set(errorIdx, t);
         } else {
-            tokens.add(">>><<<");
+        	Token t = new Token(line.getLnum(), line.getLine().length(), 0, ">>><<<");
+            tokens.add(t);
         }
     }
 
@@ -95,7 +88,7 @@ public class ExpressionError extends Expression {
 
     @Override
     public List<ASTAware> getASTChildren() {
-        return ASTValues.of(String.join(" ", tokens));
+        return ASTValues.of(tokens.stream().map(Token::getValue).collect(Collectors.joining(" ")));
     }
 
 }

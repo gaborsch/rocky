@@ -40,6 +40,15 @@ public abstract class RockNumber {
         return instance.doParse(stringValue, r);
     }
 
+    public static RockNumber fromDouble(double dblValue) {
+        return instance.getValue(dblValue);
+    }
+
+    public static RockNumber fromLong(long longValue) {
+        return instance.getValue(longValue);
+    }
+
+
     protected abstract RockNumber getValue(Double dblValue);
     protected abstract RockNumber getValue(long l);
     
@@ -56,6 +65,7 @@ public abstract class RockNumber {
 
     public abstract int asInt();
     public abstract long asLong();
+    public abstract double asDouble();
 
     public abstract RockNumber ceil();
     public abstract RockNumber floor();

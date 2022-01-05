@@ -100,7 +100,7 @@ public class QualifierExpression extends CompoundExpression {
         } else {
             Value objValue = getObjectRef().evaluate(ctx);
             if (objValue != null) {
-                if (objValue.isObject()) {
+                if (objValue.isObject() || objValue.isNative()) {
                     // evaluate as a parameterless method call
                     if (wrappedFunctionCall == null) {
                         String name = getMethodRef().getName();

@@ -5,10 +5,14 @@
  */
 package rockstar.parser.checker;
 
+import static rockstar.parser.checker.Checker.PlaceholderType.MUTATION_EXPRESSION;
+import static rockstar.parser.checker.Checker.PlaceholderType.POETIC_LITERAL;
+import static rockstar.parser.checker.Checker.PlaceholderType.TEXT;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
@@ -17,7 +21,6 @@ import rockstar.expression.VariableReference;
 import rockstar.parser.ExpressionFactory;
 import rockstar.parser.Line;
 import rockstar.parser.Token;
-import static rockstar.parser.checker.Checker.PlaceholderType.*;
 import rockstar.statement.Block;
 import rockstar.statement.Statement;
 
@@ -60,7 +63,7 @@ public abstract class Checker<T1, T2, T3> {
         return matchCounter;
     }
 
-    public Checker initialize(Line l, Block currentBlock) {
+    public Checker<T1, T2, T3> initialize(Line l, Block currentBlock) {
         this.line = l;
         this.block = currentBlock;
         this.matchCounter = 0;
@@ -80,7 +83,6 @@ public abstract class Checker<T1, T2, T3> {
     private boolean match(Object... params) {
         matchCounter++;
         List<Token> tokenList = line.getTokens();
-        List<String> tokens = tokenList.stream().map(Token::getValue).collect(Collectors.toList());
         // clear previous result
         for (int i = 0; i < parsedResult.length; i++) {
             parsedResult[i] = null;
@@ -102,12 +104,12 @@ public abstract class Checker<T1, T2, T3> {
                     needle = Arrays.asList((String) param);
                 }
                 // set nextPosStart and nextPosEnd
-                findNext(needle, lastPos, tokens);
+                findNext(needle, lastPos, tokenList);
 
                 if (nextPosEnd > lastPos) {
                     if (lastPH != null) {
                         // save the sublist as the numbered result
-                        boolean success = saveResultPosition(lastPH, tokens.subList(lastPos + 1, nextPosStart));
+                        boolean success = saveResultPosition(lastPH, lastPos+1, nextPosStart);
                         if (!success) {
                             return false;
                         }
@@ -125,40 +127,41 @@ public abstract class Checker<T1, T2, T3> {
         }
         if (lastPH != null) {
             // save the tail as the numbered result
-            boolean success = saveResultPosition(lastPH, tokens.subList(lastPos + 1, tokens.size()));
+            boolean success = saveResultPosition(lastPH, lastPos+1, tokenList.size());
             if (!success) {
                 return false;
             }
-        } else if (lastPos + 1 < tokens.size()) {
+        } else if (lastPos + 1 < tokenList.size()) {
             // if there are tokens after the last
             return false;
         }
         return true;
     }
 
-    private boolean saveResultPosition(Placeholder ph, List<String> posTokens) {
+    private boolean saveResultPosition(Placeholder ph, int start, int end) {
         // if there are no token
-        if (posTokens.isEmpty()) {
+        if (start == end) {
             // we only accept if it is optional
             return ph.isOptional();
         }
+        List<Token> tokenList = line.getTokens().subList(start, end);
 
         boolean validExpr = false;
         boolean validText = false;
         Expression e = null;
         if (ph.getType() == POETIC_LITERAL) {
             String origTail = line.getOrigLine().substring(line.getTokens().get(lastPos+1).getPos());
-            e = ExpressionFactory.getPoeticLiteralFor(posTokens, line, origTail, block);
+            e = ExpressionFactory.getPoeticLiteralFor(tokenList, line, origTail, block);
             validExpr = true;
         } else {
             // default expression may be defined - hopefully it has already been parsed
-            Expression defaultExpr = ph.getDefaultExprPos() == null ? null : (Expression) parsedResult[ph.getDefaultExprPos()];
+            Expression defaultExpr = (ph.getDefaultExprPos() == null) ? null : (Expression) parsedResult[ph.getDefaultExprPos()];
 
             
             if (ph.getType() == MUTATION_EXPRESSION) {
-                e = ExpressionFactory.tryMutationExpressionFor(posTokens, line, block);
+                e = ExpressionFactory.tryMutationExpressionFor(tokenList, line, block);
             } else if (ph.getType() != TEXT) {
-                e = ExpressionFactory.tryExpressionFor(posTokens, line, defaultExpr, block);
+                e = ExpressionFactory.tryExpressionFor(tokenList, line, defaultExpr, block);
             }
 
             switch (ph.getType()) {
@@ -191,23 +194,23 @@ public abstract class Checker<T1, T2, T3> {
         if (validExpr && e != null) {
             parsedResult[ph.getPosition()] = e;
         } else if (validText) {
-            parsedResult[ph.getPosition()] = posTokens;
+            parsedResult[ph.getPosition()] = tokenList;
         }
         return validExpr || validText;
             
     }
 
-    private void findNext(List<String> needle, int lastPos, List<String> tokens) {
+    private void findNext(List<String> needle, int lastPos, List<Token> tokenList) {
         List<List<String>> allNeedles = block.getAliasesFor(needle);
 
-        int tokenLen = tokens.size();
+        int tokenLen = tokenList.size();
 
         for (int idx = lastPos + 1; idx < tokenLen; idx++) {
             for (List<String> currentNeedle : allNeedles) {
                 boolean matching = true;
                 int len = currentNeedle.size();
                 for (int i = 0; i < len && idx + i < tokenLen; i++) {
-                    String token = tokens.get(idx + i);
+                    String token = tokenList.get(idx + i).getValue();
                     if (!token.equalsIgnoreCase(currentNeedle.get(i))) {
                         matching = false;
                         break;

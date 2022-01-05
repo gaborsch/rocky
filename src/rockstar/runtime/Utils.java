@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import rockstar.parser.Token;
+
 /**
  *
  * @author Gabor
@@ -106,4 +108,25 @@ public class Utils {
         }
         return list.size();
     }
+
+    /**
+     * searches for an element in a list, returns its position if not found,
+     * returns the list size
+     *
+     * @param <T>
+     * @param list
+     * @param v
+     * @param startIdx
+     * @return
+     */
+    public static int findInList(List<Token> list, String v, int startIdx) {
+        for (int i = startIdx; i < list.size(); i++) {
+        	Token t = list.get(i);
+            if (t.getValue().equals(v)) {
+                return i;
+            }
+        }
+        return list.size();
+    }
+
 }

@@ -51,9 +51,9 @@ public abstract class CompoundExpression extends Expression {
     500: +, -
     400: *, /
     300: ^ (power)
-    200: unary minus
-    100: function call
-     80: , (list operator)
+    200: function call
+    100: , (list operator)
+     80: unary minus
      75: roll <array>
      60: built-in functions
      50: on:, by, in, at, to, for, from, near

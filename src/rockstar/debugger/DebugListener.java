@@ -232,7 +232,7 @@ public class DebugListener implements BlockContextListener {
                         RockstarDebugger.printDebuggerHelp(helpCmd);
                     } else if (line.equals("exit")) {
                         // exit
-                        throw new RockstarRuntimeException("exit commad");
+                        throw new RockstarRuntimeException("exit command");
                     } else {
                         System.out.println("Wrong command, use '?' for command help");
                     }

@@ -5,8 +5,11 @@
  */
 package rockstar.parser;
 
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+
 import rockstar.expression.BuiltinFunction;
 import rockstar.expression.ComparisonExpression;
 import rockstar.expression.ComparisonExpression.ComparisonType;
@@ -33,7 +36,6 @@ import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.expression.WithExpression;
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.Environment;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Value;
 import rockstar.statement.Block;
@@ -44,22 +46,19 @@ import rockstar.statement.Block;
  */
 public class ExpressionParser {
 
-    private Environment env;
-
     // tokens of the whole expression
-    private final List<String> list;
+    private final List<Token> list;
     private final Line line;
     private final Block block;
 
     // next position in the list
     private int idx;
 
-    ExpressionParser(List<String> list, Line line, Block block) {
+    ExpressionParser(List<Token> list, Line line, Block block) {
         this.list = list;
         this.line = line;
         this.block = block;
         idx = 0;
-        env = Environment.get();
     }
 
     /**
@@ -76,11 +75,11 @@ public class ExpressionParser {
     }
 
     private boolean checkCurrent(Keyword kw) {
-        return kw.matches(list.get(idx));
+        return kw.matches(list.get(idx).getValue());
     }
 
     private boolean checkCurrent(String... aliases) {
-        String value = list.get(idx);
+        String value = list.get(idx).getValue();
         for (String s : aliases) {
             if (value.equalsIgnoreCase(s)) {
                 return true;
@@ -98,23 +97,23 @@ public class ExpressionParser {
     }
 
     private boolean checkNext(String s) {
-        return list.get(idx + 1).equalsIgnoreCase(s);
+        return list.get(idx + 1).getValue().equalsIgnoreCase(s);
     }
 
     private boolean checkNext(Keyword kw) {
-        return kw.matches(list.get(idx + 1));
+        return kw.matches(list.get(idx + 1).getValue());
     }
 
     private boolean checkNext(int offset, String s) {
-        return list.get(idx + offset).equalsIgnoreCase(s);
+        return list.get(idx + offset).getValue().equalsIgnoreCase(s);
     }
 
     private boolean checkNext(int offset, Keyword kw) {
-        return kw.matches(list.get(idx + offset));
+        return kw.matches(list.get(idx + offset).getValue());
     }
 
     private String peekAhead(int offset) {
-        String next = list.get(idx + offset);
+        String next = list.get(idx + offset).getValue();
         return next;
     }
 
@@ -124,7 +123,9 @@ public class ExpressionParser {
      * @return ConstantExpression on success, null otherwise
      */
     ConstantExpression parseLiteral() {
+    	int startIdx = idx;
         if (!isFullyParsed()) {
+        	ConstantExpression constantExpression = null;
             String token = peekAhead(0);
             if (token.startsWith("\"") && token.endsWith("\"") && token.length() >= 2) {
                 // string literal> strip quotes
@@ -133,36 +134,35 @@ public class ExpressionParser {
                 // replace escaped backslash sequences with characters
                 // negative lookbehind (?<!): should not match if preceded with \\
                 literal = literal.replace("(?<!\\)\\t", "\t").replace("(?<!\\)\\r", "\r").replace("(?<!\\)\\n", "\n").replace("\\\\", "\\");
-                return new ConstantExpression(literal);
-            }
-            if (checkCurrent(Keyword.MYSTERIOUS)) {
+                constantExpression = new ConstantExpression(literal);
+            } else if (checkCurrent(Keyword.MYSTERIOUS)) {
                 next();
-                return ConstantExpression.CONST_MYSTERIOUS;
-            }
-            if (checkCurrent(Keyword.EMPTY_STRING)) {
+                constantExpression = ConstantExpression.CONST_MYSTERIOUS();
+            } else if (checkCurrent(Keyword.EMPTY_STRING)) {
                 next();
-                return ConstantExpression.CONST_EMPTY_STRING;
-            }
-            if (checkCurrent(Keyword.NULL)) {
+                constantExpression = ConstantExpression.CONST_EMPTY_STRING();
+            } else if (checkCurrent(Keyword.NULL)) {
                 next();
-                return ConstantExpression.CONST_NULL;
-            }
-            if (checkCurrent(Keyword.EMPTY_ARRAY)) {
+                constantExpression = ConstantExpression.CONST_NULL();
+            } else if (checkCurrent(Keyword.EMPTY_ARRAY)) {
                 next();
-                return ConstantExpression.CONST_EMPTY_ARRAY;
-            }
-            if (checkCurrent(Keyword.BOOLEAN_TRUE)) {
+                constantExpression = ConstantExpression.CONST_EMPTY_ARRAY();
+            } else if (checkCurrent(Keyword.BOOLEAN_TRUE)) {
                 next();
-                return ConstantExpression.CONST_TRUE;
-            }
-            if (checkCurrent(Keyword.BOOLEAN_FALSE)) {
+                constantExpression = ConstantExpression.CONST_TRUE();
+            } else if (checkCurrent(Keyword.BOOLEAN_FALSE)) {
                 next();
-                return ConstantExpression.CONST_FALSE;
+                constantExpression = ConstantExpression.CONST_FALSE();
+            } else  {            
+	            RockNumber nv = RockNumber.parse(peekAhead(0).toLowerCase());
+	            if (nv != null) {
+	                next();
+	                constantExpression =  new ConstantExpression(nv);
+	            }
             }
-            RockNumber nv = RockNumber.parse(peekAhead(0).toLowerCase());
-            if (nv != null) {
-                next();
-                return new ConstantExpression(nv);
+            if (constantExpression != null) {
+            	constantExpression.withTokens(list, startIdx, idx);
+            	return constantExpression;
             }
             // reserved keywords are skipped
             while (checkCurrent(Keyword.RESERVED)) {
@@ -182,6 +182,7 @@ public class ExpressionParser {
      */
     VariableReference parseVariableReference() {
         String name = null;
+        int startIdx = idx;
         if (isFullyParsed()) {
             return null;
         }
@@ -225,6 +226,7 @@ public class ExpressionParser {
         }
         if (name != null) {
             VariableReference varRef = VariableReference.getInstance(name);
+            varRef.withTokens(list, startIdx, idx);
             return varRef;
         }
         return null;
@@ -257,7 +259,7 @@ public class ExpressionParser {
             CompoundExpression operator = getOperator(isAfterOperator);
             if (operator == null && !isAfterOperator) {
                 // two consequent values are treated as a list
-                operator = new ListExpression();
+                operator = (CompoundExpression) new ListExpression().withTokens(list, idx, idx);
             }
             if (operator != null) {
                 // operator found
@@ -267,13 +269,13 @@ public class ExpressionParser {
                 // after operators a value is required, except FunctionCall that consumers values, too
                 isAfterOperator = true;
             } else {
-                Expression value = parseSimpleExpression();
+                SimpleExpression value = parseSimpleExpression();
                 if (value != null) {
                     // value found
                     valueStack.push(value);
                 } else {
                     // neither operator nor value found
-                    return new ExpressionError(list, idx, "Operator or value required");
+                    return new ExpressionError(line, list, idx, "Operator or value required");
                 }
                 isAfterOperator = false;
             }
@@ -297,7 +299,7 @@ public class ExpressionParser {
                 break;
             }
 
-            if ((topPrec == 600 && newPrec == 600) || (topPrec == 80 && newPrec == 80)) {
+            if ((topPrec == 600 && newPrec == 600) || (topPrec == 100 && newPrec == 100)) {
                 // Logical NOT  || ListOperator (right-associative)
                 break;
             }
@@ -317,14 +319,15 @@ public class ExpressionParser {
             // add paramcount parameters to the operator, preserving declaraton order
             for (int i = 0; i < paramCount; i++) {
                 op.addParameterReverse(valueStack.pop());
-            }
+            }            
             // all parameters set: time to finish the setup (this may restructure the expression)
             op = op.setupFinished();
             if (op != null) {
+            	setTokens(op);
                 // the result of the operator is a value now
                 valueStack.push(op);
             } else {
-                valueStack.push(new ExpressionError(list, idx, "Invalid list expression"));
+                valueStack.push(new ExpressionError(line, list, idx, "Invalid list expression"));
             }
         }
 
@@ -332,11 +335,21 @@ public class ExpressionParser {
         return true;
     }
 
-    public CompoundExpression getOperator(boolean isAfterOperator) {
+    private void setTokens(CompoundExpression op) {
+    	List<Token> tokens = new LinkedList<>();
+    	tokens.addAll(op.getTokens());
+    	for (Expression expr : op.getParameters()) {
+			tokens.addAll(expr.getTokens());
+		}
+    	tokens.sort(Comparator.comparing(Token::getPos));
+    	op.withTokens(tokens, 0, tokens.size());
+	}
 
+	public CompoundExpression getOperator(boolean isAfterOperator) {
+		int startIdx = idx;
         CompoundExpression builtinFunction = getBuiltinFunction();
         if (builtinFunction != null) {
-            return builtinFunction;
+            return (CompoundExpression) builtinFunction.withTokens(list, startIdx, idx);
         }
 
         if (isAfterOperator && checkCurrent("+")) {
@@ -346,43 +359,43 @@ public class ExpressionParser {
         // qualifiers
         if (checkCurrent(Keyword.ON)) {
             next();
-            return new QualifierExpression(false);
+            return (CompoundExpression) new QualifierExpression(false).withTokens(list, startIdx, idx);
         }
         // array index
         if (checkCurrent(Keyword.AT)) {
             next();
-            return new QualifierExpression(true);
+            return (CompoundExpression) new QualifierExpression(true).withTokens(list, startIdx, idx);
         }
         // logical operators
         if (checkCurrent(Keyword.NOT)) {
             next();
-            return new NotExpression();
+            return (CompoundExpression) new NotExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.AND)) {
             next();
-            return new LogicalExpression(LogicalType.AND);
+            return (CompoundExpression) new LogicalExpression(LogicalType.AND).withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.OR)) {
             next();
-            return new LogicalExpression(LogicalType.OR);
+            return (CompoundExpression) new LogicalExpression(LogicalType.OR).withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.NOR)) {
             next();
-            return new LogicalExpression(LogicalType.NOR);
+            return (CompoundExpression) new LogicalExpression(LogicalType.NOR).withTokens(list, startIdx, idx);
         }
         boolean isIs = checkCurrent(Keyword.IS);
-        boolean isIsnt = checkCurrent(Keyword.ISNT);
+        boolean isIsnt = !isIs && checkCurrent(Keyword.ISNT);
         if (isIs || isIsnt) {
             next();
             boolean isNegated = isIsnt;
             while (containsAtLeast(2) && checkCurrent(Keyword.NOT)) {
-                // "is not ..."
+                // "is not (not*) ..."
                 next();
                 isNegated = !isNegated;
             }
             if (containsAtLeast(3)) {
                 if (checkNext(Keyword.THAN)) {
-                    // "is ... than"
+                    // "is (not*) ... than"
                     ComparisonType type = null;
                     if (checkCurrent(Keyword.HIGHER)) {
                         type = ComparisonType.GREATER_THAN;
@@ -391,13 +404,14 @@ public class ExpressionParser {
                     }
                     if (type != null) {
                         next(2);
-                        return new ComparisonExpression(isNegated ? type.negated() : type);
+                        return (CompoundExpression) new ComparisonExpression(isNegated ? type.negated() : type)
+                        		.withTokens(list, startIdx, idx);
                     }
                 }
             }
             if (containsAtLeast(4)) {
                 if (checkCurrent(Keyword.AS) && checkNext(2, Keyword.AS)) {
-                    // "is as ... as"
+                    // "is (not*) as ... as"
                     ComparisonType type = null;
                     if (checkNext(Keyword.HIGH)) {
                         type = ComparisonType.GREATER_OR_EQUALS;
@@ -406,82 +420,81 @@ public class ExpressionParser {
                     }
                     if (type != null) {
                         next(3);
-                        return new ComparisonExpression(isNegated ? type.negated() : type);
+                        return (CompoundExpression) new ComparisonExpression(isNegated ? type.negated() : type)
+                        		.withTokens(list, startIdx, idx);
                     }
                 }
             }
             if (containsAtLeast(2) && checkCurrent("like")) {
-                // "is [not] like"
+                // "is (not*) like"
                 next();
-                return isNegated
-                        ? new NotExpression(new InstanceCheckExpression())
-                        : new InstanceCheckExpression();
+                return (CompoundExpression) new InstanceCheckExpression(isNegated)
+                		.withTokens(list, startIdx, idx);
             }
             if (containsAtLeast(4) && checkCurrent("a") && checkNext("kind") && checkNext(2, "of")) {
-                // "is [not] a kind of"
+                // "is (not*) a kind of"
                 next(3);
-                return isNegated
-                        ? new NotExpression(new InstanceCheckExpression())
-                        : new InstanceCheckExpression();
+                return (CompoundExpression) new InstanceCheckExpression(isNegated)
+                		.withTokens(list, startIdx, idx);
             }
             // simple "is" or "is not"
-            return new ComparisonExpression(isNegated ? ComparisonType.NOT_EQUALS : ComparisonType.EQUALS);
+            return (CompoundExpression) new ComparisonExpression(isNegated ? ComparisonType.NOT_EQUALS : ComparisonType.EQUALS)
+            		.withTokens(list, startIdx, idx);
         }
 
         // arithmetical operators
-        if (isAfterOperator && checkCurrent("-")) {
-            // unary minus
+        if (isAfterOperator && checkCurrent("-")) { 
             next();
-            return new UnaryMinusExpression();
+            return (CompoundExpression) new UnaryMinusExpression().withTokens(list, startIdx, idx);
         }
 
         if (checkCurrent(Keyword.WITH)) {
             next();
-            return new WithExpression();
+            return (CompoundExpression) new WithExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.PLUS)) {
             next();
-            return new PlusExpression();
+            return (CompoundExpression) new PlusExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.INTO)) {
             next();
-            return new IntoExpression();
+            return (CompoundExpression) new IntoExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.MINUS)) {
             next();
-            return new MinusExpression();
+            return (CompoundExpression) new MinusExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.TIMES)) {
             next();
-            return new MultiplyExpression();
+            return (CompoundExpression) new MultiplyExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.OVER)) {
             next();
-            return new DivideExpression();
+            return (CompoundExpression) new DivideExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.ROLL)) {
             next();
-            return new RollExpression();
+            return (CompoundExpression) new RollExpression().withTokens(list, startIdx, idx);
         }
         if (checkCurrent(Keyword.FROM)) {
             next();
-            return new SliceExpression(SliceExpression.Type.SLICE_FROM);
+            return (CompoundExpression) new SliceExpression(SliceExpression.Type.SLICE_FROM).withTokens(list, startIdx, idx);
         }
 
         if (checkCurrent(Keyword.TILL)) {
             next();
-            return new SliceExpression(SliceExpression.Type.SLICE_TO);
+            return (CompoundExpression) new SliceExpression(SliceExpression.Type.SLICE_TO).withTokens(list, startIdx, idx);
         }
 
         if (checkCurrent(",", "&")) {
             next();
-            return new ListExpression();
+            return (CompoundExpression) new ListExpression().withTokens(list, startIdx, idx);
         }
 
         // function call
         if (checkCurrent(Keyword.TAKING) || checkAlias(Keyword.TAKING, 0)) {
             next();
-            return new FunctionCall();
+            return (CompoundExpression) new FunctionCall().withTokens(list, startIdx, idx);
         }
         return null;
 

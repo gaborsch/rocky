@@ -11,7 +11,9 @@ package rockstar.parser;
  */
 public class ParseException extends RuntimeException {
     
-    private final Line line;
+	private static final long serialVersionUID = 6921734732807437751L;
+
+	private final Line line;
 
     public ParseException(String message, Line line) {
         super(message + " at line "+line.getLnum());

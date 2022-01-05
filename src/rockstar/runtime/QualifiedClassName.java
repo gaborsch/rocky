@@ -6,6 +6,7 @@
 package rockstar.runtime;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  *
@@ -29,6 +30,15 @@ public class QualifiedClassName {
         return path;
     }
     
+    public String getJavaClassName() {
+    	StringJoiner sj = new StringJoiner(".");
+    	for (String pathElem : path.getPath() ) {
+			sj.add(pathElem);
+		}
+    	sj.add(name);
+    	return sj.toString();
+    }
+
     public String getFormattedFilename() {
         return path + "/" + PackagePath.formatPathPartName(name) + ".rock";
     }

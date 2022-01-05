@@ -1,0 +1,34 @@
+from java, math play BigDecimal
+
+X will be BigDecimal taking "1.0"
+Y will be BigDecimal taking 2
+say "Instantiation OK"
+
+Let Z be add on X taking Y
+say "direct method call OK"
+
+Let Z1 be toString on Z
+Say Z1
+say "parameterless method call OK"
+
+Let Z2 be shortValue on Z
+Say Z2
+say "inherited method call OK"
+
+Let Z3 be valueOf on BigDecimal taking 10, 3
+Say toString on Z3
+Let Z3 be valueOf on BigDecimal taking 10, 0
+Say toString on Z3
+Let Z31 be valueOf on BigDecimal taking 10, -3
+Say toString on Z31
+say "static method OK"
+
+Let Z4 be valueOf on Z taking 10, 2
+Say toString on Z4
+say "static method on instance OK"
+
+Let Z5 be ROUND_DOWN on Z
+Say Z5
+say "property access OK"
+
+

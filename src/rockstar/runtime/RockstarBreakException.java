@@ -11,7 +11,9 @@ package rockstar.runtime;
  */
 public class RockstarBreakException extends RuntimeException {
    
-    public RockstarBreakException() {
+	private static final long serialVersionUID = 2256593110950110421L;
+
+	public RockstarBreakException() {
     }
     
 }
