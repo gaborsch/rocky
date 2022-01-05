@@ -25,14 +25,14 @@ import rockstar.test.RockstarTest;
  */
 public class Rockstar {
     
-    public static final String VERSION = "2.0.3";
+    public static final String VERSION = "2.1.0";
 
     // implementation constants
     public static final int MAX_LOOP_ITERATIONS = 10000;
 
     // CLI commands
     private static final String CLI_WRAPPER = "rockstar";
-    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version "+VERSION+" (with OOP)";
+    public static final String CLI_HEADER = "Rockstar Java by gaborsch, Version "+VERSION+" (with OOP and native Java)";
 
     private static final List<String> COMMANDS = (Arrays.asList(new String[]{"help", "run", "list", "repl", "test", "debug"}));
 
@@ -149,16 +149,16 @@ public class Rockstar {
             if (cmd != null) {
                 System.out.println("    All files use the same context.");
                 System.out.println("Options:");
-                System.out.println("    --infinite-loops");
-                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
-                System.out.println("    --runlog");
-                System.out.println("        Log the execution path to the stdout");
-                System.out.println("    --exprlog");
-                System.out.println("        Log the execution path and expression evaluations to the stdout");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+                System.out.println("    --infinite-loops");
+                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
+                System.out.println("    --exprlog");
+                System.out.println("        Log the execution path and expression evaluations to the stdout");
+                System.out.println("    --runlog");
+                System.out.println("        Log the execution path to the stdout");
                 System.out.println("    -X --rocky");
-                System.out.println("        Use Rocky extensions (default: strict mode)");
+                System.out.println("        Use Rocky extensions (default: automatic mode)");
             }
         }
         if (cmd == null || cmd.equals("debug")) {
@@ -166,12 +166,12 @@ public class Rockstar {
             System.out.println("    Debug a program interactively. Stop at breakpoints, lines, display and watch variables.");
             if (cmd != null) {
                 System.out.println("Options:");
-                System.out.println("    --infinite-loops");
-                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    --dec64");
                 System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+                System.out.println("    --infinite-loops");
+                System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    -X --rocky");
-                System.out.println("        Use Rocky extensions (default: strict mode)");
+                System.out.println("        Use Rocky extensions (default: automatic mode)");
                 RockstarDebugger.printDebuggerHelp("");
             }
         }
@@ -180,12 +180,12 @@ public class Rockstar {
             System.out.println("    Parse and list a program. Useful for syntax checking.");
             if (cmd != null) {
                 System.out.println("Options:");
-//                System.out.println("    -x --explain");
-//                System.out.println("        Explain all statements and expressions parsed from input.");
                 System.out.println("    -l --line-number");
                 System.out.println("        Print line numbers.");
+                System.out.println("    -x --explain");
+                System.out.println("        Display the AST (Abstract Syntax Tree)");
                 System.out.println("    -X --rocky");
-                System.out.println("        Use Rocky extensions (default: strict mode)");
+                System.out.println("        Use Rocky extensions (default: automatic mode)");
             }
         }
         if (cmd == null || cmd.equals("repl")) {
@@ -200,7 +200,7 @@ public class Rockstar {
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    -X --rocky");
-                System.out.println("        Use Rocky extensions (default: strict mode)");
+                System.out.println("        Use Rocky extensions (default: automatic mode)");
             }
         }
         if (cmd == null || cmd.equals("test")) {
