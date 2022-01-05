@@ -29,9 +29,9 @@ Rocky requires at least Java8 JRE to run. Alternatively you can also use Docker 
 
 The easiest way is to clone this Git repository, everything is prepared here. 
 
-Minimalistic approach: To install and run, you only need the `[rocky.jar](https://github.com/gaborsch/rocky/tree/master/rocky.jar)`  file, and one of the wrappers `([rockstar.bat](https://github.com/gaborsch/rocky/tree/master/rockstar.bat)` or `[rockstar](https://github.com/gaborsch/rocky/tree/master/rockstar)`, depending on your OS). Make sure that `java` is on your path and you can run it immediately. The rest of the files are for development.
+Minimalistic approach: To install and run, you only need the [`rocky.jar`](https://github.com/gaborsch/rocky/tree/master/rocky.jar)  file, and one of the wrappers ([`rockstar.bat`](https://github.com/gaborsch/rocky/tree/master/rockstar.bat) or [`rockstar`](https://github.com/gaborsch/rocky/tree/master/rockstar), depending on your OS). Make sure that `java` is on your path and you can run it immediately. The rest of the files are for development.
 
-If you are on Linux, you can execute `[sudo install.sh](https://github.com/gaborsch/rocky/tree/master/install.sh)` - this will create a runnable binary `/usr/bin/rockstar`, so your Rockstar programs could be run like a script with `#!/usr/bin/rockstar` shebang header. 
+If you are on Linux, you can execute [`sudo install.sh`](https://github.com/gaborsch/rocky/tree/master/install.sh) - this will create a runnable binary `/usr/bin/rockstar`, so your Rockstar programs could be run like a script with `#!/usr/bin/rockstar` shebang header. 
 
 There are some Rockstar program in the [programs](https://github.com/gaborsch/rocky/tree/master/programs) folder and its subfolders. They're mostly for test purposes, but you can peek into if you want to get inspired or check some features.
 
