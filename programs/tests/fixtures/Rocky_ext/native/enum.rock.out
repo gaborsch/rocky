@@ -1,0 +1,6 @@
+ElementType is java.lang.annotation.ElementType
+METHOD is METHOD
+ChronoField is java.time.temporal.ChronoField
+MINUTE_OF_DAY is MinuteOfDay
+MINUTE_OF_DAY.isTimeBased is true
+MinuteOfDay

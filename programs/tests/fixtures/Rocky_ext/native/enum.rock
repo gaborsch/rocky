@@ -1,0 +1,12 @@
+from java, lang, annotation play ElementType
+from java time temporal play ChronoField
+
+say "ElementType is " + ElementType
+let M be METHOD on ElementType
+say "METHOD is " + M
+
+say "ChronoField is " + ChronoField
+let C be MINUTE_OF_DAY on ChronoField
+say "MINUTE_OF_DAY is " + C
+say "MINUTE_OF_DAY.isTimeBased is " + isTimeBased on C
+say toString on C

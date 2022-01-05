@@ -231,7 +231,7 @@ public class NativeObject {
 			}
 			return null;
 		case BOOLEAN:
-			return value.asBoolean();
+			return value.getBool();
 		case NULL:
 			return null;
 		default:
@@ -441,16 +441,16 @@ public class NativeObject {
 		// plain value with class specification
 		return convertValue(baseClass, v);
 	}
-	
+
 	private static int getFirstScalarIdxAfter(List<Class<?>> classes, int idx) {
 		int scalarCount = 1;
-		for(int i=idx; i< classes.size(); i++) {
+		for (int i = idx; i < classes.size(); i++) {
 			Class<?> cls = classes.get(i);
 			if (Map.class.isAssignableFrom(cls)) {
 				// Map needs +1 scalar type
 				scalarCount++;
 			}
-			if (! (List.class.isAssignableFrom(cls) || Arrays.class.isAssignableFrom(cls))) {
+			if (!(List.class.isAssignableFrom(cls) || Arrays.class.isAssignableFrom(cls))) {
 				scalarCount--;
 				if (scalarCount == 0) {
 					return i;
