@@ -15,17 +15,12 @@ import rockstar.runtime.Value;
 public class NotExpression extends CompoundExpression {
 
     public NotExpression(Expression... params) {
-        super(params);
+        super(Precedence.NEGATION, params);
     }
 
     @Override
     public String getFormat() {
         return "NOT (%s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 600;
     }
 
     @Override

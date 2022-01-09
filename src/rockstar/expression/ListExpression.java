@@ -20,7 +20,7 @@ public class ListExpression extends CompoundExpression {
     private boolean hasCompound = false;
 
     public ListExpression(Expression... params) {
-        super();
+        super(Precedence.LIST_OPERATOR);
         for (Expression param : params) {
             addParameter(param);
         }
@@ -50,11 +50,6 @@ public class ListExpression extends CompoundExpression {
         StringBuilder sb = new StringBuilder();
         getParameters().forEach(expr -> sb.append(sb.length() == 0 ? "" : ", ").append(expr.format()));
         return "("+sb.toString()+")";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 100;
     }
 
     @Override

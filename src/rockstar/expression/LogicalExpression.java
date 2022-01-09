@@ -23,7 +23,7 @@ public class LogicalExpression extends CompoundExpression {
     private final LogicalType type;
 
     public LogicalExpression(LogicalType type) {
-        super();
+        super(Precedence.LOGICAL);
         this.type = type;
     }
 
@@ -34,11 +34,6 @@ public class LogicalExpression extends CompoundExpression {
     @Override
     public String getFormat() {
         return "(%s " + type + " %s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 800;
     }
 
     @Override

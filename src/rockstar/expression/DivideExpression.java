@@ -14,14 +14,13 @@ import rockstar.runtime.Value;
  */
 public class DivideExpression extends CompoundExpression {
 
+	public DivideExpression() {
+		super(Precedence.MULTIPLICATION);
+	}
+	
     @Override
     public String getFormat() {
         return "(%s / %s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 400;
     }
     
     @Override

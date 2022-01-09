@@ -54,18 +54,13 @@ public class ComparisonExpression extends CompoundExpression {
     private ComparisonType type;
 
     public ComparisonExpression(ComparisonType type) {
-        super();
+        super(Precedence.COMPARISON);
         this.type = type;
     }
 
     @Override
     public String getFormat() {
         return "(%s " + type.getSign() + " %s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 700;
     }
 
     @Override

@@ -15,10 +15,9 @@ import rockstar.runtime.Value;
  */
 public class IntoExpression extends CompoundExpression {
 
-    @Override
-    public int getPrecedence() {
-        return 550;
-    }
+	public IntoExpression() {
+		super(Precedence.INTO);
+	}
 
     @Override
     public int getParameterCount() {

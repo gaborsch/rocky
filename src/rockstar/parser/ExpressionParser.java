@@ -13,6 +13,7 @@ import java.util.Stack;
 import rockstar.expression.BuiltinFunction;
 import rockstar.expression.ComparisonExpression;
 import rockstar.expression.ComparisonExpression.ComparisonType;
+import rockstar.expression.CompoundExpression.Precedence;
 import rockstar.expression.CompoundExpression;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.DivideExpression;
@@ -262,6 +263,9 @@ public class ExpressionParser {
                 operator = (CompoundExpression) new ListExpression().withTokens(list, idx, idx);
             }
             if (operator != null) {
+            	if (defaultExpr != null && valueStack.size() == 1 && operatorStack.isEmpty()) {
+            		operator.setPrecedence(Precedence.COMPOUND_ASSIGNMENT);
+            	}
                 // operator found
                 if (!pushOperator(operator)) {
                     return null;
@@ -291,19 +295,20 @@ public class ExpressionParser {
 
         // interpret 
         while (!operatorStack.isEmpty()) {
-            int topPrec = operatorStack.peek().getPrecedence();
-            int newPrec = operator.getPrecedence();
+        	Precedence topPrec = operatorStack.peek().getPrecedence();
+        	Precedence newPrec = operator.getPrecedence();
             if (operatorStack.peek() instanceof FunctionCall
                     && operator instanceof LogicalExpression
                     && ((LogicalExpression) operator).getType() == LogicalType.AND) {
                 break;
             }
 
-            if ((topPrec == 600 && newPrec == 600) || (topPrec == 100 && newPrec == 100)) {
+            if ((topPrec == Precedence.NEGATION && newPrec == Precedence.NEGATION) || 
+            		(topPrec == Precedence.LIST_OPERATOR && newPrec == Precedence.LIST_OPERATOR)) {
                 // Logical NOT  || ListOperator (right-associative)
                 break;
             }
-            if (topPrec > newPrec) {
+            if (topPrec.isGreaterThan(newPrec)) {
                 // other (left-associative)
                 break;
             }
@@ -553,10 +558,9 @@ public class ExpressionParser {
 
     private static class EndOfExpression extends CompoundExpression {
 
-        @Override
-        public int getPrecedence() {
-            return 999;
-        }
+    	public EndOfExpression() {
+			super(Precedence.END_OF_EXPRESSION);
+		}
 
         @Override
         public String getFormat() {

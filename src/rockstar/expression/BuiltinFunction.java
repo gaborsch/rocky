@@ -8,6 +8,7 @@ package rockstar.expression;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -36,16 +37,11 @@ public class BuiltinFunction extends CompoundExpression {
     }
 
     public BuiltinFunction(Type type, Expression... params) {
-        super(params);
+        super(Precedence.BUILTIN_FUNCTION, params);
         this.type = type;
     }
 
     private final Type type;
-
-    @Override
-    public int getPrecedence() {
-        return 60;
-    }
 
     @Override
     public int getParameterCount() {

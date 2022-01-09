@@ -6,6 +6,7 @@
 package rockstar.expression;
 
 import java.util.List;
+
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -16,14 +17,13 @@ import rockstar.runtime.Value;
  */
 public class RollExpression extends CompoundExpression {
 
+	public RollExpression() {
+		super(Precedence.ROLL);
+	}
+	
     @Override
     public String getFormat() {
         return "roll(%s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 75;
     }
 
     @Override

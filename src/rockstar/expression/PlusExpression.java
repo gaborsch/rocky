@@ -14,14 +14,13 @@ import rockstar.runtime.Value;
  */
 public class PlusExpression extends CompoundExpression {
 
+	public PlusExpression() {
+		super(Precedence.ADDITION);
+	}
+	
     @Override
     public String getFormat() {
         return "(%s + %s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 500;
     }
 
     @Override

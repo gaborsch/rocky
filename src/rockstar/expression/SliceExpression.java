@@ -6,6 +6,7 @@
 package rockstar.expression;
 
 import java.util.List;
+
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -25,17 +26,13 @@ public class SliceExpression extends CompoundExpression {
     private Type type;
 
     public SliceExpression(Type type) {
+    	super(Precedence.BUILTIN_FUNCTION);
         this.type = type;
     }
 
     @Override
     public String getFormat() {
         return "(%s" + (type != Type.SLICE_TO ? " from %s" : "") + (type != Type.SLICE_FROM ? " till %s" : "") + ")";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 80;
     }
 
     @Override

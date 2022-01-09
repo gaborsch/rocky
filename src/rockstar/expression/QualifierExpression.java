@@ -6,6 +6,7 @@
 package rockstar.expression;
 
 import java.util.List;
+
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -19,7 +20,7 @@ public class QualifierExpression extends CompoundExpression {
     private final boolean isArrayIndexing;
 
     public QualifierExpression(boolean isArrayIndexing) {
-        super();
+        super(Precedence.QUALIFIER);
         this.isArrayIndexing = isArrayIndexing;
     }
 
@@ -45,10 +46,6 @@ public class QualifierExpression extends CompoundExpression {
         return this.getParameters().get(1);
     }
 
-    @Override
-    public int getPrecedence() {
-        return 50;
-    }
 
     @Override
     public int getParameterCount() {

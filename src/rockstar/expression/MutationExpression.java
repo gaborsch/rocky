@@ -7,6 +7,7 @@ package rockstar.expression;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
@@ -29,7 +30,7 @@ public class MutationExpression extends CompoundExpression {
      * @param vref
      */
     public MutationExpression(VariableReference vref) {
-        super(vref);
+        super(Precedence.MUTATION, vref);
         this.baseExpr = vref;
         this.withExpr = null;
         this.intoExpr = vref;
@@ -41,7 +42,7 @@ public class MutationExpression extends CompoundExpression {
      * @param withExpression
      */
     public MutationExpression(WithExpression withExpression) {
-        super();
+        super(Precedence.MUTATION);
         // With usage
         List<Expression> withParams = ((WithExpression) withExpression).getParameters();
         Expression withParam0 = withParams.get(0);
@@ -66,7 +67,7 @@ public class MutationExpression extends CompoundExpression {
      * @param intoExpression
      */
     public MutationExpression(IntoExpression intoExpression) {
-        super();
+        super(Precedence.MUTATION);
         List<Expression> intoParams = intoExpression.getParameters();
         Expression intoParam0 = intoParams.get(0);
         Expression intoParam1 = intoParams.get(1);
@@ -119,11 +120,6 @@ public class MutationExpression extends CompoundExpression {
 
     public VariableReference getTargetReference() {
         return intoExpr;
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 150;
     }
 
     @Override

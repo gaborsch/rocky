@@ -2,6 +2,7 @@ package rockstar.expression;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.NativeObject;
@@ -21,20 +22,15 @@ public class FunctionCall extends CompoundExpression {
     private String functionName;
 
     public FunctionCall() {
-        super();
+        super(Precedence.FUNCTION_CALL);
     }
 
     FunctionCall(VariableReference object, String methodName) {
-        super();
+        super(Precedence.FUNCTION_CALL);
         this.object = object;
         this.functionName = methodName;
     }
-
-    @Override
-    public int getPrecedence() {
-        return 200;
-    }
-
+    
     @Override
     public int getParameterCount() {
         // FunctionCall takes the name and the parameter list

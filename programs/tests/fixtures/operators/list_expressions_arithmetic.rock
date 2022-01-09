@@ -34,4 +34,7 @@ Whisper the songs
 
 (49 * 9 * 16 * 13 = 91728)
 
-
+(operator precedence)
+total is 2
+let total be of 3 with 5     (total *= 3+5 )
+shout it

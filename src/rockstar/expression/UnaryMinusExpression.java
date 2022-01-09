@@ -14,14 +14,13 @@ import rockstar.runtime.Value;
  */
 public class UnaryMinusExpression extends CompoundExpression {
 
+	public UnaryMinusExpression() {
+		super(Precedence.UNARY_MINUS);
+	}
+	
     @Override
     public String getFormat() {
         return "(-%s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 80;
     }
 
     @Override

@@ -14,14 +14,13 @@ import rockstar.runtime.Value;
  */
 public class MinusExpression extends CompoundExpression {
 
-    @Override
+	public MinusExpression() {
+		super(Precedence.ADDITION);
+	}
+
+	@Override
     public String getFormat() {
         return "(%s - %s)";
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 500;
     }
 
     @Override

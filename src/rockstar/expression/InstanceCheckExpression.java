@@ -6,7 +6,6 @@
 package rockstar.expression;
 
 import rockstar.runtime.BlockContext;
-import rockstar.runtime.NativeObject;
 import rockstar.runtime.RockObject;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -20,6 +19,7 @@ public class InstanceCheckExpression extends CompoundExpression {
 	boolean negated = false;
 	
 	public InstanceCheckExpression(boolean negated) {
+		super(Precedence.INSTANCE_CHECK);
 		this.negated = negated;
 	}
 
@@ -29,11 +29,6 @@ public class InstanceCheckExpression extends CompoundExpression {
 
     public VariableReference getClassRef() {
         return (VariableReference) this.getParameters().get(1);
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 40;
     }
 
     @Override
