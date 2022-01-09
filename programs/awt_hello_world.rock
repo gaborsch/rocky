@@ -1,19 +1,20 @@
-from java, awt play Dialog, Label, Window
+from java, awt  play Dialog, Label
+from java, lang play System
 
-#  Dialog d = new Dialog(((Window)null),"Hello world!");
-#  d.setBounds(350, 200, 280, 150);
-#  d.add(new Label("Hello world!"));
-#  d.setVisible(true);
+#  Dialog myDialog = new Dialog(((Window)null),"Hello world!");
+#  myDialog.setBounds(350, 300, 200, 150);
+#  myDialog.add(new Label("Hello world!"));
+#  myDialog.setVisible(true);
 
-d will be Dialog taking nothing, "Hello world!"
-setBounds on d taking 350, 200, 200, 150
-lbl wants to be Label taking "Hello world!"
-add to d taking lbl
-setVisible on d taking true
+my dialog will be Dialog taking nothing, "Hello world!"
+setBounds on my dialog taking 350, 300, 200, 150
+my label wants to be Label taking "Hello world!"
+add to my dialog taking my label
+setVisible for my dialog taking true
 
 say "AWT displayed! Press enter to continue ..."
 Listen to User
 
-setVisible on d taking false
+setVisible on my dialog taking false
 say "AWT done!"
-
+exit from System taking 0
