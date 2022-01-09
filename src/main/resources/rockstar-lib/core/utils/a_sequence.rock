@@ -1,0 +1,12 @@
+Album: Core, and Utils
+
+a sequence looks like nothing                   (class declaration, inherits nothing)
+  Let the counter be 0                          (field declaration works like any local variable declaration)
+  current takes nothing                         (method declaration works like any function declaration)
+    give back the counter                       (read access to field)
+                                                (eom)
+  next takes nothing                            (method declaration )
+    Build the counter up                        (write access to field)
+    give back the counter                       (read access to field)
+                                                (eom)
+                                                (end of class "a sequence")

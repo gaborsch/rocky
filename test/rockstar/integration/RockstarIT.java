@@ -18,7 +18,8 @@ public class RockstarIT {
     public void itTest() {
         // given
         Map<String, String> options = new HashMap<>();
-        options.put("-v", "-v");
+        //options.put("-v", "-v");
+        options.put("-w", "-w");
 
         // when
         boolean success = new RockstarTest(options).execute(TEST_PATH);

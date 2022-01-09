@@ -35,7 +35,7 @@ say current from ID                           (output: "3")
 
 It's easy t see that with the class feature we can write a built-in library, that could be supplied with each supporting interpreter/transpiler. 
 
-There are a few classes under the `rockstar-lib` folder, including an indexed linked list implementation that can be used as an alternative for native array implementation. 
+There are a few classes under the `src/main/resources/rockstar-lib` folder, including an indexed linked list implementation that can be used as an alternative for native array implementation. 
 After implementing the OOP feature we don't need to extend the language anymore.
 
 ## Features
@@ -66,7 +66,7 @@ off Core play Maths
 play a chain
 ```
 
-It imports the classes identified by `<class-names>` from the defined package. There is a folder called `rockstar-libs` that is the root of the system-defined classes, otherwise the local working directory is used to locate a class. When the class is imported first time, its file is located, and the body is run. The defined classes, functions and variables will be accessible globally. For example, it is possible to create a `Maths` class that defines a `Maths` globally available object instance that can be accessed for maths functions - a static instance.
+It imports the classes identified by `<class-names>` from the defined package. There is a folder called `rockstar-libs` under `src/main/resources` that is the root of the system-defined classes, otherwise the local working directory is used to locate a class. When the class is imported first time, its file is located, and the body is run. The defined classes, functions and variables will be accessible globally. For example, it is possible to create a `Maths` class that defines a `Maths` globally available object instance that can be accessed for maths functions - a static instance.
 
 ### Class declaration: 
 
@@ -165,9 +165,9 @@ Not all methods are useful for the user of the class, and it would also increase
 
 # Example code
 
-* https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/an_array.rock
-* https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chain.rock
-* https://github.com/gaborsch/rocky/blob/master/rockstar-lib/core/utils/a_chainlink.rock
+* https://github.com/gaborsch/rocky/blob/master/src/main/resources/rockstar-lib/core/utils/an_array.rock
+* https://github.com/gaborsch/rocky/blob/master/src/main/resources/rockstar-lib/core/utils/a_chain.rock
+* https://github.com/gaborsch/rocky/blob/master/src/main/resources/rockstar-lib/core/utils/a_chainlink.rock
 
 
 

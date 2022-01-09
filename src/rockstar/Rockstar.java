@@ -18,6 +18,7 @@ import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
 import rockstar.test.RockstarTest;
+import rockstar.tool.Packer;
 
 /**
  *
@@ -38,7 +39,7 @@ public class Rockstar {
 
     public static void main(String[] args) {
 
-        if (args.length == 0) {
+//        if (args.length == 0) {
 //    		args = new String[]{"list", "-x", "a.rock"};
 //            args = new String[]{"list", "-x", "programs/tests/fixtures/Rocky_ext/native/arraylist.rock"};
 //        args = new String[]{"run", "programs/tests/fixtures/Rocky_ext/native/arraylist.rock"};
@@ -55,7 +56,8 @@ public class Rockstar {
 //        args = new String[]{"test", "-w", "--testdir", "C:\\work\\rocky\\rocky1\\rocky\\programs\\tests\\_own_"};
 //        args = new String[]{"help", "run"};
 //        args = new String[]{"-", "-x"};
-        }
+//          args = new String[]{"pack", "abc.rock", "programs/tests/correct/nested_function_scopes.rock"};
+//        }
 
         List<String> argl = new LinkedList<>(Arrays.asList(args));
 
@@ -126,6 +128,9 @@ public class Rockstar {
                     case "test":
                         test(files, options);
                         break;
+                    case "pack":
+                        pack(files, options);
+                        break;
                     default:
                         System.err.println("Unknown command: " + command);
                         doHelp(files.isEmpty() ? null : files.get(0), options);
@@ -138,7 +143,7 @@ public class Rockstar {
 
     }
 
-    private static void doHelp(String cmd, Map<String, String> options) {
+	private static void doHelp(String cmd, Map<String, String> options) {
         System.out.println(CLI_HEADER);
         System.out.println(Utils.repeat("-", CLI_HEADER.length()));
         System.out.println("Usage:");
@@ -293,6 +298,15 @@ public class Rockstar {
             new RockstarTest(options).execute(path);
         });
     }
+
+    private void pack(List<String> files, Map<String, String> options) {
+		List<String> rockFiles = files.stream().filter(fn -> fn.endsWith(".rock")).collect(Collectors.toList());   	
+        if (rockFiles.isEmpty()) {
+            throw new IllegalArgumentException("Missing files");
+        }
+        String mainFile = rockFiles.remove(0);
+        new Packer().pack(mainFile, rockFiles);		
+	}
 
     public void repl(List<String> files, Map<String, String> options) {
         new RockstarRepl(options).repl(files);

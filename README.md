@@ -11,6 +11,7 @@ Rocky supports all Rockstar language features announced on 2021.10.12 and before
 * List command (parse a file without running it) (`-x` option prints the AST)
 * Detailed help with options explanation
 * IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
+* Creating standalone executable (Java JRE 8+ still required)
 
 **Special features:** 
 * [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
@@ -226,4 +227,23 @@ Pass ratio:   100.00%
 ============================================================
 ```
 
+## Creating an executable
 
+On Linux-like platforms (also including Git Bash, for example), it is possible to create a standalone executable. The created file includes Rocky, the `rockstar-lib` sources, and also the files you want to run. The syntax is as follows:
+
+```
+ pack.sh mainfile.rock [file.rock ...]
+```
+
+Example:
+
+```
+$ echo "Say \"Hello, standalone Rockstar\"" >hello.rock
+$ cat hello.rock
+Say "Hello, standalone Rockstar"
+$ ./pack.sh hello.rock
+Source file: hello.rock
+Executable file 'hello' created
+$ ./hello
+Hello, standalone Rockstar
+```

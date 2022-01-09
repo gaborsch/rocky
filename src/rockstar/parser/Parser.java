@@ -37,20 +37,31 @@ public class Parser {
     private MultilineReader rdr;
     private Environment env;
 
-    public Parser(String filename, Environment env) throws FileNotFoundException {
-        this(new FileInputStream(new File(filename)), filename, env);
+    public Parser(String filename, Environment env) throws FileNotFoundException  {
+    	//load from classpath first
+        InputStream is = getClass().getClassLoader().getResourceAsStream("rockstar-lib/" + filename);
+        if (is == null) {
+        	// then try from file system
+        	is = new FileInputStream(new File(filename));
+        }
+        init(is, filename, env);
+        
     }
 
     public Parser(InputStream is, String filename, Environment env) {
+        init(is, filename, env);
+    }
+
+	private void init(InputStream is, String filename, Environment env) {
         this.env = env;
-        Keyword.setStrictMode(env.isStrictMode());
+        this.filename = filename;
+		Keyword.setStrictMode(env.isStrictMode());
         try {
-            this.filename = filename;
             rdr = new MultilineReader(new BufferedReader(new InputStreamReader(is, Utils.UTF8)), filename);
         } catch (UnsupportedEncodingException ex) {
             System.err.println(Utils.UTF8 + " charset is not supported");
         }
-    }
+	}
 
     public Parser(String content, String filename) {
         this.filename = filename;
