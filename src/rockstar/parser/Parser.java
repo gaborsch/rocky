@@ -63,11 +63,12 @@ public class Parser {
         }
 	}
 
-    public Parser(String content, String filename) {
+    public Parser(String content, String filename, Environment env) {
+        this.env = env;
         this.filename = filename;
         rdr = new MultilineReader(new BufferedReader(new StringReader(content)), filename);
     }
-
+    
     public Program parse() {
         Program prg = new Program(filename);
 

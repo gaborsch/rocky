@@ -57,7 +57,7 @@ public class RockstarApi {
         FileContext prgCtx = new FileContext(env);
         FileContext ctx;
         try {
-            Program prg = new Parser(fileContent, filename).parse();
+            Program prg = new Parser(fileContent, filename, env).parse();
             ctx = new FileContext(prgCtx, filename);
             prg.execute(ctx);
         } catch (RuntimeException re) {
