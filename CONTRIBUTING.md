@@ -17,13 +17,13 @@ If you want to add a feature:
 * Open an issue, label as `enhancement`. Explain the desired feature, what's included and what's not. 
 
 If you find an undesired feature or a bug:
-* Open am issue, label as `bug`. Explain how to reproduce, what is the expected behaviour. Also, if possible, try it with different alternatives (e.g. strict mode on/off, different parameters, instructons, OSes, etc - whichever is relevant)
+* Open an issue, label as `bug`. Explain how to reproduce, what is the expected behaviour. Also, if possible, try it with different alternatives (e.g. strict mode on/off, different parameters, instructons, OSes, etc - whichever is relevant)
 
 # Contributing
 
 ## Requirements
 
-* JAVA JDKm at least Java8
+* JAVA JDK, at least Java8
 * Maven ([Download here](https://maven.apache.org/download.cgi))
 
 ## Way of contribution
