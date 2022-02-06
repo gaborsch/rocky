@@ -16,6 +16,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 public class NativeObject {
+	
+	public static boolean isNativeDisabled = false;
 
 	private Class<?> nativeClass;
 	private boolean isStaticInstance;
@@ -28,6 +30,10 @@ public class NativeObject {
 	}
 
 	public static NativeObject getStatic(QualifiedClassName qcn) {
+		if (isNativeDisabled) {
+			return null;
+		}
+		
 		Class<?> nativeClass = getClassForName(qcn);
 		if (nativeClass == null) {
 			return null;
@@ -36,6 +42,9 @@ public class NativeObject {
 	}
 
 	public NativeObject newInstance(List<Value> ctorParams) {
+		if (isNativeDisabled) {
+			return null;
+		}
 		Constructor<?> ctor = getConstructor(nativeClass, ctorParams);
 		Object[] initArgs = convertValues(ctor.getParameterTypes(), ctorParams);
 		try {
@@ -458,6 +467,10 @@ public class NativeObject {
 			}
 		}
 		return -1;
+	}
+
+	public static void setNativeDisabled(boolean disableNativeBinding) {
+		NativeObject.isNativeDisabled = disableNativeBinding;		
 	}
 
 }

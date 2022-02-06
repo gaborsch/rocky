@@ -14,6 +14,7 @@ import rockstar.repl.RockstarRepl;
 import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.LoggerListener;
+import rockstar.runtime.NativeObject;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
@@ -321,5 +322,9 @@ public class Rockstar {
     public static void setGlobalOptions(Map<String, String> options) {
         boolean dec64 = options.containsKey("--dec64");
         RockNumber.setDec64(dec64);
+        boolean disableNativeBinding = options.containsKey("--disable-native-java");
+        NativeObject.setNativeDisabled(disableNativeBinding);
+
+    
     }    
 }

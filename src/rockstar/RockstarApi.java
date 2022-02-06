@@ -61,7 +61,7 @@ public class RockstarApi {
             ctx = new FileContext(prgCtx, filename);
             prg.execute(ctx);
         } catch (RuntimeException re) {
-            System.err.println("Error: " + re.getMessage());
+            env.getError().println("Error: " + re.getMessage());
         }
     }
 
