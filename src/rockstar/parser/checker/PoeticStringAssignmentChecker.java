@@ -31,7 +31,13 @@ public class PoeticStringAssignmentChecker extends Checker<VariableReference, Li
     private Statement validate(ParamList params) {
         VariableReference varRef = getE1();
         Token firstPoeticToken = getE2().get(0); 
-        String poeticLiteralString = line.getOrigLine().substring(firstPoeticToken.getPos());
+        int pos = firstPoeticToken.getPos();
+        String origLine = line.getOrigLine();
+        // poetic literals may start with space
+        while (pos >= 2 && origLine.charAt(pos-2) == ' ') {
+        	pos--;
+        }
+        String poeticLiteralString = origLine.substring(pos);
         ConstantExpression value = new ConstantExpression(poeticLiteralString);
         return new AssignmentStatement(varRef, value);
     }
