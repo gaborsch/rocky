@@ -70,4 +70,16 @@ public class RockstarApi {
         return new Parser(fileContent, filename, env).parse();
     }
 
+    public String list(String filename, String fileContent) {
+        Rockstar.setGlobalOptions(env.getOptions());
+        Program prg = new Parser(fileContent, filename, env).parse();
+        return prg.listProgram(false, true, false);
+    }
+
+    public String explain(String filename, String fileContent) {
+        Rockstar.setGlobalOptions(env.getOptions());
+        Program prg = new Parser(fileContent, filename, env).parse();
+        return prg.listProgram(true, false, true);
+    }
+    
 }
