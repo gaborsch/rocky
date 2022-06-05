@@ -130,7 +130,8 @@ public class ExpressionFactory {
 
         // parse the orig String
         int digit = 0;
-        StringBuilder sb = new StringBuilder();
+        boolean hasDot = false;
+        StringBuilder sb = new StringBuilder();        
 
         int pos = 0;
         boolean inComment = false;
@@ -144,11 +145,11 @@ public class ExpressionFactory {
                     if (digit > 0) {
                         sb.append((char) ('0' + (digit % 10)));
                     }
-                    if (c == '.') {
-                        sb.append(c);
-                    }
                     digit = 0;
-                    if (c == '(') {
+                    if (c == '.' && !hasDot) {
+                        sb.append(c);
+                        hasDot = true;
+                    } else if (c == '(') {
                         inComment = true;
                     }
                 }

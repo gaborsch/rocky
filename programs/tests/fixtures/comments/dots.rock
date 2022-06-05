@@ -1,0 +1,7 @@
+Your love's got me. It's making me crazy. (your_love = 32 point whatever, doesn't matter)
+Turn it down. (rounds down to 32, ASCII value of space)
+Burn it. (your_love = charFromCode⟨your_love⟩, i.e. space)
+Your heart is a poison, (your_heart = the base for casting)
+
+say your love,.:;
+say your heart.

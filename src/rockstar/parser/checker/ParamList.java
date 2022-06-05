@@ -36,5 +36,10 @@ public class ParamList {
                     : value;
         }
     }
+    
+    @Override
+    public String toString() {
+    	return Arrays.asList(params).toString();
+    }
 
 }

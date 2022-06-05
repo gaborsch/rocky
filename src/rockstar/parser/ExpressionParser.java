@@ -321,7 +321,7 @@ public class ExpressionParser {
             if (valueStack.size() < paramCount) {
                 return false;
             }
-            // add paramcount parameters to the operator, preserving declaraton order
+            // add param count parameters to the operator, preserving declaration order
             for (int i = 0; i < paramCount; i++) {
                 op.addParameterReverse(valueStack.pop());
             }            

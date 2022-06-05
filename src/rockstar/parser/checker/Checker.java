@@ -139,7 +139,7 @@ public abstract class Checker<T1, T2, T3> {
     }
 
     private boolean saveResultPosition(Placeholder ph, int start, int end) {
-        // if there are no token
+        // if there are no tokens
         if (start == end) {
             // we only accept if it is optional
             return ph.isOptional();
@@ -322,6 +322,21 @@ public abstract class Checker<T1, T2, T3> {
             return defaultExprPos;
         }
 
+		@Override
+		public String toString() {
+			return "Placeholder "
+					+ type 
+					+" @" 
+					+ position 
+					+ " [" 
+					+ (optional ? " optional" : "")
+					+ (defaultExprPos!=null ? ("defaultExprPos=" + defaultExprPos + " " ) : "") 
+					+ "]";
+		}
+        
+
+        
+        
     }
 
 }
