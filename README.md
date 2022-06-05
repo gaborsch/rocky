@@ -4,6 +4,8 @@ Rocky is a 100% [Rockstar](https://codewithrockstar.com/) compatible RockStar In
 
 Rocky supports all Rockstar language features announced on 2021.10.12 and before, including Rockstar 2.0 additions (arrays). If you miss any feature, please open an issue for it.
 
+You can also try Rocky online on the [rockyrockstar.org](https://www.rockyrockstar.org/) site.
+
 **Features include:**
 * Fully compliant Rockstar implementation to date (all of the tests are OK, except the reported bugs)
 * Advanced Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable, trace expression evaluation!)
