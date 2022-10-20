@@ -72,7 +72,7 @@ public class MultilineReader {
         if (l != null) {
             origLine.append(l);
             lnum++;
-            l = l.replaceAll("[ .,;:]+$", "").replaceAll("[ .,;:]+\\(", " (");
+            l = l.replaceAll("[ .,;:!]+$", "").replaceAll("[ .,;:!]+\\(", " (");
         }
         return l;
     }

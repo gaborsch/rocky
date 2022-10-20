@@ -8,6 +8,7 @@ package rockstar.statement;
 import java.util.List;
 import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Environment;
 import rockstar.runtime.RockstarBreakException;
 
 /**
@@ -16,21 +17,27 @@ import rockstar.runtime.RockstarBreakException;
  */
 public class BreakStatement extends Statement {
 
-    @Override
-    boolean applyTo(Block block) {
-        Block b = block;
-        while (b != null) {
-            if (b instanceof WhileStatement) {
-                return true;
-            }
-            b = b.getParent();
-        }
-        return false;
-    }
+	@Override
+	boolean applyTo(Block block) {
+		if (Environment.get().isStrictMode()) {
+			Block b = block;
+			while (b != null) {
+				if (b instanceof WhileStatement) {
+					return true;
+				}
+				b = b.getParent();
+			}
+			return false;
+		} else {
+			return true;
+		}
+	}
 
     @Override
     public void execute(BlockContext ctx) {
-        throw new RockstarBreakException();
+		if (Environment.get().isStrictMode()) {
+			throw new RockstarBreakException();
+		}
     }
 
     @Override
