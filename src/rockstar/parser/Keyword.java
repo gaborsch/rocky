@@ -21,7 +21,7 @@ public enum Keyword {
     BOOLEAN_TRUE("true", "right", "yes", "ok"),
     BOOLEAN_FALSE("false", "wrong", "no", "lies"),
     RESERVED("definitely", "maybe"),
-    COMMON_VARIABLE_PREFIX("a", "an", "the", "my", "your", "our"),
+    COMMON_VARIABLE_PREFIX("a", "an", "the", "my", "your", "our", "+set", "+get"),
     ON("+on", "+by", "+in", "+to", "+for", "+from", "+near"),
     AT("at"),
     NOT("not"),

@@ -5,6 +5,7 @@
  */
 package rockstar.runtime;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,10 +55,6 @@ public class RockNumberDec64 extends RockNumber {
     public RockNumberDec64 getValue(long l) {
         return getFromCache(l, 0);
     }
-
-//    public static RockNumberDec64 getValue(long digits, int fractionCount) {
-//        return getFromCache(digits, -fractionCount);
-//    }
 
     private static final long MAX_VALUE = 0x7fffffffffffffffL;
     private static final long MAX_PARSED_MANTISSA = MAX_VALUE / 10;
@@ -285,6 +282,11 @@ public class RockNumberDec64 extends RockNumber {
 		return Double.valueOf(asString());
 	}
 
+	@Override
+	public BigDecimal asBigDecimal() {
+		return new BigDecimal(asString());
+	}
+
     public String asString() {
         int e = normalE(this);
         long m = transformM(this, e);
@@ -337,6 +339,11 @@ public class RockNumberDec64 extends RockNumber {
     @Override
     public RockNumber getValue(Double dblValue) {
         return parse(Double.toString(dblValue));
+    }
+
+    @Override
+    protected RockNumber getValue(BigDecimal bigValue) {
+    	return parse(bigValue.toPlainString());
     }
 
     @Override

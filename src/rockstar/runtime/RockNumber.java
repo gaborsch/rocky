@@ -1,5 +1,7 @@
 package rockstar.runtime;
 
+import java.math.BigDecimal;
+
 /**
  * RockNumber is the number abstraction layer for Rockstar
  *
@@ -7,19 +9,30 @@ package rockstar.runtime;
  */
 public abstract class RockNumber {
 
-    private static boolean IS_DEC64 = false;
-    
+    private static NumericMode mode = NumericMode.IEEE754;
+
     // an instance to delegate the static methods
     private static RockNumber instance = RockNumberDouble.ZERO;
-    
-    public static void setDec64(boolean isDec64) {
-        if (IS_DEC64 != isDec64) {
-            IS_DEC64 = isDec64;
-            instance = isDec64 ? RockNumberDec64.ZERO : RockNumberDouble.ZERO;
-        }
+
+    public static void setMode(NumericMode newMode) {
+    	if (mode != newMode) {
+    		mode = newMode;
+    		switch (newMode) {
+				case IEEE754: 
+					instance = RockNumberDec64.ZERO;
+					break;
+				case DEC64: 
+					instance = RockNumberDec64.ZERO;
+					break;
+				case UNLIMITED: 
+					instance = RockNumberBigDecimal.ZERO;
+					break;
+			}
+    	}
     }
 
     protected abstract RockNumber getZERO();
+
     protected abstract RockNumber getONE();
 
     public static RockNumber ZERO() {
@@ -44,13 +57,18 @@ public abstract class RockNumber {
         return instance.getValue(dblValue);
     }
 
-    public static RockNumber fromLong(long longValue) {
+    public static RockNumber fromBigDecimal(BigDecimal bigValue) {
+    	return instance.getValue(bigValue);
+    }
+    
+
+	public static RockNumber fromLong(long longValue) {
         return instance.getValue(longValue);
     }
 
-
     protected abstract RockNumber getValue(Double dblValue);
     protected abstract RockNumber getValue(long l);
+    protected abstract RockNumber getValue(BigDecimal bigValue);
     
     public static RockNumber getValueFromLong(long l) {
         return instance.getValue(l);
@@ -66,6 +84,7 @@ public abstract class RockNumber {
     public abstract int asInt();
     public abstract long asLong();
     public abstract double asDouble();
+	protected abstract BigDecimal asBigDecimal();
 
     public abstract RockNumber ceil();
     public abstract RockNumber floor();

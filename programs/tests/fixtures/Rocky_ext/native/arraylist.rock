@@ -22,7 +22,7 @@ say "Implicit array conversion"
 ArrList2 will be ArrayList
 addAll on ArrList2 taking X
 add on ArrList2 taking 3
-say tostring on ArrList2
+say toString on ArrList2
 
 cast ArrList2 into Y2
 say length of Y2

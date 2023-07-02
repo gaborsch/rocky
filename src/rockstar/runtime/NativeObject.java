@@ -19,16 +19,32 @@ public class NativeObject {
 	
 	public static boolean isNativeDisabled = false;
 
+	private static final Class<?>[] LONG_CLASSES = new Class<?>[] { long.class, Long.class };
+	private static final Class<?>[] INT_CLASSES = new Class<?>[] { int.class, Integer.class };
+	private static final Class<?>[] DOUBLE_CLASSES = new Class<?>[] { double.class, Double.class };
+	private static final Class<?>[] CHAR_CLASSES = new Class<?>[] { char.class, Character.class };
+	private static final Class<?>[] SHORT_CLASSES = new Class<?>[] { short.class, Short.class };
+	private static final Class<?>[] BYTE_CLASSES = new Class<?>[] { byte.class, Byte.class };
+	private static final Class<?>[] FLOAT_CLASSES = new Class<?>[] { float.class, Float.class };
+	private static final Class<?>[] OTHER_NUMERIC_CLASSES = new Class<?>[] { BigDecimal.class, BigInteger.class };
+	private static final Class<?>[] ARRAY_CLASSES = new Class<?>[] { List.class, Map.class };
+	
 	private Class<?> nativeClass;
 	private boolean isStaticInstance;
 	private Object nativeObject;
 
-	private NativeObject(Class<?> nativeClass, boolean isStaticInstance, Object nativeObject) {
+	private NativeObject(Class<?> nativeClass, Object nativeObject) {
+		this.nativeClass = nativeClass;
+		this.isStaticInstance = false;
+		this.nativeObject = nativeObject;
+	}
+
+	private NativeObject(Class<?> nativeClass, Object nativeObject, boolean isStaticInstance) {
 		this.nativeClass = nativeClass;
 		this.isStaticInstance = isStaticInstance;
 		this.nativeObject = nativeObject;
 	}
-
+	
 	public static NativeObject getStatic(QualifiedClassName qcn) {
 		if (isNativeDisabled) {
 			return null;
@@ -38,7 +54,7 @@ public class NativeObject {
 		if (nativeClass == null) {
 			return null;
 		}
-		return new NativeObject(nativeClass, true, null);
+		return new NativeObject(nativeClass, null, true);
 	}
 
 	public NativeObject newInstance(List<Value> ctorParams) {
@@ -49,7 +65,7 @@ public class NativeObject {
 		Object[] initArgs = convertValues(ctor.getParameterTypes(), ctorParams);
 		try {
 			Object nativeObject = ctor.newInstance(initArgs);
-			return new NativeObject(nativeClass, false, nativeObject);
+			return new NativeObject(nativeClass, nativeObject);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			throw new RockstarRuntimeException("Cannot instantiate native class: " + nativeClass.getCanonicalName()
@@ -135,24 +151,6 @@ public class NativeObject {
 		return true;
 	}
 
-	private static final Class<?>[] LONG_CLASSES = new Class<?>[] { long.class, Long.class };
-
-	private static final Class<?>[] INT_CLASSES = new Class<?>[] { int.class, Integer.class };
-
-	private static final Class<?>[] DOUBLE_CLASSES = new Class<?>[] { double.class, Double.class };
-
-	private static final Class<?>[] CHAR_CLASSES = new Class<?>[] { char.class, Character.class };
-
-	private static final Class<?>[] SHORT_CLASSES = new Class<?>[] { short.class, Short.class };
-
-	private static final Class<?>[] BYTE_CLASSES = new Class<?>[] { byte.class, Byte.class };
-
-	private static final Class<?>[] FLOAT_CLASSES = new Class<?>[] { float.class, Float.class };
-
-	private static final Class<?>[] OTHER_NUMERIC_CLASSES = new Class<?>[] { BigDecimal.class, BigInteger.class };
-
-	private static final Class<?>[] ARRAY_CLASSES = new Class<?>[] { List.class, Map.class };
-
 	private static boolean matchParameterType(Class<?> cls, Value value) {
 		switch (value.getType()) {
 		case NATIVE:
@@ -195,9 +193,9 @@ public class NativeObject {
 			return value.getNative().getNativeObject();
 		case NUMBER:
 			if (isAssignableFrom(cls, BigDecimal.class)) {
-				return BigDecimal.valueOf(value.getNumeric().asDouble());
+				return value.getNumeric().asBigDecimal();
 			} else if (isAssignableFrom(cls, BigInteger.class)) {
-				return BigInteger.valueOf(value.getNumeric().asLong());
+				return value.getNumeric().asBigDecimal().toBigInteger();
 			} else if (isAssignableFrom(cls, DOUBLE_CLASSES)) {
 				return value.getNumeric().asDouble();
 			} else if (isAssignableFrom(cls, FLOAT_CLASSES)) {
@@ -258,6 +256,7 @@ public class NativeObject {
 	}
 
 	public Value callMethod(String functionName, List<Value> methodParams) {
+		functionName = functionName.replace(" ", "");
 		// get method name
 		Method method = getMethod(functionName, methodParams);
 		if (method == null && methodParams.size() == 0) {
@@ -318,7 +317,7 @@ public class NativeObject {
 		} else if (rawValue instanceof Boolean) {
 			return Value.getValue((Boolean) rawValue);
 		}
-		return Value.getValue(new NativeObject(rawValue.getClass(), false, rawValue));
+		return Value.getValue(new NativeObject(rawValue.getClass(), rawValue));
 	}
 
 	private Method getMethod(String functionName, List<Value> methodParams) {
@@ -380,7 +379,7 @@ public class NativeObject {
 
 	public static NativeObject convertValueWithTypes(Value v, List<Class<?>> classList) {
 		Object obj = convertValueWithTypes(v, classList, 0);
-		return new NativeObject(obj.getClass(), false, obj);
+		return new NativeObject(obj.getClass(), obj);
 	}
 
 	private static Object convertValueWithTypes(Value v, List<Class<?>> classes, int idx) {

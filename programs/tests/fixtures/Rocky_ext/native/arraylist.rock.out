@@ -5,7 +5,7 @@ Explicit array conversion to List<Long>
 2
 mysterious
 Implicit array conversion
-[1.0, 2.0, 3.0]
+[1, 2, 3]
 3
 1
 1

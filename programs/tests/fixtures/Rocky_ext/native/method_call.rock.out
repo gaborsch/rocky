@@ -12,3 +12,9 @@ static method OK
 static method on instance OK
 1
 property access OK
+3.0
+case-insensitive method call OK
+3
+method call with spaces OK
+1
+getter call with spaces OK

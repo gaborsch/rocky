@@ -9,13 +9,13 @@ You can also try Rocky online on the [rockyrockstar.org](https://www.rockyrockst
 **Features include:**
 * Fully compliant Rockstar implementation to date (all of the tests are OK, except the reported bugs)
 * Advanced Debugger mode (Step into/over/return/run, Breakpoints, watches, examine variable, trace expression evaluation!)
-* Interactive terminal mode (REPL - Read - Eval - Print Loop)
-* List command (parse a file without running it) (`-x` option prints the AST)
-* Detailed help with options explanation
-* IEEE754 maths (double precision), or optionally Dec64 (with option `--dec64`)
+* Interactive mode (REPL - Read - Eval - Print Loop, with command `-`)
+* IEEE754 maths (double precision, default mode), BigDecimal maths (unlimited precision, with option `--bigdecimal`) or Dec64 maths (with option `--dec64`)
+* List command (parse a file without running it, `-x` option prints the Abstract Syntax Tree)
 * Creating standalone executable (Java JRE 8+ still required)
+* Detailed help with options explanation
 
-**Special features:** 
+**Special language features:** 
 * [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
 * Native Java binding - you can use any Java class or method (e.g. [AWT graphics](https://github.com/gaborsch/rocky/tree/master/programs/awt_hello_world.rock), File I/O, security, etc.)
 * Aliases (substituting keywords)
@@ -222,9 +222,9 @@ $ ./rockstar test programs/tests/
 ============================================================
 Test results for programs/tests/:
 ============================================================
-All tests:    125
+All tests:    126
 Failed tests: 0
-Passed tests: 125
+Passed tests: 126
 Pass ratio:   100.00%
 ============================================================
 ```
@@ -240,12 +240,12 @@ On Linux-like platforms (also including Git Bash, for example), it is possible t
 Example:
 
 ```
-$ echo "Say \"Hello, standalone Rockstar\"" >hello.rock
+$ echo "Say \"Hello, Rockstar\"" >hello.rock
 $ cat hello.rock
-Say "Hello, standalone Rockstar"
+Say "Hello, Rockstar"
 $ ./pack.sh hello.rock
 Source file: hello.rock
 Executable file 'hello' created
 $ ./hello
-Hello, standalone Rockstar
+Hello, Rockstar
 ```

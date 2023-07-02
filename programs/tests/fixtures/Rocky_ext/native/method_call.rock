@@ -31,4 +31,15 @@ Let Z5 be ROUND_DOWN on Z
 Say Z5
 say "property access OK"
 
+Let Z6 be tostring on Z
+Say Z6
+say "case-insensitive method call OK"
+
+Let Z7 be Short Value on Z
+Say Z7
+say "method call with spaces OK"
+
+let Z8 be get class on Z
+Say Z8
+say "getter call with spaces OK"
 

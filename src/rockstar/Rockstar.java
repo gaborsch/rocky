@@ -15,6 +15,7 @@ import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.LoggerListener;
 import rockstar.runtime.NativeObject;
+import rockstar.runtime.NumericMode;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
@@ -27,7 +28,7 @@ import rockstar.tool.Packer;
  */
 public class Rockstar {
     
-    public static final String VERSION = "2.1.0";
+    public static final String VERSION = "2.1.2";
 
     // implementation constants
     public static final int MAX_LOOP_ITERATIONS = 10000;
@@ -157,7 +158,9 @@ public class Rockstar {
                 System.out.println("    All files use the same context.");
                 System.out.println("Options:");
                 System.out.println("    --dec64");
-                System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+                System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double) arithmetic");
+                System.out.println("    --bigdecimal");
+                System.out.println("        Uses unlimited BigDecimal arithmetic instead of the default IEEE754 (Double) arithmetic");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    --exprlog");
@@ -174,7 +177,9 @@ public class Rockstar {
             if (cmd != null) {
                 System.out.println("Options:");
                 System.out.println("    --dec64");
-                System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double precision)");
+                System.out.println("        Uses Dec64 arithmetic instead of the default IEEE754 (Double) arithmetic");
+                System.out.println("    --bigdecimal");
+                System.out.println("        Uses unlimited BigDecimal arithmetic instead of the default IEEE754 (Double) arithmetic");
                 System.out.println("    --infinite-loops");
                 System.out.println("        Loops can run infinitely. Default: maximum " + MAX_LOOP_ITERATIONS + " cycles per loop (for safety reasons)");
                 System.out.println("    -X --rocky");
@@ -321,11 +326,15 @@ public class Rockstar {
     }
 
     public static void setGlobalOptions(Map<String, String> options) {
-        boolean dec64 = options.containsKey("--dec64");
-        RockNumber.setDec64(dec64);
+        RockNumber.setMode(getNumericMode(options));
         boolean disableNativeBinding = options.containsKey("--disable-native-java");
         NativeObject.setNativeDisabled(disableNativeBinding);
-
+    }
     
-    }    
+	private static NumericMode getNumericMode(Map<String, String> options) {
+		boolean dec64 = options.containsKey("--dec64");
+		boolean bigdecimal = options.containsKey("--bigdecimal");
+		return dec64 ? NumericMode.DEC64 : (bigdecimal ? NumericMode.UNLIMITED : NumericMode.IEEE754);
+	}
+    
 }

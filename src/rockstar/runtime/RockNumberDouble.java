@@ -1,5 +1,6 @@
 package rockstar.runtime;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -57,6 +58,11 @@ public class RockNumberDouble extends RockNumber {
         return new RockNumberDouble((double) l);
     }
 
+    @Override
+    protected RockNumber getValue(BigDecimal bigValue) {
+    	return new RockNumberDouble(bigValue.doubleValue());
+    }
+
     private double convertToDbl(RockNumber n) {
         if (n instanceof RockNumberDouble) {
             return ((RockNumberDouble) n).dblValue;
@@ -103,6 +109,11 @@ public class RockNumberDouble extends RockNumber {
     public double asDouble() {
     	return dblValue;
     }
+
+	@Override
+	public BigDecimal asBigDecimal() {
+		return new BigDecimal(dblValue);
+	}
 
     @Override
     public String toString() {
