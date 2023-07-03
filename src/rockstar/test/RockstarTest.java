@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import rockstar.runtime.Environment;
+import rockstar.runtime.NumericMode;
+import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 
 /**
@@ -136,6 +138,7 @@ public class RockstarTest {
 
 //        System.out.println("--- Processing file " + file.getName() + " for " + exp + " test");
         testCount++;
+        setNumericModeByFilePath(file.getPath());
         TestResult result = new TestRun(defaultEnv.getOptions(), isStrictMode).execute(file.getAbsolutePath(), exp);
         String message = result.getMessage();
         Throwable exc = result.getException();
@@ -173,7 +176,17 @@ public class RockstarTest {
         }
     }
     
-    public static void main(String[] args) {
+    private void setNumericModeByFilePath(String path) {
+    	NumericMode mode = NumericMode.IEEE754;
+		if (path.contains("math-dec64")) {
+			mode = NumericMode.DEC64;
+		} else if (path.contains("math-bigdecimal")) {
+			mode = NumericMode.UNLIMITED;
+		}
+		RockNumber.setMode(mode);
+	}
+
+	public static void main(String[] args) {
 		HashMap<String, String> options = new HashMap<>();
 //		options.put("-v", "-v");
 		new RockstarTest(options)
