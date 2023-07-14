@@ -1,0 +1,10 @@
+from java, util play ArrayList
+from java, lang play Long
+
+log takes a message			(this method will be used as Consumer)
+  say a message
+  say "---"
+
+rock L with 1, 2
+cast L with ArrayList, Long		(L is an ArrayList)
+forEach on L taking log		(forEach expects a Consumer parameter)

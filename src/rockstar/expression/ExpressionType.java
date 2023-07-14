@@ -17,5 +17,6 @@ public enum ExpressionType {
     STRING,
     OBJECT,
     NATIVE,
-    ARRAY
+    ARRAY,
+    FUNCTION
 }

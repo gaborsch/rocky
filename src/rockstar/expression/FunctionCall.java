@@ -148,7 +148,7 @@ public class FunctionCall extends CompoundExpression {
                     funcBlock = callContext.retrieveLocalFunction(functionName);
                 } else if (objValue.isNative()) {
                 	NativeObject nativeObject = objValue.getNative();
-                	retValue = nativeObject.callMethod(functionName, values);
+                	retValue = nativeObject.callMethod(functionName, values, ctx);
                 } else {
                     throw new RockstarRuntimeException("Invalid method call " + functionName + " on a " + objValue.getType().name() + " type variable " + object);
                 }
