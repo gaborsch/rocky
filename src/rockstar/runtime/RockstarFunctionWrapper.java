@@ -109,13 +109,13 @@ public class RockstarFunctionWrapper {
 
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			if (method != functionalMethod) {
+			if (! method.equals(functionalMethod)) {
 				return method.invoke(proxy, args);
 			}
-			// wrap java parameters
+			// convert java parameters, leave non-primitives as-is
 			List<Value> functionParams = new ArrayList<>();
 			for (int i = 0; i < args.length; i++) {
-				functionParams.add(NativeObject.unwrapObject(args[i], paramClassList[i]));
+				functionParams.add(NativeObject.convertPrimitiveFromJava(args[i], paramClassList[i]));
 			}
 			// call functionBlock
 			Value returnValue = functionBlock.call(callCtx, functionParams);
