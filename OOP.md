@@ -7,13 +7,13 @@ You can instantiate a class with the constructor and call member methods. You ca
 Within the member methods you can access the parent class methods and the object instance itself. If you have a variable, you can check its runtime class. 
 All these are of course within the Rockstar limitations: no strong typing, no method overload, no null hassle (every declaration comes with assignment).
 
-This is very much like a traditional OOP, without the interfaces. Of the OOP principles, all encapsulation, inheritance, abstraction and polymorphism are covered (the latter two are partially). 
+The approach is very much like a traditional OOP, without the interfaces. Of the OOP principles, all encapsulation, inheritance, abstraction and polymorphism are covered (the latter two are partially). 
 
 ## Let's start!
 
-Let me show you a small example (this uses the "parameterless method" syntax, but only as an object method call). The explanations are on the right side.
+This small example uses the "parameterless method" syntax. The explanations are on the right side.
 
-This class represents a simple sequence class, holding a counter value and return the next value each time it is called.
+This sample class implements a simple sequence, holding a counter value and return the next value each time it is called. 
 
 ```
 a sequence looks like nothing                 (class declaration, inherits nothing)
@@ -33,13 +33,10 @@ say 2 times next from ID                      (output: "6")
 say current from ID                           (output: "3")
 ```
 
-It's easy t see that with the class feature we can write a built-in library, that could be supplied with each supporting interpreter/transpiler. 
-
-There are a few classes under the `src/main/resources/rockstar-lib` folder, including an indexed linked list implementation that can be used as an alternative for native array implementation. 
-After implementing the OOP feature we don't need to extend the language anymore.
+Rocky has a few built-in classes provided under the `src/main/resources/rockstar-lib` folder, including an indexed linked list implementation that can be used as an alternative for native array implementation. Feel free to contribute your own classes!
 
 ## Features
-I summarized the main characterisics of the OOP feature below. How it works, what will be the user experience, what's covered and what's not. I tried to highlight the most relevant OOP questions as well.
+The main characteristics of the OOP feature are below. How it works, what will be the user experience, what's covered and what's not. I tried to highlight the most relevant OOP questions as well.
 
 ### Object type:
 
@@ -169,9 +166,8 @@ Not all methods are useful for the user of the class, and it would also increase
 * https://github.com/gaborsch/rocky/blob/master/src/main/resources/rockstar-lib/core/utils/a_chain.rock
 * https://github.com/gaborsch/rocky/blob/master/src/main/resources/rockstar-lib/core/utils/a_chainlink.rock
 
-
-
 Some demo for the Chain / Array
+
 ```
 from core, utils play an array, a chain
 
