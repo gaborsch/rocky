@@ -75,10 +75,10 @@ public class TestRun {
 
             String expectedOutput;
             try {
-                // find and load expected outpu from .out file
-                File outValidationFile = new File(filename + ".out");
-                FileInputStream ois = new FileInputStream(outValidationFile);
-                BufferedReader ordr = new BufferedReader(new InputStreamReader(ois, Utils.UTF8));
+                // find and load expected output from .out file
+            	File outValidationFile = new File(filename + ".out");
+            	FileInputStream ois = new FileInputStream(outValidationFile);
+            	BufferedReader ordr = new BufferedReader(new InputStreamReader(ois, Utils.UTF8));
                 StringBuilder osb = new StringBuilder();
                 String line;
                 while ((line = ordr.readLine()) != null) {
@@ -86,9 +86,10 @@ public class TestRun {
                 }
                 expectedOutput = osb.toString();
 //                System.out.println("Output validation file " + outValidationFile.getName() + " found, " + expectedOutput.length() + " chars");
+                ordr.close();
             } catch (FileNotFoundException ex) {
                 expectedOutput = "";
-            }
+			}
 
             // output stream
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -144,7 +145,7 @@ public class TestRun {
         int lineNum = 1;
         try(Scanner exp = new Scanner(expectedOutput).useDelimiter("\\r?\\n");
         		Scanner act = new Scanner(output).useDelimiter("\\r?\\n")) {
-
+        	boolean matching = true;
 	        while (exp.hasNext() && act.hasNext()) {
 	            String expLine = exp.next();
 	            String actLine = act.next();
@@ -152,18 +153,21 @@ public class TestRun {
 	                String msg = "OUTPUT MISMATCH at line " + lineNum + ": expected '" + expLine + "', got '" + actLine + "'";
 	                result.setMessage(msg);
 	                writeCurrentOutput(filename, output);
-	                return;
+	                matching = false;
+	                break;
 	            }
 	            lineNum++;
 	        }
-	        if (exp.hasNext()) {
-	            result.setMessage("MORE OUTPUT EXPECTED at line " + lineNum);
-	            result.setDebugInfo(exp.next());
-	            writeCurrentOutput(filename, output);
-	        } else if (act.hasNext()) {
-	            result.setMessage("SURPLUS OUTPUT at line " + lineNum);
-	            result.setDebugInfo(act.next());
-	            writeCurrentOutput(filename, output);
+	        if (matching) {
+		        if (exp.hasNext()) {
+		            result.setMessage("MORE OUTPUT EXPECTED at line " + lineNum);
+		            result.setDebugInfo(exp.next());
+		            writeCurrentOutput(filename, output);
+		        } else if (act.hasNext()) {
+		            result.setMessage("SURPLUS OUTPUT at line " + lineNum);
+		            result.setDebugInfo(act.next());
+		            writeCurrentOutput(filename, output);
+		        }
 	        }
 		}
     }
