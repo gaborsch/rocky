@@ -15,9 +15,10 @@ You can also try Rocky online on the [rockyrockstar.org](https://www.rockyrockst
 * Creating standalone executable (Java JRE 8+ still required)
 * Detailed help with options explanation
 
+
 **Special language features:** 
 * [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
-* Native Java binding - you can use any Java class or method (e.g. [AWT graphics](https://github.com/gaborsch/rocky/tree/master/programs/awt_hello_world.rock), File I/O, security, etc.)
+* [Native Java](native_java.md) binding - you can use any Java class or method (e.g. AWT graphics, File I/O, security, etc.) Also. using `FunctionalInterfaces` native Java code may call back to Rockstar!
 * Aliases (substituting keywords)
 * Advanced array management features
 
@@ -222,9 +223,9 @@ $ ./rockstar test programs/tests/
 ============================================================
 Test results for programs/tests/:
 ============================================================
-All tests:    126
+All tests:    132
 Failed tests: 0
-Passed tests: 126
+Passed tests: 132
 Pass ratio:   100.00%
 ============================================================
 ```

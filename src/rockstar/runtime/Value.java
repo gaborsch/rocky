@@ -44,6 +44,7 @@ public class Value implements Comparable<Value> {
     private NativeObject nativeObject;
     private List<Value> listArrayValue;
     private Map<Value, Value> assocArrayValue;
+    private FunctionBlock function;
 
     public static Value getValue(String s) {
         return new Value(s);
@@ -81,6 +82,10 @@ public class Value implements Comparable<Value> {
         return new Value(instance);
     }
 
+    public static Value getValue(FunctionBlock function) {
+    	return new Value(function);
+    }
+    
     public static Value parse(String s) {
         return getValue(s);
     }
@@ -122,6 +127,11 @@ public class Value implements Comparable<Value> {
         this.type = ExpressionType.NATIVE;
     }
     
+    private Value(FunctionBlock function) {
+    	this.function = function;
+    	this.type = ExpressionType.FUNCTION;
+    }
+    
     public ExpressionType getType() {
         return type;
     }
@@ -154,6 +164,10 @@ public class Value implements Comparable<Value> {
         return type == ExpressionType.NATIVE;
     }
 
+    public boolean isFunction() {
+    	return type == ExpressionType.FUNCTION;
+    }
+    
     public boolean isArray() {
         return type == ExpressionType.ARRAY;
     }
@@ -175,16 +189,14 @@ public class Value implements Comparable<Value> {
                 }
             case BOOLEAN:
                 return boolValue ? RockNumber.ONE() : RockNumber.ZERO();
-            case OBJECT:
-                return RockNumber.ZERO();
-            case NATIVE:
-                return RockNumber.ZERO();
-            case MYSTERIOUS:
-                return RockNumber.ZERO();
-            case NULL:
-                return RockNumber.ZERO();
             case ARRAY:
-                return RockNumber.getValueFromLong(listArrayValue.size() + assocArrayValue.size());
+            	return RockNumber.getValueFromLong(listArrayValue.size() + assocArrayValue.size());
+            case OBJECT:
+            case NATIVE:
+            case FUNCTION:
+            case MYSTERIOUS:
+            case NULL:
+            	return RockNumber.ZERO();
         }
         throw new RockstarRuntimeException("unknown numeric value");
     }
@@ -216,6 +228,8 @@ public class Value implements Comparable<Value> {
             }
             case NATIVE:
             	return nativeObject.describe();
+            case FUNCTION:
+            	return function.getName();
             case MYSTERIOUS:
                 return "mysterious";
             case NULL:
@@ -247,16 +261,16 @@ public class Value implements Comparable<Value> {
                 return numericValue.compareTo(RockNumber.ZERO()) != 0;
             case STRING:
                 return this.stringValue.length() > 0;
-            case OBJECT:
-                return true;
             case NATIVE:
             	return nativeObject.getBool();
+            case ARRAY:
+            	return listArrayValue.size() + assocArrayValue.size() > 0;
+            case OBJECT:
+            case FUNCTION:
+            	return true;
             case MYSTERIOUS:
-                return false;
             case NULL:
                 return false;
-            case ARRAY:
-                return listArrayValue.size() + assocArrayValue.size() > 0;
         }
         throw new RockstarRuntimeException("unknown bool value");
     }
@@ -275,6 +289,13 @@ public class Value implements Comparable<Value> {
         throw new RockstarRuntimeException("unknown native object value");
     }
 
+    public FunctionBlock getFunctionBlock() {
+    	if (getType() == ExpressionType.FUNCTION) {
+    		return function;
+    	}
+    	throw new RockstarRuntimeException("unknown function value");
+    }
+    
     public Value asBoolean() {
         return getValue(getBool());
     }
@@ -290,6 +311,7 @@ public class Value implements Comparable<Value> {
             case ARRAY:
                 return getValue(this.listArrayValue.size());
             case OBJECT:
+            case FUNCTION:
                 return getValue(RockNumber.ONE());
             case NATIVE:
             	return  getValue(nativeObject.getBool() ? RockNumber.ONE() : RockNumber.ZERO());
@@ -327,9 +349,13 @@ public class Value implements Comparable<Value> {
                 return "Object(" + objectValue + ")";
             case NATIVE:
             	return "Native(" + nativeObject + ")";
-            default:
+            case FUNCTION:
+            	return "Function(" + function.getName() + ")";
+            case NULL:
+            case MYSTERIOUS:
             	return this.type.toString();
         }
+        return null;
     }
 
     public String describe() {
@@ -346,9 +372,13 @@ public class Value implements Comparable<Value> {
                 return "Object(" + objectValue + ")\n" + objectValue.describe();
             case NATIVE:
             	return nativeObject.describe();
-            default:
+            case FUNCTION:
+            	return "Function " +function.getName() + " (" + function.getParameterRefs() +  ")";
+            case NULL:
+            case MYSTERIOUS:
             	return this.type.toString();
         }
+        return null;
     }
 
     public Value negate() {
@@ -565,8 +595,11 @@ public class Value implements Comparable<Value> {
                 case ARRAY:
                     return Integer.compare(assocArrayValue.size() + listArrayValue.size(),
                             other.assocArrayValue.size() + other.listArrayValue.size());
-                default:
-                    // null, mysterious are equal to themselves
+                case FUNCTION:
+                	return Objects.equals(function, other.function) ? 0 : 1;
+                case NULL:
+                case MYSTERIOUS:
+                    // null and  mysterious are equal to themselves
                     return 0;
             }
         }
@@ -588,6 +621,11 @@ public class Value implements Comparable<Value> {
 
         // object is not equal to anything else
         if (isObject() || other.isObject()) {
+            return 1;
+        }
+
+        // function is not equal to anything else
+        if (isFunction() || other.isFunction()) {
             return 1;
         }
 
@@ -645,6 +683,8 @@ public class Value implements Comparable<Value> {
                 return false;
             case NATIVE:
             	return !nativeObject.getBool();
+            case FUNCTION:
+            	return false;
             case ARRAY:
                 return assocArrayValue.size() + listArrayValue.size() == 0;
         }
@@ -701,7 +741,10 @@ public class Value implements Comparable<Value> {
                             && Utils.isMapEquals(asAssocArray(), o.asAssocArray());
                 case NATIVE:
                 	return nativeObject.equals(o.nativeObject);
-                default:
+                case FUNCTION:
+                	return function.equals(o.function);
+                case OBJECT:
+                	return objectValue.equals(o.objectValue);
             }
         }
         return false;
@@ -782,5 +825,7 @@ public class Value implements Comparable<Value> {
         cloned.listArrayValue.addAll(listArrayValue);
         cloned.assocArrayValue.putAll(assocArrayValue);
         return cloned;
-    }   
+    }
+    
+    
 }

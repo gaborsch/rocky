@@ -57,12 +57,12 @@ public class NativeObject {
 		return new NativeObject(nativeClass, null, true);
 	}
 
-	public NativeObject newInstance(List<Value> ctorParams) {
+	public NativeObject newInstance(List<Value> ctorParams, BlockContext ctx) {
 		if (isNativeDisabled) {
 			return null;
 		}
 		Constructor<?> ctor = getConstructor(nativeClass, ctorParams);
-		Object[] initArgs = convertValues(ctor.getParameterTypes(), ctorParams);
+		Object[] initArgs = convertValuesToJava(ctor.getParameterTypes(), ctorParams, ctx);
 		try {
 			Object nativeObject = ctor.newInstance(initArgs);
 			return new NativeObject(nativeClass, nativeObject);
@@ -135,15 +135,15 @@ public class NativeObject {
 		return null;
 	}
 
-	private static boolean matchParameterTypes(Class<?>[] parameterTypes, List<Value> ctorParams) {
-		if (ctorParams == null) {
+	private static boolean matchParameterTypes(Class<?>[] parameterTypes, List<Value> methodParams) {
+		if (methodParams == null) {
 			return parameterTypes.length == 0;
 		}
-		if (parameterTypes.length != ctorParams.size()) {
+		if (parameterTypes.length != methodParams.size()) {
 			return false;
 		}
 		int i = 0;
-		for (Value value : ctorParams) {
+		for (Value value : methodParams) {
 			if (!matchParameterType(parameterTypes[i++], value)) {
 				return false;
 			}
@@ -153,41 +153,42 @@ public class NativeObject {
 
 	private static boolean matchParameterType(Class<?> cls, Value value) {
 		switch (value.getType()) {
-		case NATIVE:
-			return isAssignableFrom(cls, value.getNative().getNativeClass());
-		case NUMBER:
-			return isAssignableFrom(cls, LONG_CLASSES) || isAssignableFrom(cls, INT_CLASSES)
-					|| isAssignableFrom(cls, SHORT_CLASSES) || isAssignableFrom(cls, BYTE_CLASSES)
-					|| isAssignableFrom(cls, CHAR_CLASSES) || isAssignableFrom(cls, DOUBLE_CLASSES)
-					|| isAssignableFrom(cls, FLOAT_CLASSES) || isAssignableFrom(cls, OTHER_NUMERIC_CLASSES);
-		case STRING:
-			return isAssignableFrom(cls, String.class);
-		case ARRAY:
-			return cls.isArray() || isAssignableFrom(cls, ARRAY_CLASSES);
-		case BOOLEAN:
-			return isAssignableFrom(cls, boolean.class, Boolean.class);
-		case NULL:
-			return !cls.isPrimitive();
-		case MYSTERIOUS:
-			return false;
-		case OBJECT:
-			return false;
-		default:
-			return false;
+			case NATIVE:
+				return isAssignableFrom(cls, value.getNative().getNativeClass());
+			case NUMBER:
+				return isAssignableFrom(cls, LONG_CLASSES) || isAssignableFrom(cls, INT_CLASSES)
+						|| isAssignableFrom(cls, SHORT_CLASSES) || isAssignableFrom(cls, BYTE_CLASSES)
+						|| isAssignableFrom(cls, CHAR_CLASSES) || isAssignableFrom(cls, DOUBLE_CLASSES)
+						|| isAssignableFrom(cls, FLOAT_CLASSES) || isAssignableFrom(cls, OTHER_NUMERIC_CLASSES);
+			case STRING:
+				return isAssignableFrom(cls, String.class);
+			case ARRAY:
+				return cls.isArray() || isAssignableFrom(cls, ARRAY_CLASSES);
+			case BOOLEAN:
+				return isAssignableFrom(cls, boolean.class, Boolean.class);
+			case FUNCTION:
+				return cls.isInterface() && cls.isAnnotationPresent(FunctionalInterface.class);
+			case NULL:
+				return !cls.isPrimitive();
+			case MYSTERIOUS:
+				return false;
+			case OBJECT:
+				return false;
 		}
+		return false;
 	}
 
-	private static Object[] convertValues(Class<?>[] types, List<Value> values) {
+	private static Object[] convertValuesToJava(Class<?>[] types, List<Value> values, BlockContext ctx) {
 		Object[] args = new Object[values.size()];
 		int i = 0;
 		for (Value value : values) {
-			args[i] = convertValue(types[i], value);
+			args[i] = convertValueToJava(types[i], value, ctx);
 			i++;
 		}
 		return args;
 	}
 
-	private static Object convertValue(Class<?> cls, Value value) {
+	private static Object convertValueToJava(Class<?> cls, Value value, BlockContext ctx) {
 		switch (value.getType()) {
 		case NATIVE:
 			return value.getNative().getNativeObject();
@@ -201,7 +202,7 @@ public class NativeObject {
 			} else if (isAssignableFrom(cls, FLOAT_CLASSES)) {
 				return (float) value.getNumeric().asDouble();
 			} else if (isAssignableFrom(cls, LONG_CLASSES)) {
-				return (Long) value.getNumeric().asLong();
+				return value.getNumeric().asLong();
 			} else if (isAssignableFrom(cls, INT_CLASSES)) {
 				return value.getNumeric().asInt();
 			} else if (isAssignableFrom(cls, SHORT_CLASSES)) {
@@ -221,22 +222,24 @@ public class NativeObject {
 				Object[] arr = (Object[]) Array.newInstance(compType, valueList.size());
 				int i = 0;
 				for (Value v : valueList) {
-					arr[i++] = convertValue(compType, v);
+					arr[i++] = convertValueToJava(compType, v, ctx);
 				}
 				return arr;
 			} else if (isAssignableFrom(cls, List.class)) {
 				List<Value> valueList = value.asListArray();
 				List<Object> arrList = new ArrayList<>(valueList.size());
-				valueList.forEach(v -> arrList.add(convertValue(Object.class, v)));
+				valueList.forEach(v -> arrList.add(convertValueToJava(Object.class, v, ctx)));
 				return arrList;
-			} else if (isAssignableFrom(cls, List.class)) {
+			} else if (isAssignableFrom(cls, Map.class)) {
 				Map<Value, Value> valueMap = value.asAssocArray();
 				Map<Object, Object> arrMap = new HashMap<>();
 				valueMap.forEach(
-						(Value k, Value v) -> arrMap.put(convertValue(Object.class, k), convertValue(Object.class, v)));
+						(Value k, Value v) -> arrMap.put(convertValueToJava(Object.class, k, ctx), convertValueToJava(Object.class, v, ctx)));
 				return arrMap;
 			}
 			return null;
+		case FUNCTION:
+			return RockstarFunctionWrapper.getProxyObject(cls, value.getFunctionBlock(), ctx);
 		case BOOLEAN:
 			return value.getBool();
 		case NULL:
@@ -255,7 +258,7 @@ public class NativeObject {
 		return false;
 	}
 
-	public Value callMethod(String functionName, List<Value> methodParams) {
+	public Value callMethod(String functionName, List<Value> methodParams, BlockContext ctx) {
 		functionName = functionName.replace(" ", "");
 		// get method name
 		Method method = getMethod(functionName, methodParams);
@@ -265,7 +268,7 @@ public class NativeObject {
 			if (field != null) {
 				try {
 					Object rawValue = field.get(nativeObject);
-					return convertBack(rawValue, field.getType());
+					return convertPrimitiveFromJava(rawValue, field.getType());
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					throw new RockstarRuntimeException("Error accessing native field " + functionName + " on class "
 							+ nativeClass.getCanonicalName() + ": " + e.getMessage());
@@ -277,24 +280,24 @@ public class NativeObject {
 					"Unknown native method " + functionName + " on class " + nativeClass.getCanonicalName());
 		}
 		// convert values
-		Object[] methodArgs = convertValues(method.getParameterTypes(), methodParams);
+		Object[] methodArgs = convertValuesToJava(method.getParameterTypes(), methodParams, ctx);
 
 		// call method
 		try {
 			Object rawValue = method.invoke(nativeObject, methodArgs);
-			return convertBack(rawValue, method.getReturnType());
+			return convertPrimitiveFromJava(rawValue, method.getReturnType());
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RockstarRuntimeException("Cannot call native method " + functionName + " on class: "
 					+ nativeClass.getCanonicalName() + " with params " + methodArgs);
 		}
 	}
 
-	private Value convertBack(Object rawValue, Class<?> returnClass) {
+	public static Value convertPrimitiveFromJava(Object rawValue, Class<?> returnClass) {
 		// only primitive values (Long, Double, String, null) are converted,
 		// other objects (BigDecimal, List, array, Map, etc) are wrapped into
 		// NativeObject (also general objects)
-		// convert Void to MYSTEROIUS
-		if (returnClass.equals(Void.class)) {
+		// Void converted to MYSTEROIUS, null to NULL
+		if (returnClass.equals(Void.class) || returnClass.equals(void.class)) {
 			return Value.MYSTERIOUS;
 		} else if (rawValue == null) {
 			return Value.NULL;
@@ -321,23 +324,22 @@ public class NativeObject {
 	}
 
 	private Method getMethod(String functionName, List<Value> methodParams) {
-		Class<?> cls = nativeClass;
-		while (cls != null) {
+		Class<?> cls = getEffectiveClass();
+		if (cls != null) {
 			for (Method method : cls.getMethods()) {
 				if (method.getName().equalsIgnoreCase(functionName)
 						&& matchParameterTypes(method.getParameterTypes(), methodParams)) {
 					return method;
 				}
 			}
-			cls = cls.getSuperclass();
 		}
 		return null;
 	}
 
 	private Field getField(String functionName) {
-		Class<?> cls = nativeClass;
+		Class<?> cls = getEffectiveClass();
 		while (cls != null) {
-			for (Field field : nativeClass.getFields()) {
+			for (Field field : cls.getDeclaredFields()) {
 				if (field.getName().equalsIgnoreCase(functionName)) {
 					return field;
 				}
@@ -346,40 +348,49 @@ public class NativeObject {
 		}
 		return null;
 	}
+	
+	private Class<?> getEffectiveClass() {
+		return nativeObject == null 
+				? nativeClass
+				: nativeObject.getClass();
+	}
 
-	public Value unwrap() {
-		if (nativeObject instanceof BigDecimal) {
-			return Value.getValue(RockNumber.fromDouble(((BigDecimal) nativeObject).doubleValue()));
-		} else if (nativeObject instanceof BigInteger) {
-			return Value.getValue(RockNumber.fromLong(((BigInteger) nativeObject).longValue()));
-		} else if (nativeObject instanceof List) {
+	public Value getAsValue() {
+		return convertFromJava(nativeObject, nativeClass);
+	}
+
+	public static Value convertFromJava(Object rawObject, Class<?> cls) {
+		if (rawObject instanceof BigDecimal) {
+			return Value.getValue(RockNumber.fromDouble(((BigDecimal) rawObject).doubleValue()));
+		} else if (rawObject instanceof BigInteger) {
+			return Value.getValue(RockNumber.fromLong(((BigInteger) rawObject).longValue()));
+		} else if (rawObject instanceof List) {
 			List<Value> newList = new ArrayList<>();
-			for (Object o : (List<?>) nativeObject) {
-				newList.add(convertBack(o, Object.class));
+			for (Object o : (List<?>) rawObject) {
+				newList.add(convertPrimitiveFromJava(o, Object.class));
 			}
 			return Value.getValue(newList);
-		} else if (nativeObject instanceof Map) {
+		} else if (rawObject instanceof Map) {
 			Map<Value, Value> newMap = new HashMap<>();
-			for (Entry<?, ?> e : ((Map<?, ?>) nativeObject).entrySet()) {
-				newMap.put(convertBack(e.getKey(), Object.class), convertBack(e.getValue(), Object.class));
+			for (Entry<?, ?> e : ((Map<?, ?>) rawObject).entrySet()) {
+				newMap.put(convertPrimitiveFromJava(e.getKey(), Object.class), convertPrimitiveFromJava(e.getValue(), Object.class));
 			}
 			return Value.getValue(newMap);
-		} else if (nativeClass.isArray()) {
-			Object[] arr = (Object[]) nativeObject;
+		} else if (cls.isArray()) {
+			Object[] arr = (Object[]) rawObject;
 			List<Value> newList = new ArrayList<>(arr.length);
-			Class<?> componentType = nativeClass.getComponentType();
+			Class<?> componentType = cls.getComponentType();
 			for (int i = 0; i < arr.length; i++) {
-				newList.add(convertBack(arr[i], componentType));
+				newList.add(convertPrimitiveFromJava(arr[i], componentType));
 			}
 			return Value.getValue(newList);
 		}
-
-		return null;
+		return convertPrimitiveFromJava(rawObject, cls);
 	}
 
 	public static NativeObject convertValueWithTypes(Value v, List<Class<?>> classList) {
 		Object obj = convertValueWithTypes(v, classList, 0);
-		return new NativeObject(obj.getClass(), obj);
+		return new NativeObject(classList.get(0), obj);
 	}
 
 	private static Object convertValueWithTypes(Value v, List<Class<?>> classes, int idx) {
@@ -392,6 +403,9 @@ public class NativeObject {
 				baseClass = ArrayList.class;
 			}
 			Constructor<?> listCtor = getConstructor(baseClass, null);
+			if (listCtor == null) {
+				throw new RockstarRuntimeException(baseClass.getCanonicalName() + " does not have parameterless constructor");				
+			}
 			List<Object> listObj;
 			try {
 				Object obj = listCtor.newInstance();
@@ -447,7 +461,7 @@ public class NativeObject {
 		}
 
 		// plain value with class specification
-		return convertValue(baseClass, v);
+		return convertValueToJava(baseClass, v, null);
 	}
 
 	private static int getFirstScalarIdxAfter(List<Class<?>> classes, int idx) {

@@ -7,7 +7,9 @@ package rockstar.expression;
 
 import rockstar.parser.Keyword;
 import rockstar.runtime.BlockContext;
+import rockstar.runtime.Environment;
 import rockstar.runtime.Value;
+import rockstar.statement.FunctionBlock;
 
 /**
  *
@@ -66,7 +68,12 @@ public class VariableReference extends SimpleExpression {
             // is it a function reference?
             BlockContext funcCtx = ctx.getContextForFunction(vref.name);
             if (funcCtx != null) {
-                value = Value.BOOLEAN_TRUE;
+            	if(Environment.get().isStrictMode()) {
+            		value = Value.BOOLEAN_TRUE;
+            	} else {
+            		FunctionBlock function = funcCtx.retrieveLocalFunction(vref.name);
+            		value = Value.getValue(function);
+            	}
             }
         }
 
@@ -81,7 +88,7 @@ public class VariableReference extends SimpleExpression {
 
     @Override
     public String format() {
-        return name;
+        return "<" + name + ">";
     }
 
     @Override

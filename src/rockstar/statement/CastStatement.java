@@ -45,7 +45,7 @@ public class CastStatement extends Statement {
         // Non-primitive Native object conversion (Array, List, Map, BigDecimal, BigInteger)
         if (v.isNative()) {
         	NativeObject nativeObj = v.getNative();
-        	Value newValue = nativeObj.unwrap();
+        	Value newValue = nativeObj.getAsValue();
         	if (newValue != null) {
                 ctx.setVariable(targetRef, newValue);
                 return;

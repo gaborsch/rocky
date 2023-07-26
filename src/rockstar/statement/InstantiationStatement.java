@@ -52,7 +52,7 @@ public class InstantiationStatement extends Statement {
     		// get the class representation
     		NativeObject nativeClass = nativeClassValue.getNative();
     		// instantiate
-    		instance = Value.getValue(nativeClass.newInstance(paramValues));
+    		instance = Value.getValue(nativeClass.newInstance(paramValues, ctx));
     	}
     	if (instance == null) {    	
 	        // check if Rockstar class is defined

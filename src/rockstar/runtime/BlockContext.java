@@ -248,8 +248,12 @@ public class BlockContext {
         return funcs.get(name);
     }
     
+    protected boolean containsFunction(String name) {
+    	return funcs.containsKey(name);
+    }
+    
     public BlockContext getContextForFunction(String name) {
-        return getContextFor(this, ctx -> ctx.funcs.containsKey(name));
+        return getContextFor(this, ctx -> ctx.containsFunction(name));
     }
     
     public QualifiedClassName findClass(String name) {
