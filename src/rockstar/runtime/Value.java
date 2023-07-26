@@ -350,7 +350,7 @@ public class Value implements Comparable<Value> {
             case NATIVE:
             	return "Native(" + nativeObject + ")";
             case FUNCTION:
-            	return "Function(" + nativeObject + ")";
+            	return "Function(" + function.getName() + ")";
             case NULL:
             case MYSTERIOUS:
             	return this.type.toString();
@@ -825,5 +825,7 @@ public class Value implements Comparable<Value> {
         cloned.listArrayValue.addAll(listArrayValue);
         cloned.assocArrayValue.putAll(assocArrayValue);
         return cloned;
-    }   
+    }
+    
+    
 }

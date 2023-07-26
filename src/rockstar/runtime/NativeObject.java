@@ -324,23 +324,22 @@ public class NativeObject {
 	}
 
 	private Method getMethod(String functionName, List<Value> methodParams) {
-		Class<?> cls = nativeClass;
-		while (cls != null) {
+		Class<?> cls = getEffectiveClass();
+		if (cls != null) {
 			for (Method method : cls.getMethods()) {
 				if (method.getName().equalsIgnoreCase(functionName)
 						&& matchParameterTypes(method.getParameterTypes(), methodParams)) {
 					return method;
 				}
 			}
-			cls = cls.getSuperclass();
 		}
 		return null;
 	}
 
 	private Field getField(String functionName) {
-		Class<?> cls = nativeClass;
+		Class<?> cls = getEffectiveClass();
 		while (cls != null) {
-			for (Field field : nativeClass.getFields()) {
+			for (Field field : cls.getDeclaredFields()) {
 				if (field.getName().equalsIgnoreCase(functionName)) {
 					return field;
 				}
@@ -348,6 +347,12 @@ public class NativeObject {
 			cls = cls.getSuperclass();
 		}
 		return null;
+	}
+	
+	private Class<?> getEffectiveClass() {
+		return nativeObject == null 
+				? nativeClass
+				: nativeObject.getClass();
 	}
 
 	public Value getAsValue() {

@@ -8,3 +8,23 @@ log takes a message			(this method will be used as Consumer)
 rock L with 1, 2
 cast L with ArrayList, Long		(L is an ArrayList)
 forEach on L taking log		(forEach expects a Consumer parameter)
+
+
+a wrapper looks like nothing			(Rockstar object, to represent a context for the functional interface)
+  let the sum be 0						(object property)
+  testfunc takes a list					(this is the main test method that receives a native ArrayLList object)
+  the sign says the number is: 
+  forEach on a list taking callback		(the parameter for ArrayList::forEach is another function on this object)
+  say the sum							(the object property is being read here)
+  
+  callback takes a param				(this function is the Consumer for the foreach)
+  summarizer taking a param				(and it calls another method)
+  say the sign with a param				(the callee has access to the local variable 'the sign' of the caller!)
+
+  summarizer takes a value				(this method just sums the values in the object property)
+  let the sum be with a value			(the object property is being written here, within the foreach!)
+  
+(end of wrapper)
+
+obj will be a wrapper
+testfunc on obj taking L
