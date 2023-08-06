@@ -77,7 +77,7 @@ public class RockstarList implements StatementVisitor {
 			}
 			s = l.get(l.size() - 1);
 		}
-		int maxLineNum = s.getLine().getLnum();
+		int maxLineNum = s.getLine() == null ? 1 : s.getLine().getLnum();
 		int width = (maxLineNum < 10 ? 2 : (maxLineNum < 100 ? 2 : (maxLineNum < 1000 ? 3 : 4)));
 		this.lineNumberFormat = "(%" + width + "d) ";
 	}
