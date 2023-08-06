@@ -103,6 +103,9 @@ public class RockstarRepl {
                     try {
                         MultilineReader rdr = new MultilineReader(new BufferedReader(new StringReader(l)), "-");
                         final Line line = rdr.readLine();
+                        if (line == null) {
+                        	continue;
+                        }
 
                         // parse the statement
                         Statement stmt = StatementFactory.getStatementFor(line, blocks.peek());
