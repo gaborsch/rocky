@@ -6,9 +6,8 @@
 package rockstar.statement;
 
 import java.io.IOException;
-import java.util.List;
+
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -42,11 +41,6 @@ public class ListenStatement extends Statement {
         if (variable != null) {
             ctx.setVariable(variable, Value.parse(inputLine));
         }
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(variable);
     }
 
     

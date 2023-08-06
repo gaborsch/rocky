@@ -5,11 +5,6 @@
  */
 package rockstar.runtime;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-
-import rockstar.statement.ClassBlock;
 import rockstar.statement.FunctionBlock;
 
 /**

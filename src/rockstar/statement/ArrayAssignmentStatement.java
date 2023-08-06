@@ -7,10 +7,10 @@ package rockstar.statement;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import rockstar.expression.Expression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -52,14 +52,6 @@ public class ArrayAssignmentStatement extends Statement {
         ctx.setVariable(this.variable, arrayValue);
     }
 
-    @Override
-    public List<ASTAware> getASTChildren() {
-        List<ASTAware> astParams = new LinkedList<>();
-        astParams.add(variable);
-        astParams.addAll(expressionList);
-        return astParams;
-    }
-    
     @Override
     public void accept(StatementVisitor visitor) {
     	visitor.visit(this);

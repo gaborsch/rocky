@@ -45,9 +45,4 @@ public abstract class Expression implements VisitableExpression, ASTAware {
         return this.getClass().getSimpleName().replace("Expression", "") + " " + format();
     }
 
-    @Override
-    public Integer getASTLineNum() {
-        return null;
-    }
-    
 }

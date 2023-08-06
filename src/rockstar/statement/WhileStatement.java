@@ -5,10 +5,8 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.Rockstar;
 import rockstar.expression.Expression;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarBreakException;
 import rockstar.runtime.RockstarContinueException;
@@ -71,14 +69,6 @@ public class WhileStatement extends Block {
     public String getASTNodeText() {
         return negateCondition ? "Until" : "While";
     }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        List<ASTAware> astValues = ASTValues.of(condition);
-        astValues.addAll(super.getASTChildren());
-        return astValues;
-    }
-
     
     @Override
     public void accept(StatementVisitor visitor) {

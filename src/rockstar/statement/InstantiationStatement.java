@@ -6,12 +6,11 @@
 package rockstar.statement;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import rockstar.expression.Expression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.NativeObject;
 import rockstar.runtime.QualifiedClassName;
@@ -75,14 +74,6 @@ public class InstantiationStatement extends Statement {
     @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + " of class " + classRef.geTokensAsString();
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        List<ASTAware> astParams = new LinkedList<>();
-        astParams.add(variable);
-        astParams.addAll(ctorParameterExprs);
-        return astParams;
     }
     
     @Override

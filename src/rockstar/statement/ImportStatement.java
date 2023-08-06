@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import rockstar.expression.VariableReference;
 import rockstar.parser.Token;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.NativeObject;
@@ -62,15 +61,6 @@ public class ImportStatement extends Statement {
         		root.importClass(qcn);
             }            
         }
-    }
-
-
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        List<ASTAware> astValues = ASTValues.of(path.toString());
-        astValues.addAll(ASTValues.of((String[]) names.toArray(new String[names.size()])));
-        return astValues;
     }
     
     @Override

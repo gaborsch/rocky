@@ -7,8 +7,8 @@ package rockstar.statement;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarReturnException;
 import rockstar.runtime.RockstarRuntimeException;
@@ -87,14 +87,6 @@ public class FunctionBlock extends Block {
     @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + " " + name;
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        List<ASTAware> astChildren = new ArrayList<>();
-        astChildren.addAll(parameterRefs);
-        astChildren.addAll(super.getASTChildren());
-        return astChildren;
     }
     
     @Override

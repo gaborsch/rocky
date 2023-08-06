@@ -5,9 +5,7 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.expression.Expression;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -27,11 +25,6 @@ public class SayStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value v = expression.evaluate(ctx);
         ctx.getEnv().getOutput().println(v.asScalar().getString());
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(expression);
     }
     
     @Override

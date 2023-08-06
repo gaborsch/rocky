@@ -6,8 +6,8 @@
 package rockstar.statement;
 
 import java.util.List;
+
 import rockstar.expression.MutationExpression;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -46,11 +46,6 @@ public class JoinStatement extends Statement {
         // assign the value to the variable
         AssignmentStatement.assign(expr.getTargetReference(), stringValue, ctx);
 
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(expr);
     }
     
     @Override

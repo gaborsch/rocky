@@ -6,8 +6,8 @@
 package rockstar.statement;
 
 import java.util.List;
+
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -52,12 +52,6 @@ public class RollStatement extends Statement {
         } else {
             throw new RockstarRuntimeException("Rolling from a nonexistent variable: " + arrayVariable);
         }
-    }
-
-    @Override
-
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(targetRef, arrayVariable);
     }
     
     @Override

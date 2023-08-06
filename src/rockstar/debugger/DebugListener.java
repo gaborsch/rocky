@@ -22,6 +22,8 @@ import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 import rockstar.statement.Block;
 import rockstar.statement.Program;
+import rockstar.statement.RockstarASTList;
+import rockstar.statement.RockstarList;
 import rockstar.statement.Statement;
 
 /**
@@ -222,7 +224,13 @@ public class DebugListener implements BlockContextListener {
                         // list the program
                         String optionStr = line.substring(4).trim();
                         boolean explain = "-x".equals(optionStr);
-                        System.out.println(this.program.listProgram(true, !explain, explain));
+                        if (explain) {
+        	                RockstarASTList lister = new RockstarASTList(this.program);
+        	                System.out.println(lister.list());
+                        } else {
+        	                RockstarList lister = new RockstarList(this.program, true);
+        	                System.out.println(lister.list());
+                        }
                     } else if (line.equals(".")) {
                         // print the current line again
                         System.out.format("Line %d: %s\n", l.getLnum(), l.getOrigLine());

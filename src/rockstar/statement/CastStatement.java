@@ -12,7 +12,6 @@ import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.MutationExpression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.NativeObject;
 import rockstar.runtime.RockNumber;
@@ -117,11 +116,6 @@ public class CastStatement extends Statement {
 		}
 		return Value.getValue(NativeObject.convertValueWithTypes(v, typeClasses));
 	}
-
-	@Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(expr);
-    }
     
     @Override
     public void accept(StatementVisitor visitor) {

@@ -5,8 +5,6 @@
  */
 package rockstar.statement;
 
-import java.util.List;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.PackagePath;
@@ -32,11 +30,6 @@ public class PkgDefStatement extends Statement {
         } else {
             throw new RockstarRuntimeException("Package can be set on file level only: " + path);
         }
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(path.toString());
     }
     
     @Override

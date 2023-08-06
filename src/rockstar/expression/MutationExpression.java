@@ -8,11 +8,9 @@ package rockstar.expression;
 import java.util.LinkedList;
 import java.util.List;
 
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
-import rockstar.statement.ASTValues;
 
 /**
  *
@@ -160,11 +158,6 @@ public class MutationExpression extends CompoundExpression {
         return baseExpr.evaluate(ctx);
     }
 
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(baseExpr, withExpr, intoExpr);
-    }
-    
     @Override
     public void accept(ExpressionVisitor visitor) {
     	visitor.visit(this);

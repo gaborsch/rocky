@@ -64,9 +64,4 @@ public abstract class Statement implements ASTAware, VisitableStatement {
         return this.getClass().getSimpleName().replace("Statement", "");
     }
 
-    @Override
-    public Integer getASTLineNum() {
-        return line != null ? line.getLnum() : null;
-    }
-
 }

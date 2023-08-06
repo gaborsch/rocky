@@ -5,8 +5,6 @@
  */
 package rockstar.statement;
 
-import java.util.List;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 
 /**
@@ -17,11 +15,6 @@ public class BlockEnd extends Statement {
 
     @Override
     public void execute(BlockContext ctx) {
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return null;
     }
     
     @Override

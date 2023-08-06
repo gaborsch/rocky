@@ -14,6 +14,8 @@ import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.LoggerListener;
 import rockstar.statement.Program;
+import rockstar.statement.RockstarASTList;
+import rockstar.statement.RockstarList;
 
 /**
  *
@@ -73,13 +75,13 @@ public class RockstarApi {
     public String list(String filename, String fileContent) {
         Rockstar.setGlobalOptions(env.getOptions());
         Program prg = new Parser(fileContent, filename, env).parse();
-        return prg.listProgram(false, true, false);
+        return new RockstarList(prg, false).list().toString();
     }
 
     public String explain(String filename, String fileContent) {
         Rockstar.setGlobalOptions(env.getOptions());
         Program prg = new Parser(fileContent, filename, env).parse();
-        return prg.listProgram(true, false, true);
+        return new RockstarASTList(prg).list().toString();
     }
     
 }

@@ -6,11 +6,10 @@
 package rockstar.statement;
 
 import java.util.Arrays;
-import java.util.List;
+
 import rockstar.expression.Expression;
 import rockstar.expression.ListExpression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -60,11 +59,6 @@ public class RockStatement extends Statement {
             Value value = expression.evaluate(ctx);
             ctx.setVariable(this.variable, arrayValue.push(value));
         }
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(variable, expression);
     }
     
     @Override

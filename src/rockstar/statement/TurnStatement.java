@@ -5,9 +5,7 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarRuntimeException;
@@ -75,11 +73,6 @@ public class TurnStatement extends Statement {
     @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + " " + direction;
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(variable);
     }
     
     @Override

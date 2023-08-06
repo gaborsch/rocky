@@ -5,10 +5,8 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.parser.Line;
 import rockstar.parser.ParseException;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 
 /**
@@ -25,11 +23,6 @@ public class InvalidStatement extends Statement {
     @Override
     public void execute(BlockContext ctx) {
         throw new UnsupportedOperationException("InvalidStatement not supported.");
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(getLine().getOrigLine());
     }
     
     @Override

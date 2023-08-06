@@ -5,9 +5,7 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.parser.ParserError;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 
@@ -40,12 +38,6 @@ public class StatementError extends Statement {
             prg.addError(new ParserError(this.getLine(), this.pos, this.msg));
         }
         return true;
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        // indentation is to match the error marker positioning
-        return ASTValues.of("   " + getLine().getOrigLine());
     }
     
     @Override

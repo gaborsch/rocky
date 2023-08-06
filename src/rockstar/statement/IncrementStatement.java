@@ -5,11 +5,9 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.expression.ConstantExpression;
 import rockstar.expression.PlusExpression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.RockstarRuntimeException;
@@ -71,11 +69,6 @@ public class IncrementStatement extends Statement {
     @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + (count != 1 ? (" by " + count) : "");
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(variable);
     }
     
     @Override

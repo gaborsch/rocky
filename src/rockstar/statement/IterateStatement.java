@@ -9,11 +9,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import rockstar.expression.Expression;
 import rockstar.expression.ExpressionType;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarBreakException;
 import rockstar.runtime.RockstarContinueException;
@@ -141,11 +141,6 @@ public class IterateStatement extends Block {
                 canContinue = false;
             }
         }
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(arrayExpr, asExpr);
     }
     
     @Override

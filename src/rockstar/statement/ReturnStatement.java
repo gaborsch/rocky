@@ -5,9 +5,7 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.expression.Expression;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarReturnException;
 import rockstar.runtime.Value;
@@ -40,11 +38,6 @@ public class ReturnStatement extends Statement {
     public void execute(BlockContext ctx) {
         Value value = expression.evaluate(ctx);
         throw new RockstarReturnException(value);
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(expression);
     }
     
     @Override

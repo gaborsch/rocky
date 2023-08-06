@@ -5,10 +5,7 @@
  */
 package rockstar.statement;
 
-import java.util.List;
-
 import rockstar.expression.Expression;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 
 /**
@@ -31,11 +28,6 @@ public class ExpressionStatement extends Statement {
     public void execute(BlockContext ctx) {
         //discard value
         expression.evaluate(ctx);
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(expression);
     }
     
     @Override

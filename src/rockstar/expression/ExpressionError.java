@@ -7,16 +7,13 @@ package rockstar.expression;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import rockstar.parser.Line;
 import rockstar.parser.Token;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Utils;
 import rockstar.runtime.Value;
-import rockstar.statement.ASTValues;
 
 /**
  *
@@ -86,11 +83,6 @@ public class ExpressionError extends Expression {
         return false;
     }
 
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(tokens.stream().map(Token::getValue).collect(Collectors.joining(" ")));
-    }
-    
     @Override
     public void accept(ExpressionVisitor visitor) {
     	visitor.visit(this);

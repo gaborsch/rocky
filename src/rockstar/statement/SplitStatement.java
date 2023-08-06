@@ -8,8 +8,8 @@ package rockstar.statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import rockstar.expression.MutationExpression;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -67,11 +67,6 @@ public class SplitStatement extends Statement {
             start = end + sepLen;
         }
         return parts;
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(expr);
     }
     
     @Override

@@ -31,6 +31,7 @@ import rockstar.runtime.Environment;
 import rockstar.runtime.FileContext;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
+import rockstar.statement.RockstarList;
 
 /**
  *
@@ -116,7 +117,9 @@ public class TestRun {
             } catch (FileNotFoundException ex) {
                 result.setException(ex);
             }
-            result.setDebugInfo(prg == null ? "Not parsed" : prg.listProgram(true, true, false));
+            result.setDebugInfo(prg == null 
+            		? "Not parsed" 
+            		: new RockstarList(prg, true).list().toString());
 
             String output = null;
             try {

@@ -5,12 +5,10 @@
  */
 package rockstar.expression;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.Utils;
 
 /**
@@ -119,13 +117,6 @@ public abstract class CompoundExpression extends Expression {
             return paramCount == o.paramCount && Utils.isListEquals(parameters, o.parameters);
         }
         return false;
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        List<ASTAware> astChildren = new ArrayList<>();
-        astChildren.addAll(parameters);
-        return astChildren;
     }
 
 }

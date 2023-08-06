@@ -6,7 +6,7 @@
 package rockstar.statement;
 
 import java.util.List;
-import rockstar.runtime.ASTAware;
+
 import rockstar.runtime.BlockContext;
 
 /**
@@ -36,11 +36,6 @@ public class AliasStatement extends Statement {
         // alias definition executed immediately by the Parser
     }
 
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(String.join(" ", alias), String.join(" ", keyword));
-    }
-    
     @Override
     public void accept(StatementVisitor visitor) {
     	visitor.visit(this);

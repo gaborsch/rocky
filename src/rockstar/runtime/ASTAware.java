@@ -5,8 +5,6 @@
  */
 package rockstar.runtime;
 
-import java.util.List;
-
 /**
  *
  * @author Gabor
@@ -14,9 +12,5 @@ import java.util.List;
 public interface ASTAware {
 
     public String getASTNodeText();
-
-    public List<ASTAware> getASTChildren();
-
-    public Integer getASTLineNum();
 
 }

@@ -1,7 +1,5 @@
 package rockstar.statement;
 
-import rockstar.expression.Expression;
-
 public interface StatementVisitor {
 
 	void visit(AliasStatement aliasStatement);

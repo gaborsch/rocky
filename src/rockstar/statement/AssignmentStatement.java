@@ -5,11 +5,9 @@
  */
 package rockstar.statement;
 
-import java.util.List;
 import rockstar.expression.Expression;
 import rockstar.expression.QualifierExpression;
 import rockstar.expression.VariableReference;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
@@ -66,11 +64,6 @@ public class AssignmentStatement extends Statement {
         } else {
             throw new RockstarRuntimeException("Cannot assign to " + variableExpr.format());
         }
-    }
-
-    @Override
-    public List<ASTAware> getASTChildren() {
-        return ASTValues.of(variableExpression, valueExpression);
     }
     
     @Override
