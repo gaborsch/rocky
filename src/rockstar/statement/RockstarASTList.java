@@ -93,8 +93,7 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 	}
 
 	private String getStatementDisplayName(Statement stmt) {
-		return stmt.getASTNodeText();
-//		return stmt.getClass().getSimpleName().replaceFirst("Statement", "");
+		return stmt.getStatementDisplayText();
 	}
 
 	private void list(Block block, List<RoleAndValue> values) {

@@ -108,11 +108,6 @@ public class ComparisonExpression extends CompoundExpression implements Subtyped
         }
         return false;
     }
-
-    @Override
-    public String getASTNodeText() {
-        return type.toString();
-    }
     
     @Override
     public void accept(ExpressionVisitor visitor) {

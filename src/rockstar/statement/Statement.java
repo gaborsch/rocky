@@ -6,14 +6,13 @@
 package rockstar.statement;
 
 import rockstar.parser.Line;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 
 /**
  *
  * @author Gabor
  */
-public abstract class Statement implements ASTAware, VisitableStatement {
+public abstract class Statement implements VisitableStatement {
 
     private Line line;
     private Block block;
@@ -59,8 +58,7 @@ public abstract class Statement implements ASTAware, VisitableStatement {
         this.block = block;
     }
 
-    @Override
-    public String getASTNodeText() {
+    public String getStatementDisplayText() {
         return this.getClass().getSimpleName().replace("Statement", "");
     }
 

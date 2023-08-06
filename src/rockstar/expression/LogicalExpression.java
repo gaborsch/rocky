@@ -72,11 +72,6 @@ public class LogicalExpression extends CompoundExpression implements SubtypedExp
         }
         return ctx.afterExpression(this, null);
     }
-
-    @Override
-    public String getASTNodeText() {
-        return type.name();
-    }
     
     @Override
     public void accept(ExpressionVisitor visitor) {

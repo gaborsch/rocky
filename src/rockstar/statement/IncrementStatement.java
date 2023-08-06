@@ -67,8 +67,8 @@ public class IncrementStatement extends Statement {
     }
 
     @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + (count != 1 ? (" by " + count) : "");
+    public String getStatementDisplayText() {
+        return super.getStatementDisplayText() + (count != 1 ? (" by " + count) : "");
     }
     
     @Override

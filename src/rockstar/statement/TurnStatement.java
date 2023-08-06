@@ -71,8 +71,8 @@ public class TurnStatement extends Statement {
     }
 
     @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + " " + direction;
+    public String getStatementDisplayText() {
+        return super.getStatementDisplayText() + " " + direction;
     }
     
     @Override

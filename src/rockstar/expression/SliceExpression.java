@@ -87,11 +87,6 @@ public class SliceExpression extends CompoundExpression {
 
         return ctx.afterExpression(this, retValue);
     }
-
-    @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + type.name();
-    }
     
     @Override
     public void accept(ExpressionVisitor visitor) {

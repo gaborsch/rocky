@@ -85,8 +85,8 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + " " + name;
+    public String getStatementDisplayText() {
+        return super.getStatementDisplayText() + " " + name;
     }
     
     @Override

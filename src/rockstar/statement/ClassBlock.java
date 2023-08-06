@@ -130,7 +130,7 @@ public class ClassBlock extends Block {
     }
 
     @Override
-    public String getASTNodeText() {
+    public String getStatementDisplayText() {
         return "Class " + name + (parentName == null ? "" : " extends " + parentName);
     }
     

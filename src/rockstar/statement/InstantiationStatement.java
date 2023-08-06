@@ -72,8 +72,8 @@ public class InstantiationStatement extends Statement {
     }
 
     @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + " of class " + classRef.geTokensAsString();
+    public String getStatementDisplayText() {
+        return super.getStatementDisplayText() + " of class " + classRef.geTokensAsString();
     }
     
     @Override

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import rockstar.parser.Token;
-import rockstar.runtime.ASTAware;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Value;
 
@@ -17,7 +16,7 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public abstract class Expression implements VisitableExpression, ASTAware {
+public abstract class Expression implements VisitableExpression {
 	
 	private List<Token> tokens;
 	
@@ -39,10 +38,5 @@ public abstract class Expression implements VisitableExpression, ASTAware {
     public abstract Value evaluate(BlockContext ctx);
 
     public abstract String format();
-
-    @Override
-    public String getASTNodeText() {
-        return this.getClass().getSimpleName().replace("Expression", "") + " " + format();
-    }
 
 }

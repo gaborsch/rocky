@@ -35,11 +35,6 @@ public class NotExpression extends CompoundExpression {
         Value v = expr.evaluate(ctx);
         return ctx.afterExpression(this, v.negate());
     }
-
-    @Override
-    public String getASTNodeText() {
-        return "NOT";
-    }
     
     @Override
     public void accept(ExpressionVisitor visitor) {

@@ -121,8 +121,8 @@ public class Program extends Block {
 //    }
 
     @Override
-    public String getASTNodeText() {
-        return super.getASTNodeText() + " " + (name != null ? name : null);
+    public String getStatementDisplayText() {
+        return super.getStatementDisplayText() + " " + (name != null ? name : null);
     }
     
     @Override
