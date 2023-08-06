@@ -12,7 +12,7 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public class LogicalExpression extends CompoundExpression {
+public class LogicalExpression extends CompoundExpression implements SubtypedExpression {
 
     public enum LogicalType {
         AND,
@@ -27,8 +27,13 @@ public class LogicalExpression extends CompoundExpression {
         this.type = type;
     }
 
-    public LogicalType getType() {
-        return type;
+    @Override
+    public String getType() {
+    	return type.name();
+    }
+
+    public boolean isAndExpression() {
+        return type == LogicalType.AND;
     }
 
     @Override
@@ -71,6 +76,11 @@ public class LogicalExpression extends CompoundExpression {
     @Override
     public String getASTNodeText() {
         return type.name();
+    }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

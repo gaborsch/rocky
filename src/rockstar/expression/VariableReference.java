@@ -106,5 +106,10 @@ public class VariableReference extends SimpleExpression {
     public VariableReference getEffectiveVref(BlockContext ctx) {
         return this;
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

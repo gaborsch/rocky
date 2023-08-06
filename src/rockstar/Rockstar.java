@@ -19,6 +19,8 @@ import rockstar.runtime.NumericMode;
 import rockstar.runtime.RockNumber;
 import rockstar.runtime.Utils;
 import rockstar.statement.Program;
+import rockstar.statement.RockstarASTList;
+import rockstar.statement.RockstarList;
 import rockstar.test.RockstarTest;
 import rockstar.tool.Packer;
 
@@ -288,7 +290,16 @@ public class Rockstar {
         rockFiles.forEach((filename) -> {
             try {
                 Program prg = new Parser(filename, env).parse();
-                System.out.println(prg.listProgram(lineNums, !explain, explain));
+                // old
+//                System.out.println(prg.listProgram(lineNums, !explain, explain));
+                // new
+                if (explain) {
+	                RockstarASTList lister = new RockstarASTList(prg);
+	                System.out.println(lister.list());
+                } else {
+	                RockstarList lister = new RockstarList(prg, lineNums);
+	                System.out.println(lister.list());
+                }
             } catch (FileNotFoundException ex) {
                 System.err.println("File not found: " + filename);
             } catch (RuntimeException re) {

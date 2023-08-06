@@ -21,8 +21,8 @@ import rockstar.runtime.Value;
  */
 public class IncrementStatement extends Statement {
 
-    private final VariableReference variable;
-    private final int count;
+    final VariableReference variable;
+    final int count;
     private PlusExpression plus;
 
     public IncrementStatement(VariableReference variable, int count) {
@@ -76,6 +76,11 @@ public class IncrementStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variable);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

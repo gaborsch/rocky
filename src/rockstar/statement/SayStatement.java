@@ -17,7 +17,7 @@ import rockstar.runtime.Value;
  */
 public class SayStatement extends Statement {
 
-    private final Expression expression;
+    final Expression expression;
 
     public SayStatement(Expression expression) {
         this.expression = expression;
@@ -32,5 +32,10 @@ public class SayStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expression);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

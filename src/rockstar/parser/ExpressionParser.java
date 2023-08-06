@@ -19,6 +19,7 @@ import rockstar.expression.ConstantExpression;
 import rockstar.expression.DivideExpression;
 import rockstar.expression.Expression;
 import rockstar.expression.ExpressionError;
+import rockstar.expression.ExpressionVisitor;
 import rockstar.expression.FunctionCall;
 import rockstar.expression.InstanceCheckExpression;
 import rockstar.expression.IntoExpression;
@@ -299,7 +300,7 @@ public class ExpressionParser {
         	Precedence newPrec = operator.getPrecedence();
             if (operatorStack.peek() instanceof FunctionCall
                     && operator instanceof LogicalExpression
-                    && ((LogicalExpression) operator).getType() == LogicalType.AND) {
+                    && ((LogicalExpression) operator).isAndExpression()) {
                 break;
             }
 
@@ -580,6 +581,10 @@ public class ExpressionParser {
         @Override
         public String format() {
             return "$";
+        }
+        
+        @Override
+        public void accept(ExpressionVisitor visitor) {
         }
 
     }

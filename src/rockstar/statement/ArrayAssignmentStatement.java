@@ -20,9 +20,9 @@ import rockstar.runtime.Value;
  */
 public class ArrayAssignmentStatement extends Statement {
 
-    private final VariableReference variable;
-    private final List<Expression> expressionList = new LinkedList<>();
-
+    final VariableReference variable;
+    final List<Expression> expressionList = new LinkedList<>();
+    
     public ArrayAssignmentStatement(VariableReference variable) {
         this.variable = variable;
     }
@@ -58,6 +58,11 @@ public class ArrayAssignmentStatement extends Statement {
         astParams.add(variable);
         astParams.addAll(expressionList);
         return astParams;
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

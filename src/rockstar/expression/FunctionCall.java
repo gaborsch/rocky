@@ -31,6 +31,14 @@ public class FunctionCall extends CompoundExpression {
         this.functionName = methodName;
     }
     
+    public VariableReference getObject() {
+		return object;
+	}
+    
+    public String getFunctionName() {
+		return functionName;
+	}
+    
     @Override
     public int getParameterCount() {
         // FunctionCall takes the name and the parameter list
@@ -212,6 +220,11 @@ public class FunctionCall extends CompoundExpression {
         List<ASTAware> astParams = ASTValues.of(object);
         astParams.addAll(super.getASTChildren());
         return astParams;
+    }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

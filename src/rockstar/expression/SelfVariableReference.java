@@ -37,5 +37,10 @@ public class SelfVariableReference extends VariableReference {
     public VariableReference getEffectiveVref(BlockContext ctx) {
         return ctx.getLastVariableRef();
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

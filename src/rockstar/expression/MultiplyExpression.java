@@ -46,4 +46,9 @@ public class MultiplyExpression extends CompoundExpression {
         }    
         return v;
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 }

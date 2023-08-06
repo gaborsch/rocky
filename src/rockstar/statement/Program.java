@@ -125,5 +125,10 @@ public class Program extends Block {
     public String getASTNodeText() {
         return super.getASTNodeText() + " " + (name != null ? name : null);
     }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

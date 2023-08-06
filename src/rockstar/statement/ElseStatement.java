@@ -46,5 +46,10 @@ public class ElseStatement extends Block implements ContinuingBlockStatementI {
     public void executeElse(BlockContext ctx) {
         super.execute(ctx);
     }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

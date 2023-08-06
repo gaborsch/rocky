@@ -96,5 +96,10 @@ public class FunctionBlock extends Block {
         astChildren.addAll(super.getASTChildren());
         return astChildren;
     }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

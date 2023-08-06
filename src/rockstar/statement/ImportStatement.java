@@ -26,9 +26,9 @@ import rockstar.runtime.Value;
  */
 public class ImportStatement extends Statement {
 
-    private final PackagePath path;
-    private final List<String> names;
-    private final List<List<Token>> tokens;
+    final PackagePath path;
+    final List<String> names;
+    final List<List<Token>> tokens;
 
     public ImportStatement(PackagePath path, List<String> aliases, List<List<Token>> names) {
         this.path = path;
@@ -71,6 +71,11 @@ public class ImportStatement extends Statement {
         List<ASTAware> astValues = ASTValues.of(path.toString());
         astValues.addAll(ASTValues.of((String[]) names.toArray(new String[names.size()])));
         return astValues;
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

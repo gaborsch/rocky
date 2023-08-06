@@ -17,7 +17,7 @@ import rockstar.runtime.BlockContext;
  */
 public class ExpressionStatement extends Statement {
 
-    private final Expression expression;
+    final Expression expression;
 
     public ExpressionStatement(Expression expression) {
         this.expression = expression;
@@ -36,6 +36,11 @@ public class ExpressionStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expression);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

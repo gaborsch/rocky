@@ -90,5 +90,10 @@ public class ExpressionError extends Expression {
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(tokens.stream().map(Token::getValue).collect(Collectors.joining(" ")));
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

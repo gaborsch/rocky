@@ -25,7 +25,7 @@ import rockstar.runtime.Value;
  */
 public class CastStatement extends Statement {
 
-    private final MutationExpression expr;
+    final MutationExpression expr;
 
     public CastStatement(MutationExpression mutationExpression) {
         this.expr = mutationExpression;
@@ -121,5 +121,10 @@ public class CastStatement extends Statement {
 	@Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expr);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

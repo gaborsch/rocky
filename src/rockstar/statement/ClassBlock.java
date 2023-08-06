@@ -15,8 +15,8 @@ import rockstar.runtime.*;
  */
 public class ClassBlock extends Block {
 
-    private final String name;
-    private final String parentName;
+    final String name;
+    final String parentName;
 
     private QualifiedClassName qualifiedName;
     private QualifiedClassName qualifiedParentName;
@@ -132,6 +132,11 @@ public class ClassBlock extends Block {
     @Override
     public String getASTNodeText() {
         return "Class " + name + (parentName == null ? "" : " extends " + parentName);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

@@ -94,5 +94,10 @@ public class ConstantExpression extends SimpleExpression {
     public String getASTNodeText() {
         return super.getASTNodeText() + " (" + value.getType() + ")";
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

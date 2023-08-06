@@ -18,7 +18,7 @@ import rockstar.runtime.Value;
  */
 public class ListenStatement extends Statement {
 
-    private final VariableReference variable;
+    final VariableReference variable;
 
     public ListenStatement(VariableReference variable) {
         this.variable = variable;
@@ -47,5 +47,11 @@ public class ListenStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variable);
+    }
+
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

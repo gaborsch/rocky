@@ -31,5 +31,10 @@ public class InvalidStatement extends Statement {
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(getLine().getOrigLine());
     }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

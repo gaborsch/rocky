@@ -48,5 +48,10 @@ public class IfStatement extends Block {
         astValues.addAll(super.getASTChildren());
         return astValues;
     }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

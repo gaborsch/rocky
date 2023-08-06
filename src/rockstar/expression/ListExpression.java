@@ -111,7 +111,7 @@ public class ListExpression extends CompoundExpression {
         }
         if (expr instanceof LogicalExpression) {
             LogicalExpression lexpr = (LogicalExpression) expr;
-            if (lexpr.getType() == LogicalExpression.LogicalType.AND) {
+            if (lexpr.isAndExpression()) {
                 ListExpression newExpr = expandTo(lexpr, new ListExpression());
                 return newExpr;
             }
@@ -131,7 +131,7 @@ public class ListExpression extends CompoundExpression {
             compExpr.getParameters().forEach(expr2 -> expandTo(expr2, newExpr));
         } else if (expr instanceof LogicalExpression) {
             LogicalExpression lexpr = (LogicalExpression) expr;
-            if (lexpr.getType() == LogicalExpression.LogicalType.AND) {
+            if (lexpr.isAndExpression()) {
                 lexpr.getParameters().forEach(expr2 -> expandTo(expr2, newExpr));
             }
         } else if (expr instanceof SimpleExpression || expr instanceof UnaryMinusExpression) {
@@ -140,6 +140,11 @@ public class ListExpression extends CompoundExpression {
             return null;
         }
         return newExpr;
+    }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

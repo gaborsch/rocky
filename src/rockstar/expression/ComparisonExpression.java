@@ -12,7 +12,7 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public class ComparisonExpression extends CompoundExpression {
+public class ComparisonExpression extends CompoundExpression implements SubtypedExpression {
 
     public enum ComparisonType {
         EQUALS("=="),
@@ -56,6 +56,11 @@ public class ComparisonExpression extends CompoundExpression {
     public ComparisonExpression(ComparisonType type) {
         super(Precedence.COMPARISON);
         this.type = type;
+    }
+
+    @Override
+    public String getType() {
+    	return type.name();
     }
 
     @Override
@@ -107,6 +112,11 @@ public class ComparisonExpression extends CompoundExpression {
     @Override
     public String getASTNodeText() {
         return type.toString();
+    }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

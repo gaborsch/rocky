@@ -34,4 +34,9 @@ public class IntoExpression extends CompoundExpression {
         throw new RockstarRuntimeException("Parse problem, should not evaluate 'into' expression");
     }
     
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
+    
 }

@@ -36,8 +36,8 @@ public class TurnStatement extends Statement {
         }
     };
 
-    private final VariableReference variable;
-    private final TurnDirection direction;
+    final VariableReference variable;
+    final TurnDirection direction;
 
     public TurnStatement(VariableReference variable, TurnDirection direction) {
         this.variable = variable;
@@ -80,5 +80,10 @@ public class TurnStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variable);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

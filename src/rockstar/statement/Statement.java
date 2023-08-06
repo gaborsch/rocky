@@ -13,7 +13,7 @@ import rockstar.runtime.BlockContext;
  *
  * @author Gabor
  */
-public abstract class Statement implements ASTAware {
+public abstract class Statement implements ASTAware, VisitableStatement {
 
     private Line line;
     private Block block;

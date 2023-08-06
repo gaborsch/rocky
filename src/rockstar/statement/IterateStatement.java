@@ -26,8 +26,8 @@ import rockstar.runtime.Value;
  */
 public class IterateStatement extends Block {
 
-    private final Expression arrayExpr;
-    private final Expression asExpr;
+    final Expression arrayExpr;
+    final Expression asExpr;
 
     public IterateStatement(Expression arrayExpr, Expression asExpr) {
         this.arrayExpr = arrayExpr;
@@ -146,6 +146,11 @@ public class IterateStatement extends Block {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(arrayExpr, asExpr);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

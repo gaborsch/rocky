@@ -21,7 +21,7 @@ import rockstar.runtime.Value;
  */
 public class WhileStatement extends Block {
 
-    private final Expression condition;
+    final Expression condition;
     private boolean negateCondition = false;
 
     public WhileStatement(Expression condition) {
@@ -77,5 +77,11 @@ public class WhileStatement extends Block {
         List<ASTAware> astValues = ASTValues.of(condition);
         astValues.addAll(super.getASTChildren());
         return astValues;
+    }
+
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

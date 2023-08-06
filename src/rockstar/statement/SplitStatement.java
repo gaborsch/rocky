@@ -19,7 +19,7 @@ import rockstar.runtime.Value;
  */
 public class SplitStatement extends Statement {
 
-    private final MutationExpression expr;
+    final MutationExpression expr;
 
     public SplitStatement(MutationExpression expr) {
         this.expr = expr;
@@ -72,5 +72,10 @@ public class SplitStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expr);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

@@ -13,4 +13,9 @@ package rockstar.expression;
  */
 public class WithExpression extends PlusExpression {
     
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
+    
 }

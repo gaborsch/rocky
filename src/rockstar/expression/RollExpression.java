@@ -52,5 +52,10 @@ public class RollExpression extends CompoundExpression {
         } 
         throw new RockstarRuntimeException("Invalid array reference: " + expr1);
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

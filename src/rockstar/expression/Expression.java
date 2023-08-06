@@ -17,7 +17,7 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public abstract class Expression implements ASTAware {
+public abstract class Expression implements VisitableExpression, ASTAware {
 	
 	private List<Token> tokens;
 	

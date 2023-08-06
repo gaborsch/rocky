@@ -57,7 +57,7 @@ public class PackagePath {
         } else if (expr instanceof LogicalExpression) {
             // logical "and" also processed as a list
             LogicalExpression le = (LogicalExpression) expr;
-            if (le.getType() == LogicalExpression.LogicalType.AND) {
+            if (le.isAndExpression()) {
                 for (Expression part : le.getParameters()) {
                     path = processPathExpr(part, path);
                 }

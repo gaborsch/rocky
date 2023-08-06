@@ -22,6 +22,10 @@ public class InstanceCheckExpression extends CompoundExpression {
 		super(Precedence.INSTANCE_CHECK);
 		this.negated = negated;
 	}
+	
+	public boolean isNegated() {
+		return negated;
+	}
 
     public VariableReference getObjectRef() {
         return (VariableReference) this.getParameters().get(0);
@@ -62,6 +66,11 @@ public class InstanceCheckExpression extends CompoundExpression {
 		    }
         }
         throw new RockstarRuntimeException("Instance check on a non-object value");
+    }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

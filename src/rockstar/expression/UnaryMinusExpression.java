@@ -35,5 +35,10 @@ public class UnaryMinusExpression extends CompoundExpression {
         Value v1 = expr1.evaluate(ctx);
         return ctx.afterExpression(this, Value.NULL.minus(v1));
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

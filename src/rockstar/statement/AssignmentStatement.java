@@ -20,8 +20,8 @@ import rockstar.runtime.Value;
  */
 public class AssignmentStatement extends Statement {
 
-    private final Expression variableExpression;
-    private final Expression valueExpression;
+    final Expression variableExpression;
+    final Expression valueExpression;
 
     public AssignmentStatement(Expression variableExpression, Expression valueExpression) {
         this.valueExpression = valueExpression;
@@ -71,5 +71,10 @@ public class AssignmentStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variableExpression, valueExpression);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

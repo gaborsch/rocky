@@ -17,7 +17,7 @@ import rockstar.runtime.Value;
  *
  * @author Gabor
  */
-public class BuiltinFunction extends CompoundExpression {
+public class BuiltinFunction extends CompoundExpression implements SubtypedExpression {
 
     public enum Type {
         SORT(1, "sorted %s"),
@@ -42,6 +42,11 @@ public class BuiltinFunction extends CompoundExpression {
     }
 
     private final Type type;
+    
+    @Override
+    public String getType() {
+    	return type.name();
+    }
 
     @Override
     public int getParameterCount() {
@@ -121,6 +126,11 @@ public class BuiltinFunction extends CompoundExpression {
             return Value.getValue(m.values());
         }
         throw new RockstarRuntimeException("Invalid type: all values of " + v.getType());
+    }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

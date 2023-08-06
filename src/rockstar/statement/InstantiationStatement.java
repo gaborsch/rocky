@@ -24,9 +24,9 @@ import rockstar.runtime.Value;
  */
 public class InstantiationStatement extends Statement {
 
-    private final VariableReference variable;
-    private final VariableReference classRef;
-    private final List<Expression> ctorParameterExprs = new ArrayList<>();
+    final VariableReference variable;
+    final VariableReference classRef;
+    final List<Expression> ctorParameterExprs = new ArrayList<>();
 
     public InstantiationStatement(VariableReference variable, VariableReference classRef) {
         this.variable = variable;
@@ -83,6 +83,11 @@ public class InstantiationStatement extends Statement {
         astParams.add(variable);
         astParams.addAll(ctorParameterExprs);
         return astParams;
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

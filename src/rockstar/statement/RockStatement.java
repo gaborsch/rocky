@@ -21,8 +21,8 @@ import rockstar.runtime.Value;
  */
 public class RockStatement extends Statement {
 
-    private final VariableReference variable;
-    private final Expression expression;
+    final VariableReference variable;
+    final Expression expression;
 
     public RockStatement(VariableReference variable, Expression expression) {
         this.variable = variable;
@@ -65,6 +65,11 @@ public class RockStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(variable, expression);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

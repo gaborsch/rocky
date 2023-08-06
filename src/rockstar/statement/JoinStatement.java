@@ -17,7 +17,7 @@ import rockstar.runtime.Value;
  */
 public class JoinStatement extends Statement {
 
-    private final MutationExpression expr;
+    final MutationExpression expr;
 
     public JoinStatement(MutationExpression expr) {
         this.expr = expr;
@@ -51,5 +51,10 @@ public class JoinStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(expr);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

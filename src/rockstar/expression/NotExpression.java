@@ -40,5 +40,10 @@ public class NotExpression extends CompoundExpression {
     public String getASTNodeText() {
         return "NOT";
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

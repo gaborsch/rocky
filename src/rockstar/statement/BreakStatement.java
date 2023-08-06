@@ -44,5 +44,10 @@ public class BreakStatement extends Statement {
     public List<ASTAware> getASTChildren() {
         return null;
     }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

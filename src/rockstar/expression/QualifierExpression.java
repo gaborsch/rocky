@@ -112,4 +112,9 @@ public class QualifierExpression extends CompoundExpression {
             }
         }
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 }

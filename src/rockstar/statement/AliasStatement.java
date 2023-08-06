@@ -15,8 +15,8 @@ import rockstar.runtime.BlockContext;
  */
 public class AliasStatement extends Statement {
 
-    private final List<String> alias;
-    private final List<String> keyword;
+    final List<String> alias;
+    final List<String> keyword;
 
     public AliasStatement(List<String> alias, List<String> keyword) {
         this.alias = alias;
@@ -39,6 +39,11 @@ public class AliasStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(String.join(" ", alias), String.join(" ", keyword));
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }

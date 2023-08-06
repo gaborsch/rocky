@@ -18,8 +18,8 @@ import rockstar.runtime.Value;
  */
 public class RollStatement extends Statement {
 
-    private final VariableReference arrayVariable;
-    private final VariableReference targetRef;
+    final VariableReference arrayVariable;
+    final VariableReference targetRef;
 
     public RollStatement(VariableReference arrayVariable, VariableReference targetRef) {
         this.arrayVariable = arrayVariable;
@@ -58,5 +58,10 @@ public class RollStatement extends Statement {
 
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(targetRef, arrayVariable);
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

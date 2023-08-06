@@ -17,7 +17,8 @@ public class JoinChecker extends Checker<MutationExpression, Object, Object> {
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
         new ParamList("join", mutationExpressionAt(1)),
-        new ParamList("unite", mutationExpressionAt(1))};
+        new ParamList("unite", mutationExpressionAt(1))
+    };
 
     @Override
     public Statement check() {

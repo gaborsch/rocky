@@ -35,6 +35,11 @@ public class LastVariableReference extends VariableReference {
     public VariableReference getEffectiveVref(BlockContext ctx) {
         return ctx.getLastVariableRef();
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
     
 }

@@ -164,5 +164,10 @@ public class MutationExpression extends CompoundExpression {
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(baseExpr, withExpr, intoExpr);
     }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
+    }
 
 }

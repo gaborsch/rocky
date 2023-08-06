@@ -18,7 +18,7 @@ import rockstar.runtime.RockstarRuntimeException;
  */
 public class PkgDefStatement extends Statement {
 
-    private final PackagePath path;
+    final PackagePath path;
 
     public PkgDefStatement(PackagePath path) {
         this.path = path;
@@ -37,5 +37,10 @@ public class PkgDefStatement extends Statement {
     @Override
     public List<ASTAware> getASTChildren() {
         return ASTValues.of(path.toString());
+    }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
     }
 }

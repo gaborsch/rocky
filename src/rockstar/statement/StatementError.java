@@ -47,4 +47,9 @@ public class StatementError extends Statement {
         // indentation is to match the error marker positioning
         return ASTValues.of("   " + getLine().getOrigLine());
     }
+    
+    @Override
+    public void accept(StatementVisitor visitor) {
+    	visitor.visit(this);
+    }
 }

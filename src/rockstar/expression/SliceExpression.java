@@ -29,6 +29,10 @@ public class SliceExpression extends CompoundExpression {
     	super(Precedence.BUILTIN_FUNCTION);
         this.type = type;
     }
+    
+    public Type getType() {
+		return type;
+	}
 
     @Override
     public String getFormat() {
@@ -87,6 +91,11 @@ public class SliceExpression extends CompoundExpression {
     @Override
     public String getASTNodeText() {
         return super.getASTNodeText() + type.name();
+    }
+    
+    @Override
+    public void accept(ExpressionVisitor visitor) {
+    	visitor.visit(this);
     }
 
 }
