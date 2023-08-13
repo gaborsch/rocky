@@ -2,6 +2,7 @@ package rockstar.statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -28,11 +29,11 @@ import rockstar.expression.QualifierExpression;
 import rockstar.expression.RollExpression;
 import rockstar.expression.SelfVariableReference;
 import rockstar.expression.SliceExpression;
+import rockstar.expression.SliceExpression.Type;
 import rockstar.expression.SubtypedExpression;
 import rockstar.expression.UnaryMinusExpression;
 import rockstar.expression.VariableReference;
 import rockstar.expression.WithExpression;
-import rockstar.expression.SliceExpression.Type;
 import rockstar.parser.Line;
 import rockstar.parser.ParserError;
 import rockstar.runtime.Utils;
@@ -71,6 +72,25 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 		while(lnum < current) {
 			nl().append(String.format(lineNumberFormat, ++lnum));
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<RoleAndValue> toValues(Object... values) {
+		List<RoleAndValue> valueList = new ArrayList<>();
+		Boolean nextAccepted = true;
+		for (Object o : values) {
+			if (nextAccepted && o != null) {
+				if (o instanceof List) {
+					valueList.addAll((List<RoleAndValue>) o);
+				} else if (o instanceof RoleAndValue) {
+					valueList.add((RoleAndValue) o);
+				} else if (o instanceof Boolean) {
+					nextAccepted = (Boolean) o;
+				}
+			}
+			nextAccepted = true;
+		}
+		return valueList;
 	}
 	
 	private void list(Statement stmt, List<RoleAndValue> values) {
@@ -204,13 +224,10 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 	@Override
 	public void visit(FunctionCall functionCall) {
 		VariableReference obj = functionCall.getObject();
-		List<RoleAndValue> props = new ArrayList<>();
-		if (obj != null) {
-			props.add(fromExpr("object", obj));
-		}
-		props.add(fromText("functionName",functionCall.getFunctionName()));
-		props.addAll(fromExprList("param", functionCall.getParameters()));
-		listValues(props);
+		listValues(toValues(
+				fromExpr("object", obj),
+				fromText("functionName",functionCall.getFunctionName()),
+				fromExprList("param", functionCall.getParameters())));
 	}
 
 	@Override
@@ -252,17 +269,10 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 
 	@Override
 	public void visit(MutationExpression mutationExpression) {
-		List<RoleAndValue> props = new ArrayList<>();
-		if (mutationExpression.getSourceExpr() != null) {
-			props.add(fromExpr("from", mutationExpression.getSourceExpr()));
-		}
-		if (mutationExpression.getParameterExpr() != null) {
-			props.add(fromExpr("with", mutationExpression.getParameterExpr()));
-		}
-		if (mutationExpression.getTargetReference() != null) {
-			props.add(fromExpr("into", mutationExpression.getTargetReference()));
-		}
-		listValues(props);
+		listValues(toValues(
+				fromExpr("from", mutationExpression.getSourceExpr()),
+				fromExpr("with", mutationExpression.getParameterExpr()),
+				fromExpr("into", mutationExpression.getTargetReference())));
 	}
 
 	@Override
@@ -290,7 +300,7 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 
 	@Override
 	public void visit(RollExpression rollExpression) {
-		listValues(fromExprList("arg", rollExpression.getParameters()));
+		listValues(fromExprList("expr", rollExpression.getParameters()));
 	}
 
 	@Override
@@ -300,21 +310,18 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 	@Override
 	public void visit(SliceExpression sliceExpression) {
 		SliceExpression.Type type = sliceExpression.getType();
-		List<RoleAndValue> props = new ArrayList<>();
-        List<Expression> parameters = sliceExpression.getParameters();
-		props.add(fromExpr("base", parameters.get(0)));
-        if (type != Type.SLICE_TO) {
-        	props.add(fromExpr("from", parameters.get(1)));        	
-        }
-        if (type != Type.SLICE_FROM) {
-            props.add(fromExpr("to", parameters.get(parameters.size()-1)));
-        }
-        list(program, props);
+		List<Expression> parameters = sliceExpression.getParameters();
+        list(program, toValues(
+        		fromExpr("base", parameters.get(0)),
+        		type != Type.SLICE_TO,
+				fromExpr("from", parameters.get(1)),
+				type != Type.SLICE_FROM,
+				fromExpr("to", parameters.get(parameters.size()-1))));
 	}
 
 	@Override
 	public void visit(UnaryMinusExpression unaryMinusExpression) {
-		listValues(fromExprList("arg", unaryMinusExpression.getParameters()));
+		listValues(fromExprList("expr", unaryMinusExpression.getParameters()));
 	}
 
 	@Override
@@ -324,7 +331,7 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 
 	@Override
 	public void visit(WithExpression withExpression) {
-		listValues(fromExprList("arg", withExpression.getParameters()));
+		listValues(fromExprList("expr", withExpression.getParameters()));
 	}
 
 	@Override
@@ -341,10 +348,9 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 
 	@Override
 	public void visit(ArrayAssignmentStatement arrayAssignmentStatement) {
-		List<RoleAndValue> values = new ArrayList<>(); 
-		values.add(fromExpr("target", arrayAssignmentStatement.variable));
-		values.addAll(fromExprList("value", arrayAssignmentStatement.expressionList));
-		list(arrayAssignmentStatement, values);
+		list(arrayAssignmentStatement, toValues(
+				fromExpr("target", arrayAssignmentStatement.variable),
+				fromExprList("element", arrayAssignmentStatement.expressionList)));
 	}
 
 	@Override
@@ -430,11 +436,10 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 
 	@Override
 	public void visit(InstantiationStatement instantiationStatement) {
-		List<RoleAndValue> values = new ArrayList<>(); 
-		values.add(fromExpr("variable", instantiationStatement.variable));
-		values.add(fromExpr("className", instantiationStatement.classRef));
-		values.addAll(fromExprList("parameter", instantiationStatement.ctorParameterExprs));
-		list(instantiationStatement, values);
+		list(instantiationStatement, toValues(
+				fromExpr("variable", instantiationStatement.variable),
+				fromExpr("className", instantiationStatement.classRef),
+				fromExprList("parameter", instantiationStatement.ctorParameterExprs)));
 	}
 
 	@Override
@@ -475,22 +480,16 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 
 	@Override
 	public void visit(RockStatement rockStatement) {
-		List<RoleAndValue> values = new ArrayList<>(); 
-		values.add(fromExpr("variable", rockStatement.variable));
-		if(rockStatement.expression != null) {
-			values.add(fromExpr("expression", rockStatement.expression));
-		}
-		list(rockStatement, values);
+		list(rockStatement, toValues(
+				fromExpr("variable", rockStatement.variable),
+				fromExpr("expression", rockStatement.expression)));
 	}
 
 	@Override
 	public void visit(RollStatement rollStatement) {
-		List<RoleAndValue> values = new ArrayList<>(); 
-		values.add(fromExpr("array", rollStatement.arrayVariable));
-		if(rollStatement.targetRef != null) {
-			values.add(fromExpr("target", rollStatement.targetRef));
-		}
-		list(rollStatement, values);
+		list(rollStatement, toValues(
+				fromExpr("array", rollStatement.arrayVariable),
+				fromExpr("target", rollStatement.targetRef)));
 	}
 
 	@Override
@@ -527,13 +526,13 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 		return list;
 	}
 	
-	public enum ValueType {
+	private enum ValueType {
 		EXPRESSION,
 		TEXT,
 		LIST_OF_STRING
 	}
 	
-	public static class RoleAndValue  {
+	private static class RoleAndValue  {
 		public ValueType type;
 		public String role;
 		public Object value;
@@ -555,30 +554,26 @@ public class RockstarASTList implements StatementVisitor, ExpressionVisitor {
 		public static RoleAndValue keywords(String role, List<String> kws) {
 			return new RoleAndValue(ValueType.LIST_OF_STRING, role, kws);
 		}
-		
 	}
 
-	public static RoleAndValue fromExpr(String r1, Expression e1) {
-		return RoleAndValue.expression(r1, e1);
+	private static RoleAndValue fromExpr(String r, Expression e) {
+		return e == null ? null : RoleAndValue.expression(r, e);
 	}
 
-	public static RoleAndValue fromKeywords(String r1, List<String> e1) {
-		return RoleAndValue.keywords(r1, e1);
+	private static RoleAndValue fromKeywords(String r, List<String> kl) {
+		return kl == null || kl.isEmpty() ? null : RoleAndValue.keywords(r, kl);
 	}
 	
-	public static RoleAndValue fromText(String r1, String e1) {
-		return RoleAndValue.text(r1, e1);
+	private static RoleAndValue fromText(String r, String t) {
+		return t == null ? null : RoleAndValue.text(r, t);
 	}
 	
-	public static List<RoleAndValue> fromExprList(List<? extends Expression> expressions) {
-		return fromExprList("", expressions);
-	}
-
-	public static List<RoleAndValue> fromExprList(String r, List<? extends Expression> expressions) {
+	private static List<RoleAndValue> fromExprList(String r, List<? extends Expression> expressions) {
 		AtomicInteger idx = new AtomicInteger();
 		return expressions == null
 				? List.of()
 				: expressions.stream()
+					.filter(Objects::nonNull)
 					.map(e -> RoleAndValue.expression(r + (idx.incrementAndGet()), e))
 					.collect(Collectors.toList());
 	}
