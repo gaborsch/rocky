@@ -11,7 +11,7 @@ The approach is very much like a traditional OOP, without the interfaces. Of the
 
 ## Let's start!
 
-This small example uses the "parameterless method" syntax. The explanations are on the right side.
+This small example uses the "parameterless method" syntax (methods can be called without the `taking` part). The explanations are on the right side.
 
 This sample class implements a simple sequence, holding a counter value and return the next value each time it is called. 
 

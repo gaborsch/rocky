@@ -10,7 +10,7 @@ There is a separate page to introduce [Rockstar Object-Oriented Programming](OOP
 
 ## Native Java support
 
-There is a separate page about [Native Java support](native_java.md) in Rocky.
+There is a separate page about [Native Java support](native_java.md) in Rocky. Shortly: it is possible to call native Java methods from Rockstar and using a `FunctionalInterface` Java classes can call back to Rockstar. Values are automatically converted to and from Java.
 
 ## Array extensions
 
@@ -55,6 +55,7 @@ Say height of the rainbow
 ### Last element of an array ("peek")
 
 The built-in function `last of` returns the last element in an array.
+
 ```
 Say last of the colors
 ```
