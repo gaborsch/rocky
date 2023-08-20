@@ -1,5 +1,11 @@
 # Native Java support
 
+## Demonstration
+
+![Native Java AWT example](awt.png "AWT Hello World in Rockstar")
+
+The sample program can be found in the [`programs/samples/awt.rock`](https://github.com/gaborsch/rocky/tree/master/programs/samples/awt.rock) file.
+
 ## Using Java features
 
 Rocky has a Rockstar-to-Java binding, that is using the [Rocky OOP](OOP.md) syntax, but the underlying classes are provided by Java. The Java wrapping is using a new value type - NATIVE - to represent Java classes and instances. Only `public` methods and properties can be accessed.
