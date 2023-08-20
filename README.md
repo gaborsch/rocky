@@ -137,61 +137,6 @@ $ ./rockstar list programs/modulus.rock
 ```
 
 With `-x` option, it lists the AST (Abstract Syntax Tree) - the result of the parsing 
-
-```
-$ ./rockstar list -x programs/modulus.rock
-       Program programs/modulus.rock
-L0001  \-- FunctionBlock modulus
-       |   \-- VariableReference number
-       |   \-- VariableReference divisor
-L0002  |   \-- Assignment
-       |   |   \-- VariableReference big divisor
-       |   |   \-- VariableReference divisor
-L0003  |   \-- While
-       |   |   \-- LESS_THAN
-       |   |   |   \-- VariableReference big divisor
-       |   |   |   \-- VariableReference number
-L0004  |   |   \-- Assignment
-       |   |       \-- VariableReference big divisor
-       |   |       \-- Multiply (big divisor * 2)
-       |   |           \-- VariableReference big divisor
-       |   |           \-- Constant 2 (NUMBER)
-L0006  |   \-- While
-       |   |   \-- GREATER_OR_EQUALS
-       |   |   |   \-- VariableReference big divisor
-       |   |   |   \-- VariableReference divisor
-L0007  |   |   \-- If
-       |   |   |   \-- GREATER_OR_EQUALS
-       |   |   |   |   \-- VariableReference number
-       |   |   |   |   \-- VariableReference big divisor
-L0008  |   |   |   \-- Assignment
-       |   |   |       \-- VariableReference number
-       |   |   |       \-- Minus (number - big divisor)
-       |   |   |           \-- VariableReference number
-       |   |   |           \-- VariableReference big divisor
-L0010  |   |   \-- Assignment
-       |   |       \-- VariableReference big divisor
-       |   |       \-- Divide (big divisor / 2)
-       |   |           \-- VariableReference big divisor
-       |   |           \-- Constant 2 (NUMBER)
-L0012  |   \-- Return
-       |       \-- VariableReference number
-L0014  \-- Say
-       |   \-- Constant "Enter Dividend:" (STRING)
-L0015  \-- Listen
-       |   \-- VariableReference x
-L0016  \-- Say
-       |   \-- Constant "Enter Divisor:" (STRING)
-L0017  \-- Listen
-       |   \-- VariableReference y
-L0018  \-- Say
-           \-- With ("The modulus is " + modulus(x, y))
-               \-- Constant "The modulus is " (STRING)
-               \-- FunctionCall modulus(x, y)
-                   \-- VariableReference x
-                   \-- VariableReference y
-```
-
 ### REPL mode - Read-Eval-Print-Loop
 
 The REPL (interactive) mode enables you to try out Rockstar features. Start Rocky with `rockstar repl` or `rockstar -`:
