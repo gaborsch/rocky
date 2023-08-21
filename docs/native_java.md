@@ -1,6 +1,6 @@
 # Native Java support
 
-## Demonstration
+## Native Java demo
 
 ![Native Java AWT example](awt.png "AWT Hello World in Rockstar")
 

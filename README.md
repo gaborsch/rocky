@@ -17,12 +17,12 @@ You can also try Rocky online on the [rockyrockstar.org](https://www.rockyrockst
 
 
 **Special language features:** 
-* [Object Oriented Programming](OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
-* [Native Java](native_java.md) binding - you can use any Java class or method (e.g. AWT graphics, File I/O, security, etc.) Also. using `FunctionalInterfaces` native Java code may call back to Rockstar!
+* [Object Oriented Programming](docs/OOP.md) in Rockstar! Yes, you can write OOP code in Rockstar!
+* [Native Java](docs/native_java.md) binding - you can use any Java class or method (e.g. AWT graphics, File I/O, security, etc.) Also. using `FunctionalInterfaces` native Java code may call back to Rockstar!
 * Aliases (substituting keywords)
 * Advanced array management features
 
-For all additional feature details [check the extras page!](spec_ext.md)
+For all additional feature details, please check the [Rocky extra features page].(docs/spec_ext.md)
 
 
 ## Prerequisites
@@ -47,7 +47,7 @@ To run a program, simply add the program name(s) as parameters:
 ./rockstar programs/fizzbuzz.rock 
 ```
 
-Running Rocky in Docker: Please refer the [Docker page](https://github.com/gaborsch/rocky/tree/master/Docker.md) for details.
+Running Rocky in Docker: Please refer the [Docker page](docs/Docker.md) for details.
 
 ## Commands
 

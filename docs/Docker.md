@@ -7,9 +7,9 @@ If you don't have Java on your machine, you can run Rockstar within a Docker con
 For example:
 
 ```
-./dockstar help
-./dockstar programs/fizzbuzz.rock
-./dockstar debug programs/fizzbuzz.rock
+bin/dockstar help
+bin/dockstar programs/fizzbuzz.rock
+bin/dockstar debug programs/fizzbuzz.rock
 ```
 
 ## Creating a Docker image
