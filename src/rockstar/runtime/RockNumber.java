@@ -19,7 +19,7 @@ public abstract class RockNumber {
     		mode = newMode;
     		switch (newMode) {
 				case IEEE754: 
-					instance = RockNumberDec64.ZERO;
+					instance = RockNumberDouble.ZERO;
 					break;
 				case DEC64: 
 					instance = RockNumberDec64.ZERO;

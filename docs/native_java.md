@@ -10,7 +10,7 @@ The sample program can be found in the [`programs/samples/awt.rock`](https://git
 
 Rocky has a Rockstar-to-Java binding, that is using the [Rocky OOP](OOP.md) syntax, but the underlying classes are provided by Java. The Java wrapping is using a new value type - NATIVE - to represent Java classes and instances. Only `public` methods and properties can be accessed.
 
-Scalar values (number, String, boolean, null) are implicitly converted to Java and from Java, as well. Array values may be converted to Java implicitly, too, but it is possible to specify the exact Java representation with casting.
+Primitive values (number, boolean, String, null) are implicitly converted to Java and from Java, as well. Array values may be converted to Java implicitly, too, but it is possible to specify the exact Java representation with casting.
 
 Importing (`from java, util play ArrayList`) creates a new global variable with the class name (`ArrayList` in this case) that allows access to static methods and properties. 
 
@@ -18,7 +18,7 @@ Instantiation (`my list will be ArrayList [taking Parameter]`) creates a new var
 
 Method calling and property access uses similar syntax: `method on object [taking parameter, ...]` and `property on object` respectively. If there are multiple method signatures, the first matching method is used. Method and property names are not case sensitive. There are multiple aliases for `on`: `by`, `in`, `to`, `for`, `from`, `near`.
 
-Return values are retained as-is (and wrapped into a Rockstar NATIVE), unless a primitive value is returned (number, String, null). `Void` is converted to `mysterious`. 
+Return values are retained as-is (and wrapped into a Rockstar Native), unless a primitive value is returned (number, boolean, String, null). `Void` is converted to `mysterious`. 
 
 Type check (`my list is like List`) is possible, including super classes and implemented interfaces. Even two classes or two instances can be checked against each other (`Linkedlist is like List` or `list1 is like list2`). Negation is also allowed (`list1 is not like list2`).
 
@@ -49,6 +49,7 @@ The above statements cast Rockstar Arrays into native Java objects. `List` defau
 Similarly, returned non-primitive values must be converted back if we want to access them within Rockstar. These types include `BigDecimal`, `BigInteger`, all `List`, `Map` and array types.
 
 ```
+(continuing the above example)
 cast V (V is cast back - note that the value is 12 now)
 cast ArrayListOfLongs into X2        (X2 is a Rockstar array)
 cast ArrayOfStrings into X3          (X2 is a Rockstar array)
