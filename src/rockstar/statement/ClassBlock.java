@@ -17,18 +17,25 @@ public class ClassBlock extends Block {
 
     final String name;
     final String parentName;
+    final List<String> parentInterfaceNames;
 
     private QualifiedClassName qualifiedName;
     private QualifiedClassName qualifiedParentName;
+    private List<QualifiedClassName> qualifiedParentInterfaceNames;
 
     private FileContext definingContext;
 
     private ClassBlock parentClass;
     private List<String> abstractMethodNames = new LinkedList<>();
 
-    public ClassBlock(String name, String parentName) {
+    public ClassBlock(String name, String parentName, List<String> parentInterfaceNames) {
         this.name = name;
         this.parentName = parentName;
+        this.parentInterfaceNames = parentInterfaceNames != null ? parentInterfaceNames : List.of();
+    }
+
+    public ClassBlock(String name, String parentName) {
+    	this(name, parentName, List.of());
     }
 
     public String getName() {

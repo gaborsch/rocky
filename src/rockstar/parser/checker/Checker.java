@@ -84,9 +84,7 @@ public abstract class Checker<T1, T2, T3> {
         matchCounter++;
         List<Token> tokenList = line.getTokens();
         // clear previous result
-        for (int i = 0; i < parsedResult.length; i++) {
-            parsedResult[i] = null;
-        }
+        Arrays.fill(parsedResult, null);
         // match cycle
         lastPos = -1;
         lastPH = null;
@@ -181,6 +179,9 @@ public abstract class Checker<T1, T2, T3> {
                 case LITERAL_OR_VARIABLE:
                     validExpr = (e != null) && ((e instanceof ConstantExpression) || (e instanceof VariableReference));
                     break;
+                case LITERAL_OR_VARIABLE_OR_LIST:
+                	validExpr = (e != null) && ((e instanceof ConstantExpression) || (e instanceof VariableReference) || (e instanceof ListExpression));
+                	break;
                 case VARIABLE_OR_LIST:
                     validExpr = (e != null) && ((e instanceof VariableReference) || (e instanceof ListExpression));
                     break;
@@ -263,10 +264,6 @@ public abstract class Checker<T1, T2, T3> {
         return new Placeholder(PlaceholderType.POETIC_LITERAL, pos);
     }
 
-//    public static Placeholder at(int pos, PlaceholderType type) {
-//        return new Placeholder(type, pos);
-//    }
-
     public enum PlaceholderType {
         TEXT,
         LITERAL,
@@ -274,6 +271,7 @@ public abstract class Checker<T1, T2, T3> {
         LITERAL_OR_VARIABLE,
         VARIABLE_OR_QUALIFIER,        
         VARIABLE_OR_LIST,
+        LITERAL_OR_VARIABLE_OR_LIST,
         EXPRESSION,
         MUTATION_EXPRESSION,
         POETIC_LITERAL;
@@ -333,10 +331,5 @@ public abstract class Checker<T1, T2, T3> {
 					+ (defaultExprPos!=null ? ("defaultExprPos=" + defaultExprPos + " " ) : "") 
 					+ "]";
 		}
-        
-
-        
-        
     }
-
 }

@@ -7,3 +7,7 @@ dreams look like nothing
 San Francisco looks like Los Angeles
 (end of empty class, extending another)
 say San Francisco (mysterious - classes are not variables)
+
+(multiple inheritance)
+New York look like San Francisco, dreams
+(end of empty class)
