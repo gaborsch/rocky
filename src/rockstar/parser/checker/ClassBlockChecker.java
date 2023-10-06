@@ -30,12 +30,7 @@ public class ClassBlockChecker extends Checker<VariableReference, Expression, Ex
 
     private static final ParamList[] PARAM_LIST = new ParamList[]{
   		new ParamList(variableAt(1), LOOK_LIKE, LITERAL_OR_VARIABLE_OR_LIST.at(2)),
-//        new ParamList(variableAt(1), LOOK_LIKE, LITERAL_OR_VARIABLE.at(2), VARIABLE_OR_LIST.at(3)),
-//        new ParamList(variableAt(1), LOOK_LIKE, LITERAL_OR_VARIABLE.at(2)),
-        new ParamList(variableAt(1), LOOKS_LIKE, LITERAL_OR_VARIABLE_OR_LIST.at(2))
-//        new ParamList(variableAt(1), LOOKS_LIKE, LITERAL_OR_VARIABLE.at(2), VARIABLE_OR_LIST.at(3)),
-//        new ParamList(variableAt(1), LOOKS_LIKE, LITERAL_OR_VARIABLE.at(2))
-        };
+        new ParamList(variableAt(1), LOOKS_LIKE, LITERAL_OR_VARIABLE_OR_LIST.at(2))};
 
     @Override
     public Statement check() {
@@ -82,57 +77,6 @@ public class ClassBlockChecker extends Checker<VariableReference, Expression, Ex
 		}
     	// the first name will be the parent class name
     	parentName = interfaceNames.remove(0);
-        
-    	return new ClassBlock(className, parentName, interfaceNames);
-    }
-    
-    private Statement validateOld(ParamList params) {
-        VariableReference nameRef = getE1();
-        Expression parentsListRef = getE2();
-
-        String className = nameRef.getName();        
-        String parentName = null; 
-        List<String> interfaceNames = new ArrayList<>();
-        
-        if (parentsListRef instanceof ConstantExpression) {
-            Value v = ((ConstantExpression) parentsListRef).getValue();
-            // checking for "nothing" and its aliases
-            if (v.isNull()) {
-            	parentName = null;
-            } else {
-            	// no other constant name is valid
-            	return null;
-            }
-        } else if (parentsListRef instanceof VariableReference) {
-            // parent class name
-            // TODO: proper classname check: self, parent, it, ...
-        	parentName = ((VariableReference) parentsListRef).getName();
-        } else if (parentsListRef instanceof ListExpression) {
-        	ListExpression parentNamesList = (ListExpression) parentsListRef;
-        	for (Expression parentNameExpression : parentNamesList.getParameters()) {
-        		if (parentNameExpression instanceof ConstantExpression) {
-                    Value v = ((ConstantExpression) parentsListRef).getValue();
-                    // checking for "nothing" and its aliases
-                    if (v.isNull()) {
-                    	interfaceNames.add(null);
-                   	} else {;
-                    	// no other constant name is valid
-                    	return null;
-                    }
-					;
-				} else if (parentNameExpression instanceof VariableReference) {
-					interfaceNames.add(((VariableReference) parentNameExpression).getName());
-				} else {
-					// only valid interface names are allowed
-					return null;
-				}
-			}
-        	// the first name will be the parent class name
-        	parentName = interfaceNames.remove(0);
-        } else {
-        	// no other expression is valid
-        	return null;
-        }
         
     	return new ClassBlock(className, parentName, interfaceNames);
     }
