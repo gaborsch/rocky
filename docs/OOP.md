@@ -49,13 +49,13 @@ There are no other operations defined. Specifically, object fields cannot be acc
 
 ### Package:
 
-Each file may have its package declaration. The syntax is simple: `Album: core, and utils`. Actually the colon is optinal, as Rockstar skips it. In general the syntax is `Album: <list-of-identifiers>`. The `list-of-identifiers` is a list expression that contains Rockstar identifiers, that defines the package. Alternatively, an identifier may be a string constant, e.g. `Album: "core", "utils"` (also slash/separated, like `Album: "core/utils"`). Also, for convenience, an `and` expression is allowed, like `Album: core and utils` (note, that the comma is missing.)
+Each file may have its package declaration. The syntax is simple: `Album: core, and utils`. Actually the colon is optional, as Rockstar skips it. In general the syntax is `Album: <list-of-identifiers>`. The `list-of-identifiers` is a list expression that contains Rockstar identifiers, that defines the package. Alternatively, an identifier may be a string constant, e.g. `Album: "core", "utils"` (also slash/separated, like `Album: "core/utils"`). Also, for convenience, an `and` expression is allowed, like `Album: core and utils` (note, that the comma is missing.)
 
-The folder names are the identifier names (or string parts), lowercased, all non-alpha characters replaced with underscore (`_`). Similar rules apply to class names (see below).
+The folder names are the identifier names (or string parts), lowercase, all non-alpha characters replaced with underscore (`_`). Similar rules apply to class names (see below).
 
 ### Importing, class loading:
 
-To import a class, we can use the following syntax: `[[From/off] <package-name>] play <class-names>`. The `from/off` part is optional, and it denotes that the imported classes should be in the same package as the importing class.
+To import a class, we can use the following syntax: `[[From/off] <package-name>] play <class-names>`. The `from/off` part is optional, if omitted it means that the imported classes should be in the same package as the importing class.
 
 ```
 from Core, and Utils play an array, a comparator
@@ -68,7 +68,7 @@ It imports the classes identified by `<class-names>` from the defined package. T
 ### Class declaration: 
 
 `<class-name> looks like <superclass>`
-Alias: `look like`. The class is terminated by an empty line (just like other blocks). A class name should follow the rules of a variable names (simple, common or proper name currently), however it is recommended to use proper names (i.e. starting with capital letters) Superclass name can be `nothing` (or any other aliases for `null`) meaning that there is no superclass.
+Alias: `look like`. The class is terminated by an empty line (just like other blocks). A class name should follow the rules of a variable names (simple, common or proper name), however it is recommended to use proper names (i.e. starting with capital letters) Superclass name can be `nothing` (or any other aliases for `null`) meaning that there is no superclass.
 
 ### Inheritance:
 
@@ -80,12 +80,12 @@ Any variable declared in the scope of the class will be treated as a local field
 
 ### Method declaration in a class:
 
-Any function declared in the scope of the class will be treated as a method on the class.
+Any function declared in the scope of the class will be treated as a public method on the class.
 
 ### Constructor declaration: 
 
 `<classname> takes <constructor parameter list>`
-The function named exactly as the class name will be used as constructor. The parameter list can be `nothing` or othes aliases of `null`, if there are no parameters. There can be only one constructor for each class.
+The function named exactly as the class name will be used as constructor. The parameter list can be `nothing` (or other aliases of `null`), if there are no parameters. There can be only one constructor for each class.
 
 ### Special references:
 
@@ -99,7 +99,7 @@ The method name `describe` should return the string representation of an object 
 ### Instantiation:
 
 `<variable> wants to be <class> [taking <constructor parameter list>]` (also `want to be`, `wanna be`, `will be`, `would be`). The instantiation always comes with an assignment. The `taking` part (with constructor parameters) is optional.
-When instantiating, all fields are initialized and all methods are declared, in order of declaration (superclass first, then the subclass). Finally the constructor is called with the provided parameter list (or with empty list, if missing).
+When instantiating, all fields are initialised and all methods are declared, in order of declaration (superclass first, then the subclass). Finally the constructor is called with the provided parameter list (or with empty list, if missing).
 
 ### Method call:
 

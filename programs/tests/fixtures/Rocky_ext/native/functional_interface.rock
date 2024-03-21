@@ -15,7 +15,7 @@ forEach on L taking log		(forEach expects a Consumer parameter)
 
 a wrapper looks like nothing			(Rockstar object, to represent a context for the functional interface)
   let the sum be 0						(object property)
-  testfunc takes a list					(this is the main test method that receives a native ArrayLList object)
+  testfunc takes a list					(this is the main test method that receives a native ArrayList object)
   the sign says the number is: 
   forEach on a list taking callback		(the parameter for ArrayList::forEach is another function on this object)
   say the sum							(the object property is being read here)

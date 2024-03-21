@@ -16,7 +16,7 @@ Importing (`from java, util play ArrayList`) creates a new global variable with 
 
 Instantiation (`my list will be ArrayList [taking Parameter]`) creates a new variable (`my list`) using a previously imported class (`ArrayList`), the constructor parameters (if any) should follow the `taking` keyword. Constructor is selected based on the actual parameter value types.
 
-Method calling and property access uses similar syntax: `method on object [taking parameter, ...]` and `property on object` respectively. If there are multiple method signatures, the first matching method is used. Method and property names are not case sensitive. There are multiple aliases for `on`: `by`, `in`, `to`, `for`, `from`, `near`.
+Method calling and property access uses similar syntax: `method on object [taking parameter, ...]` and `property on object` respectively. If there are multiple method signatures, the first matching method is used. Method and property names are not case sensitive. Aliases for `on` are  `by`, `in`, `to`, `for`, `from`, `near`.
 
 Return values are retained as-is (and wrapped into a Rockstar Native), unless a primitive value is returned (number, boolean, String, null). `Void` is converted to `mysterious`. 
 
