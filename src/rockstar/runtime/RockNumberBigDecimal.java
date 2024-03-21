@@ -96,6 +96,7 @@ public class RockNumberBigDecimal extends RockNumber {
         return value.compareTo(ZERO.value) < 0;
     }
     
+    @Override
     public RockNumberBigDecimal negate() {
         return create(value.negate());
     }

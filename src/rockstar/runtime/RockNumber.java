@@ -90,4 +90,6 @@ public abstract class RockNumber {
     public abstract RockNumber floor();
     public abstract RockNumber round();
 
+	protected abstract RockNumber negate();
+
 }

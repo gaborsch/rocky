@@ -33,7 +33,7 @@ public class NotExpression extends CompoundExpression {
         ctx.beforeExpression(this);
         Expression expr = this.getParameters().get(0);
         Value v = expr.evaluate(ctx);
-        return ctx.afterExpression(this, v.negate());
+        return ctx.afterExpression(this, v.negateBoolean());
     }
     
     @Override

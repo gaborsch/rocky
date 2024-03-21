@@ -58,7 +58,7 @@ public class IncrementStatement extends Statement {
             v = v.asBoolean();
             if (count % 2 == 1) {
                 // negate boolean
-                v = v.negate();
+                v = v.negateBoolean();
             }
             ctx.setVariable(variable, v);
             return;

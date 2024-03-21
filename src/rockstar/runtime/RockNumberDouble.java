@@ -16,6 +16,9 @@ public class RockNumberDouble extends RockNumber {
     public final Double dblValue;
 
     private RockNumberDouble(Double dblValue) {
+    	if (dblValue != null && dblValue == -0.0) {
+    		dblValue = 0.0;
+    	}
         this.dblValue = dblValue;
     }
 
@@ -94,6 +97,11 @@ public class RockNumberDouble extends RockNumber {
     public RockNumberDouble divide(RockNumber rn) {
         return new RockNumberDouble(dblValue / convertToDbl(rn));
     }
+    
+    @Override
+    protected RockNumber negate() {
+    	return new RockNumberDouble(-dblValue);
+    }
 
     @Override
     public int asInt() {
@@ -164,6 +172,5 @@ public class RockNumberDouble extends RockNumber {
     public RockNumber round() {
         return new RockNumberDouble((double)Math.round(dblValue));
     }
-
     
 }

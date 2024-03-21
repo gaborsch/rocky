@@ -255,6 +255,7 @@ public class RockNumberDec64 extends RockNumber {
         return mantissa>=0;
     }
     
+    @Override
     public RockNumberDec64 negate() {
         return getFromCache(-mantissa, exponent);
     }

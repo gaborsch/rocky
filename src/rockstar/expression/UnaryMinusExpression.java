@@ -33,7 +33,7 @@ public class UnaryMinusExpression extends CompoundExpression {
         ctx.beforeExpression(this);
         Expression expr1 = this.getParameters().get(0);
         Value v1 = expr1.evaluate(ctx);
-        return ctx.afterExpression(this, Value.NULL.minus(v1));
+        return ctx.afterExpression(this, v1.negateNumeric());
     }
     
     @Override

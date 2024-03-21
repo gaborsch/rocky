@@ -381,9 +381,17 @@ public class Value implements Comparable<Value> {
         return null;
     }
 
-    public Value negate() {
-        // bool negation
-        return getBool() ? BOOLEAN_FALSE : BOOLEAN_TRUE;
+    public Value negateBoolean() {
+    	return getBool() ? BOOLEAN_FALSE : BOOLEAN_TRUE;
+    }
+
+    public Value negateNumeric() {
+        switch (this.type) {
+        case NUMBER:
+        	return Value.getValue(getNumeric().negate());
+        default:
+        	throw new RockstarRuntimeException("Cannot negate "+this.getType()+" type");
+        }
     }
 
     public Value plus(Value other) {
