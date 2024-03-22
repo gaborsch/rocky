@@ -28,6 +28,7 @@ public class MultilineReader {
     int tokenStartPos = -1;
 
     boolean isInComment = false;
+    char commentStyle;
     boolean isInQuote = false;
     boolean isInNumber = false;
     boolean wasApos = false;
@@ -80,7 +81,9 @@ public class MultilineReader {
     private void processChar(char c) {
         if (isInComment) {
             // in bracket comment
-            if (c == ')') {
+            if ((commentStyle == '(' && c == ')')
+            	|| (commentStyle == '[' && c == ']')
+            	|| (commentStyle == '{' && c == '}')) {
                 isInComment = false;
             }
             return;
@@ -109,7 +112,10 @@ public class MultilineReader {
                         addToken(0);
                         break;
                     case '(':
+                    case '[':
+                    case '{':
                         isInComment = true;
+                        commentStyle = c;
                         addToken(0);
                         break;
                     case '"':
