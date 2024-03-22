@@ -49,7 +49,7 @@ public class DecrementStatement extends Statement {
         }
 
         if (v.isNumeric()) {
-            // increment by count
+            // decrement by count
             Value value = getMinus().evaluate(ctx);
             ctx.setVariable(variable, value);
             return;
