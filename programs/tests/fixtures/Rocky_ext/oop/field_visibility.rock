@@ -34,9 +34,9 @@ say the prey by Tom taking nothing (method has access to parent class fields)
 
 say "Abstract field access"
 
-Make Noise by Kitty taking nothing (mysterious)
+(Make Noise by Kitty taking nothing) (runtime error - field 'the noise' is not defined in parent class)
 
 Set Noise for Tom taking "Roarrrr!"
-Make Noise near Tom taking nothing (mysterious - parent method has NO access to child-defined fields)
+(Make Noise near Tom taking nothing) (runtime error - parent method has NO access to child-defined fields)
 
 

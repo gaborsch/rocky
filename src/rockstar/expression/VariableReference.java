@@ -8,6 +8,7 @@ package rockstar.expression;
 import rockstar.parser.Keyword;
 import rockstar.runtime.BlockContext;
 import rockstar.runtime.Environment;
+import rockstar.runtime.RockstarRuntimeException;
 import rockstar.runtime.Value;
 import rockstar.statement.FunctionBlock;
 
@@ -40,7 +41,6 @@ public class VariableReference extends SimpleExpression {
     }
 
     private final String name;
-//    private boolean isFunctionName = false;
 
     protected VariableReference(String name) {
         this.name = name;
@@ -78,8 +78,7 @@ public class VariableReference extends SimpleExpression {
         }
 
         if (value == null) {
-            value = Value.MYSTERIOUS;
-            ctx.setVariable(vref, value);
+            throw new RockstarRuntimeException("Undefined variable "+name);
         }
 
         return ctx.afterExpression(vref, value);

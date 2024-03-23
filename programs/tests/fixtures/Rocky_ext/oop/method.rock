@@ -25,13 +25,22 @@ Los Angeles looks like Pasadena
   (eom)
 (eoc)
 Tokyo looks like Los Angeles
-  visit takes a week
+  visit takes a month
     say "Hello, Tokyo!"
   (eom)
   leave takes ages
     say "Sayonara!"
   (eom)
 (eoc)
+
+slippers were in the bag
+a walk is tiring
+a horse is eating oat
+a carriage is from the middle ages
+a car is really fast
+a ship is floating
+a helicopter is dangerous
+a plane is speeding at mach one point five
 
 (on, by, in, at, to, for, from, near)
 a house wants to be Pasadena
@@ -47,7 +56,7 @@ visit to a suburb taking a car (Hello, LA!)
 a city wants to be Los Angeles
 visit for a city taking a ship (Hello, LA!)
 a metropolis wants to be Tokyo
-visit from a metropolis taking helicopter (Hello, Tokyo!)
+visit from a metropolis taking a helicopter (Hello, Tokyo!)
 a megalopolis wants to be Tokyo
 visit near a megalopolis taking a plane (Hello, Tokyo!)
 
