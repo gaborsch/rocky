@@ -6,6 +6,7 @@
 package rockstar.statement;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 import rockstar.expression.MutationExpression;
 import rockstar.runtime.BlockContext;
@@ -31,17 +32,13 @@ public class JoinStatement extends Statement {
         // evaluate separator, use default if not present
         String sep = (expr.getParameterExpr() == null) ? "" : expr.getParameterExpr().evaluate(ctx).getString();
         // JOIN the array into a string
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(sep);
         arrayValue.stream()
                 .filter(v -> (!v.isNull() && !v.isMysterious()))
-                .forEachOrdered(v -> {
-                    if (sb.length() > 0) {
-                        sb.append(sep);
-                    }
-                    sb.append(v.getString());
-                });
+                .map(Value::getString)
+                .forEachOrdered(sj::add);
         // get string vale
-        Value stringValue = Value.getValue(sb.toString());
+        Value stringValue = Value.getValue(sj.toString());
 
         // assign the value to the variable
         AssignmentStatement.assign(expr.getTargetReference(), stringValue, ctx);
