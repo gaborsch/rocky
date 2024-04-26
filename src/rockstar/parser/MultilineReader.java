@@ -64,6 +64,10 @@ public class MultilineReader {
                 break;
             }
         }
+        while (!tokens.isEmpty() 
+        		&& tokens.get(tokens.size()-1).getValue().equals(",")) {
+        	tokens.remove(tokens.size()-1);
+        }
         return new Line(origLine.toString(), filename, startLnum, tokens);
     }
 
@@ -73,7 +77,6 @@ public class MultilineReader {
         if (l != null) {
             origLine.append(l);
             lnum++;
-            l = l.replaceAll("[ .,;:!]+$", "").replaceAll("[ .,;:!]+\\(", " (");
         }
         return l;
     }
@@ -123,6 +126,9 @@ public class MultilineReader {
                         startToken();
                         break;
                     case ' ':
+                    case ';':
+                    case ':':
+                    case '!':
                     case '\t':
                     case '\n':
                     case '\r':
@@ -138,7 +144,7 @@ public class MultilineReader {
                 }
             }
         } else {
-            if (" \t\r\n".indexOf(c) >= 0) {
+            if (" .;:!\t\r\n".indexOf(c) >= 0) {
                 // terminal char
                 addToken(0);
             } else if(",+-*/&".indexOf(c) >= 0) {
@@ -187,12 +193,18 @@ public class MultilineReader {
                     }
                 }
             }
+            if (isInNumber && token.equals(".")) {
+            	// a single dot is not a decimal number
+            	skipThisToken = true;
+            }
             if (! token.startsWith("\"")) {
+            	// apos does not count in a non-string token
                 token = token.replaceAll("[']*", "");
             }
             if (token.equalsIgnoreCase("and") 
                     && !tokens.isEmpty()
                     && ",".equals(tokens.get(tokens.size()-1).getValue())) {
+            	// in case of ", and", the comma is skipped  
                 skipThisToken = true;
             }
             if (! skipThisToken) {
