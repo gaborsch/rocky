@@ -9,4 +9,13 @@ say not X or not Y (true)
 say not X and not Y and not X or not Y (true)
 
 
+shout 0 or 42
+shout 0 or 0
+shout 16 and 42
+shout 16 and 0
+shout 16 or 42
+shout 16 or 0
+shout 0 and 42
+shout 0 and 0
+
 

@@ -55,17 +55,17 @@ public class LogicalExpression extends CompoundExpression implements SubtypedExp
         // short circuit: do not evaluate expr2 if not needed
         switch (type) {
             case AND:
-                if (v1.asBoolean().equals(Value.BOOLEAN_TRUE)) {
+                if (v1.isBoolean() && v1.asBoolean().equals(Value.BOOLEAN_TRUE)) {
                     return ctx.afterExpression(this, v1.and(expr2.evaluate(ctx)));
                 }
                 return ctx.afterExpression(this, v1);
             case OR:
-                if (v1.asBoolean().equals(Value.BOOLEAN_FALSE)) {
+                if (v1.isBoolean() && v1.asBoolean().equals(Value.BOOLEAN_FALSE)) {
                     return ctx.afterExpression(this, v1.or(expr2.evaluate(ctx)));
                 }
                 return ctx.afterExpression(this, v1);
             case NOR:
-                if (v1.asBoolean().equals(Value.BOOLEAN_FALSE)) {
+                if (v1.isBoolean() && v1.asBoolean().equals(Value.BOOLEAN_FALSE)) {
                     return ctx.afterExpression(this, v1.nor(expr2.evaluate(ctx)));
                 }
                 return ctx.afterExpression(this, Value.BOOLEAN_FALSE);
