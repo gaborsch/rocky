@@ -7,15 +7,22 @@ say not X       (false)
 say not X and not Y (false)
 say not X or not Y (true)
 say not X and not Y and not X or not Y (true)
-
-
+shout "-----------"
 shout 0 or 42
 shout 0 or 0
-shout 16 and 42
-shout 16 and 0
 shout 16 or 42
 shout 16 or 0
 shout 0 and 42
 shout 0 and 0
-
+shout 16 and 42
+shout 16 and 0
+shout "-----------"
+shout true and true
+shout true and false
+shout false and true
+shout false and false
+shout true or true
+shout true or false
+shout false or true
+shout false or false
 
