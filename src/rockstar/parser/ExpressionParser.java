@@ -141,6 +141,7 @@ public class ExpressionParser {
 						.replace("\\t", "\t")
 						.replace("\\r", "\r")
 						.replace("\\n", "\n")
+						.replace("\\\"", "\"")
 						.replace(DOUBLE_BACKSLASH_PLACEHOLDER, "\\");
 				constantExpression = new ConstantExpression(literal);
 			} else if (checkCurrent(Keyword.MYSTERIOUS)) {

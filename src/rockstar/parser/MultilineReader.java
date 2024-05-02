@@ -30,6 +30,7 @@ public class MultilineReader {
     boolean isInComment = false;
     char commentStyle;
     boolean isInQuote = false;
+    boolean isInQuoteAfterBackslash = false;
     boolean isInNumber = false;
     boolean wasApos = false;
     boolean isCommentToEOL = false;
@@ -44,6 +45,7 @@ public class MultilineReader {
         tokens = new ArrayList<>();
         isInComment = false;
         isInQuote = false;
+        isInQuoteAfterBackslash = false;
         isInNumber = false;
         wasApos = false;
         isCommentToEOL = false;
@@ -92,9 +94,11 @@ public class MultilineReader {
             return;
         } 
         if (isInQuote) {
-            if (c == '"') {
-                isInQuote = false;
+            if (c == '"' && !isInQuoteAfterBackslash) {
                 addToken(1);
+                isInQuote = false;
+            } else {
+                isInQuoteAfterBackslash = (c == '\\');
             }
             return;
         } 
@@ -123,6 +127,7 @@ public class MultilineReader {
                         break;
                     case '"':
                         isInQuote = true;
+                        isInQuoteAfterBackslash = false;
                         startToken();
                         break;
                     case ' ':
@@ -167,45 +172,43 @@ public class MultilineReader {
             boolean skipThisToken = false;
             String token = l.substring(tokenStartPos, pos + offset);
             int len = token.length();
-            if (len >=2) {
-                if (token.substring(len-2).equalsIgnoreCase("'s")) {
+            if (isInNumber) {
+                // a single dot is not a decimal number
+                skipThisToken = token.equals(".");
+            } else if (!isInQuote) {
+                int nIdx = token.indexOf("'n'");
+                while (nIdx >= 0) {
+                    if (nIdx > 0) {
+                        tokens.add(new Token(lnum, tokenStartPos, nIdx, token.substring(0, nIdx)));
+                    }
+                    tokens.add(new Token(lnum, tokenStartPos+nIdx, 3, ","));
+                    tokenStartPos += nIdx + 3;
+                    token = token.substring(nIdx+3);
+                    len = token.length();
+                    nIdx = token.indexOf("'n'");
+                }
+                if(len >= 2 && token.substring(len-2).equalsIgnoreCase("'s")) {
                     tokens.add(new Token(lnum, tokenStartPos, len-2, token.substring(0, len-2)));
                     token = "is";
                     tokenStartPos = pos-2;
                     len = token.length();
-                } else if (len >=3) {
-                    if (token.substring(len-3).equalsIgnoreCase("'re")) {
-                        tokens.add(new Token(lnum, tokenStartPos, len-3, token.substring(0, len-3)));
-                        token = "are";
-                        tokenStartPos = pos-3;
-                        len = token.length();
-                    }
-                    int nIdx = token.indexOf("'n'");
-                    while (nIdx >= 0) {
-                        if (nIdx > 0) {
-                            tokens.add(new Token(lnum, tokenStartPos, nIdx, token.substring(0, nIdx)));
-                        }
-                        tokens.add(new Token(lnum, tokenStartPos+nIdx, 3, ","));
-                        tokenStartPos += nIdx + 3;
-                        token = token.substring(nIdx+3);
-                        len = token.length();
-                        nIdx = token.indexOf("'n'");
-                    }
                 }
-            }
-            if (isInNumber && token.equals(".")) {
-            	// a single dot is not a decimal number
-            	skipThisToken = true;
-            }
-            if (! token.startsWith("\"")) {
-            	// apos does not count in a non-string token
+                if(len >= 3 && token.substring(len-3).equalsIgnoreCase("'re")) {
+                    tokens.add(new Token(lnum, tokenStartPos, len-3, token.substring(0, len-3)));
+                    token = "are";
+                    tokenStartPos = pos-3;
+                    len = token.length();
+                }
+
+                // apos does not count in a non-string token
                 token = token.replaceAll("[']*", "");
-            }
-            if (token.equalsIgnoreCase("and") 
-                    && !tokens.isEmpty()
-                    && ",".equals(tokens.get(tokens.size()-1).getValue())) {
-            	// in case of ", and", the comma is skipped  
-                skipThisToken = true;
+
+                // in case of ", and", the comma is skipped  
+                if (token.equalsIgnoreCase("and") 
+                        && !tokens.isEmpty()
+                        && ",".equals(tokens.get(tokens.size()-1).getValue())) {
+                    skipThisToken = true;
+                }
             }
             if (! skipThisToken) {
                 tokens.add(new Token(lnum, tokenStartPos, len, token));
