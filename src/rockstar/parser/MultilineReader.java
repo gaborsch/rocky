@@ -98,7 +98,7 @@ public class MultilineReader {
                 addToken(1);
                 isInQuote = false;
             } else {
-                isInQuoteAfterBackslash = (c == '\\');
+                isInQuoteAfterBackslash = (!isInQuoteAfterBackslash) && (c == '\\');
             }
             return;
         } 
