@@ -22,7 +22,7 @@ Return values are retained as-is (and wrapped into a Rockstar Native), unless a 
 
 Type check (`my list is like List`) is possible, including super classes and implemented interfaces. Even two classes or two instances can be checked against each other (`Linkedlist is like List` or `list1 is like list2`). Negation is also allowed (`list1 is not like list2`).
 
-Rockstar functions (including object methods) can implement Java `FunctionalInterface`, enabling native Java methods to call back to Rockstar (see [functional_interface.rock](programs/tests/fixtures/Rocky_ext/native/functional_interface.rock)).
+Rockstar functions (including object methods) can implement Java `FunctionalInterface`, enabling native Java methods to call back to Rockstar (see [functional_interface.rock](https://github.com/gaborsch/rocky/tree/master/programs/tests/fixtures/Rocky_ext/native/functional_interface.rock).
 
 ## Conversion of types
 
