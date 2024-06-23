@@ -50,7 +50,7 @@ Arrays can be sliced with `my array [since X] [till Y]` expression. Both `since`
 
 ```
 ('the colors' is an integer-indexed array)
-morning is colors till 6 (morning is an array, elements 0-5 of teh original array)
+morning is the colors till 6 (morning is an array, elements 0-5 of teh original array)
 ```
 
 ### Array size
