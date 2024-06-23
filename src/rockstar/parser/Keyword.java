@@ -44,7 +44,7 @@ public enum Keyword {
     ROCK(),
     ROLL("roll", "pop"),
     INTO("into", "in"),
-    FROM("+from"),
+    SINCE("+since"),
     TILL("+till"),
     TAKING("taking"),
     SORTED("+sorted"),

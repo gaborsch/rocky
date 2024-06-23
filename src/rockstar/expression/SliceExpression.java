@@ -36,7 +36,7 @@ public class SliceExpression extends CompoundExpression {
 
     @Override
     public String getFormat() {
-        return "(%s" + (type != Type.SLICE_TO ? " from %s" : "") + (type != Type.SLICE_FROM ? " till %s" : "") + ")";
+        return "(%s" + (type != Type.SLICE_TO ? " since %s" : "") + (type != Type.SLICE_FROM ? " till %s" : "") + ")";
     }
 
     @Override
@@ -79,10 +79,10 @@ public class SliceExpression extends CompoundExpression {
         Value retValue = Value.MYSTERIOUS;
         if (baseVal.isArray()) {
             List<Value> baseList = baseVal.asListArray();
-            List<Value> newList = baseList.subList(fromVal == null ? 0 : fromVal, toVal == null ? baseList.size() : toVal + 1);
+            List<Value> newList = baseList.subList(fromVal == null ? 0 : fromVal, toVal == null ? baseList.size() : toVal);
             retValue = Value.getValue(newList);
         } else {
-            throw new RockstarRuntimeException("Invalid argument for from/till operation: " + baseVal.getType());
+            throw new RockstarRuntimeException("Invalid argument for since/till operation: " + baseVal.getType());
         }
 
         return ctx.afterExpression(this, retValue);

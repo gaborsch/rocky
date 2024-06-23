@@ -488,7 +488,7 @@ public class ExpressionParser {
 			next();
 			return (CompoundExpression) new RollExpression().withTokens(list, startIdx, idx);
 		}
-		if (checkCurrent(Keyword.FROM)) {
+		if (checkCurrent(Keyword.SINCE)) {
 			next();
 			return (CompoundExpression) new SliceExpression(SliceExpression.Type.SLICE_FROM).withTokens(list, startIdx,
 					idx);

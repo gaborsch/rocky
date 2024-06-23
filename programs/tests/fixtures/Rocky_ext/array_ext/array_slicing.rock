@@ -1,0 +1,18 @@
+cut "ABCDEFGHIJ" into letters
+
+sliced = letters till 3
+join sliced
+say sliced
+
+sliced = letters since 3
+join sliced
+say sliced
+
+sliced = letters since 3 till 6
+join sliced
+say sliced
+
+sliced = letters till 8 since 6 
+join sliced
+say sliced
+
