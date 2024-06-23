@@ -44,6 +44,15 @@ Let the rainbow be sorted the colors
 Let the rainbow be the colors sorted
 ```
 
+### Array slicing
+
+Arrays can be sliced with `my array [since X] [till Y]` expression. Both `since` and `till` part are optional (and can even be swapped). Indexing starts with `0`, the start of the slice is inclusive, the end of the slice is exclusive. Invalid indexing causes runtime error.
+
+```
+('the colors' is an integer-indexed array)
+morning is colors till 6 (morning is an array, elements 0-5 of teh original array)
+```
+
 ### Array size
 
 The built-in function `count of` returns the number of elements in an array. Aliases: `length of`, `height of`.
