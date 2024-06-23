@@ -22,7 +22,7 @@ You can also try Rocky online on the [rockyrockstar.org](https://www.rockyrockst
 * Aliases (substituting keywords)
 * Advanced array management features
 
-For all additional feature details, please check the [Rocky extra features page].(docs/spec_ext.md)
+For all additional feature details, please check the [Rocky extra features page](docs/spec_ext.md).
 
 
 ## Prerequisites
