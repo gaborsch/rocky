@@ -1,0 +1,13 @@
+let the weather at "London" be "rainy"
+let the weather at "Phoenix" be "dry"
+let the weather at "Siberia" be "cold"
+
+let cities be all keys of the weather
+let climates be all values of the weather
+
+While cities sorted alike a hamlet
+   say a hamlet
+   
+While climates sorted alike a sunray
+   say a sunray
+   

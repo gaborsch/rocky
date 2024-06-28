@@ -530,13 +530,13 @@ public class ExpressionParser {
 				type = BuiltinFunction.Type.PEEK;
 				next(2);
 			}
-		} // all keys of
-			// all values of
-		else if (containsAtLeast(3) && checkCurrent(Keyword.ALL) && checkNext(Keyword.OF)) {
-			if (checkNext(2, Keyword.KEYS)) {
+		} 
+		else if (containsAtLeast(3) && checkCurrent(Keyword.ALL) && checkNext(2, Keyword.OF)) {
+			// all keys of / all values of
+			if (checkNext(Keyword.KEYS)) {
 				type = BuiltinFunction.Type.KEYS;
 				next(3);
-			} else if (checkNext(2, Keyword.VALUES)) {
+			} else if (checkNext(Keyword.VALUES)) {
 				type = BuiltinFunction.Type.VALUES;
 				next(3);
 			}

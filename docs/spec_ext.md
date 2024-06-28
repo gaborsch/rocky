@@ -69,6 +69,13 @@ The built-in function `last of` returns the last element in an array.
 Say last of the colors
 ```
 
+## Associative Array extension
+
+### Keys and values
+
+The `all keys of X` and `all values of X` functions return the key set and the value set of an associative array `X`. Note that the sets are unsorted.
+
+
 ## DEC64 Arithmetics
 
 As per the original Rockstar specification, Rocky fully supports DEC64 arithmetic with `--dec64` command line option (including rounding functions).
