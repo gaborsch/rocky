@@ -57,7 +57,7 @@ public class SplitStatement extends Statement {
         int start = 0;
         int len = orig.length();
 
-        while (start < len) {
+        while (start < len || (start == len && !emptySep)) {
             int end = (emptySep ? start + 1 : orig.indexOf(sep, start));
             if (end < 0) {
                 end = len;

@@ -1,0 +1,23 @@
+letters = "ABC"
+
+split letters into middle with "B" ( -> "A", "C" )
+say middle at 0
+say middle at 1
+say middle at 2
+
+split letters into start with "A" ( -> "", "BC" )
+say start at 0
+say start at 1
+say start at 2
+
+split letters into end with "C" ( -> "AB" ) ( expected "AB", "")
+say end at 0
+say end at 1
+say end at 2
+
+split letters into nosep with ""
+say nosep at 0
+say nosep at 1
+say nosep at 2
+say nosep at 3
+
