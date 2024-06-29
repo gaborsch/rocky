@@ -17,30 +17,24 @@ public class BreakStatement extends Statement {
 
 	@Override
 	boolean applyTo(Block block) {
-		if (Environment.get().isStrictMode()) {
-			Block b = block;
-			while (b != null) {
-				if (b instanceof WhileStatement) {
-					return true;
-				}
-				b = b.getParent();
+		Block b = block;
+		while (b != null) {
+			if (b instanceof WhileStatement) {
+				return true;
 			}
-			return false;
-		} else {
-			return true;
+			b = b.getParent();
 		}
+		return false;
 	}
 
-    @Override
-    public void execute(BlockContext ctx) {
-		if (Environment.get().isStrictMode()) {
-			throw new RockstarBreakException();
-		}
-    }
-    
-    @Override
-    public void accept(StatementVisitor visitor) {
-    	visitor.visit(this);
-    }
+	@Override
+	public void execute(BlockContext ctx) {
+		throw new RockstarBreakException();
+	}
+
+	@Override
+	public void accept(StatementVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }
