@@ -53,45 +53,50 @@ public class CastStatement extends Statement {
             }
         }        
         
-        // radix for numeric conversions
+        // radix for numeric conversions, typeParameters for native casting
         RockNumber radixNumber = null;
         List<Expression> typeParameters = null;
         if (paramExpr != null) {
         	if (paramExpr instanceof ListExpression) {
-        		typeParameters = ((ListExpression)paramExpr).getParameters();
-        	} else {
+            	typeParameters = ((ListExpression)paramExpr).getParameters();
+            } else if (paramExpr instanceof VariableReference) {
+            	typeParameters = List.of(paramExpr);
+            } else {
 	            Value paramValue = paramExpr.evaluate(ctx);
-	            if (!paramValue.isNumeric()) {
-	                throw new RockstarRuntimeException("Invalid radix value for conversion: " + paramValue);
-	            }
-	            radixNumber = paramValue.getNumeric();
+				if (paramValue != null  && paramValue.isNumeric()) {
+		            radixNumber = paramValue.getNumeric();
+				} else {
+					throw new RockstarRuntimeException("Invalid radix value for conversion: " + paramValue);
+				}
         	}
         }
 
-        // numeric to string conversion
-        if (v.isNumeric()) {
-            // create a string with the given char code
-            RockNumber num = v.getNumeric();
-            int code = num.asInt();
-            String s = new String(new char[]{(char) code});
-            ctx.setVariable(targetRef, Value.getValue(s));
-            return;
-        } 
-        // string to numeric conversion
-        else if (v.isString()) {
-            RockNumber num;
-            if (radixNumber != null) {
-                // parse long or double with radix
-                num = RockNumber.parseWithRadix(v.getString(), radixNumber);
-            } else {
-                // parse long or double w/o radix
-                num = RockNumber.parse(v.getString());
-            }
-            ctx.setVariable(targetRef, Value.getValue(num));
-            return;
-        }
-        // array to native array/list/map
-        else if (v.isArray() && typeParameters != null) {
+        if (typeParameters == null) {
+	       	// numeric to string conversion
+	        if (v.isNumeric()) {
+	            // create a string with the given char code
+	            RockNumber num = v.getNumeric();
+	            int code = num.asInt();
+	            String s = new String(new char[]{(char) code});
+	            ctx.setVariable(targetRef, Value.getValue(s));
+	            return;
+	        }
+	        
+	        // string to numeric conversion
+	        else if (v.isString()) {
+	            RockNumber num;
+	            if (radixNumber != null) {
+	                // parse long or double with radix
+	                num = RockNumber.parseWithRadix(v.getString(), radixNumber);
+	            } else {
+	                // parse long or double w/o radix
+	                num = RockNumber.parse(v.getString());
+	            }
+	            ctx.setVariable(targetRef, Value.getValue(num));
+	            return;
+	        }
+        } else {
+        	// native value conversion
             ctx.setVariable(targetRef, convertToNative(v, typeParameters, ctx));
             return;
         }
