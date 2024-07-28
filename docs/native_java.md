@@ -52,6 +52,6 @@ Similarly, returned non-primitive values must be converted back if we want to ac
 (continuing the above example)
 cast V (V is cast back - note that the value is 12 now)
 cast ArrayListOfLongs into X2        (X2 is a Rockstar array)
-cast ArrayOfStrings into X3          (X2 is a Rockstar array)
-cast HashMapOfStringAndLong into M2  (X2 is a Rockstar associative array)
+cast ArrayOfStrings into X3          (X3 is a Rockstar array)
+cast HashMapOfStringAndLong into M2  (M2 is a Rockstar associative array)
 ```
