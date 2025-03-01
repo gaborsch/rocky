@@ -1,8 +1,8 @@
 # Rocky - Rockstar Java interpreter
 
-Rocky is a 100% [Rockstar](https://codewithrockstar.com/) compatible Rockstar Interpreter, written in Java. Should you have any issues, requests, wishes or troubles, open a ticket for it. 
+Rocky is a 100% [Rockstar](https://codewithrockstar.com/) compatible Rockstar 1.0 Interpreter, written in Java. Should you have any issues, requests, wishes or troubles, open a ticket for it.  This interpreter is _not compatible_ with Rockstar 2.0.
 
-Rocky supports all Rockstar language features announced on 2021.10.12 and before, including Rockstar 2.0 additions (arrays). If you miss any feature, please open an issue for it.
+Rocky supports all Rockstar language features announced on 2021.10.12 and before. If you miss any feature, please open an issue for it.
 
 You can also try Rocky online on the [rockyrockstar.org](https://www.rockyrockstar.org/) site. (Not now, sorry, the site is under reconstruction)
 
